@@ -1,16 +1,13 @@
 This is xgraph, the X11 plotting programme. Originally by David Harrison, further
-development by R.J.V. Bertin (RJVB).
+development by R.J.V. Bertin (RJVB) into a data exploration/processing tool.
+Currently known to work on Mac OS X 10.6, Linux 2.6 and Cygwin - which probably means
+it'll run on anything "*n*xy" with an X11 server.
 
 Please, have a look at the other README files, especially README.INSTALL that contains
 detailed (I hope) instructions on building and installing. Sorry for the old-fashioned
 manual way in which this must be done, but I myself prefer to work that way :)
 Alternatively, if you have Linux running on (probably) at least a Pentium class processor,
 try the xgraph binary that *may* be provided together with the source distribution.
-
-Important note (added 20031008): the current way 'ascanf pointers' are implemented (see
-take_ascanf_address/parse_ascanf_address) for the internal programming language is quite
-likely INCOMPATIBLE WITH 64BIT PROCESSORS. At least when using 8 byte (ieee) doubles;
-with long doubles, it should work, but at a probably performance cost.
 
 This distribution changes often, whenever I find a bug, or need some new functionality.
 I won't comment on which of the two occur more frequently :) The only trustworthy
@@ -41,4 +38,6 @@ as my own.
 If you find bugs, implement improvements or additional features (have a look at TODOHIST),
 PLEASE let me know about them!
 
-(C) R.J.V. Bertin, 1990 - now (Mon Jan  8 17:22:59 CET 2001)
+(C) R.J.V. Bertin, 1990 - then (Mon Jan  8 17:22:59 CET 2001)
+
+now (Tue May 22 13:20:10 CEST 2012).
