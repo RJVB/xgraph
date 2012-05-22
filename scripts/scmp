@@ -1,0 +1,17 @@
+#!/bin/sh
+# a simple script that will only show diff's output when it detects a difference or otherwise
+# return a non-zero status.
+
+ts () {
+	timestamp -v $1 2>&1 | fgrep -v -i "No such file or directory"
+}
+
+DIFF=`cmp  "$@" 2>&1`
+RET=$?
+if [ $RET != 0 ] ;then
+	echo  "$DIFF" | egrep -v 'Is a directory|Operation not permitted'
+	if [ $? = 0 ] ;then
+		echo "`ts $1` -- `ts $2`"
+	fi
+fi
+exit $RET

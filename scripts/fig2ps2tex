@@ -1,0 +1,59 @@
+#! /bin/csh -f
+#
+# Fig2ps2tex - generate a TeX file for including a PostScript file
+#		 involves calculating the bounding box from fig2ps output
+#
+
+# check if the PS file is created by xgraph:
+# if so, remove centering code and showpage(s)
+
+if ( "`head -25 $1 | fgrep Xgraph`" != "" ) then
+	sed < $1 -e '/[rR]otation .*required/,/end .*tation section/s/^[^%]/% /g' -e 's/showpage//g' -e 's/Xgraph/xgraph-fig2ps2tex/g' > fig2ps2tex.$$
+	if ( $status == 0 ) then
+		sh -c "echo '\tCentering information and showpages removed' 1>&2"
+		mv fig2ps2tex.$$ $1
+	endif
+endif
+
+set bbox = `grep "^%%BoundingBox:" $1`
+
+# set transl = `grep '^[-0-9].*translate$' $1`
+# 
+# if ( "$transl" != "" ) then
+# 	set _transl = `echo $transl | sed -e 's/-/_/g'`
+# 	set xtransl = `echo "3k $_transl[1] 2 * p" | dc`
+# 	sed -e "s/$transl/ $xtransl $transl[2] translate/g" < $1 > fig2ps2tex.$$
+# 	if ( $status == 0 ) then	
+# 		sh -c "echo '\tTranslation information changed ($transl[1] $transl[2] -> $xtransl $transl[2])' 1>&2"
+# 		mv fig2ps2tex.$$ $1
+# 	endif
+# endif
+
+if ( "`head -25 $1 | fgrep '%%Creator: fig2dev'`" != "" ) then
+	# fig2dev specifies a slightly too narrow box, so we
+	# add an extra width of 7.5 mm (in points):
+	set xplus = `echo "3k 0.75 2.54 / 72.27 * p" | dc`
+else
+	set xplus = 0
+endif
+
+set UNIT = "pt"
+
+if ( "$UNIT" == "in" ) then
+	set xsp = `echo "3k $bbox[4] $bbox[2] - $xplus + 72 / p" | dc`
+	set ysp = `echo "3k $bbox[5] $bbox[3] - 72 / p" | dc`
+else
+	set xsp = `echo "3k $bbox[4] $bbox[2] - $xplus + p" | dc`
+	set ysp = `echo "3k $bbox[5] $bbox[3] - p" | dc`
+endif
+
+echo "\begin{center}"
+echo " % \transfigbox is defined in transfig.tex"
+echo " \transfigbox{${xsp}${UNIT}}{l}{"
+echo "   \vbox to ${ysp}${UNIT}{"
+echo "     \vfill"
+echo "     \special{psfile=$1}"
+echo "   }"
+echo "   \vspace{-\baselineskip}"
+echo " }"
+echo "\end{center}"

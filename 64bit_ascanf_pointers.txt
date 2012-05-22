@@ -1,0 +1,47 @@
+Musings on how to implement a transparent ascanf pointer mechanism for 64bit machines (where an an address can't be stored inside a 64bit variable (double) that can unambiguously be distinguished from a non-pointer 64bit double).
+
+So:
+
+1) calculate a serial id when first defining a variable, and attribute that to the variable. It should be unique to 
+   ALL ascanf_Function entities. A(nother) good place to do it is thus in take_ascanf_address, i.e. when the address
+   is first requested (no need to go through the trouble doing all this and what follows for things that never get pointed to). 
+   Thus: do not use counter value 0, which will serve as 'has no sID' value.
+
+2) Calculate a hash value on/over the name, when an entry receives an sID, or when re-defining a variable that already has an sID
+
+3) In a separate list (address table), store {hash, ascanf_type, entity-address (in programme space)}, indexable by sID.
+
+4) When user deletes a variable, internally the only thing that happens is that the ascanf_Function entity gets cleaned. It can
+   retain its sID. The entries in the address table don't need to be touched, therefore.
+
+5) when remove_ascanf_functions is called (unloading a library...), the ascanf_Function entities *do* disappear. Their entries
+   in the address table should thus be cleaned or removed. Removing entries from the address table would require decreasing the sID
+   of all remaining entities at higher positions in the list. Ascanf pointers are treated as constants, so that kind of action
+   would require recompiling all existing expressions. Not feasible.
+   Therefore, to avoid exhausting available addresses as long as possible, do 'hole management'. Keep track of the first
+   unused slot in the address table ( if(first_hole) ... remember that sID==0 is unused?). When a new sID is needed, take the
+   one 'at' <first_hole>, and advance first_hole to the next empty slot (entity-address==NULL); advancing may requiring seeking
+   if a non-empty slot is encountered.
+
+typedef struct AddressTables{
+	ascanf_Function_type type;
+	unsigned name_hash:32;
+	ascanf_Function *address;
+} AddressTables;
+
+typedef union AscanfAddresses{
+	double value;					/* value seen by the user */
+	struct{
+		unsigned take_usage:1;		/* address requested by ` operator instead of & (to get to the usage string)? */
+#define ASCANF_ADDRESS_MASK	0x56
+		unsigned mask:8;			/* a mask as a first test this is a pointer 	*/
+		unsigned type:5;			/* encodes the ascanf_Function_type field: 32 should be enough */
+		unsigned sID:18;			/* to index the address table. 2nd test: it should be a valid entry number */
+		unsigned name_hash:32;		/* 3rd test, to check we got the right one: should equal the hash at table[sID] */
+	} handle;
+} AscanfAddresses;
+
+To take an address, fill in the handle fields and read out .value; to parse an address, specify .value and read out the .handle fields; get the address via table[.handle.sID].
+
+Q
+*) What happens with local, static variables in shared libraries? Are they re-initialised when the library is re-loaded?

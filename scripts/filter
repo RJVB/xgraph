@@ -1,0 +1,11 @@
+#!/bin/sh
+
+	grep -v "mathdef\.h.*redefined" $* |\
+	grep -v 'pointer.* combination ' |\
+	grep -v '^[ 	]*$' |\
+	fgrep -v "extra characters on" |\
+	fgrep -v "& before" |\
+	fgrep -v "Duplicate entry" |\
+#	fgrep -v "incompatible type" |\
+	fgrep -v "Pointers are not assignment-compatible" |\
+	fgrep -v "ignored"

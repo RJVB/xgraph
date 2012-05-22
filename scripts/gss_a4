@@ -1,0 +1,4 @@
+#!/bin/sh
+# gs postscript preview in A4 seascape mode (landscape upside-down).
+
+exec /usr/local/bin/gs -g1065x754+0+0 seascap.ps $*

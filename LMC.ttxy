@@ -1,0 +1,86 @@
+#!/bin/sh /usr/local/bin/XGraph
+*TITLE* Weber adaptation in a LMC
+*XLABEL* T
+*YLABEL* Out
+
+*EXTRATEXT*
+Definition of MEM variables:
+  MEM[0]: 1/\d\t
+  MEM[3]: WeberConstant
+  MEM[2]: nlowpass[MEM[4] * (1 + sin(t,MEM[5]) ),MEM[33],10]: stimulus
+  MEM[4]: stimulus strength
+  MEM[5]: stimulus frequency
+  MEM[6]: ON channel weight
+  MEM[7]: OFF channel weight
+  MEM[33]: \t\ of weber, highpass
+  MEM[44]: \t\ of shunt
+  MEM[1]: Weber lowpass mem
+  MEM[10]: HP lowpass mem
+  MEM[100]: shunt mem.
+
+*ARGUMENTS* -bb -tk -detach -fn0 -fli -eng0 -noerr -progress -overwrite_legend -PrintInfo
+
+*PARAM_NOW*comment[MEM[0,1000]]
+
+*PARAM_RANGE* 0,1,MEM[0]
+
+*PARAM_NOW* SETMXY[2,add[1,MEM[0]]]
+*PARAM_NOW* comment[MEM[3,100],MEM[33,0.05],MEM[44,mul[0.015,MEM[3]]],MEM[4,1],MEM[5,0.25],MEM[6,1],MEM[7,0]]
+
+*PARAM_NOW* verbose[MEM[0], MEM[3], MEM[2], MEM[4], MEM[5], MEM[6], MEM[7], MEM[33], MEM[44], MEM[1], MEM[10], MEM[100]]
+
+*LEGEND* sin
+*AUTOSCRIPT* 1 0 1 8 1 1 0 0
+*PARAM_FUNCTIONS* self,MXY[0,counter,mul[MEM[4],add[1,sin[self,MEM[5]]]]], elapsed[0]
+
+*LEGEND* WC*shunt(t,sin(t),WC)
+*PARAM_NOW* MEM[100,0]
+*PARAM_FUNCTIONS* self, add[mul[MEM[4],2],mul[MEM[3],shunt[self,MXY[0,counter],MEM[3],MEM[44],100]]], elapsed[0]
+
+*LEGEND* WC*t/(WC+ sin(t))
+*PARAM_FUNCTIONS* self, add[mul[MEM[4],2],mul[MEM[3],div[self,add[MEM[3],MXY[0,counter]]]]],elapsed[0]
+
+*LEGEND* wc*weber(HP(sin))
+*AUTOSCRIPT* 2 0 2 8 1 2 0 0
+*PARAM_NOW* MEM[1,0],MEM[10,0],MEM[100,0]
+*PARAM_BEFORE* MEM[2,progn[\n
+   MEM[2,sub[MXY[0,counter],nlowpass[MXY[0,counter],MEM[33],10]]],\n
+   return[ ifelse[ >=[MEM[2],0], mul[MEM[6],MEM[2]], mul[-1,MEM[7],MEM[2]]] ]\n
+ ]]
+*PARAM_FUNCTIONS* self,MXY[1,counter,\n
+# 	mul[MEM[3],div[MEM[2],add[MEM[3],nlowpass[MEM[2],MEM[33],1]]]]],\n
+    mul[ MEM[3],\n
+         shunt[\n
+            MEM[2],nlowpass[MEM[2],MEM[33],1],MEM[3],MEM[44],100\n
+         ]\n
+    ]],\n
+ elapsed[0]
+
+*LEGEND* HP(sin)
+*AUTOSCRIPT* 3 0 3 8 1 3 0 0
+*PARAM_NOW* MEM[1,0],MEM[10,0],MEM[100,0]
+*PARAM_FUNCTIONS* self,MEM[2],elapsed[0]
+
+*FILE*LMC.ttxy
+*PARAM_NOW* comment[MEM[5,4]]
+
+*LEGEND* sin
+*AUTOSCRIPT* 1 0 1 8 2 1 0 0
+*PARAM_FUNCTIONS* self,MXY[0,counter,mul[MEM[4],add[1,sin[self,MEM[5]]]]], elapsed[0]
+
+*LEGEND* wc*weber(HP(sin))
+*AUTOSCRIPT* 2 0 2 8 2 2 0 0
+*PARAM_NOW* MEM[1,0],MEM[10,0],MEM[100,0]
+# *PARAM_BEFORE* MEM[2,progn[MEM[2,sub[MXY[0,counter],nlowpass[MXY[0,counter],MEM[33],10]]],return[\n
+#    ifelse[>=[MEM[2],0],mul[MEM[6],MEM[2]],mul[-1,MEM[7],MEM[2]]]\n
+#  ]]]
+
+# 	mul[MEM[3],div[MEM[2],add[MEM[3],nlowpass[MEM[2],MEM[33],1]]]]],\n
+*PARAM_FUNCTIONS* self,MXY[1,counter,\n
+	mul[MEM[3],shunt[MEM[2],nlowpass[MEM[2],MEM[33],1],MEM[3],MEM[44],100]]],\n
+	elapsed[0]
+
+*LEGEND* HP(sin)
+*AUTOSCRIPT* 3 0 3 8 2 3 0 0
+*PARAM_NOW* MEM[1,0],MEM[10,0],MEM[100,0]
+*PARAM_FUNCTIONS* self,MEM[2],elapsed[0]

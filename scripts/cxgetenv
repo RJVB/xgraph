@@ -1,0 +1,38 @@
+#!/bin/sh
+
+if [ $# = 0 ] ;then
+	exec Env
+else
+	if [ $# -gt 1 ] ;then
+		echo "usage: `basename $0` <variablename> <value>" 1>&2
+		echo "The variable is recorded in \$ENVDIR , ./.env or $HOME/.env" 1>&2
+		exit 1
+	fi
+fi
+if [ "$ENVDIR" = "" ] ;then
+	if [ -d ./.env ] ;then
+		ENVDIR="./.env"
+	else	
+		if [ -d $HOME/.env ] ;then
+			ENVDIR="$HOME/.env"
+		else
+			echo "No ENVDIR specified - creating ./.env" 1>&2
+			mkdir ./.env
+			ENVDIR="./.env"
+		fi
+	fi
+fi
+
+if [ ! -d "$ENVDIR" ] ;then
+	echo "ENVDIR=$ENVDIR : not a directory" 1>&2
+	exit 10
+fi
+
+PREF="_"
+if [ -r "$ENVDIR/$PREF$1" ] ;then
+	cat "$ENVDIR/$PREF$1"
+else
+	if [ -r $ENVDIR/$1 ] ;then
+		cat $ENVDIR/$1
+	fi
+fi

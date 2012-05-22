@@ -1,0 +1,44 @@
+typedef struct PostScript_Font{
+	char *ps_name;
+	char *X_name;
+	int fig_id;
+} PostScript_Font;
+
+PostScript_Font ps_font_list[]= {
+	{ "Times-Roman", "-adobe-times-medium-r-*--*", 0 },
+	{ "Times-Italic", "-adobe-times-medium-i-*--*", 1 },
+	{ "Times-Bold", "-adobe-times-bold-r-*--*", 2 },
+	{ "Times-BoldItalic", "-adobe-times-bold-i-*--*", 3 },
+	{ "AvantGarde-Book", "-schumacher-clean-medium-r-*--*", 4 },
+	{ "AvantGarde-BookOblique", "-schumacher-clean-medium-i-*--*", 5 },
+	{ "AvantGarde-Demi", "-schumacher-clean-bold-r-*--*", 6 },
+	{ "AvantGarde-DemiOblique", "-schumacher-clean-bold-i-*--*", 7 },
+	{ "Bookman-Light", "NONE", 8 },
+	{ "Bookman-LightItalic", "NONE", 9 },
+	{ "Bookman-Demi", "NONE", 10 },
+	{ "Bookman-DemiItalic", "NONE", 11 },
+	{ "Courier", "-adobe-courier-medium-r-*--*", 12 },
+	{ "Courier-Oblique", "-adobe-courier-medium-o-*--*", 13 },
+	{ "Courier-Bold", "-adobe-courier-bold-r-*--*", 14 },
+	{ "Courier-BoldOblique", "-adobe-courier-bold-o-*--*", 15 },
+	{ "Helvetica", "-adobe-helvetica-medium-r-*--*", 16 },
+	{ "Helvetica-Oblique", "-adobe-helvetica-medium-o-*--*", 17 },
+	{ "Helvetica-Bold", "-adobe-helvetica-bold-r-*--*", 18 },
+	{ "Helvetica-BoldOblique", "-adobe-helvetica-bold-o-*--*", 19 },
+	{ "Helvetica-Narrow", "NONE", 20 },
+	{ "Helvetica-Narrow-Oblique", "NONE", 21 },
+	{ "Helvetica-Narrow-Bold", "NONE", 22 },
+	{ "Helvetica-Narrow-BoldOblique", "NONE", 23 },
+	{ "NewCenturySchlbk-Roman", "-adobe-new century schoolbook-medium-r-*--*", 24 },
+	{ "NewCenturySchlbk-Italic", "-adobe-new century schoolbook-medium-i-*--*", 25 },
+	{ "NewCenturySchlbk-Bold", "-adobe-new century schoolbook-bold-r-*--*", 26 },
+	{ "NewCenturySchlbk-BoldItalic", "-adobe-new century schoolbook-bold-i-*--*", 27 },
+	{ "Palatino-Roman", "-*-lucidabright-medium-r-*--*", 28 },
+	{ "Palatino-Italic", "-*-lucidabright-medium-i-*--*", 29 },
+	{ "Palatino-Bold", "-*-lucidabright-demibold-r-*--*", 30 },
+	{ "Palatino-BoldItalic", "-*-lucidabright-demibold-i-*--*", 31 },
+	{ "Symbol", "*-symbol-medium-r-*--*", 32 },
+	{ "ZapfChancery-MediumItalic", "-*-zapfchancery-medium-i-*--*", 33 },
+	{ "ZapfDingbats", "-*-zapfdingbats-*-*-*--*", 34 },
+};
+int ps_font_list_length= sizeof(ps_font_list)/sizeof(PostScript_Font);

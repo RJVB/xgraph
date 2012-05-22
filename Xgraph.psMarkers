@@ -1,0 +1,108 @@
+% XGraph Marker definitions (17)
+% Internal markers
+% a blank, filled rectangle
+/M0 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x sizeX sub y sizeY sub moveto
+sizeX sizeX add 0 rlineto 0 sizeY sizeY add rlineto
+0 sizeX sizeX add sub 0 rlineto closepath bgColour gsave fill grestore fgColour stroke} def
+
+% a fgColour, filled rectangle
+/M1 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x sizeX sub y sizeY sub moveto
+sizeX sizeX add 0 rlineto 0 sizeY sizeY add rlineto
+0 sizeX sizeX add sub 0 rlineto closepath fill} def
+
+% a blank, filled circle
+/M2 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x y sizeX sizeY 0 360 DrawEllipse bgColour gsave fill grestore fgColour stroke} def
+
+% a fgColour, filled circle
+/M3 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x y moveto x y sizeX sizeY 0 360 DrawEllipse fill} def
+
+% a blank, filled diamond
+/M4 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x sizeX sub y moveto sizeX sizeY rlineto
+sizeX sizeY -1 mul rlineto sizeX -1 mul sizeY -1 mul rlineto
+closepath bgColour gsave fill grestore fgColour stroke} def
+
+% a fgColour, filled diamond
+/M5 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x sizeX sub y moveto sizeX sizeY rlineto
+sizeX sizeY -1 mul rlineto sizeX -1 mul sizeY -1 mul rlineto
+closepath fill} def
+
+% a blank, filled upwards triangle
+/M6 {/sizeY edf /sizeX edf /y edf /x edf
+%/osize size 7.0710678119E-01 mul def
+/osizeX sizeX def /osizeY sizeY def
+newpath x y sizeY add moveto osizeX sizeY osizeY add -1 mul rlineto
+sizeX osizeX add -1 mul 0 rlineto
+closepath bgColour gsave fill grestore fgColour stroke} def
+
+% a fgColour, filled upwards triangle
+/M7 {/sizeY edf /sizeX edf /y edf /x edf
+%/osize size 7.0710678119E-01 mul def
+/osizeX sizeX def /osizeY sizeY def
+newpath x y sizeY add moveto osizeX sizeY osizeY add -1 mul rlineto
+sizeX osizeX add -1 mul 0 rlineto
+closepath fill} def
+
+% a blank, filled downwards triangle
+/M8 {/sizeY edf /sizeX edf /y edf /x edf
+%/osize size 7.0710678119E-01 mul def
+/osizeX sizeX def /osizeY sizeY def
+newpath x y sizeY sub moveto osizeX sizeY osizeY add rlineto
+sizeX osizeX add -1 mul 0 rlineto
+closepath bgColour gsave fill grestore fgColour stroke} def
+
+% a fgColour, filled downwards triangle
+/M9 {/sizeY edf /sizeX edf /y edf /x edf
+%/osize size 7.0710678119E-01 mul def
+/osizeX sizeX def /osizeY sizeY def
+newpath x y sizeY sub moveto osizeX sizeY osizeY add rlineto
+sizeX osizeX add -1 mul 0 rlineto
+closepath fill} def
+
+% a blank, filled diabolo
+/M10 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x y moveto sizeX -1 mul sizeY -1 mul rlineto
+sizeX 2 mul 0 rlineto closepath bgColour gsave fill grestore fgColour stroke
+newpath x y moveto sizeX sizeY rlineto
+sizeX -2 mul 0 rlineto
+closepath bgColour gsave fill grestore fgColour stroke} def
+
+% a fgColour, filled diabolo
+/M11 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x y moveto sizeX -1 mul sizeY -1 mul rlineto
+sizeX 2 mul 0 rlineto closepath fill
+newpath x y moveto sizeX sizeY rlineto
+sizeX -2 mul 0 rlineto
+closepath fill} def
+
+% a diagonal cross
+/M12 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x sizeX sub y sizeY sub moveto x sizeX add y sizeY add lineto
+x sizeX sub y sizeY add moveto x sizeX add y sizeY sub lineto stroke} def
+
+% a cross
+/M13 {/sizeY edf /sizeX edf /y edf /x edf
+newpath x sizeX sub y moveto x sizeX add y lineto
+x y sizeY add moveto x y sizeY sub lineto stroke} def
+
+% a rectangle with a diagonal cross
+/M14 {/sizeY edf /sizeX edf /y edf /x edf
+x y sizeX sizeY M0
+newpath x y sizeX sizeY M12 } def
+
+% a rectangle/diamond ("star")
+/M15 {/sizeY edf /sizeX edf /y edf /x edf
+/sizex sizeX def
+/sizey sizeY def
+x y sizeX 1.3 div sizeY 1.3 div M0
+newpath x y sizex sizey M4 } def
+
+% a circle with a cross
+/M16 {/sizeY edf /sizeX edf /y edf /x edf
+x y sizeX sizeY M2
+newpath x y sizeX sizeY M12 } def

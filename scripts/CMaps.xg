@@ -1,0 +1,318 @@
+*EVAL*\n
+	IDict[ DCL[CMaps-old$VL,1], printf[`CMaps-old$VL,`$VariableLabel],
+		printf[`$VariableLabel,`"*This-File*"],
+		DEPROC-noEval[CMaps-conserve, progn[CMaps-old$VL] ],
+	] @
+
+*VERSION_LIST*
+ XGraph ColourMap definitions 20030328
+
+**EVAL*
+IDict[
+	DCL[dum], DCL[level]
+] @
+
+**EVAL*
+DEPROC-noEval[RainBow-Intensity,IDict[
+	ifelse[=[$DATA{0},0],progn[DCL[red,0],DCL[green,0],DCL[blue,0]],
+		ifelse[=[$DATA{0},sub[$IntensityColours,1]],progn[red[1],green[1],blue[1]],
+			progn[
+				dum[div[mul[1,sub[$DATA{0},1]],sub[$IntensityColours,2]]],
+				red[sub[1,mul[dum,dum]]],
+				green[mul[4,dum,sub[1,dum]]],
+				blue[mul[dum,dum]],
+				TBARprogress[$DATA{0},$IntensityColours],
+			],
+		],
+	],
+	return[red],
+]] @
+
+
+# BGR: a colourmap that goes from black through blue through cyan (blue+green) to white, with
+# a psychonomical (perceived) brightness/luminance that increases linearly from 0
+# to 1.
+# Call this Aqua.
+**EVAL*
+IDict[compile[
+	 DCL[$bgr-bluefact,1], DCL[$bgr-greenfact,0.59/0.11], DCL[$bgr-redfact,0.3/0.11],
+	 DCL[$bgr-maxblue,1], DCL[$bgr-maxgreen,add[$bgr-maxblue,$bgr-greenfact]], DCL[$bgr-maxred,add[$bgr-maxgreen,$bgr-redfact]],
+]] @
+
+**EVAL*
+DEPROC-noEval[BGR, IDict[
+	 level[ mul[ div[$[0],sub[$IntensityColours,1]], $bgr-maxred ] ],
+	 ifelse[ <=[level,$bgr-maxblue],
+		  progn[
+			   blue[level], green[0], red[0]
+		  ],
+		  progn[
+			   blue[1],
+			   ifelse[<=[level,$bgr-maxgreen],
+					progn[
+						 green[ div[ sub[level,$bgr-maxblue], $bgr-greenfact] ],
+						 red[0],
+					],
+					progn[
+						 green[1],
+						 ifelse[<=[level,$bgr-maxred],
+							  progn[
+								   red[ div[ sub[level,$bgr-maxgreen], $bgr-redfact] ]
+							  ],
+							  progn[
+								   red[1],
+								   printf[2, "BGR(%s): level=%s> %s: this shouldn't happen!!#xn", $[0], level, $bgr-maxred ],
+							  ],
+						 ],
+					],
+			   ],
+		  ],
+	 ],
+	 return[red],
+] ] @
+
+**EVAL*
+DEPROC-noEval[BGR-Intensity,
+	 progn[ TBARprogress[$DATA{0},$IntensityColours],return[BGR[$DATA{0}]]] ] @
+
+# BRG: a colourmap that goes from black through blue through magenta (blue+red) to white, with
+# a psychonomical (perceived) brightness/luminance that increases linearly from 0
+# to 1.
+# Call this Violet.
+**EVAL*
+IDict[compile[
+	 DCL[$brg-bluefact,1], DCL[$brg-redfact,0.3/0.11], DCL[$brg-greenfact,0.59/0.11],
+	 DCL[$brg-maxblue,1], DCL[$brg-maxred,add[$brg-maxblue,$brg-redfact]], DCL[$brg-maxgreen,add[$brg-maxred,$brg-greenfact]],
+]] @
+
+**EVAL*
+DEPROC-noEval[BRG, IDict[
+	 level[ mul[ div[$[0],sub[$IntensityColours,1]], $brg-maxgreen ] ],
+	 ifelse[ <=[level,$brg-maxblue],
+		  progn[
+			   blue[level], green[0], red[0]
+		  ],
+		  progn[
+			   blue[1],
+			   ifelse[<=[level,$brg-maxred],
+					progn[
+						 red[ div[ sub[level,$brg-maxblue], $brg-redfact] ],
+						 green[0],
+					],
+					progn[
+						 red[1],
+						 ifelse[<=[level,$brg-maxgreen],
+							  progn[
+								   green[ div[ sub[level,$brg-maxred], $brg-greenfact] ]
+							  ],
+							  progn[
+								   green[1],
+								   printf[2, "BRG(%s): level=%s> %s: this shouldn't happen!!#xn", $[0], level, $brg-maxgreen ],
+							  ],
+						 ],
+					],
+			   ],
+		  ],
+	 ],
+	 return[red],
+] ] @
+
+**EVAL*
+DEPROC-noEval[BRG-Intensity,
+	 progn[ TBARprogress[$DATA{0},$IntensityColours],return[BRG[$DATA{0}]]] ] @
+
+# Fire: a colourmap that goes from black through red through yellow to white, with
+# a psychonomical (perceived) brightness/luminance that increases linearly from 0
+# to 1.
+**EVAL*
+IDict[compile[
+	 DCL[$fire-redfact,1], DCL[$fire-greenfact,0.59/0.3], DCL[$fire-bluefact,0.11/0.3],
+	 DCL[$fire-maxred,1], DCL[$fire-maxgreen,add[$fire-maxred,$fire-greenfact]], DCL[$fire-maxblue,add[$fire-maxgreen,$fire-bluefact]],
+]] @
+
+**EVAL*
+DEPROC-noEval[Fire, IDict[
+	 level[ mul[ div[$[0],sub[$IntensityColours,1]], $fire-maxblue ] ],
+	 ifelse[ <=[level,$fire-maxred],
+		  progn[
+			   red[level], green[0], blue[0]
+		  ],
+		  progn[
+			   red[1],
+			   ifelse[<=[level,$fire-maxgreen],
+					progn[
+						 green[ div[ sub[level,$fire-maxred], $fire-greenfact] ],
+						 blue[0],
+					],
+					progn[
+						 green[1],
+						 ifelse[<=[level,$fire-maxblue],
+							  progn[
+								   blue[ div[ sub[level,$fire-maxgreen], $fire-bluefact] ]
+							  ],
+							  progn[
+								   blue[1],
+								   printf[2, "Fire(%s): level=%s> %s: this shouldn't happen!!#xn", $[0], level, $fire-maxblue ],
+							  ],
+						 ],
+					],
+			   ],
+		  ],
+	 ],
+	 return[red],
+] ] @
+
+**EVAL*
+DEPROC-noEval[Fire-Intensity,
+	 progn[ TBARprogress[$DATA{0},$IntensityColours],return[Fire[$DATA{0}]]] ] @
+
+**EVAL*
+DEPROC-noEval[RGB-Intensity,
+	 progn[ TBARprogress[$DATA{0},$IntensityColours],return[Fire[$DATA{0}]]] ] @
+
+# GBR: a colourmap that goes from black through green through cyan (green+blue) to white, with
+# a psychonomical (perceived) brightness/luminance that increases linearly from 0
+# to 1.
+# Call this <korenbloem>/<hyacinth>
+**EVAL*
+IDict[compile[
+	 DCL[$gbr-greenfact,1], DCL[$gbr-bluefact,0.11/0.59], DCL[$gbr-redfact,0.3/0.59],
+	 DCL[$gbr-maxgreen,1], DCL[$gbr-maxblue,add[$gbr-maxgreen,$gbr-bluefact]], DCL[$gbr-maxred,add[$gbr-maxblue,$gbr-redfact]],
+]] @
+
+**EVAL*
+DEPROC-noEval[GBR, IDict[
+	 level[ mul[ div[$[0],sub[$IntensityColours,1]], $gbr-maxred ] ],
+	 ifelse[ <=[level,$gbr-maxgreen],
+		  progn[
+			   green[level], red[0], blue[0]
+		  ],
+		  progn[
+			   green[1],
+			   ifelse[<=[level,$gbr-maxblue],
+					progn[
+						 blue[ div[ sub[level,$gbr-maxgreen], $gbr-bluefact] ],
+						 red[0],
+					],
+					progn[
+						 blue[1],
+						 ifelse[<=[level,$gbr-maxred],
+							  progn[
+								   red[ div[ sub[level,$gbr-maxblue], $gbr-redfact] ]
+							  ],
+							  progn[
+								   red[1],
+								   printf[2, "GBR(%s): level=%s> %s: this shouldn't happen!!#xn", $[0], level, $gbr-maxred ],
+							  ],
+						 ],
+					],
+			   ],
+		  ],
+	 ],
+	 return[red],
+] ] @
+
+**EVAL*
+DEPROC-noEval[BGR-Intensity,
+	 progn[ TBARprogress[$DATA{0},$IntensityColours],return[GBR[$DATA{0}]]] ] @
+
+# GRB: a colourmap that goes from black through green through yellow to white, with
+# a psychonomical (perceived) brightness/luminance that increases linearly from 0
+# to 1.
+# Call this Spring.
+**EVAL*
+IDict[compile[
+	 DCL[$grb-greenfact,1], DCL[$grb-redfact,0.3/0.59], DCL[$grb-bluefact,0.11/0.59],
+	 DCL[$grb-maxgreen,1], DCL[$grb-maxred,add[$grb-maxgreen,$grb-redfact]], DCL[$grb-maxblue,add[$grb-maxred,$grb-bluefact]],
+]] @
+
+**EVAL*
+DEPROC-noEval[GRB, IDict[
+	 level[ mul[ div[$[0],sub[$IntensityColours,1]], $grb-maxblue ] ],
+	 ifelse[ <=[level,$grb-maxgreen],
+		  progn[
+			   green[level], red[0], blue[0]
+		  ],
+		  progn[
+			   green[1],
+			   ifelse[<=[level,$grb-maxred],
+					progn[
+						 red[ div[ sub[level,$grb-maxgreen], $grb-redfact] ],
+						 blue[0],
+					],
+					progn[
+						 red[1],
+						 ifelse[<=[level,$grb-maxblue],
+							  progn[
+								   blue[ div[ sub[level,$grb-maxred], $grb-bluefact] ]
+							  ],
+							  progn[
+								   blue[1],
+								   printf[2, "GRB(%s): level=%s> %s: this shouldn't happen!!#xn", $[0], level, $grb-maxblue ],
+							  ],
+						 ],
+					],
+			   ],
+		  ],
+	 ],
+	 return[red],
+] ] @
+
+**EVAL*
+DEPROC-noEval[GRB-Intensity,
+	 progn[ TBARprogress[$DATA{0},$IntensityColours],return[GRB[$DATA{0}]]] ] @
+
+# RBG: a colourmap that goes from black through red through magenta (red+blue) to white, with
+# a psychonomical (perceived) brightness/luminance that increases linearly from 0
+# to 1.
+# Call this candy....
+**EVAL*
+IDict[compile[
+	 DCL[$rbg-redfact,1], DCL[$rbg-bluefact,0.11/0.3], DCL[$rbg-greenfact,0.59/0.3],
+	 DCL[$rbg-maxred,1], DCL[$rbg-maxblue,add[$rbg-maxred,$rbg-bluefact]], DCL[$rbg-maxgreen,add[$rbg-maxblue,$rbg-greenfact]],
+]] @
+
+**EVAL*
+DEPROC-noEval[RBG, IDict[
+	 level[ mul[ div[$[0],sub[$IntensityColours,1]], $rbg-maxgreen ] ],
+	 ifelse[ <=[level,$rbg-maxred],
+		  progn[
+			   red[level], green[0], blue[0]
+		  ],
+		  progn[
+			   red[1],
+			   ifelse[<=[level,$rbg-maxblue],
+					progn[
+						 blue[ div[ sub[level,$rbg-maxred], $rbg-bluefact] ],
+						 green[0],
+					],
+					progn[
+						 blue[1],
+						 ifelse[<=[level,$rbg-maxgreen],
+							  progn[
+								   green[ div[ sub[level,$rbg-maxblue], $rbg-greenfact] ]
+							  ],
+							  progn[
+								   green[1],
+								   printf[2, "RBG(%s): level=%s> %s: this shouldn't happen!!#xn", $[0], level, $rbg-maxgreen ],
+							  ],
+						 ],
+					],
+			   ],
+		  ],
+	 ],
+	 return[red],
+] ] @
+
+*EVAL*\n
+DEPROC-noEval[RBG-Intensity,
+	 progn[ TBARprogress[$DATA{0},$IntensityColours],return[RBG[$DATA{0}]]] ] @
+
+
+
+
+**EVAL*
+	IDict[ printf[`$VariableLabel,`CMaps-old$VL], Delete[CMaps-conserve],
+		Delete[CMaps-old$VL],
+	] @
+

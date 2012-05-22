@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# 20020422 RJVB
+# a simple script that should output the machine dependent optimal compiler to
+# compile the ascanfc modules with.
+
+if [ "`uname -s`" = "Darwin" ] ;then
+	MACH="Darwin"
+else
+	MACH="`uname -m`"
+fi
+
+
+case $MACH in
+	IP22*|IP32*|IRIX*)
+		case $1 in
+			dymod)
+				echo "c++opt"
+				;;
+			*)
+				echo "c++opt"
+				;;
+		esac
+		;;
+	i686|i586|x86_64)
+		case $1 in
+			dymod)
+# 				echo "c++opt -compiler gcc295.3 -inline"
+				echo "c++opt"
+				;;
+			*)
+				echo "c++opt"
+				;;
+		esac
+		;;
+	Darwin|"Power Macintosh")
+		case $1 in
+			dymod)
+				echo "c++opt"
+				;;
+			*)
+				echo "c++opt"
+				;;
+		esac
+		;;
+	*)
+		echo "c++opt"
+		;;
+esac

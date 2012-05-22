@@ -1,0 +1,74 @@
+#
+# Makefile for the xgraph program
+#
+# David Harrison
+# University of California,  Berkeley
+# 1987
+#
+# NOTE: the libCreate library is a library I wrote to replace XCreate
+#       and XCreateTerm with ones I think provide a better interface.
+#       If you do not have this library,  you can get it from hoser.
+#       If you don't want to use it,  just take it out of the LIBS
+#	line below.
+#
+
+CLEVEL	= -W0,-opt,3 -A runtype,bsd4.3 -A systype,bsd4.3 -A nansi
+CFLAGS	= $(CLEVEL) -Ixtb -Iux11
+CC	= cc
+
+SRC	= xgraph.c xgX.c hard_devices.c dialog.c hpgl.c new_ps.c matherr.c
+OBJ	= xgraph.o xgX.o hard_devices.o dialog.o hpgl.o new_ps.o matherr.o
+
+UX11	= libux11.a
+XTB	= libxtb.a
+LIBS	= xtb/$(XTB) ux11/$(UX11) -lX11 -lm
+
+TARGET	= xgraph
+# /usr/bin/rcp $*.c bertin@fysae:/usr/tmp/.bertin/src/xgraph 
+
+#--------
+
+$(TARGET):	$(OBJ) xtb_m ux11_m
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LIBS)
+
+dialog.o: dialog.c hard_devices.h
+	$(CC) $(CFLAGS) -c $<
+
+hard_devices.o: hard_devices.c hard_devices.h
+	$(CC) $(CFLAGS) -c $<
+
+xgraph.o: xgraph.c xgraph.h
+	$(CC) $(CFLAGS) -c $<
+
+xgX.o: xgX.c
+	$(CC) $(CFLAGS) -c $<
+
+hpgl.o: hpgl.c
+	$(CC) $(CFLAGS) -c $<
+
+new_ps.o: new_ps.c
+	$(CC) $(CFLAGS) -c $<
+
+matherr.o: matherr.c
+	$(CC) $(CFLAGS) -c $<
+
+xg11:		$(TOBJ) xtb_m ux11_m
+		$(CC) $(CFLAGS) -o xg11 $(TOBJ) $(LIBS)		
+
+xtb_m:
+#		sh -c "cd $(MAKEBDIR)/xtb ; make CLEVEL=$(CLEVEL) $(XTB)"
+#		( cd $(MAKEBDIR)/xtb ; make "CLEVEL=$(CLEVEL)" $(XTB) )
+		( cd xtb ; make "CLEVEL=$(CLEVEL)" $(XTB) )
+
+ux11_m:
+#		sh -c "cd $(MAKEBDIR)/ux11 ; make CLEVEL=$(CLEVEL) $(UX11)"
+#		( cd $(MAKEBDIR)/ux11 ; make "CLEVEL=$(CLEVEL)" $(UX11) )
+		( cd ux11 ; make "CLEVEL=$(CLEVEL)" $(UX11) )
+
+xgtest:		xgtest.o
+		cc $(CFLAGS) -o xgtest xgtest.o -lm
+
+clean:
+		rm -f $(OBJ) $(TARGET) xgtest.o xgtest #* *~
+		cd xtb; make clean
+		cd ux11; make clean

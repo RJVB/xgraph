@@ -1,0 +1,6 @@
+#define mark14_width 8
+#define mark14_height 8
+#define mark14_x_hot 3
+#define mark14_y_hot 3
+static char mark14_bits[] = {
+   0x7f, 0x41, 0x63, 0x7f, 0x63, 0x41, 0x7f, 0x00};

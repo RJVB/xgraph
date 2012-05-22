@@ -1,0 +1,123 @@
+#!/bin/sh
+
+XPV="xgraph.pspreview.$$"  ;  export XPV
+XPVb="xgraph.pspreview.$$b"  ;  export XPVb
+
+cat - > "${XPV}"
+line < ${XPV} | grep '#!/bin/sh .*XGraph'
+
+if [ $? = 0 ] ;then
+	env XGRAPH_ARGUMENTS= XGraph ${XPV}
+	rm ${XPV}
+	exit 0
+fi
+
+nocomments=0
+
+while [ $# != 0 ] ;do
+	case $1 in
+		--strip-comments|-strip-comments|-sc)
+			nocomments=1
+			;;
+	esac
+	shift
+done
+
+ORIENT="`fgrep '%Orientation:' ${XPV}`"
+ISEPS="`grep '^%!PS.*EPSF' ${XPV}`"
+
+	case "$DISPLAY" in
+		'')
+			# Assume unix:0.0
+			DISPLAY=${HOST-`hostname`}:0.0
+			;;
+		:0.0|localhost:*)
+			;;
+		:*|unix:*|`hostname`:0.0)
+			DISPLAY=${HOST-`hostname`}`expr "$DISPLAY" : "[^:]*\(.*\)"`
+			;;
+		*)
+			localhost="n"
+			;;
+	esac
+
+	remsh=rsh
+
+# RJB971122
+# For use on an intranet where the gateway doesn't know the hostnames
+# This converts the name of a host in the intranet into its IP address,
+# leaving other hosts unchanged.
+
+	if [ "$localhost" = "n" ] ;then
+		SCREEN=`expr "$DISPLAY" : "[^:]*\(.*\)"`
+		XCLIENT=`basename $DISPLAY $SCREEN`
+		XCLIENTIP=`hostnm -q $XCLIENT`
+
+		case "$XCLIENTIP" in
+			"")
+				echo "Warning: can't convert DISPLAY"
+				DISPLAY="${XCLIENT}${SCREEN}"
+				;;
+			190.1.1.*)
+				DISPLAY="${XCLIENTIP}${SCREEN}"
+				;;
+			*)
+				DISPLAY="`hostnm -q ${XCLIENTIP}`${SCREEN}"
+				;;
+		esac
+		echo "DISPLAY is $DISPLAY"
+	fi
+
+	DHOST="" ; export DHOST
+	if [ "$DHOST" != "" ] ;then
+		xhost +$DHOST
+		RCMD="rsh $DHOST env DISPLAY=$DISPLAY"
+	else
+		RCMD=""
+	fi
+
+	export DISPLAY
+	whereis gv > /dev/null 2>&1
+	GV=$?
+
+	if [ $GV = 0 ] ;then
+		gv --version 2>&1 | fgrep 'Cannot open' > /dev/null
+		if [ $? = 0 ] ;then
+			GVMAGMED="-magstep -2 -a4"
+		else
+			GVMAGMED="-scale=-2 --media=a4"
+		fi
+	fi
+
+	if [ $nocomments = 1 ] ;then
+		cat ${XPV} - | grep -a -v '^%' > ${XPVb}
+	else
+		cat ${XPV} - > ${XPVb}
+	fi
+
+	ORIENTATION=""
+# Set to true (1) when landscape mode should be enforced when the file contains landscape pages:
+	if [ "${ENFORCE_LANDSCAPE}" = "" ] ;then
+		ENFORCE_LANDSCAPE=0
+	fi
+
+	echo "$ORIENT" | fgrep -i landscape > /dev/null 2>&1
+	if [ $? = 0 ] ;then
+#		gv handles the orientation itself, via the %%PageOrientation DSC command.
+#		But this is ignored for EPS files. Thus, for those, enforce landscape mode when appropriate.
+		if [ "$ISEPS" != "" -o $ENFORCE_LANDSCAPE != 0 ] ;then
+			ORIENTATION="-landscape"
+		fi
+		if [ $GV = 0 ] ;then
+			(  $RCMD gv ${GVMAGMED} ${ORIENTATION} ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
+		else
+			(  $RCMD ghostview -magstep -2 -forcemedia ${ORIENTATION} -a4 ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
+		fi
+	else
+# 		ORIENTATION="-portrait"
+		if [ $GV = 0 ] ;then
+			( $RCMD gv ${GVMAGMED} ${ORIENTATION} ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
+		else
+			( $RCMD ghostview -magstep -2 -forcemedia ${ORIENTATION} -a4 ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
+		fi
+	fi

@@ -1,0 +1,395 @@
+#!/bin/sh
+
+GEO="+0+0"
+XPLOT="`basename $0` $*"
+ARGUMENTS=""
+SOPTS="-fli -eng0 -Cauto" # -stats"
+XGRAPH="${XPLOT}" ; export XGRAPH
+SHOWDATA=0
+
+bold="`tput smso`"
+plain="`tput rmso`"
+
+LESS='x 5cfmb32-P?f%f .?m(file %i of %m) .?ltline %lt?L\:%L. .byte %bB?s\:%s. ?e(END) :?pB%pB\%..%t'
+LESSBINFMT='*d#%x'
+
+usage(){
+	{
+		echo "$XPLOT"
+		ME="`basename $0`"
+		echo "usage: $ME [$ME options] [xgraph options] -file|-File <filename(s)> -col <xcol>,<ycol>[,<dycol>] [<xcol>,<ycol>[,<dycol>]..]"
+		case "$1" in
+			"-help")
+				echo "$ME options:"
+				echo "\t-dir <dir>"
+				echo "\t-dont\n\t-xdb: be verbose\n\t-file: one window for all <filename(s)>"
+				echo "\t-File: one window (xgraph process) for each <filename>"
+				echo "\t-nostrip-labels: include all label definitions when more files are given"
+				echo "\t-ntile <x> <y>: idem, reset counter so that first window is left-up"
+				echo "\t-pcopts <plot-cut options>"
+				echo "\t-show-data: show the resulting input-file to xgraph"
+				echo "\t-title_file: set plottitle to <filename>"
+				echo "\t-tile <x> <y>: tile <x> times <y> windows on the screen"
+				echo "\t-xfile <name>: basename of temporary file"
+				xgraph -help 2>&1
+				exit $?
+				;;
+			"-error")
+				shift
+				echo "${bold}$*${plain}"
+				;;
+		esac
+	} | less
+	exit 1
+}
+
+if [ $# -lt 6 ]
+then
+	usage $*
+fi
+
+TITLE_FILE=0
+file=""
+xfile=""
+
+tiling=0
+not_all_labels=1 ; export not_all_labels
+
+DONT=0
+ResetAttrs=0
+
+PCOPTS=""
+
+colourargs=" "
+
+while [ $# != 0 -a "$1" != "-file" -a "$1" != "-File" ]
+do
+	case "$1" in
+# 	"-f")
+# 		shift
+# 		file="$*"
+# 		tfile=`echo "$file" | sed -e 's/ /-/g' -e 's,/,@,g'`
+# 		tfile="$tfile.$cols"_$$
+# 		while [ $# != 0 ]
+# 		do
+# 			shift
+# 		done
+# 		;;
+	"-xdb")
+		set -x
+		shift
+		;;
+	"-do")
+		DONT=-1
+		ARGUMENTS="$ARGUMENTS $1"
+		shift
+		;;
+	"-dont")
+		DONT=1
+		ARGUMENTS="$ARGUMENTS $1"
+		shift
+		;;
+	"-d"|"-display")
+		ARGUMENTS="$ARGUMENTS $1 $2"
+		shift
+		DISPLAY="$1"
+		export DISPLAY
+		shift
+		;;
+	"-ResetAttr")
+		ResetAttrs=1
+		ARGUMENTS="$ARGUMENTS $1"
+		shift
+		;;
+	"-nocolour")
+		colourargs=" "
+		ARGUMENTS="$ARGUMENTS $1"
+		shift
+		;;
+	"-colour")
+		colourargs="-colour -fg White -bg Black"
+		ARGUMENTS="$ARGUMENTS $1"
+		shift
+		;;
+	"-show-data")
+		SHOWDATA=1;
+		shift
+		;;
+	"-title_file")
+		ARGUMENTS="$ARGUMENTS $1"
+		shift 1
+		TITLE_FILE=1
+		;;
+	"-ntile"|"-tile")
+		if [ "$SWIDTH" = "" ] ;then
+			SWIDTH="`echo "width:WIDTH" | xrdb -n | sed -e 's/width:[        ]*//'`"
+			export SWIDTH
+		fi
+		if [ "$SHEIGHT" = "" ] ;then
+			SHEIGHT="`echo "height:HEIGHT" | xrdb -n | sed -e 's/height:[        ]*//'`"
+			export SHEIGHT
+		fi
+		if [ "$1" = "-ntile" ] ;then
+			cxsetenv xposition 0 yposition 0
+		fi
+		tiling=1
+		case $2 in
+			[0-9]*)
+				tilex="`echo $SWIDTH $2 /ps | dc`"
+				;;
+			*)
+				usage -error "-ntile $2 ($3)"
+				;;
+		esac
+		case $3 in
+			[0-9]*)
+# 				tiley="`echo $SHEIGHT $3 / 1 +ps | dc`"
+				tiley="`echo $SHEIGHT $3 /ps | dc`"
+				;;
+			*)
+				usage -error "-ntile ($2) $3"
+				;;
+		esac
+		xposition="`cxgetenv xposition"
+		yposition="`cxgetenv yposition"
+		if [ "$xposition" = "" ] ;then
+			xposition="0"
+		fi
+		if [ "$yposition" = "" ] ;then
+			yposition="0"
+		fi
+		GEO="${tilex}x${tiley}+${xposition}+${yposition}"
+		echo "tiling: $GEO"
+		ARGUMENTS="$ARGUMENTS -tile $2 $3"
+		shift 3
+		;;
+	-ps_size)
+		GEO="1276x886+0+0"
+		shift 1
+		;;
+	-xfile)
+		xfile="$2"
+		ARGUMENTS="$ARGUMENTS $1 $2"
+		shift 2
+		;;
+	-pcopts)
+		PCOPTS="${PCOPTS} $2"
+		shift 2
+		;;
+	-nostrip-labels)
+		not_all_labels=0
+		ARGUMENTS="$ARGUMENTS $1"
+		shift
+		;;
+	-dir)
+		cd $2
+		shift 2
+		;;
+	*)
+		ARGUMENTS="$ARGUMENTS $1"
+		argv="$argv $1"
+		shift 1
+		;;
+	esac
+done
+export tfile
+
+file_arg="$1"
+if [ "$1" != "-file" -a "$1" != "-File" -o $# -lt 3 ] ;then
+	echo "Missing -file or too few arguments left ($# $*)"
+	usage
+fi
+
+shift 1
+
+tfile="X-plot$$,"
+tempfile="$tfile"
+
+file=""
+while [ $# != 0 -a "$1" != "-col" ] ;do
+	if [ "$1" = "-" ] ;then
+		F="X$#.$$"
+		cat - > "$F"
+		rm_file="$rm_file $F"
+	else
+		F="$1"
+	fi
+	file="$file $F"
+	tempfile="$tempfile"`basename "$F"`
+	shift 1
+done
+rm -f "${tempfile}" > /dev/null 2>&1
+if [ $? != 0 ] ;then
+	tempfile="X-plot.$$"
+fi
+tfile="$tempfile"
+
+if [ "$file" = "" ] ;then
+	echo "\tNo file specification - reading stdin"
+else
+	if [ $TITLE_FILE = 1 ] ;then
+		TITLE="-t \"$file\""
+	fi
+fi
+
+if [ "$1" != "-col" -o $# -lt 2 ] ;then
+	echo "Missing -col or too few arguments left ($# $*)"
+	usage
+fi
+
+shift 1
+
+if [ "$file_arg" = "-File" ] ;then
+	XPARENT="$$" ; export XPARENT
+	for J in $file ;do
+		$0 $ARGUMENTS -file $J -col $*
+	done
+	exit 0
+fi
+
+if [ $# -lt 1 ] ;then
+	echo "Too few arguments left ($# $*)"
+	usage
+fi
+
+y_cols="`echo $* | sed -e 's/ /_/g'`"
+
+if [ "$xfile" = "" ] ;then
+	tempfile="${tempfile}_${y_cols}" 
+else
+	tempfile="${xfile}$$_${y_cols}" 
+fi
+export tempfile
+tempfile2="X-plot.$$.temp" ; export tempfile2
+
+ycols=$*
+all_labels=1
+for _file in $file ;do
+	MASK="^#"
+	rm -f "$tempfile2"
+	for _col in $ycols ;do
+		tfile="$tfile,$_col"
+		plot-cut $PCOPTS -f $_col $_file >> "$tempfile2"
+		if [ $? != 0 ] ;then
+			egrep -v '^#' $_file |  cut -f $1 | fgrep -v ';' |  sed -e "s/^	*$//" >> "$tempfile2"
+		fi
+		echo "" >> "$tempfile2"
+	done
+	if [ "$ResetAttrs" = "1" ] ;then
+		echo "*RESET_ATTRS*" >> "$tempfile2"
+	fi
+	if [ $all_labels = 1 ] ;then
+		cat "$tempfile2" >> "$tempfile"
+		if [ $not_all_labels = 1 ] ;then
+		  # see if there were labels in this file
+			grep -l '\*[XY][XY]*LABEL\*' "$tempfile2" > /dev/null 2>&1
+			if [ $? = 0 ] ;then
+				all_labels=0
+			fi
+		fi
+	else
+	  # we already have the labels. Don't want them another time.
+# 		grep -v '\*[XY][YX]*LABEL\*' "$tempfile2" >> "$tempfile"
+	  # other strategy: remove the *XLABEL* and *YLABEL*; substitute the [XY][YX]LABEL's for
+	  # [XY][YX]label commands.
+		grep -v '\*[XY]LABEL\*' "$tempfile2" | sed -e 's/\([XY][YX]\)LABEL/\1label/g' >> "$tempfile"
+	fi
+	rm -f "$tempfile2"
+	MASK="^#|\*TITLE\*"
+done
+
+if [ "ycols" = "" ] ;then
+	echo "No ycols specified"
+	rm -f $tempfile
+	usage
+fi
+
+# mv $tempfile $tfile
+tfile=$tempfile
+
+export ycols
+
+# echo ">>\t${bold}"`grep '\*.LABEL\*' "$tfile" | tail -3 | sed -e 's/\*.LABEL\*\(.*\)/"\1"/g'`"${plain}"
+echo ">>\t" `grep '\*[XY]*LABEL\*' "$tfile" | tail -3 | sed -e "s/\*[XY]*LABEL\*\(.*\)/'${bold}\1${plain}'/g"`
+
+/bin/echo -n ">>\tPlot file '${bold}$file${plain}', columns ${bold}$ycols${plain}? "
+
+if [ "$DISPLAY" = "unix:0.1" ]
+then
+	GEO="$640x476+0+0"
+fi
+
+cleanup(){
+	rm -f "$tfile" $rm_file
+	echo "($XPLOT) done"
+	exit $1
+}
+
+trap "cleanup" 0
+trap "cleanup" 1
+trap "cleanup" 2
+trap "cleanup" 9
+
+case $DONT in
+	1)
+		echo "${bold}NO${plain}"
+		exit 0
+		;;
+	-1)
+		echo "${bold}YES${plain}"
+		DOIT="Y"
+		;;
+	*)
+		DOIT=`line`
+		;;
+esac
+
+case "$DOIT" in
+  "y"|"Y"|"")
+	if [ "$colourargs" = "" ] ;then
+		xrdb -symbols  | fgrep "COLOR" >/dev/null
+		if [ $? = 0 ] ;then
+			colourargs="-colour -fg White -bg Black"
+		else
+			colourargs="-mono -bg White -fg Black"
+		fi
+	fi
+
+	if [ $SHOWDATA = 1 ] ;then
+		less -x20 "$tfile"
+		echo Command will be: xgraph =$GEO "$tfile" $SOPTS $colourargs $TITLE $argv
+	else
+		xgraph =$GEO "$tfile" $SOPTS $colourargs $TITLE $argv
+
+		if [ $tiling = 1 ] ;then
+			GEO="${tilex}x${tiley}+${xposition}+${yposition}"
+# 		xposition="`echo $SWIDTH $tilex - s1 $xposition $tilex + l1 %ps | dc"
+# 		if [ $xposition -lt $tilex ] ;then
+# 			yposition="`echo $SHEIGHT $tiley - s1 $yposition $tiley + l1 %ps | dc"
+			xposition="`echo $xposition $tilex +ps | dc"
+			if [ `echo $xposition $tilex +ps |dc` -gt $SWIDTH ] ;then
+				yposition="`echo $yposition $tiley +ps | dc"
+				if [ `echo $yposition $tiley +ps | dc` -gt $SHEIGHT ] ;then
+					yposition="0"
+				fi
+				xposition="0"
+			fi
+			cxsetenv xposition $xposition
+			cxsetenv yposition $yposition
+# 		fi
+	fi
+	;;
+  "q")
+	if [ "$XPARENT" != "" ] ;then
+		echo "Aborting all (HUP to (x)parent $XPARENT)"
+		kill -1 $XPARENT
+	fi
+	if [ "$PARENT" != "" ] ;then
+		echo "Aborting all (HUP to parent $PARENT)"
+		kill -1 $PARENT
+	fi
+	exit 0
+	;;
+esac
+
+times

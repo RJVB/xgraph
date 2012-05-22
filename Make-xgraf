@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -ex
+	cc -W0,-opt,4 -A runtype,bsd4.3 -A systype,bsd4.3 -A nansi -Ixtb -Iux11 -c xgraph.c
+	( cd //fysae/sys/node_data/usrtmp/.bertin/src/xgraph/xtb ; make "CLEVEL=-W0,-opt,4 -A runtype,bsd4.3 -A systype,bsd4.3 -A nansi" libxtb.a )
+	( cd //fysae/sys/node_data/usrtmp/.bertin/src/xgraph/ux11 ; make "CLEVEL=-W0,-opt,4 -A runtype,bsd4.3 -A systype,bsd4.3 -A nansi" libux11.a )
+	cc -W0,-opt,4 -A runtype,bsd4.3 -A systype,bsd4.3 -A nansi -Ixtb -Iux11 -o xgraph xgraph.o xgX.o hard_devices.o dialog.o hpgl.o new_ps.o xtb/libxtb.a ux11/libux11.a -lX11 -lm

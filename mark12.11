@@ -1,0 +1,6 @@
+#define mark12_width 8
+#define mark12_height 8
+#define mark12_x_hot 3
+#define mark12_y_hot 3
+static char mark12_bits[] = {
+   0x7f, 0x63, 0x55, 0x49, 0x55, 0x63, 0x7f, 0x00};

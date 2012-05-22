@@ -1,0 +1,304 @@
+#!/bin/sh
+# ccopt script interface to cc on IRIX 5.1.1 IP22 mips
+
+VOPTIMOPT="-O2 -Olimit 2048"
+OOPTIMOPT="-O2 -Olimit 2048"
+OPTIMOPT="$OOPTIMOPT"
+LOCALINC=""
+SYS=
+A=""
+PIPE=""
+OTHEROPT=" $LOCALINC -I$HOME/work/include -I/usr/include/X11"
+WARNINGS="-fullwarn -woff 625,835"
+PROTO="-D__STDC__ -D_PROTOTYPES"
+DEFINES="-D__GCCOPT__ -D_IEEE -D_IRIX_SOURCE -D_SYS5_SOURCE -DSYSV"
+LIBDIR="-L /usr/local/lib"
+CC="cc"
+
+LINK=1
+LIBS=""
+
+ARGS=""
+VERBOSE=""
+
+COMPRESS="" ; export COMPRESS
+UNCOMPRESS="" ; export UNCOMPRESS
+COMPRESSING=0
+
+compress="gzip -9"
+uncompress="gunzip"
+Z="gz"
+
+SWITCHES="${CC}"
+
+if [ "$SLEEP" = "" ] ;then
+	SLEEP=0
+fi
+
+while [ $# != 0 ] ; do
+	case $1 in
+		"-Ac")
+			ARGS="$ARGS -cckr"
+			PROTO="-U__STDC__ -U_PROTOTYPES"
+			SWITCHES="${SWITCHES} -cckr"
+			;;
+		"-Aa")
+			ARGS="$ARGS -xansi"
+			PROTO="-D__STDC__ -D_PROTOTYPES"
+			SWITCHES="${SWITCHES} -xansi"
+			;;
+		"-sleep")
+			SLEEP=$2
+			shift
+			;;
+		"-Zbg")
+			COMPRESSING=2
+			;;
+		"-Z")
+			COMPRESSING=1
+			;;
+		"-Q")
+			;;
+		"-v")
+			VERBOSE="-v"
+			OTHEROPT="$OTHEROPT"
+			ARGS="$ARGS $1"
+			;;
+		"$LOCALINC")
+			echo "$0: $LOCALINC already included in headerfile searchtree"
+			;;
+		"-c")
+			LINK=0
+			ARGS="$ARGS $1"
+			LIBDIR=""
+			file="`echo $2 | sed -e 's/\.[csi]//g'`"
+			if [ -r "$file".c ] ;then
+				OUTPUT=$2	#$file
+				object="$file".o
+# 				if [ ! -s $object ] ;then
+# 					rm -f "$object"
+# 				fi
+				if [ -r "$object".$Z ] ;then
+					UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+				fi
+# 				if [ ! -r $object -a $COMPRESSING != 0 ] ;then
+				if [ $COMPRESSING != 0 ] ;then
+					COMPRESS="$COMPRESS $object"
+				fi
+			else
+				echo "Warning: file ${file}.c doesn't exist - non-filename after -c ?"
+# 				COMPRESS="$COMPRESS ${file}.o"
+			fi
+			;;
+		"-o")
+			TARGET="$2"
+			OUTPUT=$2	#"`basename $2`"
+			ARGS="$ARGS $1"
+			;;
+		"-BSD")
+#			SYS="-A runtype,bsd4.3 -A systype,bsd4.3"
+			SYS=$SYS
+# 			LIBS="$LIBS -lBSD"
+			;;
+		"-SYSV")
+#			SYS="-A runtype,sys5.3 -A systype,sys5.3"
+			SYS=$SYS
+			;;
+		"-Opt")
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT=""
+			ENDO=""
+			echo "\"full\" optimisation => no DEBUG"
+			;;
+		"-noOpt")
+			OPTIMOPT=""
+			VOPTIMOPT=""
+			;;
+		"-simOpt")
+			OPTIMOPT="-O -Olimit 2048"
+			VOPTIMOPT="-O -Olimit 2048"
+			;;
+		-g*|-9*)
+# 			ARGS="$ARGS $1 -DDEBUG"
+			if [ "$OPTIMOPT" != "" ] ;then
+				echo "DEBUG => no \"simple\" optimisation (-simOpt)"
+				OPTIMOPT=""
+				VOPTIMOPT=""
+			else
+				echo "DEBUG and no optimisation (-noOpt)"
+			fi
+			DEBUGOPT="-g3 -DDEBUG"
+# 			ENDO="/usr/lib/end.o"
+			;;
+		-p)
+			echo "Profiling => no Optim"
+			OPTIMOPT=""
+			DEBUGOPT="-p -DPROFILING"
+			;;
+		"-gp")
+			echo "Debug && Profiling => no Optim"
+			OPTIMOPT=""
+			DEBUGOPT="-g -p -DDEBUG -DPROFILING"
+# 			ENDO="/usr/lib/end.o"
+			;;
+		"-SERIAL")
+			PIPE=""
+			;;
+		*.o)
+			object=$1
+			if [ "$object" = "/usr/lib/end.o" ] ;then
+				ENDO=""
+			fi
+# 			if [ ! -s $object ] ;then
+# 				rm -f "$object"
+# 			fi
+			if [ -r "$object".$Z ] ;then
+				UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+			fi
+# 			if [ ! -r $object -a $COMPRESSING != 0 ] ;then
+			if [ $COMPRESSING != 0 ] ;then
+				COMPRESS="$COMPRESS $object"
+			fi
+			ARGS="$ARGS $1"
+			;;
+		*)
+			ARGS="$ARGS $1"
+# 			SWITCHES="${SWITCHES} $1"
+			SWITCHES="${SWITCHES} `echo $1 | sed -e 's/\\\"/\\\\\"/g'`"
+			;;
+	esac
+	shift 1
+done
+set +x
+
+SWITCHES="${SWITCHES} ${SYS} ${OPTIMOPT} ${DEBUGOPT}"
+
+if [ $LINK = 0 ] ;then
+	LIBS=""
+	ENDO=""
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN="`cxgetenv INCREMENT_RETURN`"
+	if [ "$INCREMENT_RETURN" = "" ] ;then
+		INCREMENT_RETURN=0
+	fi
+fi
+
+rm -f .make_success
+
+if [ "$UNCOMPRESS" != "" ] ;then
+ 	echo "\tuncompressing $UNCOMPRESS"
+	for J in $UNCOMPRESS ;do
+# 		rm -f "`basename $J .$Z`"
+		( 
+			cd `dirname $J` ;\
+			UNC_OBJ="`basename $J .$Z`" ;\
+			OLD_UNC_OBJ="`basename $J .$Z`.old" ;\
+			mv $UNC_OBJ $OLD_UNC_OBJ ;\
+			$uncompress $VERBOSE `basename $J` ;\
+			touch `timestamp $OLD_UNC_OBJ` $UNC_OBJ ;\
+			rm -f $OLD_UNC_OBJ )
+	done
+fi
+
+if [ "$VERBOSE" != "" ] ; then
+	set -x
+fi
+
+if [ -d ./emsg -a "$OUTPUT" != "" ] ;then
+	EMSGb="./emsg/$OUTPUT"
+	EMSG="./emsg/$OUTPUT.msg"
+	echo "\tOutput saved in $EMSG"
+	rm -f "${EMSGb}"* > /dev/null
+else
+	EMSGb=""
+	EMSG="/dev/null"
+fi
+
+( $CC -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $ARGS  $ENDO $LIBS 2>&1 ; cxsetenv RET $? ) | tee $EMSG
+RET="`cxgetenv RET`" ; export RET
+set +x
+if [ "$RET" != "" ] ;then
+	echo "Return code $RET" >> $EMSG
+	if [ "$EMSGb" != "" -a "$RET" != "0" ] ;then
+		mv "$EMSG" "${EMSGb}.err"
+	fi
+fi
+
+# if [ "${OUTPUT}" != "" -a "${LINK}" = 1 ] ;then
+# 	what ${OUTPUT}
+# fi
+
+if [ "$COMPRESS" != "" ] ;then
+	echo "\tcompressing $COMPRESS"
+	if [ $LINK = 0 ] ;then
+		TOUCH=""
+		if [ $COMPRESSING = 2 ] ;then
+			COMPRESSING=1
+		fi
+	else	
+		TOUCH="$TARGET"
+	fi
+	export TOUCH
+	case $COMPRESSING in
+		0)
+			;;
+		1)
+			if [ $LINK != 0 ] ;then
+				_obj_compress 0 $compress $VERBOSE $Z $TARGET $COMPRESS
+			else
+				_obj_compress 0 $compress $VERBOSE $Z "" $COMPRESS
+			fi
+# 			for J in $COMPRESS ;do
+# 				if [ -r $J ] ;then
+# 					rm -f $J.$Z
+# 					nice $compress $VERBOSE $J
+# 					echo "\c" > $J
+# 					touch -r $J.$Z $J
+# 				fi
+# 			done
+# 			if [ $LINK != 0 ] ;then
+# 				(sleep 1 ; touch $TARGET) &
+# 			fi
+# 			echo "\tcompressing done"
+			;;
+		2)
+			if [ $LINK != 0 ] ;then
+				( system "_obj_compress </dev/null 1 $compress $VERBOSE $Z $TARGET $COMPRESS &" ) &
+			else
+				( system "_obj_compress </dev/null 0 $compress $VERBOSE $Z \"\" $COMPRESS &" ) &
+			fi
+# 			( for J in $COMPRESS ;do if [ -r $COMPRESS ] ;then \
+# 					rm -f $J.$Z ;\
+# 					nice $compress $VERBOSE $J ;\
+# 					echo "\c" > $J ;\
+# 					touch -r $J.$Z $J ;\
+# 				fi ;\
+# 			done ;\
+# 			if [ $LINK != 0 ] ;then sleep 1 ; touch $TARGET ;fi ) &
+			;;
+		*)
+			echo "Illegal value ($COMPRESSING) for COMPRESSING"
+			;;
+	esac
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN=`echo "$INCREMENT_RETURN + $RET" | bc`
+	cxsetenv INCREMENT_RETURN $INCREMENT_RETURN
+else
+	INCREMENT_RETURN=$RET
+fi
+
+if [ $INCREMENT_RETURN = 0 ] ;then
+	touch .make_success
+else
+	echo "(Incremental) exitcode $INCREMENT_RETURN" 1>&2
+fi
+
+if [ $SLEEP != 0 ] ;then
+	sleep $SLEEP
+fi
+
+exit $RET

@@ -1,0 +1,48 @@
+with -noinline:
+rw-r--r--   202/    20  11516 Sep 16 18:22 1995 xgX.o
+rw-r--r--   202/    20   3296 Sep 16 18:22 1995 hard_devices.o
+rw-r--r--   202/    20  34936 Sep 16 18:22 1995 dialog.o
+rw-r--r--   202/    20  83176 Sep 16 18:23 1995 dialog_s.o
+rw-r--r--   202/    20  40864 Sep 16 18:23 1995 new_ps.o
+rw-r--r--   202/    20  23992 Sep 16 18:24 1995 matherr.o
+rw-r--r--   202/    20  70896 Sep 16 18:24 1995 ascanfc.o
+rw-r--r--   202/    20   3096 Sep 16 18:24 1995 fascanf.o
+rw-r--r--   202/    20   2224 Sep 16 18:21 1995 ux11f_watter.o
+rw-r--r--   202/    20   2040 Sep 16 18:21 1995 ux11_open.o
+rw-r--r--   202/    20   2676 Sep 16 18:21 1995 ux11f_gcvals.o
+rw-r--r--   202/    20    944 Sep 16 18:21 1995 ux11g_value.o
+rw-r--r--   202/    20   2588 Sep 16 18:21 1995 ux11s_vismap.o
+rw-r--r--   202/    20   2056 Sep 16 18:21 1995 ux11f_hints.o
+rw-r--r--   202/    20   8464 Sep 16 18:21 1995 ux11n_font.o
+rw-r--r--   202/    20   2036 Sep 16 18:21 1995 ux11n_visual.o
+rw-r--r--   202/    20   1568 Sep 16 18:22 1995 ux11f_xa.o
+rw-r--r--   202/    20  13416 Sep 16 18:22 1995 ux11_err.o
+Opened stream to command #8 'ar -tv "xtb/libxtb.a"' (ar(1) archive)rw-r--r--   202/    20  35148 Sep 16 18:21 1995 xtb.o
+rw-r--r--   202/    20  35148 Sep 16 18:21 1995 xtb.o
+method  crc     date  time  compressed  uncompr. saved uncompressed_name
+defla bee9bf83 Sep 17 18:42     85934    252472  65.9% xgraph.o
+defla 8547284e Sep 17 18:40     41700    118116  64.7% xgsupport.o
+                               127634    370588  65.5% (totals)
+rw-r--r--   202/    20  12436 Sep 17 18:51 1995 xgX.o
+rw-r--r--   202/    20   3180 Sep 17 18:52 1995 hard_devices.o
+rw-r--r--   202/    20  35464 Sep 17 18:52 1995 dialog.o
+rw-r--r--   202/    20  85340 Sep 17 18:53 1995 dialog_s.o
+rw-r--r--   202/    20  43748 Sep 17 18:53 1995 new_ps.o
+rw-r--r--   202/    20  24052 Sep 17 18:53 1995 matherr.o
+rw-r--r--   202/    20  75788 Sep 17 18:54 1995 ascanfc.o
+rw-r--r--   202/    20   3016 Sep 17 18:54 1995 fascanf.o
+Opened stream to command #8 'ar -tv "ux11/libux11.a"' (ar(1) archive)rw-r--r--   202/    20   2224 Sep 17 18:48 1995 ux11f_watter.o
+rw-r--r--   202/    20   2040 Sep 17 18:48 1995 ux11_open.o
+rw-r--r--   202/    20   2676 Sep 17 18:49 1995 ux11f_gcvals.o
+rw-r--r--   202/    20    944 Sep 17 18:49 1995 ux11g_value.o
+rw-r--r--   202/    20   2588 Sep 17 18:49 1995 ux11s_vismap.o
+rw-r--r--   202/    20   2056 Sep 17 18:49 1995 ux11f_hints.o
+rw-r--r--   202/    20   8464 Sep 17 18:50 1995 ux11n_font.o
+rw-r--r--   202/    20   2036 Sep 17 18:51 1995 ux11n_visual.o
+rw-r--r--   202/    20   1568 Sep 17 18:51 1995 ux11f_xa.o
+rw-r--r--   202/    20  13416 Sep 17 18:51 1995 ux11_err.o
+Opened stream to command #8 'ar -tv "xtb/libxtb.a"' (ar(1) archive)rw-r--r--   202/    20  35148 Sep 17 18:48 1995 xtb.o
+method  crc     date  time  compressed  uncompr. saved uncompressed_name
+defla 4295ee57 Sep 17 18:56     85940    252456  65.9% xgraph.o
+defla b231be88 Sep 17 18:55     44941    136392  67.0% xgsupport.o
+                               130881    388848  66.3% (totals)

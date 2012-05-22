@@ -1,0 +1,76 @@
+#!/bin/sh
+
+cd `dirname $0`
+echo $CWD
+
+PVERSION=$1
+
+# create a the python<version>_numpy.h headerfile that will include arrayobject.h :
+numpy() {
+	case ${PVERSION} in
+		23)
+			echo "#include <"`python2.3 -c "import numpy ; print numpy.get_include()"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
+		24)
+			echo "#include <"`python2.4 -c "import numpy ; print numpy.get_include()"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
+		25)
+			echo "#include <"`python2.5 -c "import numpy ; print numpy.get_include()"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
+		26)
+			echo "#include <"`python2.6 -c "import numpy ; print numpy.get_include()"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
+		27)
+			echo "#include <"`python2.7 -c "import numpy ; print numpy.get_include()"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
+		31)
+			echo "#include <"`python3.1 -c "import numpy ; print(numpy.get_include())"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
+		32)
+			echo "#include <"`python3.2 -c "import numpy ; print(numpy.get_include())"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
+		sys|default)
+#		PVERSION=`echo "import sys ; print str(sys.version_info[0])+str(sys.version_info[1])" | python`${PVERSION}
+			echo "#include <"`python -c "import numpy ; print numpy.get_include()"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
+	esac
+}
+
+# retrieve the installation path of the selection Python version:
+prefix() {
+	case ${PVERSION} in
+		23)
+			echo 'import sys;print sys.prefix' | python2.3
+			;;
+		24)
+			echo 'import sys;print sys.prefix' | python2.4
+			;;
+		25)
+			echo 'import sys;print sys.prefix' | python2.5
+			;;
+		26)
+			echo 'import sys;print sys.prefix' | python2.6
+			;;
+		27)
+			echo 'import sys;print sys.prefix' | python2.7
+			;;
+		31)
+			echo 'import sys;print(sys.prefix)' | python3.1
+			;;
+		32)
+			echo 'import sys;print(sys.prefix)' | python3.2
+			;;
+		sys|default)
+			echo 'import sys;print sys.prefix' | python
+			;;
+	esac
+}
+
+case $2 in
+	numpy)
+		numpy
+		;;
+	*)
+		prefix
+		;;
+esac

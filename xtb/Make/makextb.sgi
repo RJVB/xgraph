@@ -1,0 +1,35 @@
+#
+# Makefile for xtb Toolkit library
+#
+
+CHECK=-c
+DEBUG =
+CLEVEL	= 
+CFLAGS	= $(DEBUG) $(CLEVEL) -DXGRAPH
+COMP=gccopt
+CC	= $(COMP) -noOpt
+
+TARGET	= libxtb.a
+
+SOURCES = xtb.h xtb.c
+OBJECTS = xtb.o
+
+TAGFILE	= TAGS
+
+#---------
+
+.c.o:
+		( cd ..;  $(CC) $(CFLAGS) -I xtb/ -o xtb/$*.o $(CHECK) xtb/$*.c)
+		ar r $(TARGET) $*.o
+		echo "\c" >$*.o
+
+$(TARGET):	$(OBJECTS)
+		-ls -ailsF $(TARGET)
+		touch .make_success ../xtb_m
+
+$(TAGFILE):	$(SOURCES)
+		ctags -eut $(SOURCES)
+
+clean:
+		rm -f $(TARGET) $(OBJECTS) $(OBJECTS:.o=.o.gz) ../emsg/xtb/* *.cer*
+

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+ln -f $1 $2
+
+if [ $? != 0 ] ;then
+	echo "Can't hard-link across devices; moving $1 to $2 and making $1 a soft-link to it."
+	mv $1 $2
+	if [ -d $2 ] ;then
+		ln -sf $2/$1 $1
+	else
+		ln -sf $2 $1
+	fi
+fi

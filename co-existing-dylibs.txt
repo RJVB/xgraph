@@ -1,0 +1,43 @@
+# foreach J ( $DYLD_LIBRARY_PATH/*.so )
+foreach? locate "`basename $J`"
+foreach? end
+/Volumes/Debian/Users/bertin/work/src/xgraph/CMaps.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/CMaps.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/GSRio.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/GSRio.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/Python.25.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/Python.25.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/Python.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/Python.so
+/Library/Python/2.3/constants.so
+/Library/Python/2.3/pygame/constants.so
+/Library/Python/2.4/pygame/constants.so
+/Library/Python/2.5/pygame/constants.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/constants.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/constants.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/fig_dist.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/fig_dist.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/fourconv.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/fourconv.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/fourconv3.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/fourconv3.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/fourconv3f.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/fourconv3f.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/integrators.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/integrators.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/pearson_correlation.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/pearson_correlation.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/simanneal.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/simanneal.so
+/Volumes/Debian/Applications/R/2.2.1/Resources/library/splines/libs/splines.so
+/Volumes/Debian/Applications/R/2.3.1/Resources/library/splines/libs/splines.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/splines.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/splines.so
+/Volumes/Debian/Applications/R/2.2.1/Resources/library/stats/libs/stats.so
+/Volumes/Debian/Applications/R/2.3.1/Resources/library/stats/libs/stats.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/stats.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/stats.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/strings.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/strings.so
+/Volumes/Debian/Users/bertin/work/src/xgraph/emsg/utils.so.msg
+/Volumes/Debian/Users/bertin/work/src/xgraph/utils.so

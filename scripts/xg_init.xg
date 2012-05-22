@@ -1,0 +1,120 @@
+*BUFLEN* 1024
+
+*EVAL*\n
+	IDict[ time, DCL[xg_init-old$VL,1], printf[`xg_init-old$VL,`$VariableLabel],
+		printf[`$VariableLabel,`"*This-File*"],
+		DEPROC-noEval[xg_init-conserve, progn[xg_init-old$VL] ],
+	] @
+
+*VERSION_LIST*
+ XGraph init file 20020507/20040701
+
+*IF* *linux*
+**EVAL**
+	setenv["XG_LIBREADLINE","libreadline.so"],
+	setenv["XG_LIBFFTW3","libfftw3.so"],
+	setenv["XG_LIBFFTW3_THREADS","libfftw3_threads.so"],
+	setenv["XG_LIBFFTW3F","libfftw3f.so"],
+	setenv["XG_LIBFFTW3F_THREADS","libfftw3f_threads.so"],
+*!EVAL*
+*ELIF* *Cygwin*
+**EVAL**
+	setenv["XG_LIBREADLINE","cygreadline7.dll"],
+	setenv["XG_LIBFFTW3","cygfftw3-3.dll"],
+	setenv["XG_LIBFFTW3_THREADS","cygfftw3_threads-3.dll"],
+	setenv["XG_LIBFFTW3F","cygfftw3f-3.dll"],
+	setenv["XG_LIBFFTW3F_THREADS","cygfftw3f_threads-3.dll"],
+*!EVAL*
+*ENDIF*
+*ENDIF*
+
+# add a number of additional associations to the dynamic module autoload list:
+*LOAD_MODULE* auto-load
+$DBL_EPSILON,constants.so
+$DBL_MIN,constants.so
+$DBL_MAX,constants.so
+
+
+*ECHO*
+*PINFO*
+
+# Some default settings I always resort to. Try to use GNU readline to read input from the terminal should
+# the occasion arise. No problem if we don't have it...!
+# The -detach option can be overriden by the -nodetach option...!
+
+*ARGUMENTS* -bb1 -tk1 -m1 -fn0 -legendtype 1 -fractions0 -process_bounds0 -transform_axes0 -detach -readline -progress0 -warnOutliers0
+
+# A4 paper sizes:
+*ARGUMENTS* -maxWidth 29.7 -maxHeight 21
+
+# Whether or not you may want to have xgraph update the names of its icons depends on your Window Manager.
+# If it can show them (continuously) (like TWM or CTWM), you may wish to do (it's the default).
+# Otherwise, it can slow things down for nothing (sawfish...!).
+# The same things apply to UnmappedWindowTitle -- should titlebars be updated when a window is not mapped?
+# Similarly, some WindowManagers (again, sawfish) do not pass on keyboard events to dialogs the way xgraph expects
+# (keystrokes will go to the dialog when struck in the parent window, and get lost if struck in the dialog itself).
+# For those, there is the option to reparent (= put a title bar on) dialog windows for which keyboard actions are
+# defined.
+# UnmapNotify events normally cause xgraph to unmap (iconify) the targeted window, unless told to ignore them. This is
+# for windowmanagers that generate UnmapNotify events when swapping desktops (again, sawfish).
+*ARGUMENTS* -SetIconName1 -UnmappedWindowTitle0 -ReparentDialogs1 -Ignore_UnmapNotify1
+
+*ARGUMENTS* -xrm "*X11-Greek-Template:-urw-symbol-medium-r-normal--%d-%d-%d-%d-p-0-*-*" -xrm *DisplayYRes-0:75
+# *ARGUMENTS* -xrm *DisplayXRes-0:85 -xrm *DisplayYRes-0:85
+# *ARGUMENTS* -xrm "*X11-Greek-Template:-*-psymbol-medium-r-normal--%d-%d-%d-%d-p-0-*-*" -xrm "*PS-Greek-Font:Psymbol" -ps_s_inc ~/cworks/fonts/Type1/Psymbol.pfa
+
+**EVAL*
+	IDict[ DEPROC-noEval[ VerifyAssociationsNumber, ifelse[>=[$[0],0],progn[
+			printf[2, "Checking for %s associations (using 1 of %s arguments):#xn", $[0], $[-1]],
+			for-toMAX[0,$setNumber,
+				ifelse[ !=[CheckAssociations_OR[$loop],$[0]],
+					printf[2, "Warning: set #%s (%s) has %s association(s) instead of %s#xn",
+						$loop, SetTitle[$loop], ?CheckAssociations_OR, $[0]
+					],0
+				],
+			]
+		],0
+	], "Verify the number of associations for all sets, printing those that have a different amount." ] ] @
+		
+**EVAL*
+IDict[ DEPROC-noEval[ Popup-SetInfos, no-verbose[ popup[
+	printf[2, "%s:#xn", ProcedureName[0]],
+	for-toMAX[0,$setNumber,
+		ifelse[ AND[DrawSet[$loop], SetInfo[$loop]],
+			progn[
+				printf[2, "Set #%s:#xn", $loop],
+				printf[2, ?SetInfo],
+			], 0
+		],
+	],
+	for-toMAX[0,NumPens,
+		SelectPen[$loop],
+		ifelse[ AND[PenIsDrawn,PenInfo],
+			progn[
+				printf[2, "Pen #%s:#xn", $loop],
+				printf[2, " "], printf[2, ?PenInfo], printf[2, "#xn"],
+			], 0
+		],
+	],
+] ], "Popup a window showing all currently visible sets' info text" ] ] @
+
+**EVAL*
+IDict[ DCL[prtimestring,0],
+	DEPROC-noEval[prelaps, progn[
+		printf[`prtimestring, "%s(real)/%s(user)", $elapsed[0], $elapsed[1]],
+		return[`prtimestring],
+	], "return a string containing the current real and user-time elapsed times" ]
+] @
+
+**KEY_EVAL*
+!::Popup-SetInfos # Press the ! key to popup a window showing all currently visible sets' info text. @
+
+**EVAL*
+	IDict[ printf[`$VariableLabel,`xg_init-old$VL], Delete[xg_init-conserve],
+		Delete[xg_init-old$VL],
+	] @
+
+# **EVAL**
+# IDict[ DEPROC-noEval[proc-return-args, &$] ] @
+# *!EVAL*
+

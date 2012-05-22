@@ -1,0 +1,4 @@
+#define xtb_disabled_bg_width 4
+#define xtb_disabled_bg_height 4
+static unsigned char xtb_disabled_bg_bits[] = {
+   0x01, 0x00, 0x04, 0x00};

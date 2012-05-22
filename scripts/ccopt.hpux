@@ -1,0 +1,256 @@
+#!/bin/sh
+# ccopt script interface to HPUX cc compiler
+
+OPTIMOPT="+O3 +ESsfc +OS"
+LOCALINC="-I/users/bertin/work/include/local -I/users/bertin/work/include"
+SYS=
+A="-Aa"
+OTHEROPT="+u $LOCALINC -I/users/bertin/work/include -I/usr/include/X11R4"
+WARNINGS=""
+PROTO="-D__STDC__ -D_PROTOTYPES"
+DEFINES="-D_IEEE -D_HPUX_SOURCE -D_SYS5_SOURCE"
+LIBDIR="-L /usr/lib/X11R4 -L /usr/local/lib"
+Compile="cc"
+
+LINK=1
+LIBS=""
+
+ARGS=""
+VERBOSE=""
+
+COMPRESS="" ; export COMPRESS
+UNCOMPRESS="" ; export UNCOMPRESS
+COMPRESSING=0
+DEBUG=0
+
+compress="gzip -9"
+uncompress="gunzip"
+Z="gz"
+
+if [ "$SLEEP" = "" ] ;then
+	SLEEP=0
+fi
+
+SWITCHES="cc"
+
+while [ $# != 0 ] ; do
+	case $1 in
+		"-debug")
+			set -x
+			DEBUG=1 ; export DEBUG
+			;;
+		"-srcdir")
+			 # hardcode the full pathname in the objectfile. This
+			 # is useful for debugging: the debugger will always (?)
+			 # find the sourcefile
+			SRCDIR="`pwd`/"
+			;;
+		"-more_warnings")
+			;;
+		"-sleep")
+			SLEEP=$2
+			shift
+			;;
+		"-Z"|"-Zbg")
+			COMPRESSING=1
+			;;
+		"-v")
+			VERBOSE="-v"
+			OTHEROPT="$OTHEROPT"
+			;;
+		"$LOCALINC")
+			echo "$0: $LOCALINC already included in headerfile searchtree"
+			;;
+		"-c")
+			LINK=0
+			ARGS="$ARGS $1 ${SRCDIR}$2"
+			SWITCHES="${SWITCHES} $1 ${SRCDIR}$2"
+			LIBDIR=""
+			file="`echo $2 | sed -e 's/\.[csi]//g'`"
+			file="${SRCDIR}${file}"
+			if [ -r "$file".c ] ;then
+				OUTPUT=$2
+				if [ "${TARGET}" != "" ] ;then
+					object="${TARGET}"
+				else
+					object="$file".o
+				fi
+				if [ -r "$object".$Z ] ;then
+					UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+				fi
+				if [ ! -s $object ] ;then
+					rm -f "$object"
+				fi
+# 				if [ ! -r $object -a $COMPRESSING = 1 ] ;then
+				if [ $COMPRESSING != 0 ] ;then
+					COMPRESS="$COMPRESS $object"
+				fi
+			else
+				echo "Warning: file ${file}.c doesn't exist - non-filename after -c ?"
+# 				COMPRESS="$COMPRESS ${file}.o"
+			fi
+			shift
+			;;
+		"-o")
+			TARGET="${SRCDIR}$2"
+			OUTPUT=$2
+			ARGS="$ARGS $1"
+			SWITCHES="${SWITCHES} $1 $2"
+			if [ $LINK = 0 ] ;then
+				echo "\"$1 $2\" was preceded by \"-c $file.c\": reverse for correct handling of compressed object-files!\n\
+\telse you run the risk of favouring the old object-file"
+			fi
+			;;
+		"-BSD")
+#			SYS="-A runtype,bsd4.3 -A systype,bsd4.3"
+			SYS=$SYS
+			LIBS="$LIBS -lBSD"
+			;;
+		"-SYSV")
+#			SYS="-A runtype,sys5.3 -A systype,sys5.3"
+			SYS=$SYS
+			;;
+		"-noOpt")
+			OPTIMOPT=""
+			;;
+		"-simOpt")
+			OPTIMOPT="-O"
+			;;
+		-g*|-9*)
+			echo "Debug => no Optim"
+			OPTIMOPT=""
+			DEBUGOPT="-g -DDEBUG"
+			SRCDIR="`pwd`/"
+			;;
+		-pg)
+# 			echo "Profiling => no Optim"
+# 			OPTIMOPT=""
+			DEBUGOPT="${DEBUGOPT} -G -DPROFILING"
+			;;
+		-p)
+# 			echo "Profiling => no Optim"
+# 			OPTIMOPT=""
+			DEBUGOPT="${DEBUGOPT} -p -DPROFILING"
+			;;
+		"-gp")
+			echo "Debug && Profiling => no Optim"
+			OPTIMOPT=""
+			DEBUGOPT="${DEBUGOPT} -g -p -DDEBUG -DPROFILING"
+			;;
+		"-Aa")
+			A="-Aa"
+			PROTO="-D__STDC__ -D_PROTOTYPES"
+			;;
+		"-Ac")
+			A="-Ac"
+			PROTO="-U__STDC__ -U_PROTOTYPES"
+			;;
+		"-POSIX")
+			Compile="c89"
+			;;
+		*.o)
+			object=$1
+			if [ -r "$object".$Z ] ;then
+				UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+			fi
+			if [ ! -s $object ] ;then
+				rm -f "$object"
+			fi
+			if [ ! -r $object -a $COMPRESSING = 1 ] ;then
+				COMPRESS="$COMPRESS $object"
+			fi
+			ARGS="$ARGS $1"
+			;;
+		-*)
+			ARGS="$ARGS $1"
+# 			SWITCHES="${SWITCHES} $1"
+			SWITCHES="${SWITCHES} `echo $1 | sed -e 's/\\\"/\\\\\"/g'`"
+			;;
+		*)
+			if [ -r "$1" ] ;then
+				ARGS="$ARGS ${SRCDIR}$1"
+			else
+				ARGS="$ARGS $1"
+			fi
+# 			SWITCHES="${SWITCHES} $1"
+			SWITCHES="${SWITCHES} `echo $1 | sed -e 's/\\\"/\\\\\"/g'`"
+			;;
+	esac
+	shift 1
+done
+
+if [ $LINK = 0 ] ;then
+	LIBS=""
+else
+	OPTIMOPT=""
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN="`cxgetenv INCREMENT_RETURN`"
+	if [ "$INCREMENT_RETURN" = "" ] ;then
+		INCREMENT_RETURN=0
+	fi
+fi
+
+rm -f .make_success
+
+if [ "$UNCOMPRESS" != "" ] ;then
+# 	echo "uncompressing $UNCOMPRESS"
+	for J in $UNCOMPRESS ;do
+		rm -f "`basename $J .$Z`"
+		$uncompress $VERBOSE $J
+	done
+fi
+
+if [ "$VERBOSE" != "" ] ; then
+	set -x
+fi
+
+if [ -d ./emsg -a "$OUTPUT" != "" ] ;then
+	echo "\tOutput saved in ./emsg/$OUTPUT.err"
+	EMSG="./emsg/$OUTPUT.err"
+else
+	EMSG="/dev/null"
+fi
+if [ "$SRCDIR" != "" ] ;then
+	echo "Compiling in directory \"$SRCDIR\""
+fi
+
+SWITCHES="${SWITCHES} $VERBOSE $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $ARGS  $LIBS"
+( $Compile -DSWITCHES="\"${SWITCHES}\"" $VERBOSE $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $ARGS  $LIBS 2>&1 ; cxsetenv RET $? ) | tee $EMSG
+RET="`cxgetenv RET`" ; export RET
+set +x
+
+if [ "$COMPRESS" != "" ] ;then
+	if [ -r $COMPRESS ] ;then
+# 		echo "compressing $COMPRESS"
+		for J in $COMPRESS ;do
+			rm -f $J.$Z
+			$compress $VERBOSE $J
+			echo "\c" > $J
+			touch -r $J.$Z $J
+		done
+		if [ $LINK != 0 ] ;then
+			(sleep 1 ; touch $TARGET) &
+		fi
+	fi
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN=`echo "$INCREMENT_RETURN + $RET" | bc`
+	cxsetenv INCREMENT_RETURN $INCREMENT_RETURN
+else
+	INCREMENT_RETURN=$RET
+fi
+
+if [ $INCREMENT_RETURN = 0 ] ;then
+	touch .make_success
+else
+	echo "(Incremental) exitcode $INCREMENT_RETURN"
+fi
+
+if [ $SLEEP != 0 ] ;then
+	sleep $SLEEP
+fi
+
+exit $RET

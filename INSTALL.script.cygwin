@@ -1,0 +1,32 @@
+#!/bin/sh
+
+echo "Source this file!"
+
+if [ "$1" != "" ] ;then
+	SCRIPTSDIR="`pwd`/scripts"
+	LSCRIPTSDIR="${SCRIPTSDIR}/"
+	MANDIR="`pwd`/man"
+	cd "$1"
+	XGPREFSDIR="`pwd`/.Preferences/.xgraph" ; export XGPREFSDIR
+else
+	SCRIPTSDIR="../../scripts"
+	LSCRIPTSDIR=""
+	MANDIR="../../man"
+	XGPREFSDIR="`pwd`/.Preferences/.xgraph" ; export XGPREFSDIR
+fi
+
+set -x
+
+mkdir -p .Preferences/.dev .Preferences/.xgraph
+
+ln -sf ${LSCRIPTSDIR}gccopt.cygwin scripts/gccopt
+ln -sf ${SCRIPTSDIR}/wmachine.cygwin .Preferences/.dev/wmachine
+
+mkdir -p ${XGPREFSDIR}
+ln -sf ${SCRIPTSDIR}/noprocs.xg ${XGPREFSDIR}
+ln -sf ${SCRIPTSDIR}/xg_init.xg ${XGPREFSDIR}
+ln -sf ${MANDIR}/xgraph.1 ${XGPREFSDIR}
+
+PATH="`pwd`/scripts":${PATH} ; export PATH
+
+set +x

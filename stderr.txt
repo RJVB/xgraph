@@ -1,0 +1,7 @@
+stderr.txt: Unknown error: 0
+#0 unknown symbol "dfadsf" => compiler would create variable with "DCL[dfadsf]"
+file: `stdin', line: 0.2 (dfadsf)
+Must have between 1 and 3 coordinates per line (not 0)
+#0 unknown symbol "wer" => compiler would create variable with "DCL[wer]"
+file: `stdin', line: 0.3 (wer)
+Must have between 1 and 3 coordinates per line (not 0)

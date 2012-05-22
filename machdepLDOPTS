@@ -1,0 +1,171 @@
+#!/bin/sh
+
+# 20020818 RJVB
+# A simple script to determine machine-dependent (loader) options related to the use of dynamic libraries ("dynamic modules").
+# This presupposes that the compiler is gcc, or uses compatible options!!
+# flags:
+# xgraph : flags required to link the main xgraph programme
+# dynload : flags required link/compile a programme such that its symbols are accessible to dynamic modules/libraries (linux)
+# shobj : flags required to COMPILE a component of a dynamic module
+# shlib : flags required to link a dynamic module (or create one directly from source!)
+
+if [ $# = 0 ] ;then
+	exit 0
+fi
+
+MACH="`uname -m`"
+OS="`uname`"
+
+case $OS in
+	AIX)
+		MACH="AIX"
+		;;
+	Darwin)
+		MACH="Darwin"
+		;;
+	Linux)
+		MACH="Linux"
+		;;
+esac
+
+if [ "$DEBUG" != "" ] ;then
+	echo "Determining required $MACH machine-dependent ld options; flags \"$*\"" 1>&2
+fi
+
+case $MACH in
+	IP22*|IP32*|IRIX*)
+		case $1 in
+			xgraph)
+				;;
+			dynload)
+				;;
+			shobj)
+				echo "-shared -fPIC"
+				;;
+			shlib)
+				echo "-shared -Wl,-soname,$2 -Wl,-nostdlib -fPIC "
+				;;
+			PythonModule|Python24Module|Python25Module|Python23Module)
+				echo "`$0 shlib $2` -lX11 -lpython"
+				;;
+		esac
+		;;
+	AIX)
+		case $1 in
+			xgraph)
+				echo "-Wl,-bbigtoc -Wl,-brtl -Wl,-bexpall"
+				;;
+			dynload)
+				;;
+			shobj)
+				echo "-shared"
+				;;
+			shlib)
+# it is quite likely that import files have to be used (-Wl,-bI:xgraph.imp) that define the needed symbols defined in xgraph.
+				echo "-shared -Wl,-G -Wl,-bexpall -Wl,-bautoexp -nostdlib "
+				;;
+			PythonModule|Python24Module|Python25Module|Python23Module|Python26Module)
+				echo "`$0 shlib $2` -lX11 -lpython"
+				;;
+		esac
+		;;
+	i686|i586|Linux)
+		case $1 in
+			xgraph)
+				;;
+			dynload)
+				case `uname -s` in
+					CYGWIN*|cygwin*)
+						echo "-Wl,--export-all-symbols"
+						;;
+					*)
+						echo "-rdynamic"
+						;;
+				esac
+				;;
+			shobj)
+				echo "-shared -fno-common -fPIC"
+				;;
+			shlib)
+				case `uname -s` in
+					CYGWIN*|cygwin*)
+						echo "-Wl,--export-all-symbols -fno-common -shared -Wl,-soname,$2 "
+						;;
+					*)
+#						echo "-shared -Wl,-soname,$2 -nostdlib -fPIC "
+						echo "-shared -Wl,-soname,$2 -fPIC "
+						;;
+				esac
+				;;
+			PythonModule|Python25Module)
+				echo "`$0 shlib $2` -lX11 -lpython2.5"
+				;;
+			Python24Module)
+				echo "`$0 shlib $2` -lX11 -lpython2.4"
+				;;
+			Python26Module)
+				PDIR=$3
+				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython2.6"
+				;;
+			Python27Module)
+				PDIR=$3
+				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython2.7"
+				;;
+			Python31Module)
+				PDIR=$3
+				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.1"
+				;;
+		esac
+		;;
+	Darwin)
+		case $1 in
+			xgraph)
+				echo "-bind_at_load"
+				;;
+			dynload)
+				;;
+			shobj)
+				echo "-dynamic -fno-common -fPIC"
+				;;
+			shlib)
+# 				echo "-dynamic -fno-common -dynamiclib -install_name $2 -fPIC "
+# 				echo "`$0 shobj $2` -dynamiclib -twolevel_namespace -undefined define_a_way -fPIC "
+# 				echo "`$0 shobj $2` -dynamiclib -twolevel_namespace -fPIC "
+				echo "`$0 shobj $2` -bundle -twolevel_namespace -fPIC "
+				 # we could use twolevel_namespace, but then the accessing of undefined symbols (... environ! ...)
+				 # would could us to coredump. With flat_namespace, we can accept such symbols with a warning,
+				 # and have things resolved when linking an application: this works OK.
+# 				echo "`$0 shobj $2` -dynamiclib -flat_namespace -undefined warning -fPIC "
+				;;
+			Python24Module)
+				 ## This is valid for RJVB's machines...:
+# 				echo "`$0 shlib $2` -lX11 -framework Python2.4"
+				#PDIR=`echo 'import sys;print sys.prefix' | python2.4`
+				PDIR=$3
+				PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
+				echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
+				;;
+			Python23Module|PythonModule|PythonsysModule)
+				 ## This is valid for all Mac OS X machines...:
+# 				echo "`$0 shlib $2` -lX11 -framework Python"
+				PDIR=$3
+				PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
+				echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
+				;;
+			Python25Module)
+				 ## This is valid for RJVB's machines...:
+# 				echo "`$0 shlib $2` -lX11 -framework Python2.5"
+				PDIR=$3
+				PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
+				echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
+				;;
+			Python26Module|Python27Module|Python31Module|Python32Module)
+				 ## This is valid for RJVB's machines...:
+				#PDIR=`echo 'import sys;print sys.prefix' | python2.6`
+				PDIR=$3
+				PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
+				echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
+				;;
+		esac
+		;;
+esac

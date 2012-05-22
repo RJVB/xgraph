@@ -1,0 +1,271 @@
+#!/bin/sh
+
+# compiler script for Apollo; cc version.
+
+set +x
+
+#OPTIMOPT="-W0,-opt,4"
+OOPTIMOPT="-O -D_STRING_BUILTINS"
+OPTIMOPT="$OOPTIMOPT"
+DEBUGOPT=""
+LOCALINC="-I$HOME/work/include/local"
+SYS="-A runtype,any -A systype,any -D_SYS5_SOURCE -DSYSV -YS,/usr/lib"
+ANSI=""
+PROTO="-D__STDC__ -D_PROTOTYPES"
+OTHEROPT="$LOCALINC -I$HOME/work/include -W0,-nfrnd -W0,-indexl -W0,-msgs -W0,-nfrnd -W0,-natural -W0,-comchk" #" -W0,-cd -W0,-compress"
+WARNINGS=""
+DEFINES="-D_IEEE -D_APOLLO_SOURCE"
+# -D_BSD_SOURCE -D_AUX_SOURCE
+LIBDIR="-L/usr/lib/X11"
+LIBS=""
+
+ARGS=""
+FILES=""
+X=0
+
+LINK=1
+OUTPUTNAME=""
+
+COMPRESS="" ; export COMPRESS
+UNCOMPRESS="" ; export UNCOMPRESS
+COMPRESSING=0
+
+compress="gzip -9"
+uncompress="gunzip"
+Z="gz"
+
+SWITCHES="cc"
+
+while [ $# != 0 ]
+do
+	case $1 in
+		-srcdir)
+			 # not yet used: meant for debugging:
+			 # hardcodes full pathname in objectfile
+			SRCDIR="`pwd`/"
+			;;
+		*.c)
+			INPUTNAME="$1"
+			DIRNAME="`dirname $1`"
+#			OUTPUTNAME="$DIRNAME/`basename $1 .c`.o"
+			# cc -c kk.c -o kk/kk.o puts kk.o in ./kk.o and not in kk/kk.o
+			OUTPUTNAME="`basename $1 .c`.o"
+			ARGS="$ARGS $1"
+			SWITCHES="${SWITCHES} $1"
+			;;
+		"-o")
+			TARGETNAME="$2"
+			OUTPUT=$2	#"`basename $2`"
+			ARGS="$ARGS $1"
+			SWITCHES="${SWITCHES} $1"
+			;;
+		"-Q")
+			;;
+		"-v")
+			OTHEROPT="-v $OTHEROPT"
+			ARGS="$ARGS $1"
+			X=1
+			;;
+		"$LOCALINC")
+			echo "$0: $LOCALINC already included in headerfile searchtree"
+			;;
+		"-c")
+			LIBDIR=""
+			LINK=0
+			ARGS="$ARGS $1"
+			OUTPUT=$2	#"`basename $2`"
+			SWITCHES="${SWITCHES} $1"
+			file="`echo $2 | sed -e 's/\.[csi]//g'`"
+			if [ -r "$file".c ] ;then
+				OUTPUT=$2	#$file
+				object="$file".o
+				if [ -r "$object".$Z ] ;then
+					UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+				fi
+				if [ $COMPRESSING != 0 ] ;then
+					COMPRESS="$COMPRESS $object"
+				fi
+			else
+				echo "Warning: file ${file}.c doesn't exist - non-filename after -c ?"
+			fi
+			;;
+		"-ZB"|"-BSD")
+			SYS="-A runtype,bsd4.3 -A systype,bsd4.3 -DBSD=4.3"
+# 			ver bsd4.3
+			;;
+		"-SYSV")
+			SYS="-A runtype,sys5.3 -A systype,sys5.3 -DSYS5_SOURCE -DSYSV"
+# 			ver sys5.3
+			;;
+		-Opt)
+			OPTIMOPT="$OOPTIMOPT"
+			;;
+		-g*)
+			OPTIMOPT=""
+			DEBUGOPT="-g -DDEBUG"
+			;;
+		-pg)
+			ARGS="${ARGS} -qg -DPROFILING"
+			;;
+		-p)
+			ARGS="${ARGS} -p -DPROFILING"
+			;;
+		"-Aa")
+			ANSI=""
+			PROTO="-D__STDC__ -D_PROTOTYPES"
+			;;
+		"-Ac")
+			ANSI="-A nansi"
+			PROTO="-U__STDC__ -U_PROTOTYPES"
+			;;
+		"-simOpt")
+			OPTIMOPT="-O"
+			;;
+		"-noOpt")
+			OPTIMOPT=""
+			;;
+		"-Zbg")
+			COMPRESSING=2
+			;;
+		"-Z")
+			COMPRESSING=1
+			;;
+		-L*|-l*)
+		  # preserve the order of -L and -l...
+			LIBS="$LIBS $1"
+			;;
+		*.o)
+			object=$1
+			if [ -r "$object".$Z ] ;then
+				UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+			fi
+			if [ $COMPRESSING != 0 ] ;then
+				COMPRESS="$COMPRESS $object"
+			fi
+			ARGS="$ARGS $1"
+			;;
+		*)
+			ARGS="$ARGS $1"
+			;;
+	esac
+	shift 1
+done
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN="`cxgetenv INCREMENT_RETURN`"
+	if [ "$INCREMENT_RETURN" = "" ] ;then
+		INCREMENT_RETURN=0
+	fi
+	echo "\tStarting compile with exit-code $INCREMENT_RETURN"
+fi
+rm -f .make_success
+
+if [ "$UNCOMPRESS" != "" ] ;then
+ 	echo "\tuncompressing $UNCOMPRESS"
+	for J in $UNCOMPRESS ;do
+# 		rm -f "`basename $J .$Z`"
+		( 
+			cd `dirname $J` ;\
+			UNC_OBJ="`basename $J .$Z`" ;\
+			OLD_UNC_OBJ="`basename $J .$Z`.old" ;\
+			mv $UNC_OBJ $OLD_UNC_OBJ ;\
+			$uncompress $VERBOSE `basename $J` ;\
+			touch -r $OLD_UNC_OBJ $UNC_OBJ ;\
+			rm -f $OLD_UNC_OBJ )
+	done
+fi
+
+case ${TARGETCPU} in
+	[mM]68*[kK])
+		echo "Compiling for 68xxx machine"
+		SYS="${SYS} -A cpu,mathchip"
+		;;
+	[aA]88[kK])
+		echo "Compiling for DN10000"
+		SYS="${SYS} -A cpu,a88k"
+		;;
+	any|default)
+		echo "Compiling for host architecture"
+		SYS="${SYS} -A cpu,any"
+		;;
+esac
+
+if [ $X != 0 ] ;then
+	set -x
+fi
+
+if [ -d ./emsg -a "$OUTPUT" != "" ] ;then
+	echo "\tOutput saved in ./emsg/$OUTPUT.err"
+	EMSG="./emsg/$OUTPUT.err"
+else
+	EMSG="/dev/null"
+fi
+
+if [ $LINK = 0 ] ;then
+	LIBS=""
+fi
+
+SWITCHES="cc ${SYS} ${ANSI} ${PROTO} ${OTHEROPT} ${OPTIMOPT} ${DEBUGOPT} ${DEFINES} ${ARGS} ${FILES} ${LIBDIR} ${LIBS}"
+( cc -DSWITCHES="\"${SWITCHES}\"" $SYS $ANSI $PROTO $OTHEROPT $OPTIMOPT ${DEBUGOPT} $WARNINGS $DEFINES $ARGS ${FILES} $LIBDIR $LIBS 2>&1 ; cxsetenv RET $? ) | tee $EMSG
+RET="`cxgetenv RET`" ; export RET
+set +x
+
+if [ $RET = 0 ] ;then
+	if [ "$TARGETNAME" != "" -a $LINK = 0 ] ;then
+		mv "$OUTPUTNAME" "$TARGETNAME"
+	fi
+fi
+
+if [ "$COMPRESS" != "" ] ;then
+	echo "\tcompressing $COMPRESS"
+	if [ $LINK = 0 ] ;then
+		TOUCH=""
+		if [ $COMPRESSING = 2 ] ;then
+			COMPRESSING=1
+		fi
+	else	
+		TOUCH="$TARGET"
+	fi
+	export TOUCH
+	case $COMPRESSING in
+		0)
+			;;
+		1)
+			if [ $LINK != 0 ] ;then
+				_obj_compress 0 $compress $VERBOSE $Z $TARGET $COMPRESS
+			else
+				_obj_compress 0 $compress $VERBOSE $Z "" $COMPRESS
+			fi
+			;;
+		2)
+			if [ $LINK != 0 ] ;then
+				( system "_obj_compress </dev/null 1 $compress $VERBOSE $Z $TARGET $COMPRESS &" ) &
+			else
+				( system "_obj_compress </dev/null 0 $compress $VERBOSE $Z \"\" $COMPRESS &" ) &
+			fi
+			;;
+		*)
+			echo "Illegal value ($COMPRESSING) for COMPRESSING"
+			;;
+	esac
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN=`echo "$INCREMENT_RETURN + $RET" | bc`
+	cxsetenv INCREMENT_RETURN $INCREMENT_RETURN
+else
+	INCREMENT_RETURN=$RET
+fi
+
+if [ "$INCREMENT_RETURN" = "0" ] ;then
+	touch .make_success
+else
+	echo "(Incremental) exitcode $INCREMENT_RETURN"
+fi
+
+exit $RET
+#if [ $RET = 0 ] ;then
+	#touch .make_success
+#fi
+#
+#exit $?

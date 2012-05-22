@@ -1,0 +1,898 @@
+#!/usr/bin/bash
+# 20040228:
+# gccopt script interface to gcc 3.3.? (and higher) on AIX
+# env.variable behavioural modifiers:
+# GCCOPT_SIMPLE: don't try to determine an error-message output file from the -c/-o combination
+# 	needed for makefiles that don't give first -o and then -c, or -c only.
+# GCCOPT_NOINC: don't specify the include file path (-I options). Needed to prevent clashes
+#	with installed headerfiles when compiling updates (e.g. of libraries).
+
+if [ "${DEVPREFSDIR}" = "" ] ;then
+	DEVPREFSDIR="${HOME}/.Preferences/.dev"
+fi
+if [ -r ${DEVPREFSDIR}/wmachine ] ;then
+	. ${DEVPREFSDIR}/wmachine gccopt
+else
+	DEFAULT_CC="/usr/bin/gcc"
+	DEFAULT_CXX="/usr/bin/g++"
+
+	VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+	OOPTIMOPT="-O3 -fstrength-reduce" #-fdelayed-branch"	# -mshared-libs"
+# 970113:
+# 	OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-omit-frame-pointer -fno-schedule-insns -fschedule-insns2 -finline-functions"
+# The options that get turned on by maximal optimisation (default):
+	OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops"
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+	NODEBUGOPT="" #"-fomit-frame-pointer"
+	OPTIMOPT="$OOPTIMOPT"
+	DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+# On a PIII, this means never allowing -fcaller-saves, unless user overrides it again...
+	SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+# do not use -mpowerpc-gpopt: runtime errors may result (on G3/G4 only?)
+# same for -mpowerpc-gfxopt?
+# 	MARCH="-mpowerpc -mcpu=power2 -maltivec -mabi=altivec -mhard-float -mpowerpc-gfxopt -mpowerpc-gpopt" # -force_cpusubtype_ALL"
+	MARCH="-mpowerpc -mcpu=power2 -mhard-float -mpowerpc-gfxopt -mpowerpc-gpopt" # -force_cpusubtype_ALL"
+
+fi
+
+vanilla=""
+
+ALWAYS_FLAGS="-fno-float-store -fomit-frame-pointer"
+
+if [ "$RWSTRINGS" = "" ] ;then
+	RWSTRINGS="-fwritable-strings"
+elif [ $RWSTRINGS = 0 ] ;then
+	RWSTRINGS=""
+fi
+
+COMMANDLINE="$0 $*"
+
+OTHEROPTIMS=""
+case $HOST in
+	*)
+# 		LOCALINC="-I$HOME/work/include -I. -I/usr/include/X11 -I/usr/local/include -I/usr/include -I/usr/include/bits"
+		if [ "$GCCOPT_NOINC" != "1" ] ;then
+			LOCALINC="-I$HOME/work/include -I. -I/usr/include/X11 -I/usr/X11R6/include -I/usr/local/include -I/usr/local/include/libpng -I/usr/include/freetype"
+		fi
+# 		OTHEROPT="$LOCALINC -fdollars-in-identifiers"
+		OTHEROPT="$LOCALINC -fdollars-in-identifiers"
+		LIBDIR=""
+		;;
+esac
+
+if [ "$0" = "cc" ] ;then
+	GCCOPT_SIMPLE=1
+	GCCOPT_QUIET=1
+fi
+
+SYS=""
+A=""
+PIPE="-pipe"
+
+WARNINGS="-Wcomment -Wunused -Winline -Wchar-subscripts -Wparentheses -Wcast-align " #-Wsurprising"
+EXTRA_WARNINGS="-W -Wuninitialized -Wconversion -Wredundant-decls -Wpointer-arith -Wformat -Wshadow"
+ALL_WARNINGS="-Wall -Wtraditional -Wshadow -Wpointer-arith -Wcast-qual  -Wcast-align -Wconversion -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wnested-externs -Wenum-clash -Woverloaded-virtual -Winline"
+
+PROTO="-D_PROTOTYPES"
+DEFINES="-D__GCCOPT__ -D_IEEE -D_POSIX_SOURCE -D_ALL_SOURCE"
+
+LINK=1
+
+# 20020908: -L library directory indications are stored in the LIBDIR variable...
+LIBDIR="-L/usr/lib/X11 -L/usr/local/lib"
+LIBS=""
+
+ARGS="$ENVARGS"
+VERBOSE=""
+DEBUG=0
+if [ $GCCOPT_QUIET ] ;then
+	QUIET=1
+else
+	QUIET=0
+fi
+
+COMPRESS="" ; export COMPRESS
+UNCOMPRESS="" ; export UNCOMPRESS
+COMPRESSING=0
+
+compress="gzip -9"
+uncompress="gunzip"
+Z="gz"
+
+if [ "$COMMANDLINE" = "0" -o "$GCCOPT_SIMPLE" = "1" ] ;then
+	SWITCHES=""
+else
+	SWITCHES=" "
+fi
+
+if [ "$SLEEP" = "" ] ;then
+	SLEEP=0
+fi
+
+# where your echo command resides that accepts arguments like -n and -e:
+llecho () {
+	SLC=""
+	TXT=""
+	while [ $# != 0 ] ;do
+		case $1 in
+			-e)
+				;;
+			-n)
+				SLC="\c"
+				;;
+			*)
+				if [ "$TXT" = "" ] ;then
+					TXT="$1"
+				else
+					TXT="${TXT} $1"
+				fi
+				;;
+		esac
+		shift
+	done
+	echo "${TXT}" "$SLC"
+}
+ECHO=llecho
+
+# a "local" routine that echos all argument to stderr...
+LECHO=${ECHO}
+lecho () {
+	${LECHO} $* 1>&2
+}
+
+# set NOSTDOUT before invocation to send all messages to stdout:
+if [ "$NOSTDOUT" != "" ] ;then
+	ECHO=lecho
+fi
+
+SYNTAX=0
+
+SELF="$0 $*"
+TARGET=""
+
+TIME=""
+
+USESRCDIR=0
+
+DDEBUG="-DDEBUG"
+
+select_debug_mode () {
+	OTHEROPTIMS="${OTHEROPTIMS} ${INLINE}"
+	STRIP=""
+	DBGSWITCH="-g3 -ggdb3"
+# 	DBGSWITCH="-g"
+	if [ "$1" = "-gi" ] ;then
+		DEBUGOPT="${DBGSWITCH} ${DDEBUG} -finline-functions -fkeep-inline-functions -fno-omit-frame-pointer"
+	else
+		DEBUGOPT="${DBGSWITCH} ${DDEBUG} -fno-inline-functions -fno-omit-frame-pointer"
+	fi
+	 # debugging: hardcode full sourcefile path.
+	 # supposes we're compiling where the file stands...
+	SRCDIR="`pwd`/"
+	if [ $USESRCDIR ] ;then
+		cd "`dirname ${SRCDIR}/$2`/" > /dev/null 2>&1
+		if [ $? = 0 ] ;then
+			NSRCDIR="`pwd`"
+			cd ${SRCDIR}
+			SRCDIR="${NSRCDIR}/"
+		else
+			SRCDIR="`dirname $2`/"
+		fi
+	fi
+}
+
+StoreSwitch() {
+	if [ "$SWITCHES" != "" ] ;then
+		SWITCHES="${SWITCHES} `echo $* | sed -e 's/\\\"/\\\\\"/g'`"
+	fi
+}
+
+DefaultArgHandler() {
+	ARGS="$ARGS $1"
+	StoreSwitch $1
+}
+
+CHECK=""
+SHOWCLI=""
+
+while [ $# != 0 ] ; do
+	case $1 in
+		"-cli")
+			SHOWCLI="1"
+			;;
+		"-compiler")
+			compiler="$2"
+			shift
+			;;
+		"-debug")
+			${ECHO} "$SELF"
+			set -x
+			DEBUG=1 ; export DEBUG
+			;;
+		"-quiet")
+			QUIET=1
+			DEBUG=0 ; export DEBUG
+			;;
+		"-srcdir")
+			 # hardcode the full pathname in the objectfile. This
+			 # is useful for debugging: the debugger will always (?)
+			 # find the sourcefile
+			SRCDIR="`pwd`/"
+			USESRCDIR=1
+			;;
+		"-more_warnings")
+			WARNINGS="${WARNINGS} ${EXTRA_WARNINGS}"
+			${ECHO} "gcc warnings: ${WARNINGS}"
+			EXTRA_WARNINGS=""
+			;;
+		"-all_warnings")
+			WARNINGS="${ALL_WARNINGS}"
+			${ECHO} "gcc warnings: ${WARNINGS}"
+			;;
+		"-Ac")
+			ARGS="$ARGS -traditional"
+			PROTO="-U__STDC__ -U_PROTOTYPES"
+			StoreSwitch "-traditional"
+			;;
+		"-Aa"|-xansi)
+			ARGS="$ARGS -ansi"
+			PROTO="-D__STDC__ -D_PROTOTYPES"
+			StoreSwitch -ansi
+			;;
+		"-sleep")
+			SLEEP=$2
+			shift
+			;;
+		"-Zbg")
+			COMPRESSING=2
+			;;
+		"-Z")
+			COMPRESSING=1
+			;;
+		"-v")
+			VERBOSE="-v"
+			OTHEROPT="-Q $OTHEROPT"
+			ARGS="$ARGS $1"
+			;;
+		"-Q")
+			ARGS="$ARGS $1"
+			TIME="time"
+			;;
+		"$LOCALINC")
+			${ECHO} "$0: $LOCALINC already included in headerfile searchtree"
+			;;
+#It is not clear whether -I <dir> is allowed, or only -I<dir>. The following 2 cases should cope:
+# 		-I)
+# 			LOCALINC="${LOCALINC} -I$2"
+# 			shift
+# 			;;
+# 		-I*)
+# 			LOCALINC="${LOCALINC} $1"
+# 			;;
+		-rwstrings)
+			RWSTRINGS="-fwritable-strings"
+			StoreSwitch -fwritable-strings
+			;;
+		-no-rwstrings)
+			RWSTRINGS="-fno-writable-strings"
+			StoreSwitch -fno-writable-strings
+			;;
+		"-c"|"-f"|"-fsyntax-only"|-synta*|"-suntax"|"-E")
+		 # 20010608: accept -f for fortran files.
+			CHECK="$1"
+			if [ "${1}" = "-f" ] ;then
+				EXT="f"
+				D1="-c"
+			else
+				EXT="c"
+				D1=$1
+			fi
+			LINK=0
+			if [ "$GCCOPT_SIMPLE" = "1" ] ;then
+				DefaultArgHandler ${D1}
+			else
+				if [ "${D1}" = "-syntax" -o "${D1}" = "-synta" -o "${D1}" = "-fsyntax-only" ] ;then
+					one="-fsyntax-only"
+					SYNTAX=1
+				elif [ "${D1}" = "-E" ] ;then
+					one="-C -dD -E"
+				else
+					one="${D1}"
+				fi
+				if [ $USESRCDIR ] ;then
+					SRCDIR="`pwd`"
+					cd "`dirname ${SRCDIR}/$2`/" > /dev/null 2>&1
+					if [ $? = 0 ] ;then
+						NSRCDIR="`pwd`"
+						cd ${SRCDIR}
+						SRCDIR="${NSRCDIR}/"
+					else
+						SRCDIR="`dirname $2`/"
+					fi
+				fi
+				ARGS="$ARGS $one ${SRCDIR}`basename $2`"
+				StoreSwitch $one ${SRCDIR}`basename $2`
+				LIBDIR=""
+				file="`echo $2 | sed -e 's/\.[cfsi]//g'`"
+				file="${SRCDIR}`basename ${file}`"
+				if [ -r "$file".${EXT} ] ;then
+					OUTPUT=$2	#$file
+					if [ "${TARGET}" != "" ] ;then
+						object="${TARGET}"
+					else
+						object="$file".o
+					fi
+					if [ -r "$object".$Z ] ;then
+						UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+					fi
+					if [ $COMPRESSING != 0 ] ;then
+						COMPRESS="$COMPRESS $object"
+					fi
+				else
+					${ECHO} "Warning: file ${file}.${EXT} doesn't exist - non-filename after ${CHECK} ?"
+					${ECHO} "         You may want to set env.var GCCOPT_SIMPLE to disable smart handling of ${CHECK} and -o"
+				fi
+				shift
+			fi
+			;;
+		"-o")
+			if [ "$GCCOPT_SIMPLE" = "1" ] ;then
+				DefaultArgHandler $1
+			else
+				if [ $USESRCDIR ] ;then
+					SRCDIR="`pwd`"
+					cd "`dirname ${SRCDIR}/$2`/" > /dev/null 2>&1
+					if [ $? = 0 ] ;then
+						NSRCDIR="`pwd`"
+						cd ${SRCDIR}
+						SRCDIR="${NSRCDIR}/"
+					else
+						SRCDIR="`dirname $2`/"
+					fi
+				fi
+				TARGET="${SRCDIR}`basename $2`"
+				OUTPUT=$2	#"`basename $2`"
+				ARGS="$ARGS $1 $2"
+				StoreSwitch $1 ${SRCDIR}`basename $2`
+				if [ $LINK = 0 ] ;then
+					${ECHO} -e "\"$1 $2\" was preceded by \"${CHECK} $file.${EXT}\": reverse for correct handling of compressed object-files!\n\
+	\telse you run the risk of favouring the old object-file"
+					${ECHO} "         You may want to set env.var GCCOPT_SIMPLE to disable smart handling of ${CHECK} and -o"
+				fi
+				shift
+			fi
+			;;
+		"-ZP")
+			;;
+		"-ZB"|"-BSD")
+			SYS=$SYS
+			LIBS="$LIBS"
+			;;
+		"-ZS"|"-SYSV")
+			SYS=$SYS
+			;;
+		"-O")
+			${ECHO} "-O ignored: use -Opt, -moreOpt or -simOpt"
+			;;
+		"-gOpt")
+			OPTIMOPT="$OOPTIMOPT"
+			select_debug_mode $*
+			${ECHO} "\"full\" optimisation and DEBUG"
+			;;
+		"-pgOpt"|"-Opt")
+			if [ "$1" = "-pgOpt" ] ;then
+				DefaultArgHandler "-pg -fno-omit-frame-pointer"
+				DefaultArgHandler "-DPROFILING"
+			fi
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT="$NODEBUGOPT"
+			ENDO=""
+			${ECHO} "\"full\" optimisation => no DEBUG"
+			;;
+		"-noOpt")
+			OPTIMOPT="-O0"
+			VOPTIMOPT=""
+			;;
+		"-simOpt")
+			OPTIMOPT="-O"
+			VOPTIMOPT="-O"
+			;;
+		"-moreOpt")
+			OPTIMOPT="-O2"
+			VOPTIMOPT="-O2"
+			;;
+		-safeOpt)
+			SAFEOPT="$SAFETYOPTS"
+			;;
+		"-gp")
+# 			${ECHO} "Debug && Profiling => no Optim"
+			OPTIMOPT="-O0"
+# 			DEBUGOPT="-g -p -DDEBUG -DPROFILING"
+			select_debug_mode $*
+			DEBUGOPT="${DEBUGOPT} -p -DPROFILING"
+			;;
+		-ddebug)
+			DDEBUG="$2"
+			shift
+			;;
+		-g*|-9*)
+			if [ "$OPTIMOPT" != "" ] ;then
+				if [ $QUIET = 0 ] ;then
+					${ECHO} "# DEBUG => no \"simple\" optimisation (-simOpt)"
+				fi
+				OPTIMOPT="-O0"
+				VOPTIMOPT=""
+			else
+				if [ $QUIET = 0 ] ;then
+					${ECHO} "# DEBUG and no optimisation (-noOpt)"
+				fi
+				OPTIMOPT="-O0"
+				VOPTIMOPT=""
+			fi
+			select_debug_mode $*
+			;;
+		"-inline")
+# 			OPTIMOPT="${OPTIMOPT} -finline-functions"
+# 			INLINE="-fkeep-inline-functions"
+			INLINING="-finline-functions"
+			;;
+		"-noinline")
+# 			OPTIMOPT="${OPTIMOPT} -fno-inline-functions"
+# 			INLINE=""
+			INLINING="-fno-inline-functions"
+			;;
+		-pg|-p)
+# 			${ECHO} "Profiling => no Optim"
+# 			OPTIMOPT=""
+			DEBUGOPT="$NODEBUGOPT $1 -DPROFILING"
+			;;
+		"-SERIAL")
+			PIPE=""
+			;;
+		*.o)
+			object=$1
+			if [ "$object" = "/usr/lib/end.o" ] ;then
+				ENDO=""
+			fi
+			if [ -r "$object".$Z ] ;then
+				UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+			fi
+			if [ $COMPRESSING != 0 ] ;then
+				COMPRESS="$COMPRESS $object"
+			fi
+			ARGS="$ARGS $1"
+			;;
+		-L*)
+			LIBDIR="$LIBDIR $1"
+			;;
+		-l*)
+			LIBS="$LIBS $1"
+			ARGS="$ARGS $1"
+			;;
+		+z)
+			DefaultArgsHandler -fpic
+			;;
+		+Z|-KPIC)
+			DefaultArgHandler -fPIC
+			;;
+#ignored options:
+		"-Olimit"|"-MDupdate"|"-woff")
+			shift
+			;;
+		"-all"|"-o32")
+			;;
+		-float)
+			;;
+		-Wf,*)
+			;;
+		-non_PP_compat)
+			MARCH=""
+			;;
+		-opt_vanilla)
+			vanilla="2"
+			;;
+		-vanilla)
+			vanilla="1"
+			DEBUGOPT=""
+			OPTIMOPT=""
+			;;
+		-s)
+			STRIP="$1"
+			;;
+# arguments passed directly to gcc:
+		-*)
+			DefaultArgHandler $1
+			;;
+		*)
+			if [ -r "$1" ] ;then
+				if [ $USESRCDIR ] ;then
+					SRCDIR="`pwd`"
+					cd "`dirname ${SRCDIR}/$1`/" > /dev/null 2>&1
+					if [ $? = 0 ] ;then
+						NSRCDIR="`pwd`"
+						cd ${SRCDIR}
+						SRCDIR="${NSRCDIR}/"
+					else
+						SRCDIR="`dirname $1`/"
+					fi
+				fi
+				ARGS="$ARGS ${SRCDIR}`basename $1`"
+			else
+				ARGS="$ARGS $1"
+			fi
+			StoreSwitch $1
+			;;
+	esac
+	shift 1
+done
+
+if [ vanilla != "1" ] ;then
+	if [ "$OPTIMOPT" = "" ] ;then
+		OPTIMOPT="$OOPTIMOPT $INLINING"
+	fi
+fi
+
+if [ "$STRIP" != "" ] ;then
+	OPTIMOPT="${STRIP} ${OPTIMOPT}"
+fi
+
+if [ $DEBUG != 1 ] ;then
+	set +x
+fi
+
+OPTIMOPT="${OPTIMOPT} ${OTHEROPTIMS}"
+
+case `basename $0` in
+	pgccopt*)
+		CPREFIX="p"
+		;;
+	g77*|f77*)
+		CPREFIX=""
+		comp="g77"
+		;;
+	c++*)
+		CPREFIX=""
+		comp="${DEFAULT_CXX}"
+		;;
+	g++*)
+		CPREFIX=""
+		comp="g++"
+		;;
+	*)
+		CPREFIX=""
+		comp="${DEFAULT_CC}"
+		;;
+esac
+
+if [ "$compiler" = "" ] ;then
+	if [ $SYNTAX = 1 ] ;then
+		if [ "$SYNTAXCHECKER" != "" ] ;then
+			compiler="${SYNTAXCHECKER}"
+		else
+			compiler="${CPREFIX}${comp}"
+#			compiler="${CPREFIX}gcc291"
+		fi
+	else
+		compiler="/usr/local/bin/${CPREFIX}${comp}"
+		if [ ! -x "$compiler" ] ;then
+			compiler="/usr/bin/${CPREFIX}${comp}"
+			if [ ! -x "$compiler" ] ;then
+				${ECHO} -n -e "compiler $compiler: not found; "
+				compiler="/usr/bin/${CPREFIX}${DEFAULT_CC}"
+				${ECHO} -e "using $compiler\n"
+			fi
+		fi
+	fi
+fi
+if [ "$Compile" = "" ] ;then
+	if [ "$vanilla" = "" ] ;then
+		case `basename ${compiler}` in
+			pgcc*)
+				Compile="${compiler} ${RWSTRINGS} ${MARCH} -fno-fast-math -mstack-align-double ${ALWAYS_FLAGS} -fno-strict-aliasing"
+				;;
+			*)
+				Compile="${compiler} ${RWSTRINGS} ${MARCH} -fno-fast-math ${ALWAYS_FLAGS} -fno-strict-aliasing"
+				;;
+		esac
+	else
+		Compile="${compiler} ${RWSTRINGS} ${MARCH} ${ALWAYS_FLAGS}"
+		compiler="${Compile}"
+	fi
+fi
+
+if [ "$SWITCHES" != "" ] ;then
+	CC="$Compile"
+	if [ "$COMMANDLINE" = "0" ] ;then
+		SWITCHES="${SYS} ${OPTIMOPT} ${DEBUGOPT} ${SWITCHES} ${SAFEOPT}"
+	else
+		SWITCHES="$Compile ${SYS} ${OPTIMOPT} ${DEBUGOPT} ${SWITCHES} ${SAFEOPT}"
+	fi
+fi
+
+if [ $LINK = 0 ] ;then
+	LIBS=""
+	ENDO=""
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN="`cxgetenv INCREMENT_RETURN`"
+	if [ "$INCREMENT_RETURN" = "" ] ;then
+		INCREMENT_RETURN=0
+	fi
+fi
+
+rm -f .make_success
+
+if [ "$UNCOMPRESS" != "" ] ;then
+#  	echo "\tuncompressing $UNCOMPRESS"
+ 	${ECHO} -n -e "\tuncompressing "
+	for J in $UNCOMPRESS ;do
+# 		rm -f "`basename $J .$Z`"
+		( 
+			cd `dirname $J` ;\
+			UNC_OBJ="`basename $J .$Z`" ;\
+			OLD_UNC_OBJ="`basename $J .$Z`.old" ;\
+			mv $UNC_OBJ $OLD_UNC_OBJ ;\
+			${ECHO} -n "$J"
+			$uncompress $VERBOSE `basename $J` ;\
+			${ECHO} -n "; "
+			touch -r $OLD_UNC_OBJ $UNC_OBJ ;\
+			rm -f $OLD_UNC_OBJ )
+	done
+	${ECHO} "done"
+fi
+
+if [ "$VERBOSE" != "" ] ; then
+	set -x
+fi
+
+if [ ! -d ./emsg -a "$EMSGMAKE" !=  "" ] ;then
+	${ECHO} "$0: creating `pwd`/emsg"
+	mkdir ./emsg
+fi
+if [ "$OUTPUT" = "" ] ;then
+	eOUTPUT=""
+else
+	eOUTPUT="`basename $OUTPUT`"
+fi
+EMSGb=""
+EMSG="/dev/null"
+if [ -d ./emsg -a "$eOUTPUT" != "" ] ;then
+	EMSGb="./emsg/$eOUTPUT"
+	EMSG="${EMSGb}.msg"
+	if [ -d "`dirname ${EMSG}`" -a $QUIET = 0 ] ;then
+		${ECHO} -e "#\tOutput saved in ${EMSG}"
+		rm -f ${EMSGb}.msg ${EMSGb}.err
+	else
+		EMSGb=""
+		EMSG="/dev/null"
+	fi
+fi
+
+if [ "$SHOWCLI" != "" ] ;then
+	${ECHO} $Compile $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LIBS 1>&2
+	${ECHO} "CC=$Compile"
+# 	${ECHO} "CFLAGS=$A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS"
+	FLAGS="$A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS"
+	CPPFLAGS=""
+	CFLAGS=""
+	for j in ${FLAGS} ;do
+		case $j in
+			-I*|-D*)
+				CPPFLAGS="${CPPFLAGS} $j"
+				;;
+			*)
+				CFLAGS="${CFLAGS} $j"
+				;;
+		esac
+	done
+	${ECHO} "CPPFLAGS=${CPPFLAGS}"
+	${ECHO} "CFLAGS=${CFLAGS}"
+	exit 0
+fi
+
+if [ "$SRCDIR" != "" -a $QUIET = 0 ] ;then
+	${ECHO} "# Compiling in directory \"$SRCDIR\", using \"$compiler\""
+fi
+
+# echo $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LIBS 1>&2
+
+( $TIME $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LIBS 2>&1 ; cxsetenv RET $? )\
+					| tee $EMSG
+RET="`cxgetenv RET`" ; export RET
+
+if [ $DEBUG != 1 ] ;then
+	set +x
+fi
+
+echo "$Compile $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LIBS" >> $EMSG
+echo -e "\t$COMMANDLINE" >> $EMSG
+echo -e "\tArguments passed to source: SWITCHES=\"${SWITCHES}\"" >> $EMSG
+
+if [ "$RET" != "0" ] ;then
+	echo "Return code $RET" >> $EMSG
+	if [ "$EMSGb" != "" -a "$RET" != "0" ] ;then
+		${ECHO} "`tput bold`Messages in ${EMSGb}.err`tput sgr0`"
+		mv "$EMSG" "${EMSGb}.err"
+	fi
+fi
+
+if [ "${OUTPUT}" != "" -a "${LINK}" = 1 -a $QUIET != 1 ] ;then
+	ll ${OUTPUT}*
+fi
+
+if [ "$COMPRESS" != "" ] ;then
+	${ECHO} -e "\tcompressing $COMPRESS"
+	if [ $LINK = 0 ] ;then
+		TOUCH=""
+		if [ $COMPRESSING = 2 ] ;then
+			COMPRESSING=1
+		fi
+	else	
+		TOUCH="$TARGET"
+	fi
+	export TOUCH
+	case $COMPRESSING in
+		0)
+			;;
+		1)
+			if [ $LINK != 0 ] ;then
+				_obj_compress 0 $compress $VERBOSE $Z $TARGET $COMPRESS
+			else
+				_obj_compress 0 $compress $VERBOSE $Z "" $COMPRESS
+			fi
+			;;
+		2)
+			if [ $LINK != 0 ] ;then
+				( system "_obj_compress </dev/null 1 $compress $VERBOSE $Z $TARGET $COMPRESS &" ) &
+			else
+				( system "_obj_compress </dev/null 0 $compress $VERBOSE $Z \"\" $COMPRESS &" ) &
+			fi
+			;;
+		*)
+			${ECHO} "Illegal value ($COMPRESSING) for COMPRESSING"
+			;;
+	esac
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN=`echo -e "$INCREMENT_RETURN + $RET" | bc -s`
+	cxsetenv INCREMENT_RETURN $INCREMENT_RETURN
+else
+	INCREMENT_RETURN=$RET
+fi
+
+if [ $INCREMENT_RETURN = 0 ] ;then
+	touch .make_success
+else
+	echo "`tput smso`(Incremental) exitcode $INCREMENT_RETURN`tput rmso`" 1>&2
+fi
+
+if [ $SLEEP != 0 ] ;then
+	sleep $SLEEP
+fi
+
+if [ $SYNTAX = 1 -a $RET = 0 ] ;then
+	${ECHO} "`tput bold`Syntax checked OK - returning -1 to prevent linking`tput sgr0`"
+	exit -1
+else
+	exit $RET
+fi
+
+# Below follow some useful & used scripts:
+
+# #!/bin/sh
+# # _obj_compress $background $compress $VERBOSE $Z $TARGET $COMPRESS
+# 
+# background=$1 ; export background ; shift
+# compress=$1 ; export compress ; shift
+# VERBOSE=$1 ; export VERBOSE ; shift
+# Z=$1 ; export Z ; shift
+# TARGET=$1 ; export TARGET ; shift
+# COMPRESS=$* ; export COMPRESS
+# 
+# do_compress(){
+# 	for J in $COMPRESS ;do
+# 		if [ -r $J ] ;then 
+# 			rm -f $J.$Z
+# 			nice $compress $VERBOSE $J
+# 			echo "\c" > $J
+# 			touch -r $J.$Z $J
+# 		fi
+# 	done
+# 
+# 	if [ "$TARGET" != "" ] ;then
+# 		sleep 1
+# 		touch $TARGET 
+# 		echo "$0: $TARGET touched and done"
+# 	fi
+# }
+# 
+# if [ $background != 0 ] ;then	
+# 	( do_compress < /dev/null > /dev/null 2>&1 & ) &
+# 	echo "$0: background"
+# else
+# 	do_compress
+# fi
+# exit 0
+
+# #!/bin/sh
+# # cxgetenv <varname>
+# 
+# if [ $# = 0 ] ;then
+# 	exec Env
+# else
+# 	if [ $# -gt 1 ] ;then
+# 		echo "usage: `basename $0` <variablename> <value>" 1>&2
+# 		echo "The variable is recorded in \$ENVDIR , ./.env or $HOME/.env" 1>&2
+# 		exit 1
+# 	fi
+# fi
+# if [ "$ENVDIR" = "" ] ;then
+# 	if [ -d ./.env ] ;then
+# 		ENVDIR="./.env"
+# 	else	
+# 		if [ -d $HOME/.env ] ;then
+# 			ENVDIR="$HOME/.env"
+# 		else
+# 			echo "No ENVDIR specified - creating ./.env" 1>&2
+# 			mkdir ./.env
+# 			ENVDIR="./.env"
+# 		fi
+# 	fi
+# fi
+# 
+# if [ ! -d "$ENVDIR" ] ;then
+# 	echo "ENVDIR=$ENVDIR : not a directory" 1>&2
+# 	exit 10
+# fi
+# 
+# PREF="_"
+# if [ -r "$ENVDIR/$PREF$1" ] ;then
+# 	cat "$ENVDIR/$PREF$1"
+# else
+# 	if [ -r $ENVDIR/$1 ] ;then
+# 		cat $ENVDIR/$1
+# 	fi
+# fi
+
+# #!/bin/sh
+# # cxsetenv <varname> <value>
+# 
+# if [ $# = 0 ] ;then
+# 	exec Env
+# else
+# # 	if [ $# = 1 -o $# -gt 2 ] ;then
+# 	if [ $# = 1 ] ;then
+# 		echo "usage: `basename $0` <variablename> <value>"
+# 		echo "The variable is recorded in \$ENVDIR , ./.env or $HOME/.env"
+# 		exit 1
+# 	fi
+# fi
+# if [ "$ENVDIR" = "" ] ;then
+# 	if [ -d ./.env ] ;then
+# 		ENVDIR="./.env"
+# 	else	
+# 		if [ -d $HOME/.env ] ;then
+# 			ENVDIR="$HOME/.env"
+# 		else
+# 			echo "No ENVDIR specified - creating ./.env"
+# 			mkdir ./.env
+# 			ENVDIR="./.env"
+# 		fi
+# 	fi
+# fi
+# 
+# if [ ! -d "$ENVDIR" ] ;then
+# 	echo "ENVDIR=$ENVDIR : not a directory"
+# 	exit 10
+# fi
+# 
+# # VAR=$ENVDIR/$1
+# # shift
+# while [ $# -gt 1 ] ;do
+# 	/bin/echo >$ENVDIR/$1 "$2\c"
+# 	shift 2
+# done

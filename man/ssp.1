@@ -1,0 +1,56 @@
+.\" $Header: ssp.1,v 66.2 90/12/13 11:03:01 clarke Exp $
+.TH ssp 1
+.ds )H Hewlett-Packard Company
+.ds ]W HP-UX Release 8.05: June 1991
+.ds Rewritten from specs by RJB.
+.SH NAME
+ssp \- remove multiple line-feeds from output
+.SH SYNOPSIS
+.B ssp
+.SH DESCRIPTION
+.I ssp
+(single-space) removes redundant blank lines from the standard input
+and sends the result to the standard output.
+All blank lines at the beginning of a file are removed, and all
+multiple blank lines elsewhere in the file (including end-of-file)
+are reduced to a single blank line.
+.PP
+.I ssp
+is typically used in pipelines such as
+.IP
+nroff\0\-ms\0file1\0|\0ssp
+.PP
+.I ssp
+is equivalent to the 4.2BSD
+.B cat \-s
+command.
+.PP
+To remove all blank lines from a file except at beginning of file,
+use
+.IR rmnl (1).
+To remove all blank lines from a file including beginning of file,
+use
+.I rmnl
+piped to
+.IR ssp ,
+or
+.I ssp
+piped to
+.IR rmnl .
+.SH SEE ALSO
+cat(1), rmnl(1).
+.\"
+.\" index	\fIssp\fR \- remove multiple line-feeds from output 	 \fBssp(1)\fR
+.\" index	remove multiple line-feeds from output 	 \fBssp(1)\fR
+.\" index	multiple line-feeds, remove from output 	 \fBssp(1)\fR
+.\" index	multiple adjacent blank lines, reduce to single blank line 	 \fBssp(1)\fR
+.\" index	eliminate multiple adjacent blank lines, reduce to single blank line 	 \fBssp(1)\fR
+.\" index	reduce multiple adjacent blank lines to single blank line 	 \fBssp(1)\fR
+.\" index	files: reduce multiple adjacent blank lines to single blank line 	 \fBssp(1)\fR
+.\" index	blank lines, reduce multiple adjacent to single blank line 	 \fBssp(1)\fR
+.\" index	lines, reduce multiple adjacent blank to single blank line 	 \fBssp(1)\fR
+.\" index	line-feeds, remove multiple from output 	 \fBssp(1)\fR
+.\"
+.\" toc	\fBssp(1)\fR:\0\0\fIssp\fR 	 remove multiple line-feeds from output
+.\"
+.\" fileset_database	ssp.1 CMDS-AUX-MAN

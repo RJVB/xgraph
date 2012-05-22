@@ -1,0 +1,33 @@
+#!/bin/sh
+
+
+# echo ctags -f NTAGS -wtdu "$@" > emsg/tags.msg
+# ( ctags -f NTAGS -w -t -d -u "$@" ;\
+# grep -v 'dymod_interface.h.*#define' NTAGS > tags ;\
+# rm NTAGS  ) 2>&1 | tee -a emsg/tags.msg
+
+echo ctags -wtmu "$@" > emsg/tags.msg
+( ctags -wtmu "$@" ;\
+grep -v 'dymod_interface.h.*#define' tags > NTAGS ;\
+mv NTAGS tags ;\
+wc tags ) 2>&1 | tee -a emsg/tags.msg
+
+
+# ## for exuberant ctags (ctags.sourceforge.net) :
+# rm emsg/tags.msg
+# # echo ctags --totals --exclude=dymod_interface.h "$@" > emsg/tags.msg
+# rm -f NTAGS
+# ctags --totals --exclude=dymod_interface.h --format=1 -o NTAGS "$@" 2>&1 | tee -a emsg/tags.msg
+# FILES="^._TAG_FILE.*|^._TAG_PROGRAM_.*"
+# # egrep "${FILES}" NTAGS
+# # echo '#########'
+# while [ $# != 0 ] ;do
+# 	FILES="${FILES}|$1"
+# 	shift
+# done
+# # echo "egrep -v ${FILES} tags >> NTAGS" 2>&1 | tee -a emsg/tags.msg
+# egrep -v "${FILES}" tags >> NTAGS 2>&1 | tee -a emsg/tags.msg
+# if [ ! -z NTAGS ] ;then
+# 	mv NTAGS tags
+# 	wc tags
+# fi

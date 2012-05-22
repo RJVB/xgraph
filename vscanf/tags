@@ -1,0 +1,45 @@
+ARGCHECK	vfscanf.c	/^#define ARGCHECK(s,format)	\\$/
+HAVE_STDARGS	vsnprintf.c	/^# define HAVE_STDARGS    \/* let's hope that works /
+IDENTIFY	vfscanf.c	/^#	define IDENTIFY(s)	__IDENTIFY(s," (gcc)")$/
+LDOUBLE	vsnprintf.c	/^#define LDOUBLE long double$/
+LLONG	vsnprintf.c	/^# define LLONG long long$/
+LOCK_STREAM	vfscanf.c	/^# define LOCK_STREAM(S)$/
+LONGLONG	vfscanf.c	/^# define LONGLONG	long long$/
+MAX	vsnprintf.c	/^#define MAX(p,q) ((p >= q) \? p : q)$/
+MIN	vsnprintf.c	/^#define MIN(p,q) ((p <= q) \? p : q)$/
+Mtstscanf	tstscanf.c	/^int main (int argc, char **argv)$/
+UNLOCK_STREAM	vfscanf.c	/^# define UNLOCK_STREAM(S)						      \\$/
+VA_END	vsnprintf.c	/^# define VA_END          va_end(ap)$/
+VA_LOCAL_DECL	vsnprintf.c	/^# define VA_LOCAL_DECL   va_list ap$/
+VA_SHIFT	vsnprintf.c	/^# define VA_SHIFT(v,t) v = va_arg(ap,t)$/
+VA_START	vsnprintf.c	/^# define VA_START(f)     va_start(ap, f)$/
+_IDENTIFY	vfscanf.c	/^#		define _IDENTIFY(s,i)	static char *ident= "@(#)/
+__IDENTIFY	vfscanf.c	/^#define __IDENTIFY(s,i)\\$/
+__mbrlen	vfscanf.c	/^#	define __mbrlen(f,flen,state)	mblen(f,flen)$/
+_getc	vfscanf.c	/^int _getc(const char *s, const char **curptr, cons/
+_tolower	vfscanf.c	/^#	define _tolower	tolower$/
+_toupper	vfscanf.c	/^#	define _toupper	toupper$/
+abs_val	vsnprintf.c	/^static LDOUBLE abs_val (LDOUBLE value)$/
+char_to_int	vsnprintf.c	/^#define char_to_int(p) (p - '0')$/
+conv_error	vfscanf.c	/^# define conv_error()	do {						      \\$/
+dopr	vsnprintf.c	/^static int dopr (char *buffer, size_t maxlen, cons/
+dopr_outch	vsnprintf.c	/^static int dopr_outch (char *buffer, size_t *currl/
+encode_error	vfscanf.c	/^# define encode_error()	do {						      \\$/
+flockfile	vfscanf.c	/^# define flockfile(S) \/* nothing *\/$/
+fmtfp	vsnprintf.c	/^static int fmtfp (char *buffer, size_t *currlen, s/
+fmtint	vsnprintf.c	/^static int fmtint (char *buffer, size_t *currlen, /
+fmtstr	vsnprintf.c	/^static int fmtstr (char *buffer, size_t *currlen, /
+funlockfile	vfscanf.c	/^# define funlockfile(S) \/* nothing *\/$/
+getc	vfscanf.c	/^#define getc(s)	_getc(s,&curptr,&maxptr)$/
+inchar	vfscanf.c	/^# define inchar()	(c == EOF \? EOF					      \\$/
+input_error	vfscanf.c	/^# define input_error()	do {						      \\$/
+memory_error	vfscanf.c	/^# define memory_error()	do {						      \\$/
+pow10	vsnprintf.c	/^static LDOUBLE pow10 (int exp)$/
+round	vsnprintf.c	/^static long round (LDOUBLE value)$/
+tvfscanf	tstscanf.c	/^int tvfscanf( FILE *s, char *format, \.\.\. )$/
+tvsscanf	tstscanf.c	/^int tvsscanf( char *s, char *format, \.\.\. )$/
+ungetc	vfscanf.c	/^# define ungetc(c, s)	((void) (c != EOF && --read_/
+vfscanf	vfscanf.c	/^int vfscanf (FILE *s, const char *format, va_list /
+vscanf	vscanf.c	/^vscanf (const char *format, va_list arg)$/
+vsnprintf	vsnprintf.c	/^int vsnprintf (char *str, size_t count, const char/
+vsscanf	vfscanf.c	/^int vsscanf (const char *s, const char *format, va/

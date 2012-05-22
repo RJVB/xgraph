@@ -1,0 +1,275 @@
+#
+# Makefile for the xgraph program
+#
+# David Harrison
+# University of California,  Berkeley
+# 1987
+#
+# gccopt and cmake are nothing but scripts that basically 
+# expand to 'gcc -O' and 'make -f'
+
+CLEVEL=
+CHECK=-c
+XG_FLAGS=
+DEBUG=
+LASTOPTIONS=
+_CLEVEL=$(CLEVEL) #-Ac
+_CFLAGS=$(_CLEVEL) $(DEBUG) -Ixtb -Iux11 -Q #-DHPGL_DUMP #-DIDRAW_DUMP
+CFLAGS=$(_CFLAGS) $(LASTOPTIONS)
+DEBUGSUPPORT= #-DDEBUGSUPPORT
+_XCFLAGS=$(DEBUG) -Ixtb -Iux11 -Q
+XCFLAGS=$(_XCFLAGS) $(LASTOPTIONS)
+COMP=gccopt
+CC=$(COMP) -DXGRAPH #-safeOpt
+cCC=ccopt -DXGRAPH #-safeOpt
+# OTHEROBS = `machdepobjects`
+OTHEROBS:=$(shell ./machdepobjects)
+OTHERLIBS:=$(shell ./machdeplibs)
+# the flag to pass to the compiler to export a programme's symbols to a module loaded via dlopen(): (under linux..)
+DYNAMIC = -rdynamic
+
+# 20010723: Options do be specified at compile time. See config.h for an uptodate list and settings.
+# uncomment if you have FFTW installed and want to use it for runtime FFTs (in ascanfc2.c):
+# # FFTW=-DHAVE_FFTW
+# 20010725: fftw libraries inserted by machdeplibs when config.h contains #define HAVE_FFTW
+# FFTW_LIBS=-lrfftw -lfftw
+# # VSCANF = -DHAVE_VSCANF
+# Define to compile in support for dynamic module (shared libraries) loading:
+# # DYMOD = -DXG_DYMOD_SUPPORT
+
+# # COPTS = $(FFTW) $(VSCANF) $(DYMOD)
+# Compile time options above now defined in config.h!
+
+SRC	= main.c xgX.c hard_devices.c dialog.c dialog_s.c new_ps.c matherr.c dymod.c xgPen.c ascanfc3.c xgInput.c xgsupport.c xgraph.c alloca.c ascanfc.c ascanfc2.c fascanf.c regex.c # hpgl.c idraw.c params.c 
+LIBOBJ = xgX.o hard_devices.o dialog.o dialog_s.o new_ps.o matherr.o dymod.o xgPen.o ascanfc3.o alloca.o ascanfc.o ascanfc2.o fascanf.o xgInput.o regex.o # hpgl.o idraw.o params.o 
+OBJS	  = $(LIBOBJ) xgsupport.o xgraph.o # hpgl.o idraw.o params.o
+
+UX11	= libux11.a
+LUX11 = -lux11
+lX11 = -lX11
+XTB	= libxtb.a
+LXTB = -lxtb
+SYSLIBS =
+LIBS	= -L. -lxgraph -Lxtb $(LXTB) -Lux11 $(LUX11) $(lX11) $(FFTW_LIBS) $(SYSLIBS) -lm $(OTHERLIBS) -lm
+
+TARGET	= xgraph
+
+COMPRESS = -Zbg
+
+# build rule suitable for gccopt (that wants the target defined before the source):
+.c.o:
+	$(CC) $(COPTS) $(CFLAGS) -o $@ $(CHECK) $<
+
+all: $(TARGET) dm_example.so
+
+All: all contrib
+
+#--------
+
+$(TARGET):	xtb_m ux11_m libxgraph.a main.c xgsupport.o xgraph.o $(OTHEROBS) tags
+# 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LIBS)
+	-no | mv $(TARGET) $(TARGET).prev
+	-rm -f $(TARGET).prev
+# we always compile main.c with DEBUG to have a maximum of debugging info available, at little or no cost:
+	$(CC) -g $(COPTS) $(CFLAGS) $(CHECK) main.c
+	$(CC) -g $(COMPRESS) $(CFLAGS) $(XG_FLAGS) -rdynamic -o $(TARGET) main.o xgsupport.o xgraph.o $(OTHEROBS) $(LIBS)
+# make_debug will either make a stripped ${TARGET}, leaving a gzipped, nonstripped copy in ${TARGET}.bin.gz, or
+# it will replace ${TARGET} by a wrapper script that will cause the debugger to be invoked (exe. in ${TARGET}.bin).
+	./make_debug $(TARGET) CFLAGS= $(CFLAGS) XCFLAGS= $(XCFLAGS) XG_FLAGS= $(XG_FLAGS) DEBUGSUPPORT= $(DEBUGSUPPORT)
+	touch .make_success
+
+refresh: $(OBJS) $(TARGET)
+	rm -i $(OBJS)
+	rm $(TARGET)
+
+tags: $(SRC) /usr/include/X11/*.h /usr/local/include/*.h xgraph.h DataSet.h xgout.h new_ps.h ascanf.h Macros.h Sinc.h ux11/*.[ch] xtb/*.[ch] Elapsed.h ALLOCA.h SS.h XXseg.h XGPen.h dymod.[ch] compiled_ascanf.h
+	ctags -wmtu $?
+
+libxgraph.a: $(LIBOBJ)
+	scripts/update_lib $@ $?
+	ranlib libxgraph.a
+
+DataSet.h: SS.h
+	touch -r SS.h DataSet.h
+
+xgraph.h: DataSet.h xgout.h Elapsed.h xtb/xtb.h
+# 	touch -r DataSet.h xgraph.h
+	touch xgraph.h
+
+# main.o: main.c copyright.h
+# 	$(CC) $(COPTS) $(CFLAGS) -g $(CHECK) $<
+
+dialog_s.o: dialog_s.c xgout.h xgraph.h hard_devices.h xtb/xtb.h ascanf.h
+# 	$(CC) -simOpt $(CFLAGS) $(CHECK) $<
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+dialog.o: dialog.c hard_devices.h xgout.h xgraph.h hard_devices.h xtb/xtb.h new_ps.h
+# 	$(CC) -simOpt $(COPTS) $(CFLAGS) $(CHECK) $<
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+hard_devices.o: hard_devices.c hard_devices.h xgraph.h xgout.h
+	$(CC) $(COPTS) $(CFLAGS) -fno-writable-strings $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+ascanfc3.o: ascanfc3.c xgraph.h hard_devices.h ascanf.h Elapsed.h ALLOCA.h xgout.h xtb/xtb.h dymod.h
+# pass XCFLAGS and XG_FLAGS because these routines used to be in xgraph.c and xgsupport.c until 20010718.
+	$(cCC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+xgPen.o: xgPen.c xgraph.h hard_devices.h ascanf.h Elapsed.h ALLOCA.h xgout.h xtb/xtb.h XGPen.h dymod.h
+# pass XCFLAGS and XG_FLAGS because these routines used to be in xgraph.c and xgsupport.c until 20010718.
+	$(CC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+xgInput.o: xgInput.c xgraph.h hard_devices.h ascanf.h Elapsed.h ALLOCA.h xgout.h xtb/xtb.h XXseg.h dymod.h
+# 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
+	$(CC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+xgsupport.o: xgsupport.c xgraph.h hard_devices.h ascanf.h Elapsed.h ALLOCA.h xgout.h xtb/xtb.h XGPen.h dymod.h
+# 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
+	$(CC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
+
+xgraph.o: xgraph.c alloca.c xgraph.h hard_devices.h ascanf.h Elapsed.h ALLOCA.h xgout.h xtb/xtb.h XXseg.h XGPen.h
+# 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(DEBUGSUPPORT) $(XG_FLAGS) $(CHECK) $<
+	$(CC) $(COPTS) $(XCFLAGS) $(DEBUGSUPPORT) $(XG_FLAGS) $(CHECK) $<
+
+alloca.o: alloca.c
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+xgX.o: xgX.c xgout.h xgraph.h ascanf.h XGPen.h xtb/xtb.h
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+hpgl.o: hpgl.c xgout.h xgraph.h
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+new_ps.o: new_ps.c xgout.h xgraph.h new_ps.h xtb/xtb.h
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+matherr.o: matherr.c
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+dymod.o: dymod.c dymod.h ascanf.h
+	$(CC) $(COPTS) $(CFLAGS) $(DYNAMIC) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+ascanfc.o: ascanfc.c ascanf.h compiled_ascanf.h Elapsed.h ALLOCA.h Sinc.h DataSet.h # xgraph.h
+	$(cCC) -BSD $(COPTS) $(XG_FLAGS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+ascanfc2.o: ascanfc2.c ascanf.h Elapsed.h ALLOCA.h DataSet.h # xgraph.h
+	$(cCC) -BSD $(COPTS) $(XG_FLAGS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+fascanf.o: fascanf.c
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+params.o: params.c params.h
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+idraw.o: idraw.c xgout.h xgraph.h
+	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+regex.o: regex.c
+	$(CC) $(COPTS) $(CFLAGS) -fno-writable-strings $(CHECK) $<
+	ar rv libxgraph.a $@
+	zero $@
+
+xg11:		$(TOBJ) xtb_m ux11_m
+		$(CC) $(COPTS) $(CFLAGS) -o xg11 $(TOBJ) $(LIBS)		
+
+xtb_m:	xtb/xtb*.[ch]
+#		sh -c "cd $(MAKEBDIR)/xtb ; cmake Makefile CLEVEL=$(_CLEVEL) $(XTB)"
+#		( cd $(MAKEBDIR)/xtb ; make "CLEVEL=$(_CLEVEL)" $(XTB) )
+		( cd xtb ; cmake xtb COMP=$(COMP) CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=$(DEBUG) $(XTB) )
+# 		( cd xtb ; cmake xtb COMP=$(COMP) CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=-gOpt $(XTB) )
+
+ux11_m:	ux11/ux11*.[ch]
+#		sh -c "cd $(MAKEBDIR)/ux11 ; make CLEVEL=$(_CLEVEL) $(UX11)"
+#		( cd $(MAKEBDIR)/ux11 ; make "CLEVEL=$(_CLEVEL)" $(UX11) )
+		( cd ux11 ; cmake ux11 COMP=$(COMP) CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=$(DEBUG) $(UX11) )
+		touch ux11_m
+
+xgtest:		xgtest.o
+		$(CC) $(COPTS) $(CFLAGS) -o xgtest xgtest.o -lm
+
+dm_example.so: dm_example.c dymod.h ascanf.h
+		-( $(CC) $(COPTS) $(CFLAGS) $(DEBUG) -shared -Wl,-soname,dm_example.so -nostdlib -fPIC -I./ -o dm_example.so dm_example.c )
+
+# 20010710: fig_dist.so depends on (the presence) of simanneal.so . It can however also include simanneal.o as an
+# "internal" module!
+
+contrib: simanneal.so fig_dist.so pearson_correlation.so
+
+FDSRC = contrib/fig_dist.c # contrib/simanneal.c
+
+simanneal.so: contrib/simanneal.c contrib/simanneal.h
+	$(CC) $(DEBUG) -shared -Wl,-soname,$@ -nostdlib -fPIC -I./ -o $@ contrib/simanneal.c
+	mkdirhier $(HOME)/.Preferences/.xgraph
+	cp -p simanneal.so $(HOME)/.Preferences/.xgraph
+
+contrib/simanneal.o: contrib/simanneal.c contrib/simanneal.h dymod.h
+	$(CC) $(COPTS) $(CFLAGS) -I. -shared -fPIC -o $@ $(CHECK) $<
+	ctags -wmtu $<
+
+# 20010710: link with simanneal.so. This hardly alters fig_dist.so, but it mentions to the loader that this shared
+# library depends on another. That way, one gets a clean runtime error (can't find simanneal.so) when the dependencies
+# can't be resolved. When simanneal.so is NOT linked, the programme will abort in that case while attempting to load
+# fig_dist.so!!
+fig_dist.so: contrib/fig_dist.o simanneal.so # contrib/simanneal.o
+	$(CC) $(DEBUG) -shared -Wl,-soname,$@ -nostdlib -fPIC -I./ -o $@ $(FDSRC:.c=.o) $(HOME)/.Preferences/.xgraph/simanneal.so
+	mkdirhier $(HOME)/.Preferences/.xgraph
+	cp -p fig_dist.so $(HOME)/.Preferences/.xgraph
+
+contrib/fig_dist.o: contrib/fig_dist.c contrib/simanneal.h dymod.h xgraph.h ascanf.h
+	$(CC) $(COPTS) $(CFLAGS) -I. -shared -fPIC -o $@ $(CHECK) $<
+	ctags -wmtu $<
+
+pearson_correlation.so: contrib/pearson_correl.o simanneal.so
+	$(CC) $(DEBUG) -shared -Wl,-soname,$@ -nostdlib -fPIC -I./ -o $@ contrib/pearson_correl.o $(HOME)/.Preferences/.xgraph/simanneal.so
+	mkdirhier $(HOME)/.Preferences/.xgraph
+	cp -p pearson_correlation.so $(HOME)/.Preferences/.xgraph
+
+contrib/pearson_correl.o: contrib/pearson_correl.c contrib/simanneal.h dymod.h xgraph.h ascanf.h
+	$(CC) $(COPTS) $(CFLAGS) -I. -shared -fPIC -o $@ $(CHECK) $<
+	ctags -wmtu $<
+
+clean:
+		-rm -f core tags a.out $(SRC:.c=.o) *.so $(TARGET) $(TARGET).prev* $(TARGET).bin* $(TARGET).dbin* xgtest.o xgtest xgtest.binout $(SRC:.c=.o.gz) *.o *.o.gz *.a *.i *.s *.b *~ *.cer* *.ps *.pspreview* *.ps.* *.cg* *.ss* kk* emsg/* emsg/..msg emsg/..err emsg/*/* emsg/*/..msg xtb_m ux11_m make_archive debug/* tmp/* *.swp_* .*.swp */*.swp_* */.*.swp *.old *.prev *.prev.* *.err *.cer* NR*.pdf examples/*.xg.xg* examples/AntSearch*.xg examples/sgt3_*.xg examples/*.xg.ps examples/*.xg.pdf *.xg *.xg.* gmon* contrib/*.o tim-asc-parm chkmap chkalign chkndn
+		-(cd xtb; make clean)
+		-(cd ux11; make clean)
+		-(cd vscanf; make clean)
+		-du
+
+remake:
+		-rm -f core $(SRC:.c=.o) $(TARGET) $(TARGET).prev* $(TARGET).bin* xgtest.o xgtest $(SRC:.c=.o.gz) *.a *~ *.cer* emsg/* emsg/*/* xtb_m ux11_m *.swp_* .*.swp
+		-(cd xtb; make clean)
+# 		-(cd ux11; make clean)
+		-du

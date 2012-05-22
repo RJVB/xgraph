@@ -1,0 +1,270 @@
+Some notes on (installing) the RJB version - the original notes appear below.
+
+Over the time (roughly 1990 - 1995 - ??? ) I changed/added several features
+to the original version. Some of this was out of need, some for fun. From a
+relatively barebones graphing programme, it has now become a rather powerful
+(IMVHO) for viewing and generating data. It contains some builtin
+transformations, but also allows several forms of almost arbitrary runtime
+processing, will handle various errorbars, allows you to display a zero value on
+a logarithmic axis, etc.
+
+I should stress that I am a programmer by necessity. It is an activity that I
+probably like too much, but nevertheless not my main activity, nor one for which
+I received or followed any formal education. That means that this "product" is
+full of hacks, and in (probably) severe need for being rewritten in many places.
+It does what I need - even makes acceptable graphs that I had published -- not
+always after retouching with Illustrator. For a certain number of things, it
+depends on external programmes that I presume installed: ghostscript for
+determining (arbitrary) postscript string dimensions, gzip and bzip2 for
+reading and writing compressed data (and that's it). Of course, I could implement
+these things the right way - nowadays there are libraries available for those
+kind of operations. They weren't when I started on this (or I didn't know about
+them). And I actually believe that my approach has some advantages :) My code also
+runs without those programmes installed - without requiring building/installation
+modifications. There are others that I could think of :))
+However, if there are things that really ought to change, just drop me a note -
+I'll add it to my wish-list.
+
+I have tried my best to not require any additional libraries in order to compile
+and/or run xgraph. You can use the fftw package, you can use GNU readline -- but
+these can be deactivated, and by default, runtime loading of the required libraries
+is performed so that the functionality may just (not) be there. For the rest, only
+plain X11 is needed. And GNU make, if you want to use the Makefiles as they currently
+are (they use GNU make's shell command, that's all).
+However, I *am* toying with the idea of porting xgraph to Trolltech's QT to make
+it platform independent. Since this requires me to learn 1) C++ and 2) QT, I don't
+think it has a very high priority/probability.
+Finally, one thing that is probably required (and that is assumed present) is a good
+and efficient memory allocator system. I heavily use dynamic memory management, and
+in a number of cases this may significantly stress the system (as running with the
+Electric Fence debugging package shows).
+
+The general setup remains unchanged. The supplied Makefiles assume the presence
+of a "compiler script" (gccopt) that sets default compilation flags, include/
+library paths, etc. A number of these scripts, for HPUX, A/UX, Domain UNIX,
+SGI Unix, AIX and Linux are supplied in the xgraph/scripts directory. This directory
+also contains the cmake script, which is not strictly necessary (though
+called in the toplevel Makefile) - and some miscellaneous scripts for e.g.
+objectfile compressing. It should be relatively straightforward to port the
+compilation scripts to your own platform (in principle, gccopt is written
+around gcc). Note: xgraph is best compiled with gcc: current development is mostly
+on Linux (where gcc is "native"), and it ensures the maximum portability anyway.
+However, I have some examples where the ascanfc modules (implementing the programming
+language) are better compiled by another compiler; such is the case under Irix 6.3
+(R5000 proc; using MIPSpro cc).
+
+Installing in a nutshell (/bin/nsh :))
+0) Unpack the distribution. This you already managed to do.
+
+1a) Have a look in the script directory. If your system is among the ones mentioned
+above, or if you have a recent gcc, you'll find the correct (g)ccopt.xx script ready.
+Copy or symlink this file, together with cmake, cx*, _obj* and zero to a directory
+in your path (I use ~/script, with links to .../xgraph/script).
+Make sure to rename the (g)ccopt.xx script to (g)ccopt, and edit it to adapt the few
+hardcoded paths in it to your system. Sorry, you have to do this by hand, unless you
+somehow acquired one of my (old?) systems :)
+20040207:
+Update: you can of course use symlinks if you plan to keep the xgraph directory around.
+Also, a number of gccopt scripts (for Linux X86 and for Mac OS X) now check for the
+presence of $HOME/.Preferences/.dev/wmachine, which they will call to set a number of
+variables that might change between machines of the same kind (e.g. Linux running on a PIII,
+a PII and an AMD Opteron). Two example wmachine scripts are given, also in the scripts
+directory.
+
+1b) Have another look in the script directory. Pick a system that is closest (to your best
+knowledge, not mine) to the ones provided. Copy the (g)ccopt.xx to (g)ccopt.<system>,
+and edit it. The whole idea behind this wrapper is to have a uniform C-compiler calling
+convention, with options identical on each system, pathnames "hardcoded" into what
+user sees of the compiler, etc. Thus, don't go ahead and change all these options. Have
+a look at their names, consult the gcc manpage (if you have gcc, you'll have to change
+very little), and modify where necessary. If a certain option is nonsense on your
+system, leave it in, but just as an empty entry in the parsing case statement. As mentioned,
+development is currently mainly under Linux, so gccopt.linux is the most uptodate, with
+the most explanatory comments. The wrapper also selects default code generation and
+optimisation options. Default is to compile for optimum performance, without debug. There
+is a -simOpt to get the compiler default optimisation (-O), -moreOpt to get some more
+(-O2), etc. Switching on debug disables optimisation - this is relevant for gcc only, in
+my knowledge (gcc will happily combine optimisation and debug, but the control flow is
+weird in that case). If you do want that combination, and your compiler supports it, there
+is -gOpt. There are a few simple programmes in the distributions (cut.c, xgtest.c) that you
+can test out your wrapper with.
+Do the rest as under 1a).
+PLEASE, IF YOU implement a new (g)ccopt, send me a copy!
+20010713: Also see the wcc script, which is a new wrapper to gccopt, for use with configure.
+ Not that I use configure (yet), but most other distributions do, and this doesn't always
+ smoothly function with gccopt.
+
+(You may need to say rehash here.)
+
+1c) Now, have a look at the Makefile. If you're going to use gcc (via gccopt), things should
+work all right for you. If you are not using a gccopt or ccopt script of mine, there are
+a few convenience variables in the Makefile that allow to control its behaviour:
+COMP: the name of the compiler to use.
+DEBUG: can contain flags to pass to all compiler invocations.
+CHECK: Is usually '-c'. This flag controls what the compiler actually does. Its relevance is when you
+       use gcc. This compiler has the option of only checking the syntax of the code it parses, without
+	  actually generating code. This is of course a lot faster, especially on big jobs like a full
+	  recompile. Try running 'make CHECK=-syntax' (with gccopt) or 'make CHECK=-fsyntax-only' (with
+	  "raw" gcc) before doing the full make.
+XG_FLAGS,XCFLAGS: flags to pass to the compiling of ascanfc3.o, xgPen.o, xgInput.o, xgraph.o and xgsupport.o .
+CLEVEL: flags to pass to the compiling of the other modules (including the ux11 and xtb libraries!).
+NB: there is a line in the Makefile [ OTHEROBS=$(shell ./machdeplibs) ] that calls a script to determine
+machine-dependent files. (It seems that this is functionality only supported by GNU make.) This script,
+together with the other ./machdep* files, are used to add machine dependent libraries and object files and flags
+respectively. You *may* need to edit these. If you do, please let me know why and how!!
+Also, you may want to have a look at config.h, ALLOCA.h and at the start of ascanf.h to see if the compile-time
+switches are set as you like and/or as are appropriate for your system.
+
+2) You may need to say rehash here. Then, either type "cmake xgraph" or just plain
+"make". If all goes well, you can go have a coffee, possibly drink it, and return
+to find xgraph ready to run. Try it out on one of the example files in the parallel
+distribution.
+
+3) Put the binary somewhere in your path. Put XGraph.sh and xgraph.pspreview in
+the same location. If you want, install the scripts in the script directory (x-plot,
+X-plot, etc) that seem useful to you. Finally, link GXraph as a symbolic link to
+xgraph. For backward compatibility, also link XGraph to xgraph. This was changed because
+not all unixes have case-sensitive filenames (Darwin:Mac OS X......)
+
+8<-------------------------------------------------------------------------------------
+
+Old notes; newer ones are in TODOHIST.
+
+951031:
+NOTE2: on IRIX, use the toplevel Makefile.sgi . As of this writing,
+xgraph.c must be  compiled without optimisation (see the note in the Makefile).
+NB: this is no longer necessary!!!
+
+960808:
+NOTE3: on gcc. This compiler is a lot more tolerant/flexible in
+(correcting) errors. This means that code which works under gcc, can crash
+when using another compiler. As an example, I passed, in _Handle_An_Event(),
+as 2nd argument to HandleMouse(): theEvent->xbutton instead of &(theEvent->
+xbutton) (the 2nd argument is a XButtonPressedEvent*). gcc generates correct
+code, so that the right information is present in HandleMouse(). When compiled
+with SGI cc, however, this caused an immediate crash, because there,
+HandleMouse got the value of the first field of theEvent->xbutton as it 2nd
+argument, with the rest also nonsense. This does make me wonder how gcc
+passes structures, however! (The address in HandleMouse() was some 608 bytes
+higher than &(theEvent->xbutton) when I checked, so maybe gcc just passes a
+structure by making a temporary copy.)
+
+NOTE4: Indexing of the ..segs. arrays in DrawData() appears to be buggy. A
+weird SIGSEGV resulted when a window was (partially) zoomed (excluding some
+sets), and afterwards an extra file was added through the READ_FILE utility
+in the Settings Dialog. Happened when realloc'ing the ..segs. arrays. After a
+lengthy posse, I found that the index X_idx-1 sometimes became -1, causing
+overwriting of (probably) headers of XsegsE[]. Indexing now goes either
+through these routines, which implement a boundary-check (in DEBUG mode), or 
+through macros with similar names, that expand to the bare-bones indexing (in
+"normal" mode). Be warned that I may not have found all occurences...! If a
+weird crash occurs, recompile in DEBUG mode (-DDEBUG), and check for warnings
+, then use your debugger to find the offending source-code line (and notify
+me!). This all breaks of course when new code doesn't use the indexer-
+routines/macros..
+
+970117
+NOTE5: Today I sort of cleaned up an old heritage: separate event-handling loops,
+one main, and one for each Dialog, that called the others where necessary. Now,
+all is done in a single main loop, although each Dialog still has its own
+event-handling routine, that is called from the main routine. Needless to say that
+this is much cleaner, and finally allows to attach a Dialog to another window without
+closing it first. The presence of a Dialog is recorded in a globall variable...
+but then.. I already had loads of'em ;-)
+
+Apart from the X-resource file XGraph.ad, which should go into /usr/lib/X11/
+app-defaults or whatever your system calls it, you can choose to install (and
+maybe edit) the file /usr/local/lib/Xgraph.psMarkers, which contains
+PostScript definitions of the standard marks used by xgraph. Furthermore, the
+XGraph.sh script can be installed at the same location as xgraph (e.g. /usr/
+local/bin) - necessary to create executable xgraph scripts.
+
+On my HP X11 server, xgraph's builtin symbols didn't work. Therefore I wrote
+support (for this server - but that can be extended of course) for a
+symbolfont. This distribution contains two: spc08x08e.snf and spc12x12e.snf
+(also supplied in bdf form). Needless to say that you need to install them
+before using 'm... (i.e. they are not compiled into xgraph). The same server
+is sometimes crashed by xgraph. I have no idea why, and/or whether this happens
+on other machines also. General tip: make an empty core-file in your home
+directory and make it unwriteable (cd ; touch core ; chmod -w core). Then you
+don't get coredumps in that directory anymore, including the (huge) ones
+caused by crashes of the X server.
+NB: by default, XGraph now uses drawing commands that generate the same symbols as are printed.
+
+A number of test-files is included. A nice one that invokes most of the (new) 
+functionality, is test5. If XGraph.sh is installed in /usr/local/bin, it should 
+be executable. It will a.o. make and execute the xgtest mentioned below. A
+nice example of xgraph's simulational capabilities is given in AntSearch, which
+contains a recent model by Muller & Wehner of a desert ant's "search-for-home"
+strategy.
+
+In the default distribution, xgraph outputs to the screen, or to PostScript,
+two spreadsheet variants, and xgraph "code". A module for HPGL is included
+(but no longer maintained by me).
+
+
+[Today ;)]
+From now on, I maintain this sort of logging in TODOHIST.
+
+Have fun,
+
+ RenE J. V. Bertin			        rjvbertin@hotmail.com
+
+   _|~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-|_
+   O] Neuro-ethologie, Vakgroep Vergelijkende Fysiologie [O
+   O]   Faculteit Biologie , Rijksuniversiteit Utrecht   [O
+   O]          Padualaan 8, 3584 CH Utrecht              [O
+   O]                   Nederland                        [O
+   O]              tel ++31-30-2534038                   [O
+   O]              fax ++31-30-2542219                   [O
+   -|~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-|-
+
+%< ------------------------- Original text: ---------------------------
+This file contains instructions for building the X11 version of xgraph.
+When unpacked,  the source is distributed into three directories:
+
+	xgraph	Top level source for the main program
+	xgraph/xtb	A mini-toolbox for constructing the hardcopy dialog
+	xgraph/ux11	A library of useful X11 programming utilities
+
+A Makefile is provided in each directory.  Type "make" in the top level
+directory to build the system.  The program assumes the machine already
+has X11 libraries and include files installed in standard locations.
+After a binary has been built,  you can move it to a standard location
+and type "make clean" to remove object files and library archives.  The
+manual page is in the file xgraph/xgraph.1.  This file can be moved
+into standard manual page locations if desired.
+
+A test program for xgraph is included.  To make this test program,  type
+"make xgtest" in the top level directory.  Try the following command
+to check out xgraph:
+
+	% xgtest 7 -5.0 5.0 0.1 | xgraph
+
+This should produce a graph with a series of parabolic curves.
+
+Normally,  the program is compiled without debugging, profiling, 
+or optimization flags.  You can change this by declaring the
+appropriate flags in the Makefile variable CLEVEL in the top level
+Makefile.
+
+Other documentation files are included.  A summary of these
+files is given below:
+
+README.ANNOUNCE		Message submitted to comp.windows.x announcing
+			the program and how to obtain it.
+
+README.GENERAL		Important notes about differences and quirks
+			of the program.
+
+README.HARDCOPY		Documenation for writing your own hardcopy
+			driver library.
+
+README.INSTALL		This file.
+
+
+			David Harrison
+			UC Berkeley Electronics Research Lab
+			(davidh@ic.Berkeley.EDU, ...!ucbvax!ucbcad!davidh)
+
+

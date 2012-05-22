@@ -1,0 +1,6 @@
+#define mark10_width 8
+#define mark10_height 8
+#define mark10_x_hot 3
+#define mark10_y_hot 3
+static char mark10_bits[] = {
+   0x7f, 0x7f, 0x63, 0x63, 0x63, 0x7f, 0x7f, 0x00};

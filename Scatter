@@ -1,0 +1,29 @@
+*PARAM_NOW* MEM[10,10000]
+
+# *LEGEND* Uniform scatter
+# *PARAM_FUNCTIONS* uniform[0,1],uniform[0,1],elapsed[1]
+# 
+# *LEGEND* normal scatter
+# *PARAM_FUNCTIONS* normal[0,1],normal[0,1],elapsed[1]
+# 
+# *LEGEND* "abnormal" scatter
+# *PARAM_FUNCTIONS* abnormal[0,1],abnormal[0,1],elapsed[1]
+# 
+# *LEGEND* random scatter
+# *PARAM_FUNCTIONS* ran[-1.7,1.7],ran[-1.7,1.7],elapsed[1]
+
+*PARAM_NOW* MEM[0,100],MEM[1,1e-2],MEM[3,pow[0.03333333333,0.5]],MEM[4,0.5]
+
+*PARAM_RANGE* 1,MEM[10],2
+*LEGEND* baseline
+*PARAM_BEFORE* elapsed[1],MEM[100,0]
+*PARAM_FUNCTIONS* self, whiledo[<[MEM[100],10000],MEM[100,add[MEM[100],1]],return[MEM[0]]],Eprint[elapsed[1]]
+
+*PARAM_RANGE* 1,MEM[10]
+*LEGEND* Additive (channel)noise - random walk
+*PARAM_BEFORE* elapsed[1]
+*PARAM_FUNCTIONS* self, MEM[0,normal[MEM[0],div[MEM[1],MEM[3]]]],elapsed[1]
+
+*LEGEND* Additive (channel)noise - on 50*(sin+1)
+*PARAM_BEFORE* elapsed[1],MEM[0,mul[50,add[1,sin[self,MEM[10]]]]]
+*PARAM_FUNCTIONS* self, MEM[0,normal[MEM[0],div[MEM[1],MEM[3]]]],elapsed[1]

@@ -1,0 +1,32 @@
+#!/bin/sh /usr/local/bin/XGraph
+*TITLE* Weber adaptation in a LMC
+*XLABEL* T
+*YLABEL* Out
+
+*EXTRATEXT*
+Definition of MEM variables:
+  MEM[0]: 1/\d\t
+  MEM[3]: WeberConstant
+  MEM[2]: nlowpass[MEM[4] * (1 + sin(t,MEM[5]) ): stimulus,MEM[33],10]
+  MEM[4]: stimulus strength
+  MEM[5]: stimulus frequency
+  MEM[6]: ON channel weight
+  MEM[7]: OFF channel weight
+  MEM[33]: WeberTau \t\
+
+*ARGUMENTS* -bb -tk -fn0 -fli -eng0 -noerr -progress -overwrite_legend -PrintInfo -process_bounds -ly -0.1,2
+
+*PARAM_NOW*comment[MEM[0,120]]
+
+*PARAM_RANGE* 0,1,MEM[0]
+
+*LEGEND* wc*weber(HP())
+*PARAM_FUNCTIONS* self, self, 0
+
+*PARAM_NOW* comment[MEM[3,1],MEM[33,0.05],MEM[4,1],MEM[5,0.25],MEM[6,1],MEM[7,0]]
+
+*DATA_BEFORE* DATA[0],MEM[2,sin[DATA[1],MEM[5]]],DATA[2]
+*data_process* DATA[0],progn[MEM[2,sub[MEM[2],nlowpass[MEM[2],MEM[33],10]]],\n
+  return[ifelse[>=[MEM[2],0],mul[MEM[6],MEM[2]],mul[MEM[7],MEM[2]]]]\n
+ ],DATA[2]
+*TRANSFORM_Y* mul[MEM[3],div[DATA[0],add[MEM[3],nlowpass[DATA[0],MEM[33],1]]]]

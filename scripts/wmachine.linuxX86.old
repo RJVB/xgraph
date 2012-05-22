@@ -1,0 +1,141 @@
+# file with machine specific definitions for gccopt, etc.
+# expected in ${DEVPREFSDIR}/wmachine or ${HOME}/.Preferences/.dev/wmachine
+# source with the command name doing the sourcing as its first argument
+
+if [ "${HOST}" = "" -a "${HOSTNAME}" != "" ] ;then
+	HOST="${HOSTNAME}"
+fi
+
+compil="$compiler"
+
+case $1 in
+	gccopt)
+
+		case $HOST in
+			bola)
+				DEFAULT_CC="/usr/local/bin/gcc33.2"
+				DEFAULT_CXX="/usr/local/bin/g++33.2"
+				ULOCAL_INCLUDE=0
+				CPU="pentium3"
+				ALT_CPU="pentiumpro"
+				INLINING="-finline-functions"
+# 			 # mmx/sse code needs supportive kernel or else coredumps will result!
+				GCC3_CPU_OPTS="-mno-mmx -mno-sse -mfpmath=387 -maccumulate-outgoing-args" # -ftracer"
+
+				VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+				OOPTIMOPT="-O3 -fstrength-reduce" #-fdelayed-branch"	# -mshared-libs"
+# The options that get turned on by maximal optimisation (default):
+				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-schedule-insns -fno-schedule-insns2 -funroll-loops -fno-unroll-all-loops"
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+				NODEBUGOPT="" #"-fomit-frame-pointer"
+				OPTIMOPT=""
+				DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+# On a PIII, this means never allowing -fcaller-saves, unless user overrides it again...
+				SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+				RWSTRINGS=0
+
+				STRIP=""
+				;;
+			irancy4bola)
+				DEFAULT_CC="/usr/bin/gcc-3.3"
+				DEFAULT_CXX="/usr/bin/g++-3.3"
+				SYNTAXCHECKER="/usr/bin/gcc-3.3"
+				ULOCAL_INCLUDE=0
+				CPU="pentium3"
+				ALT_CPU="pentiumpro"
+				INLINING="-finline-functions"
+# 			 # mmx/sse code needs supportive kernel or else coredumps will result!
+				GCC3_CPU_OPTS="-mno-mmx -mno-sse -mfpmath=387 -maccumulate-outgoing-args"
+
+				VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+				OOPTIMOPT="-O3 -fstrength-reduce" #-fdelayed-branch"	# -mshared-libs"
+# The options that get turned on by maximal optimisation (default):
+				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-schedule-insns -fno-schedule-insns2 -funroll-loops -fno-unroll-all-loops"
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+				NODEBUGOPT="" #"-fomit-frame-pointer"
+				OPTIMOPT=""
+				DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+# On a PIII, this means never allowing -fcaller-saves, unless user overrides it again...
+				SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+				RWSTRINGS=0
+
+				STRIP=""
+				;;
+			irancy|synapse)
+				DEFAULT_CC="/usr/bin/gcc-4.0"
+				DEFAULT_CXX="/usr/bin/g++-4.0"
+				SYNTAXCHECKER="/usr/bin/gcc-4.0"
+				ULOCAL_INCLUDE=0
+				CPU="pentium4"
+				ALT_CPU="pentiumpro"
+				INLINING="-finline-functions"
+				GCC3_CPU_OPTS="-mmmx -msse -msse2 -mfpmath=sse,387 -maccumulate-outgoing-args"
+
+				VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+				OOPTIMOPT="-O3 -fstrength-reduce" #-fdelayed-branch"	# -mshared-libs"
+# The options that get turned on by maximal optimisation (default):
+				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-schedule-insns -fno-schedule-insns2 -funroll-loops -fno-unroll-all-loops"
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+				NODEBUGOPT="" #"-fomit-frame-pointer"
+				OPTIMOPT=""
+				DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+# On a PIII, this means never allowing -fcaller-saves, unless user overrides it again...
+				SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+				RWSTRINGS=0
+
+				STRIP=""
+
+				if [ "$compil" = "" ] ;then
+					compil="${DEFAULT_CC}"
+				fi
+				case $compil in
+					*gcc-3.5*)
+						OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -fdump-tree-vect-stats"
+						OPTIMOPT="$OOPTIMOPT"
+						echo "# Enabling auto vectorisation" 1>&2
+						;;
+					*gcc-4*|*g++-4*)
+						MARCH="${MARCH}"
+						if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
+							OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -ftracer"
+							OPTIMOPT="$OOPTIMOPT"
+							echo "# Enabling auto vectorisation" 1>&2
+						fi
+						;;
+				esac
+				;;
+			obsolete|*)
+				DEFAULT_CC="/usr/local/bin/gcc33.2"
+				DEFAULT_CXX="/usr/local/bin/g++33.2"
+				ULOCAL_INCLUDE=0
+				CPU="pentiumpro"
+				ALT_CPU="pentiumpro"
+				INLINING="-finline-functions"
+				GCC3_CPU_OPTS="-mno-mmx -mno-sse -mfpmath=387 -maccumulate-outgoing-args"
+
+				VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+				OOPTIMOPT="-O3 -fstrength-reduce" #-fdelayed-branch"	# -mshared-libs"
+# 970113:
+# 				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-omit-frame-pointer -fno-schedule-insns -fschedule-insns2 ${INLINING}"
+# The options that get turned on by maximal optimisation (default):
+				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-schedule-insns -fno-schedule-insns2 -funroll-loops -fno-unroll-all-loops"
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+				NODEBUGOPT="" #"-fomit-frame-pointer"
+# 				OPTIMOPT="$OOPTIMOPT"
+				OPTIMOPT=""
+				DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+# On a PIII, this means never allowing -fcaller-saves, unless user overrides it again...
+				SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+				STRIP=""
+				;;
+		esac
+		;;
+	*)
+		echo "$0: PROBLEM: we should never be called with unknown argument >$1<"
+		;;
+esac

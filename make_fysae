@@ -1,0 +1,112 @@
+#
+# Makefile for the xgraph program
+#
+# David Harrison
+# University of California,  Berkeley
+# 1987
+#
+# NOTE: the libCreate library is a library I wrote to replace XCreate
+#       and XCreateTerm with ones I think provide a better interface.
+#       If you do not have this library,  you can get it from hoser.
+#       If you don't want to use it,  just take it out of the LIBS
+#	line below.
+#
+
+CLEVEL =
+DEBUG =
+_CLEVEL	=  $(CLEVEL) $(DEBUG) #-Ac
+CFLAGS	= $(_CLEVEL) -Ixtb -Iux11
+CC	= gccopt
+
+SRC	= xgraph.c xgX.c hard_devices.c dialog.c hpgl.c new_ps.c matherr.c idraw.c # params.c
+OBJ	= xgraph.o xgX.o hard_devices.o dialog.o hpgl.o new_ps.o matherr.o idraw.o # params.o
+
+UX11	= libux11.a
+LUX11 = -lux11
+XTB	= libxtb.a
+LXTB = -lxtb
+LIBS	= -L. -lxgraph -Lxtb $(LXTB) -Lux11 $(LUX11) -lX11 -lm
+
+TARGET	= xgraph
+# /usr/bin/rcp $*.c bertin@fysae:/usr/tmp/.bertin/src/xgraph 
+
+#--------
+
+$(TARGET):	libxgraph.a xtb_m ux11_m tags
+# 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LIBS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(LIBS)
+
+tags: $(SRC) xgraph.h new_ps.h ux11/*.[ch] xtb/*.[ch]
+	ctags -wmtu $?
+
+libxgraph.a: $(OBJ)
+	ranlib libxgraph.a
+
+dialog.o: dialog.c hard_devices.h
+	$(CC) $(CFLAGS) -c $<
+	ar rv libxgraph.a $@
+	zero $@
+
+hard_devices.o: hard_devices.c hard_devices.h
+	$(CC) $(CFLAGS) -c $<
+	ar rv libxgraph.a $@
+	zero $@
+
+xgraph.o: xgraph.c xgraph.h
+	$(CC) $(CFLAGS) -simOpt -c $<
+	ar rv libxgraph.a $@
+	zero $@
+
+xgX.o: xgX.c
+	$(CC) $(CFLAGS) -c $<
+	ar rv libxgraph.a $@
+	zero $@
+
+hpgl.o: hpgl.c
+	$(CC) $(CFLAGS) -c $<
+	ar rv libxgraph.a $@
+	zero $@
+
+new_ps.o: new_ps.c
+	$(CC) $(CFLAGS) -c $<
+	ar rv libxgraph.a $@
+	zero $@
+
+matherr.o: matherr.c
+	$(CC) $(CFLAGS) -c $<
+	ar rv libxgraph.a $@
+	zero $@
+
+params.o: params.c params.h
+	$(CC) $(CFLAGS) -c $<
+	ar rv libxgraph.a $@
+	zero $@
+
+idraw.o: idraw.c
+	$(CC) $(CFLAGS) -c $<
+	ar rv libxgraph.a $@
+	zero $@
+
+xg11:		$(TOBJ) xtb_m ux11_m
+		$(CC) $(CFLAGS) -o xg11 $(TOBJ) $(LIBS)		
+
+xtb_m:
+#		sh -c "cd $(MAKEBDIR)/xtb ; make CLEVEL=$(_CLEVEL) $(XTB)"
+#		( cd $(MAKEBDIR)/xtb ; make "CLEVEL=$(_CLEVEL)" $(XTB) )
+		( cd xtb ; make "CLEVEL=$(_CLEVEL)" $(XTB) )
+
+ux11_m:
+#		sh -c "cd $(MAKEBDIR)/ux11 ; make CLEVEL=$(_CLEVEL) $(UX11)"
+#		( cd $(MAKEBDIR)/ux11 ; make "CLEVEL=$(_CLEVEL)" $(UX11) )
+		( cd ux11 ; make "CLEVEL=$(_CLEVEL)" $(UX11) )
+
+xgtest:		xgtest.o
+		cc $(CFLAGS) -o xgtest xgtest.o -lm
+
+clean:
+		rm -f $(OBJ) $(TARGET) xgtest.o xgtest #* *~
+		cd xtb; make clean
+		cd ux11; make clean
+	gccopt  -Ixtb -Iux11 -simOpt -c xgraph.c
+Bad argument: -txxx
+Xos.h: 105: warning- Redefinition of macro SIGCHLD.

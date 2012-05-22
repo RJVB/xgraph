@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN"><html><head><title>Inline version [x86] of exp is buggy, exp(-Inf) should be zero.</title>
+   
+   <link rel="Index" href="_files/index.html">
+   <link rel="made" href="mailto:p.dalgaard%40biostat.ku.dk">
+   <meta name="robots" content="index,nofollow">
+   
+   <link rel="Previous" href="_files/000665.html">
+   <link rel="Next" href="_files/000668.html"></head>
+
+ <body bgcolor="#ffffff">
+   <h1>Inline version [x86] of exp is buggy, exp(-Inf) should be zero.
+   </h1>
+    <b>Peter Dalgaard BSA
+    </b> 
+    <a href="mailto:p.dalgaard%40biostat.ku.dk" title="Inline version [x86] of exp is buggy, exp(-Inf) should be zero.">p.dalgaard@biostat.ku.dk
+       </a><br>
+    <i>04 May 2000 16:52:00 +0200</i>
+    <p></p><ul>
+        <li> Previous message: <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/000665.html">library bug?
+</a></li>
+        <li> Next message: <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/000668.html">Inline version [x86] of exp is buggy, exp(-Inf) should be zero.
+</a></li>
+         <li> <b>Messages sorted by:</b> 
+              <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/date.html#667">[ date ]</a>
+              <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/thread.html#667">[ thread ]</a>
+              <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/subject.html#667">[ subject ]</a>
+              <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/author.html#667">[ author ]</a>
+         </li>
+       </ul>
+    <hr>  
+<!--beginarticle-->
+<pre>During the development of the R package (www.r-project.org) we
+stumbled over some boundary cases where we were calculating
+exp(log(0)) and it was giving wrong results.
+
+There seems to be a bug in glibc2.1 on Intel architectures:
+
+$ gcc glibc-bug.c -lm &amp;&amp; ./a.out
+0
+$ gcc -O glibc-bug.c -lm &amp;&amp; ./a.out
+nan
+$ cat glibc-bug.c
+#include&lt;stdio.h&gt;
+#include&lt;math.h&gt;
+main(){
+        volatile double neginf = -1./0.;
+        printf("%g\n", exp(neginf));
+}
+
+I'm pretty sure one does want exp(-Inf) to be zero, not NaN, although
+I don't know whether it is in the IEEE standard. The problem can be
+traced to the subtraction of two infinities in the inline math code.
+
+I took the liberty of picking the brains of Bill Metzenthen (of FPU
+emulation fame) and he came up with the enclosed suggestion for a patch.
+
+-- 
+   O__  ---- Peter Dalgaard             Blegdamsvej 3  
+  c/ /'_ --- Dept. of Biostatistics     2200 Cph. N   
+ (*) \(*) -- University of Copenhagen   Denmark      Ph: (+45) 35327918
+~~~~~~~~~~ - (<a href="mailto:p.dalgaard@biostat.ku.dk">p.dalgaard@biostat.ku.dk</a>)             FAX: (+45) 35327907
+------- Start of forwarded message -------
+From: Personal files for Bill &lt;<a href="mailto:billm@melbpc.org.au">billm@melbpc.org.au</a>&gt;
+Message-Id: &lt;<a href="mailto:200004281221.WAA07092@melbpc.lorentz.au">200004281221.WAA07092@melbpc.lorentz.au</a>&gt;
+Subject: Re: IEEE standard for exp(-Inf)
+To: <a href="mailto:p.dalgaard@biostat.ku.dk">p.dalgaard@biostat.ku.dk</a> (Peter Dalgaard BSA)
+Date: Fri, 28 Apr 2000 22:21:28 +1000 (EST)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=ELM956924487-5786-0_
+
+
+
+
+--ELM956924487-5786-0_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Peter,
+      you wrote:
+
+&gt;<i> You wouldn't happen to be able to cook up a patch that fixes the
+</i>&gt;<i> assembler code while using zero extra clock cycles, would you (well,
+</i>&gt;<i> ok, near-zero...)? It might be easier to convince the glibc guys to
+</i>&gt;<i> fix things if they were given a patch.
+</i>
+I don't know of any neat trick to solve this problem.  The obvious fix
+(fxam, conditional jump, etc) has a relatively low cost (at least on a
+486 where f2xm1 costs between 140 and 279 cycles) in terms of speed
+but does add bytes.
+
+I've attched a patch to this message which will do the job.
+
+
+Cheers,
+       Bill
+
+
+--ELM956924487-5786-0_
+Content-Type: *unknown*/
+Content-Disposition: attachment; filename=glibc-patch
+Content-Description: /tmp/glibc-patch
+Content-Transfer-Encoding: 7bit
+
+--- /usr/include/bits/mathinline.h~	Sun Aug 22 11:02:02 1999
++++ /usr/include/bits/mathinline.h	Fri Apr 28 21:35:41 2000
+@@ -332,13 +332,21 @@
+   register long double __value;						      \
+   register long double __exponent;					      \
+   __asm __volatile__							      \
+-    ("fldl2e			# e^x = 2^(x * log2(e))\n\t"		      \
++    ("fxam\n\t"								      \
++     "fstsw %%ax\n\t"							      \
++     "sahf\n\t"								      \
++     "jnc 1f\n\t"							      \
++     "fld1\n\t"								      \
++     "jmp 2f			# st(1) has NaN or Infinity\n\t"	      \
++     "1:\n\t"								      \
++     "fldl2e			# e^x = 2^(x * log2(e))\n\t"		      \
+      "fmul	%%st(1)		# x * log2(e)\n\t"			      \
+      "fst	%%st(1)\n\t"						      \
+      "frndint			# int(x * log2(e))\n\t"			      \
+      "fxch\n\t"								      \
+      "fsub	%%st(1)		# fract(x * log2(e))\n\t"		      \
+      "f2xm1			# 2^(fract(x * log2(e))) - 1\n\t"	      \
++     "2:\n\t"								      \
+      : "=t" (__value), "=u" (__exponent) : "0" (__x));			      \
+   __value += 1.0;							      \
+   __asm __volatile__							      \
+
+--ELM956924487-5786-0_--
+
+------- End of forwarded message -------
+
+</pre>
+
+<!--endarticle-->
+    <hr>
+    <p></p><ul>
+        <!--threads-->
+	<li> Previous message: <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/000665.html">library bug?
+</a></li>
+	<li> Next message: <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/000668.html">Inline version [x86] of exp is buggy, exp(-Inf) should be zero.
+</a></li>
+         <li> <b>Messages sorted by:</b> 
+              <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/date.html#667">[ date ]</a>
+              <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/thread.html#667">[ thread ]</a>
+              <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/subject.html#667">[ subject ]</a>
+              <a href="http://mail.gnu.org/pipermail/bug-glibc/2000-May/author.html#667">[ author ]</a>
+         </li>
+       </ul>
+</body></html>

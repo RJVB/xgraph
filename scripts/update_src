@@ -1,0 +1,32 @@
+#!/bin/tcsh -f
+# copy source, object and library files to the target directory
+# indicated as the 1st & only argument. Supposes we're currently
+# in a directory in which a clean compile was (successfully)
+# performed.
+
+if ( $# == 0 ) then
+	echo "Need a target directory"
+	exit 1
+endif
+
+set tdir=$1
+echo $tdir
+
+# foreach J ( *.o */*.o )
+foreach J ( `find . -name "*.o" -print | sort` )
+	set d="`dirname $J`"
+	set f="`basename $J .o`"
+	cp -p $d/$f.{c,o,o.gz} $tdir/$d
+end
+foreach J ( `find . -name "*.h" -print | sort` )
+	set d="`dirname $J`"
+	cp -p $J $tdir/$d
+end
+foreach J ( `find . -name "*.a" -print | sort` )
+	set d="`dirname $J`"
+	cp -p $J $tdir/$d
+end
+
+set CF="Makefile,scripts/gccopt.*,xgraph.db.script"
+echo "Verify the need to update the following files: $CF"
+ls -ltr {.,$tdir}/{$CF}

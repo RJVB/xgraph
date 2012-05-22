@@ -1,0 +1,2234 @@
+xtb_ti_ins(): redraw the string so that codes become visible when user
+	strikes the first key.
+
+check whether SAS_ routines really need to do conversion of angles onto <-radix/2,radix/2] ...
+
+990708:
+DrawGridAndAxis: incorporate ticks/grid drawing in the grid-text drawing loop. The original
+	tick/grid loop must be preserved because it determines YLabels and YStart. Are there
+	other pitholes? This one is important because of the exact_?_axis and ValCat_?_axis options
+	which can draw a grid/tick label at another position than expected. For ValCat axes, we
+	maybe don't want ticks/gridlines without a category?
+		990709: done!
+990726:
+HandleMouse, displacing a UserLabel doesn't (?) require a raw_display redraw. The currently
+	implemented *supposedly* silent redraw is not silent. Aborting the operation should
+	re-unset raw_display.
+		199910: remedied.
+
+990802:
+CollectPointStats(): include markerSize if negative (i.e. if specified in "world" co-ordinates).
+	Add wi->SS_LX and wi->SS_HX for that purpose, which can also be used in vanity mode.
+
+990901:
+DrawGridAndAxis(): assure that a log_zero symbol/value is always shown when there is one.
+
+990917:
+draw_set management: the Settings Dialog doesn't always show the right value(s). Doing
+a reverse twice remedies this?
+
+991024:
+It would be nice to change *COMMENT* behaviour to mark the comment added like this,
+such that they are always dumped.
+
+991209:
+IntensityLegend; always_visible doesn't work; add il_ul button.
+
+20000207:
+	update script directory; vipat, zero; make_archive!!
+		Done. xgraph now works under Linux. Still needs checking:
+		- d2str() no output issue (related to IntensityLegend?)
+		- coredump when ValCat CustomFont not present.
+
+20000504: -legend_ul (and [xy]_ul?) is not restored correctly after re-reading
+	with a transformation that sensibly changes the axes. I suspect some
+	test that does not take this into account?
+	20000505: done. It was the new Handle_MaybeLockedWindow() routine that should
+	call TransformCompute() with wi->silenced=False when drawing the window for
+	its very 1st time.
+
+20000505: made a debut with the implementation of XGPens, that should allow the user
+	to incorporate drawing commands in the different possible processing stages. The
+	goal of this is to increase the flexibility of the different types of graphs possible,
+	without having to add C code to the increasingly complex DrawWindow, DrawData, etc.
+	routines. The drawback is that it will be very hard to implement legends with this,
+	since the ascanf() code still does not have support for strings.
+
+20000505: ascanf string support could be
+	remedied by implementing routines that operate on the description field of _ascanf_variable
+	variables, and a new opcode that would tell some other routines to use/print that field
+	instead of the variable. This would be a hack (re-using an existing field...) but maybe
+	sufficient... The nice advantage is that all other routines will just use the variable
+	as they otherwise would, which 1) allows a combination of string+value/flag and 2) prevents
+	the necessity to check for yet another type of variable :)
+
+20000510: Stringpointers now exist, hacked in to make use of the "usage" field as described above.
+	Procedures can now also take arguments with a mechanism like that of Bourne shell functions:
+	the $ArgList array contains them. This array is updated before calling a procedure (not centralised:
+	verify at each new location, before calling the convenience routine evaluate_procedure()!), and
+	for expressions (functions, variables, procedures..) that have an accesshandler assigned.
+
+20000511: There is a small memory leak somewhere. Not very amazing, but this one wastes a small amount
+	at each redraw. Which becomes detectable when animating a window.
+
+20000512: I changed $ArgList to $. I also changed name-checking somewhat in the check_for_ascanf_function()
+	routine. It used to compare the supplied name (name) with the available names (af->name) over strlen(af->name),
+	once hash(name)==hash(af->name). The comparison is now over hash_length(name), which should prevent
+	that e.g. name="$bla" matches to af->name="$" in the (unlikely) case of a hash overflow/wrap-around.
+
+20000512: on linuxX86: mul[Inf,0] gives a NaN (prints nan) which is not recognised as such by xgraph?! Idem
+	for var[nan]...
+	** Resolved - i.e. programmed around. Recognition of 'nan' is *not* an XGraph feature!!
+
+20000818:
+	The strange jumps of modal dialog boxes are resolved, but now the (xtb_menu) boxes appear too high when
+	called as feedback.
+
+20000904:
+	Check what happens with barplot autoscale when fit-after-draw. Also add dimensions of XGPenText to CollectPenStats
+		done.
+
+20000926:
+	Implementing automatic stringvariables so that it is no longer necessary to define a variable to define a string. This
+	definition is of course done internally: to that end, there is a 2nd, internal list of ascanf_Functions. This one
+	currently only contains a single fixed, "DCL" entry that serves as hook. When a not-known name of type "foo" or `"foo"
+	is encountered, extra ascanf code is generated and interpreted that will define an internal variable with name
+	"foo" (with the quotes!), usage string "foo" (without the quotes of course), and value `<foo-address>. The garbage
+	collection of these variables is simple. A variable remains in existence as long as the last compiled expression that
+	references it (CHECK THIS) is not destroyed. Thus, when "foo" is referenced only once by a non-compiled expression,
+	it remains in existence until xgraph exits. If a compiled expression uses it (it is now defined), "foo" will be
+	deleted when that expression is destroyed, unless it is still in use by another compiled expression (CHECK THIS).
+	There should be no difference between "foo" and `"foo" - as long as there is not already a global variable with that
+	name!! check_for_ascanf_function() (and others) check the internal list *after* having checked the external, global list:
+	user-visible variables take precedence over internal.
+	Creation is implemented in _fascanf(), as a special case of undefined-variable definition. Spaces are allowed in variables
+	starting with a quote.
+	20001003: Done. Also implemented automatic arrays.
+
+20001006:
+	A begin has been made to support vertical UserLabels; for the moment controlled by the internal global variable VerticalLabel.
+
+20001006:
+	There should be support for CustomFonts for PenText calls, similar to the per-position colour specification;
+	SelectPen[n], PenFont["PostScriptFontName",PSSize,"X-font-spec"[,"alt-X-font-spec"]]
+
+20001029:
+	Provide DataSet point-sorting hook to be called through ascanf(). Internal qsort() is on a temp. point-index array; the
+	internal qsort-callback routine passes the to-be-compared elements in this array on to a user-supplied ascanf_procedure.
+
+20001031:
+	There is an issue with the *SPLIT* functionality. Extra points appear in the disconnected sets after the statement. Cf.
+	test-SPLIT.xg
+		20001101: resolved. The implementation of linked sets had introduced a 2nd "current set pointer" that did not get
+		updated when a split was performed.
+
+20001102:
+	One can now put a pointer to some variable in an array, and later dereference that pointer via DCL[array[n] ... ]. This
+	currently only functions for compiled expressions. Variables can be thus accessed indirectly read/write, arrays
+	only read. That is a bug (the DCL implementation in ascanf_function() needs to be verified).
+		20001103: resolved.
+
+20001104:
+	Verify whether NaN is considered False in all cases...
+
+20001114:
+	There must be a bug in ReadString, maybe having to do with the non-consideration of # chars within quotes.
+	When reading VV1b_AssocObs.xg as the only file, there is a crash after ReadString of the line
+	"*EVAL* DLC[`OutputDescription,...". At the last commented line of this expression everything was still OK.
+	Check what happens afterwards. ReadString returns only the last part of the expression.
+		It doesn't seem that there is anything wrong with the code: looks well programmed, and ReadString *returns
+		the correct string*. Yet, in this case, the buffer's base address is corrupted. This buffer is allocated
+		dynamically from the stack (using the ALLOCA). However, when one uses a "normal" pointer that is kept pointed
+		at the buffer's base-address ( ALLOCA(BUFFER,...); char *buffer= BUFFER), the code runs fine, and does not crash.
+20001115:
+	Ha... more of the same!! ReadData() used ALLOCA to allocate its read buffer. When a recursively called ReadString instance
+	increased the line length (*BUFLEN*), this updated the global variable local_buf_size (referenced through the LMAXBUFSIZE
+	macro). Of course, the local read buffer of the calling instance(s) of ReadData remained correct, but not their idea of
+	its size. Result: correct code that overwrote invalid memory because it was told to do so... The solution is thus to
+	either always maintain also a local copy of the buffer length, *or* reallocate it when necessary. The latter of course
+	requires allocation on the heap, and not on the stack (but maybe using alloca() by hand *would* work?), and good book
+	keeping. The problem with C is that this kind of bug is very hard to trace without proper tools... because it induces a
+	crash at a completely unrelated point :(
+
+20001116:
+	Two things added. After yesterdays bug was traced and solved, the programme crashed almost immediately. That was traceable
+	to an error in an ascanf() programme: a call to printf[] had more '%s' fields than actual arguments. I added a possibility
+	to impose a syntax check by the very callback routine (SyntaxCheck field in ascanf_Function structure), during the compile
+	phase. ascanf_printf[] counts its '%s' arguments, and nags about a mismatch (although too little %s fields probably are not
+	dangerous, the user won't get what he expected to get).
+	The second thing is the transfer of the Sinc routines from my old cx::vars library. These routines take a Sinc structure,
+	that can "hide" either a file or a string pointer. The goal is obvious: use the same "sinc" routines to output either to
+	file or to a string, letting lowlevel routines do the appropriate things. In case of string output, they also handle the
+	expansion of the string. Used this functionality to modify print_string, print_string2 and print_string_string (all in
+	xgsupport.c). The new print_string() routine is now used in dialog_s.c to display the processing expressions in the Settings
+	dialog with proper codes in strings contained within these expressions (i.e. tabs, newlines etc. are shown as #x.. opcodes,
+	just like they were specified in the command file). This Sinc functionality cost me... almost 3000 bytes extra in the binary :)
+
+20001129
+	Changed to another optimisation mode. Instead of using -ffloat-store to ensure IEEE compatibility, I now use -fno-float-store,
+	combined with a change to the FPU state, as described in one of the gcc info documents. This speeds up things a little bit. I
+	also opted for -fomit-frame-pointer instead of the opposite, because it gives an additional speed gain, and is apparently not
+	problematic for debugging. HOWEVER. For a reason that really escapes me, I can no longer use (r)fftw. I get a bunch of -NaN128
+	as a return. This really makes me think of yet another alignment problem, but now within a shared library. Eeky, but
+	fortunately I didn't really use that part. An binary of a few days old ran happily with the same (newly compiled) shared
+	libs. I was stupid enough not to find by elimination which xgraph module (objectfile) contains the apparently offending code;
+	recompiling that older code with the new settings produced the same deficit. Even weirder: recompiling with the old flags
+	did not restore the correct behaviour. Compiling the rfftw test with my own gcc wrapper worked OK, so I really don't know anymore.
+
+20001203
+	I think I got it now. This problem with the call to the rfftw lib. didn't always occur (called through the same lowlevel
+	routine in ascanfc2.c). A testprobe, testrfftw() pinpointed the problem: a call to overlap() in TransformCompute(). The
+	overlap() function returns a double (it actually returned nothing), but was not declared as such in TransformCompute(). Stupid
+	me thought that this was not necessary because I never used the return value from that function. This turns out to be a wrong
+	assumption; it *may* be necessary to declare all routines not returning an int to preserve stack (alignment) integrity. Even
+	if the disturbance is of temporary nature: the very call to testrfftw() was sufficient to restore matters in such a way that
+	the next call would not encounter any problems. (Which proved very helpful in pinpointing the problem... :) )
+	Declaring overlap() as a function returning a double solved the problem... TODO: make a headerfile containing the declarations
+	of all functions not returning an integer (at least).
+
+20001204
+	Well, I think it is done. I opted for the least hackery solution; making a single headerfile containing all declarations for
+	functions that are not really intended to be static to a given module. This of course gives a rather large file, with many
+	decls. for functions (probably) won't ever be called outside their own module, and likely some warnings about casts or
+	type definitions within a function declaration's scope. But at least the code has become a bit cleaner now. Most K&R style
+	definitions have been modernised in the same scoop. The headerfile (fdecl.h) is organised in sections, one for each module,
+	in alphabetical order, with the function decls. in alphabet. order too.  It also includes a few other headerfiles there were
+	type definitions might otherwise be missing. If these other headerfiles contain the standard checks against double inclusion,
+	this won't pose any problems. The fdecl.h file is *not* to be included in every sourcefile, though; notable exceptions are
+	the ascanfc*.c files, that sort of form a group apart (they must *not* include xgraph.h &co). As a matter of principle, fdecl.h
+	should be included in any (new) toplevel module doing some form of (input and) output. Meaning:
+		main.c xgraph.c xgsupport.c xgInput.c ... : main graphics, misc. support routines and input/output of data files;
+		dialog.c dialog_s.c ... : user interaction dialog routines; hardcopy, settings;
+		new_ps.c xgX.c ... : lowlevel routines for drawing the data; in PostScript, in X11;
+
+20001204
+	Note regarding floating point on Intel Pentium processors (and clones?), on linux.
+	As evident from the few notes above (1129-1204),
+	floating point is a bit precarious on these processors, especially if one is concerned about portability and such. On these
+	processors, an additional module can be linked in, x86_gcc_fpe.o, that will control the FPU's behaviour. By default, it
+	will put the FPU in double [64 bits] precision. When the DEFAULT_FPU env. variable is set, it will leave the FPU's state as it is
+	(probably meaning in extended [80 bits] precision). When the SHOW_FPU env. var is set, the routine prints the old (and new)
+	state as a hexadecimal number. See fpu_control.h for more information.
+
+20001212:
+	Make a version of xtb_input_dialog() that accepts an indefinite number of input fields, by passing 2 identical-sized arrays
+	of label strings and default-text strings.
+
+20001215:
+	Finish cleaning up DrawLegend2() dimensions calculation. Reduce the right margin: it now seems too big when -fn0. Also
+	a first highlighted set overdraws the top border.
+	Initialise X,YUnitsPerPixel in do_hardcopy() so that DrawLegend2() has a more or less correct idea about the window's
+	scaling. Verify: with msize.xg, marker size < 0 and -aspect1, the printed DrawLegend2 is better when -fit_after0!
+
+20001218:
+	I think DrawLegend2() is ready. I hope I did not overlook a situation that will afterwards prove in need of more attention.
+
+20001221:
+	A *SET_INFO_LIST* containing a *SET_PROCESS*\n (switching on read-till-empty-line mode) doesn't terminate at the next empty
+	line?!
+
+20010104:
+	Made a beginning with support for afm files, to give better string dimension calculation. the afm files contain a line
+	with 'C xxx ; WX www ; N name ; ...", where xxx is the ascii number, name the name of the character at that location,
+	and www is 100 times the width of that character at 10pt size. Adding these values, and dividing by the current
+	PS resolution (0.06 at 100%) gives the true width. At this point, the only thing done is the addition of some code (in
+	debug mode) to the postscript dump that makes gs print out the size of each rendered string.
+	A quick hack solution is to use ghostscript (gs) for this. The advantage is that it will work for all fonts that that
+	programme can display, the drawback is that it won't work for fonts that gs doesn't know about (and thus can't be
+	previewed). And of course it will be rather slow (0.2 sec for the command plus the time to create the file, the
+	pipe, etc):
+	gs -quiet -dNODISPLAY -dBATCH size.ps
+	size.ps:
+	%!PS
+	/graph-scale 1.000000 def
+	0.06 graph-scale mul 0.06 graph-scale mul scale
+	/buf 128 string def
+	/Palatino-Bold findfont 333.333 scalefont setfont
+	(w=) print (MMnn1100) stringwidth pop buf cvs print (\n) print
+	%%EOF
+
+	This is indeed slow. Therefore, a caching scheme has been implemented that uses a 2-stage search in a history of
+	printed strings. This is still faster than firing up gs every time - especially due to the overhead. What remains
+	to be done is the polishing. The Font_Width_Estimator should be ignored when this mode is active, I guess, and it should
+	no longer be necessary to scale with maxFontWidth.
+
+20010105:
+	Getting there. Remaining: legend box width depends on Font_Width_Estimator (through dev_info.legend_width?). - resolved.
+	x-position of Y-axis is wrong when xname_placed?! X-position of non-placed Y-label is wrong. - resolved.
+	Type1 legend: Overlap string a bit lower (rel. to bar-type items?), and more padding at the right. - done
+	The wrong x-pos. of the Y-axis (and Y-label) does not occur when no axis are drawn, not even when xname-placed - resolved.
+	There is an issue with ValCatX when FitAfter: somehow, Xincr is not correct when the final output is generated - resolved by
+	dividing XLabelLength (true value) by the real X_axis_width in the Xincr calculations.
+	Set axis_stuff.?LabelLength to 0 when modifying the corresponding ValCat field, or transform_axes. - done.
+	put used_gsTextWidth in LocalWin! - done.
+
+20010106:
+	Should modify postscript vertical centering such that a string vertically centered in the bounding box does not have ascenders
+	or descenders outside the box. Should modify the function c-f (and c-rf) [center-font-val] for that purpose.
+
+20010107:
+	Vertical UserLabels have been "published". Setting it goes through the Settings dialog, with a mechanism that is not yet
+	very elegant (the filenumber input field...).
+
+20010107:
+	Polish the heuristic to determine Xincr when use_gsTextWidth. Currently, this is often too small, which (?) can lead
+	to an unwanted translation (Xbias) when Xbias_threshold> 0.
+
+20010108:
+	Verify if all data returned by XFetchName is duely XFree'. - done.
+
+20010108:
+	Correct the expon. notation for at least the Y axis: a wrong "separator" is used, and the exp. is not correctly placed
+	in PostScript.
+
+20010110:
+	First implementation of support arrays of pointers. These already existed implicitely in that one could create them,
+	but not export them. Now, support is 100% for arrays of strings. Arrays of pointers to other variables (whether
+	string variables or not) or procedures are exported in a syntactically correct way, but not necessarily before
+	the variables/procedures they depend on are defined. For such arrays, a warning is included in the output file, that
+	will print during the dumping, and during a read of the generated file.
+
+20010111:
+	There is a small bug in DrawLegend2() that makes it impossible in some cases (markers with small font?) to
+	click in the legend to highlight a set when the legend is not placed. - done. (was no bug: see 20010112 note in
+	TransformCompute()).
+
+20010112:
+	Implement a possibility to *add* code to an already existing expression (*DATA_INIT*+, etc). This can be relatively
+	easy by modifying strcpalloc() to allow concatenation, with some parsing. Needed parsing: removing the leading '+' with
+	whitespace, and the possibly trailing whitespace-'@' after the existing expression.
+	20010114: is even simpler, at least for all those expressions that get test-compiled once in xgInput.c: see the
+	case for *DATA_INIT*. Concatenation is done directly into the appropriate ReadData_proc field. Need to implement
+	the other cases in the function involved.
+
+20010112:
+	There must be a small bug somewhere in ascanfc.c. After some complex processing, I find variables with a usage text
+	that belonged to another, deleted variable.
+
+20010209:
+	Implemented the '?' prefix/operator. This one "requests" the previous value returned by scalar, array, procedure or
+	function - when used, any argumentlist is ignored!
+
+20010209:
+	Corrected a bug in ReadString() that could cause the truncation of lines (last 2 characters) being folded while in
+	joining mode. I am surprised I never bumped into this one before!
+
+20010210:
+	Start implementation of scanf functionality. There exists a vscanf() family.
+	scanf[ <fileno|fpointer|string>, <format-string>, <offset>, <target-pointer>, ..]
+		Where all target-pointers should point to doubles with the %lf format specifier. <offset> can be a number (of bytes)
+		or a string after which the scan is to take place. No scanning will take place when an incorrect/invalid offset
+		is given. When <offset> is not a scalar or a string-pointer, it is assumed to be 0. Returns number read.
+			> Implemented.
+			> NB: uses vsscanf() and vfscanf() that are not available on IRIX?!?!
+	ascanf[ <fileno|fpointer|string>, <input-offset>, <store-offset>, <read-N>, <target>]
+		Where <input-offset> is as <offset> in scanf[]; <store-offset> is a scalar specifying where in the array the
+		values read will be stored, <read-N> is a scalar/pointer specifying the number of values to read, and <target>
+		is a pointer to a scalar or array.
+
+20010222:
+	Corrected a minor bug in the markerstyle management.
+
+20010306:
+	Implement a noverbose[] function.
+
+20010330:
+	Find out a bit more about the manpage formatting commands... especially how to turn off the .sp1 .nf <verbatim text> .nf
+	command sequence.
+
+20010410:
+	Fixed some (potential) errors in the ascanf string handling, a bug in the Function_args macro that would allow
+	more arguments than ASCANF_MAX_ARGS (..!) and migrated towards a toplevel $HOME/.Preferences directory.
+
+20010411
+	Fixed some more little problems, including ones introduced by allowing the number of points in a set to be changed
+	via numPoints[].
+	There is an issue with the shown-data-stats in QuickMode: each point seems to be counted 4x (2x when not fitting).
+	This of course influences the calculated stdev.
+
+Don't allow too small steps in DrawAxis; min. 1/100 of range (when step==1)?
+
+20010413
+	A startup file is expected in $HOME/.Preferences/.xgraph/xg_init.xg . User defined variables can be put on the
+	internal dictionary with the IDict function (changes the scope).
+
+20010416
+	Added the DSC %%PageOrientation command to the PostScript output. Gv uses this to automatically adjust the
+	orientation of its window.
+
+20010420, 20010427:
+	Corrected some errors in the DSC output generated. NB: PostScript (DSC?) lines should not exceed 255 characters
+	to conform to the proposed standard (i.e. to allow certain braindead programmes to interpret them)!
+
+20010422:
+	Corrected a nasty bug in ascanf_nDindex().
+
+20010428:
+	Made a start with the implementation of dynamic module loading. The load/unload routines are in dymod.[ch] . This
+	is initially intended to load additional ascanf routines, that are to be hooked in the programme's tables through
+	library initialisation routines. dymod.c is to be #included in xgInput.c .
+	20010430: mechanism functional under Linux. To be tested and possibly extended. One nice extension would be an automatic
+	loading via ReadData (typecheck at start; if ELF shared lib, than LoadModule...)
+	d
+
+20010503:
+	Storage ('*' operator) doesn't function reliably in non-compiled mode?! Corrected 20010504 (simplified mechanism...)
+
+20010504:
+	Make ascanf_printf[] robust against too few arguments. Move the check for the number of format fields to before
+	the parsing of the arguments, and add empty strings as necessary.
+
+20010504:
+	When -bb0, ticks are drawn on the upper and right border?!
+
+20010516:
+	XGraph R/CMB2c2.rsmp/stimuli.arw.xg.bz2 -f R/CMB2c2.rsmp/stim_assocs.xg :
+	StringCheck(): possibly fatal error at /home/bertin/work/src/xgraph/dialog_s.c::1983 - 259 bytes in string of 256
+	coredump. Corrected
+
+20010519:
+	Mod-clicking the [GS] button in the hardcopy dialog when Output Device==XGraph copies the X11 fonts into the Postscript
+	fonts?! Corrected.
+
+20010520:
+	Make it possible for within[] to accept an array as 2nd argument.
+
+20010521:
+	Verify (on bola):
+	> XGraph ../Cloud/R/lm_ext.rsmp/ALLp1_AC2.xg.gz
+	1.455_bola_788# make_vane(2.66804e-105,nan,-4.73327e+118), len=0.25, trign=(-2.06528e+116,-2.06528e+116): (2.66804e-105,NaN199)-(-2.06528e+116,NaN199)
+	make_vane(2.66804e-105,nan,-4.73327e+118), len=0.25, trign=(-2.06528e+116,-2.06528e+116): (2.66804e-105,NaN199)-(-2.06528e+116,NaN199)
+
+20010521:
+	Consider implementing an *ENDIF* statement instead of the currently used empty line. Done, but should be verified in more
+	detail, for nesting and robustness against indentation. Also see if line_count can be more accurate!!
+	UpdateLineCount implemented to have a correct and uptodate line_count there were necessary.
+	Verify: first byte of compressed files is lost (only when it is a #?)?! Corrected.
+
+20010524:
+	Corrected a bug in HandleMouse() that didn't correctly initialse point_l_[xy] when measure==1.
+
+20010525:
+	Verify printf[] check of # of arguments in combination with array-pointers. Done: functions returning a pointer should
+	have the SyntaxCheck field set in the function table!!
+
+20010525:
+	The XGPen mechanism should be implemented as a module...
+
+20010528:
+	Polish vertical text in Pens. 20010530: Done, and implemented PenTextBox. A better way to estimate vertical placement
+	of PostScript strings is needed. The PS c-f and c-rf routines now use the target string to estimate vertical size,
+	unless ps-old-font-offsets (ps_old_font_offsets internally) is set, in which case a single 0 is used for the estimation.
+	That latter choice bases the vertical placement on base-line to cap-height, whereas using the full string includes any
+	descenders and overshooting ascenders.
+
+20010530:
+	Made a discovery!! In X11, the pointsize of a font is not at all given by the --%d- field (which
+	is the pixel size), but by the next one... Thus, for a scalable font, *--0-120-xres-yres-* gives a
+	much better rendering of a 12pt (!) font for a given screen resolution (in dpi) than *--12-*-*-*-* would...
+
+20010602:
+	PenText can be multiple lines. It seems that PenTextBox's boxes are not always perfectly aligned in vertical mode:
+	this depends on the font used :(
+
+	Problems with ascanf when using multiple scriptfiles (-f R/CMB2c2.rsmp/BaseDefs.xg -f R/CMB2c2.rsmp/accept.xg) ?!!
+		Corrected: the send ExposeEvent after each included file messed up things. I don't yet know why, but
+		sending a single event after a batch of files remedied this problem.
+
+20010604:
+	There was a little bug in the creation of automatic variables. Trailing whitespace was not removed, which could lead
+	to the creation of variables with a different name then intended... Fortunately this situation rarely occured.
+
+20010609:
+	Corrected a conceptional bug in PenTextBox rectangle drawing. There is in fact no need to pass via the world sizes
+	of te to-be-drawn text to draw it inside a box.... Not doing this makes the boxdrawing much more robust against different
+	axes scalings or transformations.
+
+20010615:
+	Provide means to immediately return from a procedure/expression...
+
+20010621:
+	With the MaxArguments[379], an array of 378 elements looses its last element when wrapping occurs during saving??!!
+		Corrected.
+
+20010701:
+	Implementation of getenv[], and several bugfixes, among which:
+		  /* 20010701: descriptions and labels are only taken into account when a variable is first declared. Thus,
+		   \ for an array definition that can span several lines, and likely at least 2 DCL[] invocations
+		   \ (the last to set the last_index field), we are obliged to do a first declaration that
+		   \ allocates the storage, sets the 1st element, and assigns the description and/or label.
+		   */
+
+20010706:
+	Inverted the high,low fields in the 'l' enum in the IEEEfp and IEEEsfp types!
+	Also modified ad2str() so as to print pointer/string variables in "canonical" fashion, not as (floating point) addresses.
+	See the comment above ad2str().
+
+20010708:
+	Next step in CustomFont for Pens. I have decided that the most elegant (?!) solution would be to add a special variable
+	to a CustomFont instance. This will avoid unnecessary copies, will (probably) make it possible to change a font without
+	the Pens knowing (or needing to know) of it. And it allows a transparent upgrade of the PenText routine: instead of a
+	font number, a pointer can be passed... The special variable is implemented as a special-case variable, like
+	file pointers. To this end, a cfont field has been added to the ascanf_Function structure.
+
+20010708:
+	Modify Check_Option. It should be possible to use strcmp, and yet add a numerical switch at the end of the option,
+	without allowing e.g. -p to mask -progress ... Thus, internally, always use strcncmp (or strncasecmp), but reject
+	a match if after the compare-length a non-numerical token is found.
+
+20010711:
+	Implement a Srewind - rewind for Sincs. Done.
+
+20010715:
+	Verify how difficult and useful an implementation of lambda expressions will be, lambda[add[$[0],x]] (or \l\ ...).
+	In compiled expressions, this is maybe not difficult at all: with a local ascanf_Function->type=_ascanf_procedure
+	variable that gets a copy of form->args in its procedure field?
+
+	Add routine to retrieve the ith element from a statistics bin in exact mode. Done.
+
+20010718: ***
+	It turns out that several other graphing programmes (scigraphica, grace) also provide what I call vanity mode,
+	called vector maps. These actually make it possible to draw a vector at a given location, that is, an arrow
+	of a given (variable!) length, at a given location. I thus changed my vane/vanity terms to vector in order to
+	conform to this apparently established nomenclature (that I should have thought of earlier), and I'm musing on
+	how to transparently add a possibility to specify the arrows' lengths. NB: this could even give rise to X error-
+	bars if it turns out I really need an additional (set of) transformed value column(s) for this. It doesn't
+	have a very high priority, though.
+
+20010718:
+	Add:
+		*) Functions returning the raw and transformed values along the axes. Needed to implement
+			right-hand (or upper) secondary axes with Pens. This must be implemented with arrays associated
+			to each LocalWin (in axis_stuff). Done and corrected.
+		*) XGPens_API.so, containing C-callable versions of the ascanf Pen routines.
+		*) Dump for Pens, using ascanf calls (global switch variable). Done.
+		*) Move all Pens routines to a separate module - statically linked. Done.
+
+20010718: **
+	I discovered the existence of the T1lib, a library for using Type1 fonts. This is interesting in that it will
+	allow the XGFontStruct to be extended to using Type1 fonts. I should investigate how easy this will be to
+	incorporate in the current code. Note that currently, XGraph is not limited to using Type1 fonts, at least not
+	where CustomFonts are concerned (the screen font can be anything, plus an alternative), and/or where the generated
+	postscript is used to generate pdf (as long as ghostscript or whatever ps2pdf utility is used can find the
+	other technology [ttf?!] fonts), or for editing with e.g. Illustrator.
+	Besides, I am not sure that this would resolve all problems. XGraph is not perfectly wysiwig: there are (subtle)
+	differences between screen and hardcopy (postscript) scaling. These don't really bother (me), since there is
+	a preview option to (quickly) verify what the printed result would look like. But who knows, one day... after my
+	more urgent priorities :)
+
+20010721:
+	Initial implementation of tab sets (in the settings dialog). Still needs lots of work!
+	Immediate things to do: make xtb_hort & xtb_vert ignore the padding/spacing arguments if the total width/height of
+	their argument frames tree is 0. 't Is Done.
+
+	Note to xtb users: as of this writing, you will need to ensure that all frames (that you want to automatically distribute
+	on a window with xtb_fmt_do()) are mapped before calling this routine. The formatting routines will no longer take
+	unmapped frames into account: they are indeed completely ignored, and a branch consisting of only unmapped frames
+	has thus no effect whatsoever on the placement of the other, mapped frames (not even through the specified padding
+	or interspacing).
+	The good news about this is that you can easily define, in a single tree, different "tab sets". This is an approximation
+	of the tabs known from other GUIs, the most straightforward solution I could come up with within a single weekend
+	(other than rewriting everything to actually use a different library, like gtk+). The powerfull property of this is that
+	you can have widgets that are part of multiple sets, or that are visible always, only by properly assigning the
+	tab numbers, and writing a proper tabselection algorithm that will decide when which widgets are to be visible.
+
+20010722:
+	Verify all aspects of ActiveWinPrinting (all flags set?), and $XGOutput. (It seems to work)
+
+	Also, see to shut off the "you should exit" warning when closing the initial window that occurs for e.g.
+	examples/MorBurr99b.xg ... Done.
+
+20010723:
+	Implemented config.h that contains the various macros to (in)activate conditional code, that used to be defined
+	in the toplevel Makefile. Also contains the IDENTIFY macro definitions. Each file should now call this macro
+	itself if its wants to be seen by ident(1) and/or what(1). The corresponding definitions in Macros.h have been
+	removed, and those in copyright.h altered. Each file still includes copyright.h, but only main.c, xtb.c and ux11_open.c
+	include it with the _MAIN_C macro defined such that C_IDENTIFY() is called that will include a visible copyright
+	statement.
+	Also decided upon a versioning scheme: just the date :) This is xgraph 2001 - not yet Chicken Office 2001, but
+	not too far :))
+
+	Also implemented a (rather shaky) possibility to continuously read from (monitor) a pipe. Big problem here: I have
+	forgotton how to determine the amount of data (or the presence of data) on a FILE*. I seem to remember that such
+	a possibility is provided somewhere. I now use poll(), but this is not perfect (e.g. it gives hang up conditions when
+	I have not yet finished reading the file - testing for feof() after that seems to work, but I am not satisfied yet).
+
+20010725:
+	Implemented FFTW_DYNAMIC support. Allows to compile with support for fftw/rfftw, but leaves the library loading
+	and symbol resolution to the moment the routines are actually needed. This could also have been done by putting
+	the whole support in separate modules - but I preferred this solution. See ascanfc2.c for more details.
+
+20010729:
+	Reconsider SimpleAngleStats. Right now, in exact mode, the mean is reconstructed using sine/cosine pairs of the
+	individual elements, and the st.dev. is then calculated as it should, using the non-simplified sum expression.
+	In non-exact mode, an approximation is calculated using a separation of positive and negative angles. It should
+	be possible to get more exact behaviour without having to store all elements. Notably, when the sine/cosine can
+	be used in this way, that can be interesting for those cases where one doesn't have the angle, but only its
+	sine and cosine...
+
+20010730:
+	Implemented ActiveWinDataWin[] and ActiveWinDataWinScroll[].
+
+20010816:
+	Start of vector length implementation (see 20010718 entry). This will become an additional type of vector display,
+	type 2 (0=simple line, 1=fixed-length arrow). There may in fact be 2 additional types, where one has a fixed sized arrow
+	head, and the other an arrow-head size that depends on the vector length in a way similar to type-1 vectors (in
+	this case, the length parameter should be ignored). The DataSet structure has been adapted for this (vtype1_pars
+	has become vectorPars, vector_type vectorType); the length-column parameter (vectorPars[2]) will be duplicated
+	into DataSet->vcol!
+	There should probably come ascanf convenience routines; vcol[] and vectorPars[] (which will also set the type!).
+
+20010820:
+	There is a bug in the saving of PenColour: a pen that has an inherited user-defined colour does not have pixelCName
+	set (?!) but wil have pixvalue<0! Dumping PenColour[-1] will of course not suffise...
+
+20010824:
+	re 20010816: change in ideas: implement something closer to the existing error/orientation column. This should permit
+	(at some point) to implement horizontal error bars.
+	20010825: everything should be ready to start using a 4th "special" data column to obtain vector lengths.
+
+20010828:
+	Make procedure parsing/including the ScriptFile files.
+
+20010901:
+	AccessHandler for (builtin)? functions?? : Done.
+		*** Check speed penalty?!
+
+20010904:
+	Framing of UserLabels has become an option, using the already existing nobox field. Initial setting
+	remained unchanged (no frame for "single point" labels, frame for labels with "arrow & text").
+	 *** Draw an invisible box when there is an arrow. And correct the split/nobox button handler: button
+	 is inactive when a label is selected. Also, see if button text can be drawn centred (horizontally).
+	 	DONE.
+
+20020116:
+	A long break of other activities! New feature: *COLUMNLABELS*. This allows a table of column-number/label-string
+	associations to be entered. New opcodes in the legend strings (!) allow these labels to be printed to show, per set,
+	in the legend what is plotted against what.
+		Todo: easy editing via the Settings Dialog. Also, this feature doesn't work with the x-plot and X-plot wrapper scripts
+		as these alter the column numbers...
+
+20020117:
+	Implemented another version, *LABELS*, that should be compatible with x-plot and X-plot because it expects all
+	labels on a single line, separated by the data-separating character (a tab, usually), so that it should be subject
+	to the same selection as the data itself.
+	Also implemented "2D radio buttions", i.e. allowing a number of rows or columns to be specified.
+		Todo: implement a version where a callback determines how the buttons are to be placed, instead of the automatic
+		way it is done now. DONE (used for the LegendFunction button "row" in the Settings dialog)!
+
+20020127:
+	Removed a bug from SimpleEdit_h that would cause a crash when the editor returned an empty file (=> sinc containing
+	NULL pointer). SimpleEdit() now always puts a nullstring in the sinc, and SimpleEdit_h checks for a valid, non-empty
+	sinc. Also freed the sinc in SimpleEdit_h()....
+
+20020128:
+	Provide means to interactively edit the window's (global) INFO_LIST/VERSION_LIST. Via the [Info] button when data_sn_number<0?
+	Suppress output of empty *COLUMNLABELS* and *LABELS* commands.
+
+20020203:
+	Can now put only a cname="" or hl_cname"" field in a *PROPERTIES*/*AUTOSCRIPT* command.
+	Also polished the SpreadSheet/CricketGraph output code a little.
+
+20020208:
+	Improve interuptibility during PS printing (esp. when doing gsTextWidth()s!). Idem for DrawIntensityLegend().
+	* DrawIntensityLegend(): what exactly is the (minimum) width? If exclusively coupled to the axisFont, try
+	obtaining a minimum width of e.g. 1/3 the X-axis length.
+
+20020215:
+	Made a beginning with support for exact colours for printing, regardless of the colour(s) the X11 server
+	gave in request to a particular colour. Currently, only for IntensityColours, via an additional RGB table
+	in the IntensityColourFunction that stores the requested values.
+	See the 20020216 comment in new_ps.c .
+		* Add a printing option to switch off this feature when e.g. the X server's gamma corrections are
+		to be printed??
+
+20020227:
+	Investigate coredump caused by lowpass.ttxy!
+		Done. ascanf_memory wasn't always correctly initialised.
+
+20020306:
+	xtb::XFontWidth returns 0 when a NULL XFontStruct pointer is passed. Prevents crashes (in XTextWidth()) when
+	the printing width of a CustomFont structure is determined.
+
+20020313:
+	the xtb_edit_dialog doesn't correctly escape control-characters in the EVAL_NOW dialogs. (e.g. popping up 2nd time with
+	previous contents => #xn has been replaced by \n.)o
+		Done.
+
+	Verify sinc(_string) behaviour when initialised dynamically with non-null string.
+		Done.
+
+20020314:
+	ascanf_SyntaxCheck: maybe should be set to -1 when evaluating non-compiled expressions...?
+	  /* 20020314: I added a 'compiled' field to the callback frame variable. Check the arguments
+	   \ when evaluating a non-compiled expression. This is necessary because the compiler would
+	   \ allocate undefined variables that are passed as arguments, whereas this won't happen
+	   \ for a non-compiled expression, which would then happily crash the programme when vfprintf()
+	   \ tries to access arguments that weren't passed. The check-for-enough arguments will now
+	   \ expand the arglist array passed to vfprintf() to accomodate for superfluous printing fields in
+	   \ the format string.
+	   */
+
+20020317:
+	Haul over of the PostScript font handling. It turned out that "standard" postscript text handling does not
+	support the extended ASCII set (or something of the sort). Thus, the (C) symbol just doesn't show up, to give
+	an example. The StarOffice printing interface showed me what to do: reencode the desired fonts, probably into
+	the "Windows" (latin-1252/iso8859-1) encoding vector. This turned out to be not overly complicated, but
+	there is one caveat: it should only be done with text fonts, not with symbol fonts. Thus, an extra switch was
+	necessary for the CustomFonts (it is supposed that the default fonts are used for text, and can thus be
+	reencoded UNLESS they are either Symbol or ZapfDingbats).
+	Reencoding probably happens a bit (much) too often, despite some optimisation. A global PostScript variable
+	(reencode) can be unset to switch the whole thing off if you find that this feature breaks other things
+	(e.g. parsing by Illustrator?).
+	I changed the CustomFont PSSize field into a double in the same throw.
+
+20020318:
+	The StarOffice reencoding posed (indeed) some problems with Illustrator. Changed the encoding function
+	and specified my own Latin-1252 encoding vector to ensure good and decent behaviour :)
+
+	Somewhat changed the gsTextWidth functionality. Their is now an auto mode (on by default) that does recursive
+	batch stringwidth calculations when starting a PostScript dump. This is *NOT* done when the [Done] button
+	is on.
+
+20020319:
+	I should make an effort to sycnchronise the X11 and the PostScript fonts when XGraph finds "best" fonts. This could
+	be done by maintaining a list of X11/Postscript fontname equivalences. Then, first try to match the X11 font's fontfamily
+	name with the Type1 entries in that list. If no match is found, then do a (case-insensitive) strstr of the Type1 names
+	on the full X11 fontname. Fontsize will be another matter....
+
+20020322:
+	Add $ThisFunctionName function (or so) that will return the name of its parent when invoked. The parent can be stored in
+	either a global variable (needs safe/restore for each stackframe) or in the __ascb_frame variable. Either mechanism
+	costs a little, and both will need an additional (global?) variable to store the pointer to the name of the parent
+	function. Think this out a bit more, and see whether it is really useful.
+	It should also be possible to do this via a parent field in the Compiled_Form structure!!
+		Done: functions ParentsName[] and GrandParentsName[].
+
+20020328:
+	Made a beginning of converting back to int certain flags that can be controlled through predefined ascanf "$variables".
+	This involves using an interface variable (e.g. *ascanf_verbose_value) that the user controls, and that is copied
+	to the relevant int variable by the AccessHandler routine. These $variables thus need to have the internal access
+	handler defined.
+	When done for only ascanf_verbose and AllowSimpleArrayOps, this resulted in approx. 2% speed gain.
+
+	Also made a beginning with the implementation of Simple(Angle)Stats variables. Contrary to CustomFont items, these are
+	"primitives", and not special versions of other variables. The various SS_xxxx and SAS_xxxx internal routines have been
+	modified to accept a pointer to a statsbin instead of an ascanf_SS/ascanf_SAS array index. (Tested OK with old code.)
+	The goal is to also have <statsbinname>[expr] equivalent to SS_Add[&statsbinname,expr] or SAS_Add[&statsbinname,expr]
+	(depending on the type). The value of <statsbinname> could be the returnvalue of the last function applied to it.
+	verbose[statsbinname] should be equivalent to verbose[SS_Mean[&statsbinname]].
+	Declaration should be via DCL[]: DCL[statsbinname, "$SS" ] - it remains to be determined which other arguments should be
+	passed.
+	Output of statsbin values is another issue. Currently, the ascanf_SS/ascanf_SAS values are never exported. It could be made
+	an option to output them, or at least the statsbin variables...
+
+20020330:
+	Statsbin variables done (except for output in XGraph dumps!). Declaration works via conversion of existing scalar
+	variables; see `man xgraph`.
+
+20020402:
+	Verify if and how the dymod dependencies should be updated in Correct_Form_Top!!!
+		Done.
+	There remains an issue in which a registered dependency (Compiled_Form to dymod variable) can "get lost": it remains
+	in the Compiled_Form's dependency list, but the target/client (the toplevel form) cannot be found in the module's list.
+	I do not (yet) understand how this situation might arise, and it does not appear to be serious.
+
+20020404:
+	Corrected a bug in ReadData() that could cause a crash when reading old-style binary data from a source with a different
+	endianness (the number of columns could go negative => huge in fread() => write out of BinaryDump.data bounds).
+
+20020404:
+	Corrected a bug that should have been found way before. ascanfc2.c didn't include fdecl.h (it couldn't until now), and
+	didn't declare CurveLen() as a double neither. Yet, it always worked like this... No longer today (= as of recently).
+	I corrected this by making a new headerfile, fdecl_stubs.h that contains stub macros to make it possible to avoid
+	including xgraph.h and yet be able to include fdecl.h . fdecl_stubs.h will likely have to evolve as new types are
+	added -- and it is not unlikely that in some files one will have to undefine (some of) these macros just after
+	including fdecl.h in order to get at certain global variables (e.g. ReadData_proc in ascanfc.c).
+
+20020406:
+	Implement a foreach[val-array, exprs] function that executes for all elements in the val-array.
+		Not needed: can be done (too) easily with something like
+			for-toMAX[ list[{2,4,6,8}], nDindex[list,-1],
+				current-value[nDindex[list,$loop]],
+				...
+			]
+		The only "penalty" is the access through nDindex[] when it is required to use an automatic array
+		as in the example. But the penalty of an internal implementation would be the need for an additional
+		variable to read out the current case ($loop would remain a counter), or to re-use $case.
+
+20020408:
+	Assignments between statsbin variables should be defined and implemented: ss1[ss2] should copy ss2 into ss1; ss1[&ss2]
+	should make ss1 a copy of (pointer to) ss2 (NB: this requires flagging whether or not the internal Simple(Angle)Stats structure
+	is allocated or not!). For this, it is probably wise to make the SS and SAS fields SimpleStats**/SimpleAngleStats**
+	to newly created (and allocated...) _SS and _SAS fields. However: should the assignment of a statsbin variable (pointer)
+	to a hitherto not statsbin variable turn that variable into a statsbin?!
+
+	See the lambda expr. consideration above...
+
+	Check if doing the stackframe allocations in compiled_ascanf_function() as a function of the number of arguments
+	is viable and interesting.
+		If certainly is!! Between 3, mostly around 5 and (sometimes upto) almost 10 times speed gain....
+		I also got rid (finally!) of that dredged if(function==a){} else if(function==b){} else.... testing
+		in compiled_fascanf_function(). Each function and Compiled_Form now has a special_fun field, an enum
+		listing those functions that need special treatment, and that can be read out in a switch() construct.
+		This gives another couple of percents speed gain (on a PIII).
+
+20020411:
+	Added "last-value expressions" (with the ? prefix operator) to the constants lists mechanism. This may speed up some
+	expressions somewhat. But note that very simple expressions are actually slowed down slightly by turning on
+	constants lists support. Apparently there is some overhead also in the code that evaluates constant expressions.
+
+	Fixed a stupid omission in ALLOCA.h: len*sizeof(type) can be quite different from (len)*sizeof(type) when occurring
+	in a macro (as it does). This affects only non-gcc compilers that do have alloca().
+
+	It seems as if the ascanfc*.c modules are better compiled with the native (MIPSPro) C compiler on SGI.
+
+	Started writing a benchmarking example file, examples/benching.xg . This compares different aspects of the ascanf
+	language and its optimisations, using quite simple expressions. I'm not sure whether it is a good idea to calibrate
+	the loop size as I do, for comparing across platforms. I should find and implement a routine for determining
+	Mflops or some similar "standard" benchmark.
+
+20020412:
+	Some more debugging. Up to now, the modified stack frame allocation scheme (see 20020408) allocated 1 argument
+	more than then number of arguments to the frame. This worked, but the exact amount caused crashes. This is because
+	some callbacks (especially the older ones) have the habit of setting the default values of non-specified arguments
+	directly in the stack (i.e. the argument buffer allocated by compiled_ascanf_function()). Debugging with Electric
+	Fence and with an arg. buffer allocated with calloc() instead of alloca() identifies these cases without pity.
+	I'm just not sure I had all of them... :) So for now, I allocate the number of arguments that function requires
+	according to its entry in the function table, unless it is -1 (meaning "up to MaxArguments" arguments), in which
+	case I allocate the actual number of arguments passed. I have to verify whether this is more expensive than just
+	allocating the actual number + 1 (and try to find all the bugs).
+
+	Electric Fence is really great -- I find bugs in code that has been functioning for years! :)) Just a pity it
+	slows things down so much...
+
+20020413:
+	To help the debugging effort in the previous comment, I implemented the ASCANF_ARG_DEBUG compile option. With this
+	flag defined, a runtime switch (setting $verbose to greater than 1) will cause the current expression string
+	(__ascb_frame->expr) to be printed by (well behaved) callback functions at the start of their execution. Thus,
+	a trace can be obtained that shows the last callback executed before a crash, should one occur.
+
+20020415:
+	Restored functionality of the *Cxye* command. This got disfunctional through either a change in the fascanf()
+	return protocol, or because of its handling of the columns[] argument. Now, we use the more recent mechanism
+	of setting the global xcol,ycol,ecol variables. The -Cauto command is necessary for this; by default, *Cxye*
+	commands are now ignored.
+
+20020416:
+	Implemented lambda expressions, to be initiated by \l\[expr], lambda[expr] or SUBPROC[expr]. These are in fact
+	replaced by Auto_CreateVar() to a call to DEPROC-noEval[<uniquename>,expr], and a pointer to the thus created
+	procedure is substituted for the lambda[expr]. It seems to work (see examples/labels.xg).
+	Also implemented a call[&functionpointer] routine. This functions correcly for regular functions, but may be
+	buggy for pointers to procedures (a stack corruption occurred when compiled with optimisation, and disappeared
+	without that I'm sure I removed the cause).
+
+20020418:
+	I tested some (intuitively) optimisations following those of 20020408: doing the allocations of the local arguments
+	at compile time, storing them in the Compiled_Form. That way, no allocations are necessary at all. It turns out
+	that under Linux/gcc, this is actually slower (a little bit)! There are some benefits under Irix (R5000 cpu) when
+	I compile the ascanfc modules with the MIPSpro compiler that does not have the same alloca() internal function as
+	gcc does. There are only 2 explanations that I can think of: 1) the extra field in the Compiled_Form somehow slows
+	things down 2) the stack-allocation gives memory that can be accessed somewhat faster...
+	There are of course advantages with debugging with this scheme: the allocated arrays are easier to access,
+	and visible to Electric Fence. Frames corresponding to a procedure (procedure code) and arrays always have
+	their arguments allocated at compile time.
+
+	Check:
+		- reduce overhead on procedure calling?
+		- reduce overhead on ascanf_call[]?
+
+
+	fascanf_unparsed_remaining is not correct when last char of an expr. is not a separator or a ].
+
+20020420:
+	Some more optimisations, notably for array reads and simple writes (1 argument).
+	The inline expansion in ascanfc.c has become very complex, increasing compile time and the resulting binary's size.
+	Check whether performance is really different with all those macros changed into function (calls).
+
+		Check: test1: addition in benching.xg fails
+		Check: store (* operator).
+
+20020422:
+	Issues 20020418 and 20020420 finished.
+	The inlining macros have been almost all converted to functions. Curiously, I have not gained enormously
+	in average processing speed. In many applications I tested, I actually lost around 1%, whereas in a limited number
+	of other cases (simple expressions), I won around 25%. The benching.xg file is processed by approximately that much faster.
+	Such is life...
+	Contrary to what is mentioned under 20020418, frame arguments are now always allocated at compile time by default:
+	this finally turns out to be somewhat more efficient also under linux/gcc.
+
+20020424:
+	Implemented xtb_CharArray() as a quick hack to easier popup menu handling. See SD_selectfun and SD_vanes_selectfun in
+	dialog_s.c . I should probably also implement a SD_bartype_selectfun() function...
+
+	Made some additional steps to full vector plots.
+
+20020425:
+	Vector plots implemented: types 2,3,4.
+
+20020428:
+	Implemented SetOverlap[].
+	I was fed up having to update ascanfc.c (which contained the function table) each time I added a callback to some other
+	file. Thus, the functiontable listing the builtin functions and other entries is now in a separate file, ascanfc-table.c .
+	This file needs a corresponding header that contains the declarations of all the necessary (= known) callback routines.
+	THe makefile constructs this headerfile, doing a grep '^int.*ASCB_ARGLIST' on a selection of sourcefiles known to contain
+	callback routines.
+
+	Find_Point() doesn't work correctly when the (Y) axis scale is not 1?!
+
+20020429:
+	Polishing the greek-toggle opcodes. It wasn't evident (= possible) to output just a \ in the greek font (the QED symbol
+	in the symbol font).
+
+	Implemented the xtb_TI2 composite widget class.
+
+20020430:
+	** Modify SD_selectfun() such that Mod1-clicking the button opens a menu with the drawn sets included, and Shift-Mod1-clickgin
+	a menu with all sets included. Sets are to be identified by the current LegendFunction (and the previous LegendFunction too?),
+	but with their setNumber prepended so that parsing remains easy. Entries are to be truncated at the first newline, if any.
+
+	Corrected a bug in Create_AutoVariable(): it didn't save/restore Allocated_Internal.
+
+20020501:
+	(cf. R/CMB2c2.rsmp/fig_dist2.xg; figdist-shiftrot): check if the $ local-arguments array gets correctly set/updated
+	while compiling. In the aforementioned routine, I get a compile time warning about element 11 being out-of-bounds,
+	whereas it is not!
+
+20020504:
+	Correct:
+	NB: currently, labels should not contain characters that serve as separators in the ascanf parser (commas, [, ]), otherwise
+	the \fIDelete[$Label=...]\fP syntax will not work properly.
+
+20020505:
+	Resolved: (ascanfc.c):
+	  /* 20020505: do not truncate the argument string at the 1st ascanf_separator, to make
+	   \ it possible to have commas (the default ascanf_separator) in variable label strings.
+	   \ (and to delete all variables having that label...!)
+	   \ Alternatively, we could to this only when a special opcode is given (see the tests below)
+	   \ to Delete[]. But since that function accepts only 1 argument anyway, I don't think it is
+	   \ necessary to be that subtle.
+	   */
+
+20020506:
+	Solitary keywords now enable line-join mode in ReadString(); the StartJoin method has gained voting power. This is not
+	yet completely debugged.
+	Ideally, I should find another opcode to switch to this mode, but that would (currently) require modifying all the
+	keyword scanning tests to account (= disregard) that opcode (because it has to be preserved in case we want to output
+	the line unscathed).
+
+20020506:
+	Addendendum:
+	Found another opcode: very simple, just an extra * BEFORE the *COMMAND* (=> **COMMAND*). This version must currently
+	be alone on a line, without a trailing \\n or anything.
+	Ideally, this requirement would be relaxed, but that requires more changes to _ReadString than I currently want
+	to take time for.
+	Moved the ReadData() monsterfunction to ReadData.c, with a handfull of associated functions. See the comments in
+	ReadData.c and ReadData.h (a headerfile that may be used one day to implement a new format).
+
+20020510:
+	* Implement StatsBin arrays? Shouldn't be too difficult/complex, esp. when these are (initially) not allowed in Constants
+	expressions.
+	* Add a skip_to argument to *READ_FILE* .
+
+20020513:
+	Solved the problem where on some X servers (XFree86 4.01) an interrupt signal handled by ExitProgram() could block
+	xgraph (when XSync() was called after the signal if that occurred during Xlib-internal processing). Quit signals
+	that trigger graceful shutdown are now relayed through an X11 event that is inserted in the queue when control is
+	returned to the program, i.e. when it is no longer executing within library code.
+
+	Also implemented support for the X11 DoubleBuffer extension. On my PIII/450Mhz, ATI M1-pro with XFree86 4.01, the
+	example file examples/MorBurr99c.xg now runs *smoothly* at over 60Hz (at 600x400 resolution) when the cursor is not
+	in the window!
+
+20020516:
+	Add option to save as ascanf variable references (only stringpointer?) when relevant (e.g. a column contains strings).
+	Add possibility to initialise/update ValCat tables from an ascanf array (if only a string array, use the addresses as
+	the values). Also add option to Settings Dialog to do such a thing from the current X/Y/E column.
+
+	Done. Have to check whether ascanf references are saved everywhere where needed (= using dd2str() instead of d2str() ).
+
+20020517;
+	The DyModDependency structure should be redone. Currently, with the double lists, there is too much that can go wrong.
+	[02:00 AM]: Tidied up some omissions and other minor bugs that could cause major trouble. Maybe we can maintain things
+	as is for a while now :)
+	20020520: Finished for now. One of the important reasons for failures of the registration attempts (causing crashes),
+	other than the things mentioned above, was the fact that libraries were allowed to be loaded twice. This is no
+	longer allowed: a request to load an already loaded library is ignored (not an error).
+
+20020523:
+	Disabled the exact-X/Y axes behaviour for numeric axes when using TRANSFORM_X/Y and -transform_axes off. This prevents
+	getting transformed values along the axes.
+
+20020528:
+	Implemented ChiSquare tests. Also added support for (saved) GNU readline history.
+
+20020530:
+	See if the &array handling in ascanf_nDindex() can be made to use _ascanf_array_access(); adapt that macro to
+	make array[-2] return array (and make array[-2,x] set the last_index element to x).
+		Done.
+
+	Re-Consider doing the auto-updating of automatic arrays in parse_ascanf_address()...; unset AlwaysUpdateAutoArrays
+	when doing output because of verbosity... (or ad2str()).
+	Also improve ConstantsLists mechanism: distinguish between real (numerical constants) as a higher level, and
+	other constants (variables)!
+
+20020602:
+	Verify why curly braces inside strings can be mistaken for auto-array delimiters!! (see Cloud/R/VV1b.rsmp/VV1b_Analyse3.xg,
+	braces temp. substituted by " <" ... " >" )
+		Done. Extended the not-in-string checking in find_balanced(), and now use find_balanced() to find the end of the
+		input pattern in ascanf_function() (with a redundant fallback to the old method).
+
+	Also provided a file/directory selector dialog. Yes, in less than an hour :) Uses gtk, that's why :) Actually, it
+	uses a utility that comes with gtk, and that is called gtk-shell. This thingie can open a file selector dialog; I
+	just open it through popen(), and read the result from the resulting pipe. Some may think this is a pathetic solution,
+	but to me it just fits the xgraph philosophy of depending on as little (libraries) as possible. If you don't have
+	gtk-shell (in your path), the feature just won't work (it will yell just once).
+
+20020608:
+	A procedure declaration of the form DEPROC-noEval[kk, kk[10]] is accepted but crashed XGraph upon execution!!
+
+20020616:
+	Implemented Apply2Array, and some improvements to QSortArray. Corrected bugs in SS_ADev and implemented SS_Quantile.
+	Would it be useful to add a selection criterion (expression) to CopyArray? If so, see if similar code in ascanf_Apply2Array
+	and ascanf_call cannot be shared...
+
+20020616:
+	*MAX[ foo[b], foo[a] ] doesn't store into foo[b] as it should, but into foo[a] because that was the last element accessed...
+	Logical, but incorrect!
+	compiled_ascanf_function(), 13839: use form->args->args->value instead of last_index (simple solution).
+
+		20020617: corrected
+
+20020620:
+	Corrected a bug associated with *STARTUP_EXPR*. Text given is now passed verbatim.
+	Duplicating drawn set(s) in the current window now uses Init_XG_Dump=False and sets CorrectLinks=False (new switch).
+	Also removed the call to String_ParseVarname() when reading *LEGEND* and *LEGTXT*; this functionality is handled
+	by DrawLegend and DrawLegend2.
+	Code parsing *VERSION_LIST* and *SET_INFO_LIST* now set Skip_new_line and decrement line_count when multiple lines were
+	read until an empty line. Thus, an empty line after a SET_INFO_LIST command can start a new set without needing another
+	empty line. This should be extended to other multi-line commands.
+
+20020628:
+	A start with the implementation of StatsBin arrays. Just an extension of the (internal) principle: the af->N field keeps
+	track of the number of bins in the bin. Selection goes via the @/nDindex routine, that returns a pointer to the bin,
+	and sets af->last_index. Currently only implemented for $SS_StatsBins.
+	This has not yet been extensively tested
+		TODO: update the manual!
+
+20020629:
+	See if the output sections for comment[] and verbose[] (in ascanf_function and compiled_ascanf_function) cannot be merged
+	into a single routine (or 2).
+
+20020704:
+	In R, ?Random.user has an example of a random generator, unif. and normal. Check these.
+	Also check the use of strcpy vs. memcpy; in cases where the stringlength is known, memcpy is considerably faster for
+	sizes >32 bytes. (partly done; on linux, strdup is a macro that uses memcpy)
+
+20020706:
+	Corrected a bug in parse_ascanf_address where some values could cause invalid memory accesses and thus crashes. These
+	segv. signals are now trapped, and taken as an indication that the value passed was not a pointer... This doesn't seem
+	to be slower than checking the potential address' alignment (divisable by 8 on linux?), and is probably more general.
+
+20020815:
+	Need to check whether the argument arrays to procedures are allocated at compile-time and can (thus) interfere with correct
+	recursion behaviour!
+	20020816: done. Recursion is now possible under the user's responsability (i.e. you can crash xgraph with infinite
+	recursion!). For this, a level counter was added to Compiled_Form; if non-zero, a separate argument array is allocated
+	instead of using form->argvals. One instance where this *maybe* might be necessary has not yet been handled; see
+	the 20020816 comments.
+
+20020816:
+	Mostly functional under AIX; verify printing behaviour (some values don't print?!) and see if modules (.so) can be
+	supported.
+	AIX linker options: bigtoc  for shared libs: -G (expall?) (or -bE:table.exp -bMSRE ?)
+		-G -bexpall work; -bbigtoc -brtl (?) for the executable. But dlopen() still fails...
+		Printing now correct (%!ng to print with n significant digits failed for integers: %2$g was not supported).
+
+20020818:
+	Made some changes to the vscanf support module (see vscanf/README).
+
+20020819:
+	On my linux system, dlopen() can sigsegv when trying to open an executable. This can not be avoided: the longjump() trick
+	that works for parse_ascanf_address() doesn't work for this :(
+
+20020826:
+	Some miscellaneous improvements. ascanf routines with Static-StringPointers leaked memory. Under linux,
+	it is now possible to obtain the name of a file from the filepointer/descriptor (using /proc/$$/fd and
+	readlink(2)); one can also determine the length/line-count of an (open) file. Some things were done to
+	improve behaviour under window managers like Sawfish or Enlightenment (= don't count on being run under
+	(C)TWM): see the example xg_init.xg. Dprint[] and Doutput[] now print to the file specified through $Dprint-file.
+	$case would not be correct for the default (= last) case in a switch[] call. Internal variables referenced (only)
+	in an auto-update dynamic array were deleted by FixArray[].
+
+20020901:
+	Streamlined the VERSION_LIST IO somewhat.
+
+20020906:
+	Added window-specific debug flag. This overrides debugFlag in _Handle_An_Event, DrawWindow and new_param_now.
+	Also added support for *PINFO* inside a *VERSION_LIST* statement
+
+20020909:
+	Added some text to ascanf error popups when compiling, so that user knows the error is probably not serious.
+	(Compiler <dialog title>)
+	Implemented eval[], a routine that parses and evaluates a string as ascanf code.
+
+20020918:
+	Fixed/expanded support for BackingStore.
+	Improved reactiveness in compiled_ascanf_function() to ascanf_escape, in Show_Ridges*() to events, and made Add_Points()
+	immune to *spot/*Spot <0.
+
+20020930:
+	Consider a *CROSS_WIN_PROCESS* that checks the pointer's current window in the provided expression (e.g. a switch statement)
+	and then does the appropriate transformation (or none if the current window -- though the expression could be ignored then).
+	In order for this to be efficient, a global switch needs to record if any such processes exist in any of the currently
+	existing windows.
+
+	Also, implement copying of pen structure in HandleMouse window duplication. This can be done via the pen dumping mechanism
+	(that has to be altered to not use *STARTUP_EXPR*).
+		Done.
+
+20021006:
+	Implemented a (rudimentary) support for *reading* from (tar) archives: -tar.
+
+20021014:
+	Some small alterations to accomodate gcc 3.2 . TODO: adapt to OSX (defines sys_.* variables; can be identified with
+	__MACH__ and __APPLE__). Also, gcc 3.2 is generally faster than gcc 2.95.3, except for ascanf_call(), which is almost
+	10x slower (with a procedure). Investigate. Also, some of my own analysis scripts that I run with xgraph run slower with gcc3.2 than with
+	gcc2.95.3 (go understand why...) For the time being, I will use ACC="gccopt -compiler=gcc2.95.3"
+	Come to think of it, the timing for call[&procedure...] is weird using gcc295.3.
+	The same procedure called directly with the same arguments takes that almost same factor of time longer! That suggests that
+	something is very different in the way call_compiled_ascanf_function() handles the callback for the procedure between the
+	2 compilers. This is independent of compiler flags (NB: inlining is not a good idead with gcc 3.2.0??)
+
+20021023:
+	Don't attempt to switch backing store settings on the initial window. This caused X Error messages?!
+
+20021031
+	Removed bug where too large additions via SimpleEdit() (the Edit button on the simple input dialog) would crash xgraph.
+
+20021101
+	* ignore $popup_verbose within no-verbose
+	* IDict[EditPROC[...]] generates multiple definitions?!
+		Done.
+	Also do_hardcopy() now makes backup of existing file before overwriting (removed after successfull write).
+	Widget windows in xtb are now created with backingstore and saveunder.
+
+20021105:
+	SEE YAxError.xg!
+
+20021106:
+	improved MAX[] and MIN[]
+	display_ascanf_functions can now also display internal functions, which percolates to parse_var_name and the ${} syntax.
+	*** backup of output file: don't do if it is not a regular file!!!
+		done.
+
+20021107:
+	Implemented modal form for xtb_input_dialog(), currently used only on user-demand in *ASK_EVAL*.
+
+20021113:
+	todo: *ENTER_RAW_AFTER* and *LEAVE_RAW_AFTER*: expressions to evaluate upon entering and leaving raw mode. <done>
+	      SetProcess[] to (de)install set-specific processes <done>
+		 ParseArguments[] to parse command line arguments via ascanf. <done>
+		 Complete COLUMNLABELS editing in Settings dialog... <done>
+
+20030218:
+	todo: there is an issue with the autoscaling in MarkerSize mode. When the X variable goes from say -10,10, but the DATA_PROCESS
+	changes this to say 0,10, the X-axis will still show -10,10.
+	*** %<letter> opcodes in title and legend strings now function even if the first % appears alone (i.e. as a percentage sign).
+
+20030222:
+	Ain't linux great.. :) I just discovered that passing an unexisting command to popen() cause xgraph to crash on (some)
+	linux systems. Despite attempts to change the filepointer to something like /dev/null. So we now no longer use pipes
+	to the intended programme directly, but pass through a temporary file that will then be 'cat' to that programme, using
+	system().
+
+20030224:
+	Implemented wi->data_silent_process (base on data_sync_draw): process in silenced mode to ignore non-user-initiated events.
+	*** programmed around issue in which wi->legend_ulx==wi->legend_lrx and hence max_left_pos>area_w (DrawLegend2() will
+	return and set wi->redraw in that case).
+
+20030225/6/7:
+	Corrected various (minor) bugs. Notably in the ActiveWinDataWin[] functionality.
+
+20030228:
+	Concerning window-specific variables. This could be done via a window specific dictionary that is activated each time
+	a window is drawn, and that takes precedence over the global variables. This won't incur a big performance hit, as
+	variables are accessed via pointers that are fixed at compile time. Dictionaries could also be specified using a
+	Dict[&DictName,<expr list>] or Dict[WinDict,<expr list>] convention (a specific _ascanf_dictionary type would be needed).
+	When reading without an ActiveWin, a global variable can be used that will be installed (not copied) by CopyFlags().
+	CopyFlags(src,NULL) should *copy* a window's dictionary into that global variable.
+	This needs some more time to mature. For the time being, window specific values to global variables can be obtained
+	by doing the attribution in e.g. the DRAW_BEFORE statement.
+
+20030404
+	For some reason, I never discovered that the v2.2 libsnprintf included with xgraph did *not* support floating point printing.
+	I thus decided to resort to the snprintf functions that come with R (v. 1.6.2; www.r-project.org), since they obviously do.
+
+20030305
+	Implemented Subsetting functionality to dump sets in individual files. And identified a bug in DRAW_SET that would allow
+	a deleted set to be considered drawn.
+
+20030306:
+	Restored Append printing/saving mode that was rendered ineffective because of the backup-before-save feature (backup now
+	copies in append mode, instead of renaming). Also implemented -really_incomplete.
+	Also restored without-showpage and 2page printing that got mangled by the GS text size (batch) feature (the corresponding
+	flags were not cached in gsTextWidth_Batch() ).
+
+20030317:
+	Implemented constants.so .
+
+20030328:
+	Implemented utils.so and CMaps.so . Fixed a lethal bug in DrawPens() where maxitems (and hence XSegments) was not
+	updated when necessary.
+	*** Find a means to subsetting-print multiple pages into a single preview command.
+
+20030403:
+	Modified curve_len and tr_curve_len to allow 1) 'signed' operation 2) return cumulative lengths and/or individual
+	segment-lengths in arrays.
+
+20030409:
+	Some more routines work on arrays: len[], pow[] and pow*[]. They will return either the sum over the resulting values,
+	or the pointer to the result array, depending on $AllowSimpleArrayOps.
+	-Certain internal Pen routines are now protected against recursive calls (should never happen). This does not, unfortunately,
+	resolve the mysterious crash that PenTextBox[] can provoke in AddPenPosition when compiled with optim with gcc3.2.2 under
+	linux86. Therefore, compile with gcc2.95.3 (== the compiler for ascanf modules).
+	-ascanf_SyntaxCheck is set in ascanf_function() when Function->SyntaxCheck .
+	-Check for procedure->level in EditProcedure and evaluate_procedure (ask_procs).
+
+20030412
+	SavGol and (r)fftw functions moved to fourconv.c (dymod), and spline functions to splines.c (dymod).
+
+20030413
+	Corrected a string-overwrite in display_ascanf_variables() -- but more may exists! A warning should now be printed.
+	Temporarily set ascanf_propagate_events to False in many other places that replace processing code, too.
+
+20030606
+	Maybe DPShadow==-1 also should hide discarded points from printing....
+
+20030711
+	for-toMAX[high,low] now counts down from high to low+1.
+
+20030822:
+	ReadString now changes \r\n line-ends to \n on unix and linux, to correctly read files generated under DOS/Windows.
+
+20030825
+	Changed all "w" fopen() and popen() flag arguments to "wb" to ensure binary mode whenever we get to run under Windows.
+	This ensures that write() and fwrite() do not inject \r\n newlines in *BINARYDATA* output, which would be almost impossible to
+	parse out under Linux.
+
+20030829
+	There is an error in the PS colour output for INTENSITY_COLOUR_TABLE and/or INTENSITY_COLOURS, at least when both were
+	given and the table was then selected?
+	Corrected.
+
+20030920
+	Implemented time format reader in _fascanf_parser(): H:M:s is converted to seconds (where 's' is a double, and H and M integers).
+	Added *This-File* support to *LEGEND*, *LEGTXT* and *FILE*.
+	Todo: ascanf support for *COLUMNS* and a possibility to obtain/change a specific column's label.
+
+20030922
+	Added missing support for reading single-precision to the 'slow' *BINARYDATA* mode (without the specifiers).
+
+20030924:
+	Added (hopefully) full support for rar archives. For reading, unrar is expected: this can be a symlink to rar, or
+	the separate (free) unrar utility for which source is available at http://www.rarsoft.com/rar_add.htm .
+
+20030928
+	Auto-unloading of no-longer-needed modules. And did the 20030920 todo.
+	Todo: intensity legend with ValCat could be just as large as the sum of the label texts (or each entry as wide as the largest).
+	20031001: done. Also created LegendsNLabels.c
+
+20031001
+	One should not dump linked sets without dumping also the linked-to data...?!
+		Done. Also corrected an issue with dumping of 1-element arrays, and an overflow/wrap issue in fourconv.c
+
+20031005
+	Implemented a mechanism by which _ascanf_array data can be allocated with special constructor/destructors: see e.g.
+	contrib/fourconv.c (which uses fftw_malloc/fftw_free).
+
+20031008
+	Some changes to ClipWindow. Notably, 'floating' bar plots will now be clipped more intuitively, against the window
+	(and not the plotting boundary). Non-floating bar plots are still clipped very agressively: if the datapoint (the
+	top/bottom of the bar) is outside the boundary, the whole bar is not plotted. This is 'semantically' more correct.
+	(For 'floating' sets, clipping just does a semantically different thing :); for floating bars, it allows to have
+	a backdrop for other, non-floating sets.)
+
+	IMPORTANT REALISATION: the ascanf_address principle will not work on 64bit architectures!!! Unless using long doubles,
+	which may incur penalties even on those systems.
+
+20031009
+	Corrected bug which saving load instructions for the currently open dynamic modules in xgraph dumps.
+	Also no longer dump the usage strings associated with variables defined in modules.
+	Todo: find a way to restore window-specific raw_display settings in AllWin dumps. Done.
+
+20031012:
+	Made some changes to the AccessHandler mechanism. It should now more consistently ensure that foo[expr] returns
+	the same value as a subsequent foo, even if the acces handler modified the value returned by expr.
+
+20031013:
+	Modified the input routines such that joining mode is terminated by EOF *without* discarding what was read. Should remove
+	one more of the reasons to always terminate files with an empty line.
+	TODO: verify why printf[1,"%s#xn",x] prints the procedure *code* when x is a procedure pointer ?! DONE.
+
+20031016:
+	Started thinking about 64bit compatibility. See 64bit_ascanf_pointers.txt .
+
+20031017:
+	Deleting points from a linked-to set could cause problems (after PROCESS_SET_RESULTS_DRAWN) because .numPoints was not
+	updated before calling realloc_points() (which updates the linking sets). Corrected.
+
+20031021:
+	Attempt to add support for single precision fftw3; this would allow SIMD support on CPUs like the P3, AMDs and PowerPC.
+	It still crashes somewhere in fftw.
+
+20031023:
+	Added the <pass> argument to Apply2Array, to allow error-free calling of functions that require NO arguments.
+	Appears to work.
+
+20031024
+	Implemented *EXIT_EXPR* command. On o32 (mips-sgi-5.2 on a mips-sgi-6.3 host) SGI, fftw3 appears to have to be built
+	by gcc 2.95.3 (configured to use gas 2.13). Gcc 3.2 (using the sgi as) causes a crash.
+	fourconv3f.so also crashes on the SGI.
+	TODO: FilterPoints_Box() could set wi->pointVisible to include only the points in the box, so that BOX_FILTER_CLEANUP
+	can operate selectively (and 'at once') on those only. (For now, do this with pointVisible[$CurrentSet,$Counter,val]
+	in the BOX_FILTER commands.)
+
+20031027:
+	Activate cursor-cross mode when activating boxfilter mode.
+
+20031028:
+	There is an issue with DestroySet[]. It can crash xgraph.
+		Resolved. See the 20031107 comment in Destroy_Set().
+
+20031029
+	For very (many) large datasets, a special version could be conceived:
+		- DataSet->columns could be an unsigned short, which gives 64k levels, enough for most cases
+		- DataSet->xvec c.s. should be a float in that case
+		- needs an additional struct { float min, max; } or { float offset, scale; } in the DataSet, to correctly
+		  'place' the ushort data. (dimension [Ncols])
+		- these column min,max should be saved as *EXTREMES* in _XGraphDumps
+		- without *EXTREMES*, these parameters have to be determined on either specific pass, or by using temporary memory
+		  (which can become BIG). Additional passes (the fpos() before numberic binary data start, otherwise probably
+		  the *Set* statement....) make it impossible to read from a stream (but well....)
+
+20031109
+	Bar type 4 is not correctly *printed* to PostScript: outline disappears. fgColour appears to be set incorrectly.
+	  Done (see the 20031109 comment in Draw_Bar(). */
+	(2) Bar type 4 should show intensity colours also when another error type is chosen; (3) intensity colour
+	error type should not influence scaling.
+	(2): Done.
+	Attention should be given to these bars' representation in the legend. (Currently in the outline colour.)
+
+20031112
+	Speeded up copying of drawn pens to another window quite significantly. No longer done via an intermediary file.
+	The old code is still lying around, and there is an issue with the use of ASCB_call() to directly call the
+	Pen callbacks (instead of passing via the ascanf parser). This is a problem: I encountered it with a 10000
+	long PenMoveTo/PenLineTo ('dotted') Pen -- the problem is with calling ascanf_PenLineTo, but I haven't yet
+	found the culprit and can't guarantee other callbacks are not similarly affected.
+	20031113: it looks like this is an alignment problem that permanently messes up some aspect of the scaling engine.
+	It doesn't happen on my SGI O2, supporting the notion it is an x86 issue. I have no time to figure it out in depth;
+	doing a redraw of the new window immediately seems to remedy the problem.
+	20101015: see below!
+
+20031114
+	CrossCursor is now updated when one or more of the xtb dialogs are open.
+
+20031116
+	fascanf_eval() failed to evaluate expressions consisting of a single digit (because a whiledo loop was being used
+	instead of a dowhile one). Result: toplevel expressions as *RAW_DISPLAY* 1 etc. didn't work.
+
+20031123
+	Ha! See my comments under 20031016 about 64bit compatibility. I just found another reason to improve upon the pointer
+	passing scheme. Remember that it is impossible to pass a pointer to an array element (like &c[2] in C)? I always thought
+	that this was not a big deal, but now I bumped it. With a $SS_StatsBin *array*, it would be nice to be able to do something
+	like SS_TTest[ @[&SS_array,0], @[&SS_array,1] ], to compare between elements. This is currently *not* possible, as SS_TTest
+	will use the 'last accessed element' field of the internal SS_array representation to determine which one to access...
+	Thus it will try to compare SS_array[1] with itself...
+	Work-around: made these functions recognise something like &SS_array, {0,1} , i.e. the statbin array, followed by an array
+	of indices.
+
+20031129
+	Implemented use of ltdl for loading dymods.
+
+20031130
+	Corrected ran[] (ascanf_random) and kran[] (ascanf_krandom) which didn't correctly accept/handle 2 arguments anymore.
+
+20031201
+	Corrected a long-standing issue with overwriting adornment of points following clipped points. For this, added the
+	use_first field to the XSegment_error structure, that records whether the overwriting drawing loops need to use
+	(x1,y1) instead of (x2,y2).
+	Not yet fully verified!
+
+20031228
+	Got it to build on MacOSX 10.2.8 (with an old dev SDK). Does run, but dynamic modules don't work yet --
+	this is the first step :)
+	For XDarwin which sets Mod2Mask for the Apple-Command key (and 'modeswitch' for the Option key), xtb_Mod2toMod1()
+	was implemented.
+	NB NB Darwin is not case-sensitive in its filenames!!!
+
+20040108
+	Deactivated ltdl support on Linux: discovered that my libtermcap.so would load with it, making it impossible to use
+	GNU readline.
+
+20040109
+	Re-aligned all variable-argument functions to use stdarg.h . Necessary for compilation under gcc3.3 (and higher) which
+	dropped varargs support.
+	Bits of varargs code are still hanging around, but should be mopped up eventually.
+	***
+	Also started with the implementation of dymod_interface.h/XG_DYMOD_IMPORT_MAIN (see config.h), for systems like AIX and
+	Mac OSX.
+
+20040110
+	Restored BoxFilter full undo capability.
+
+20040119
+	All code compiles, links, loads and seems to run on Mac OSX 10.2.8 with the 200306xx dlcompat release.
+	Check if this is the only platform where a trailing space after a *READ_FILE* filename gives a file not found error.
+
+20040120
+	Restored preserve-timestamp functionality that got lost in transition, somewhere.
+
+20040127
+	Hah... SimpleEdit didn't work under Mac OS X; had to program it the crude way....
+	The other editing routines should still be "updated".
+
+20040129
+	Bumped default compiler to gcc 3.3.2 on my PIII Linux box. A quick look at the benching.xg results (with only ascanfc.c
+	compiled with the new compiler) suggests a 10% performance gain without changing any compiler options, combined with
+	a decrease in code size. (note the new benching.sh script in the examples directory.)
+	***
+	Corrected a bug in call[] which was responsible for its sometimes apparent instantaneousness in benching.xg . The callback
+	didn't return a value, but randomly (compile dependent) returned True (all ok) or False (error). The benching loop was thus
+	sometimes an empty loop except for the very first time.
+	***
+	There was a bug in the intensity drawing code. All colours were not drawn, UNLESS the intensity legend was shown.
+	In fact, if not, only the maximum intensity colour was shown. wi->SS_I was not being updated when the legend wasn't
+	requested....
+
+20040130
+	Linked-to sets were not properly linked across dumps in case previous sets were excluded from dumping. This has been
+	corrected.
+
+20040208
+	Implementing a new type of library/dynamic modules, DM_IO. This is intended to provide for support for importing other file
+	formats, via the *DM_IO_IMPORT* tag. Exporting support should be available, too, probably via a generic expansion interface
+	in the print dialog, maybe even hooking into the existing hard_devices mechanism.
+	The various provided IO routines are installed into the main programme via the DyModLists' libHook field, which should
+	point to a DM_IO_Handler structure (defined in ReadData.h).
+
+20040213
+	GSRio more or less finished. There is however what appears to be a heap/stack corruption problem: dumping to xgraph
+	format can result in crash with weird symptoms. Not yet tracable...
+	*** Found. MaxCols was not being updated, *and* not being checked in _XGraphDump(). Corrected. This was one of the
+	hardest to trace *stupid* bugs ever (but that's also partly due to my own stupidity).
+
+
+20040215
+	Implement better handling of the Linked2 information when not all sets are being dumped in _XGraphDump(). Basically,
+	it is *not* a given that one should correct to the number of empty sets: instead, a list should be maintained that maps
+	each current set number to the number it has in the dump.
+	splines.so now handles NaNs by linear intrapolation between the bordering non-NaN's.
+
+20040222
+	Corrected an issue where the state of the grid was not correctly saved. Re-opening an exported graph with only vertical
+	gridlines now works correctly.
+
+20040225
+	First implementation of a vaguely XML-like tagging mechanism that allows empty lines in its input. Start this with
+	**tag**
+	and all lines will be joined (=read into the current input line buffer) until the first matching
+	*!tag*
+	This is currently done in such a way that it is perfectly transparent to the parsing code: the 2nd ending * is replaced
+	by a space, and the ending tag is replaced by a single newline. XGStartJoin and XGEndJoin take care of this; the former
+	routine will return 2 when starting such a block (sign for _ReadString() to really only exit joining mode when EndJoin
+	says so).
+
+	NB: This format is not exactly backwards compatible!
+
+20040227
+	Builds and runs under cygwin (cygwin_95-4.0 currently tested: yes, OLD!).
+	The dynamic modules do not work, unfortunately; neither does detaching.
+
+20040228
+	An issue remains with SS_sprint/SS_sprint_full (garbled output => mem overwrite??!)
+	20040229: corrected.
+
+20040301
+	done: "Restored" grid doesn't show up in Settings dialog.
+	done: ASK_DM_IO_IMPORT missing filename after last :: causes the :: to show up in the popup dialog.
+	done: verbose[ sn[ strdup[ SetInfo[$loop] ] ] ] causes coredump (e.g. ~/work/data/SIMSICK1/Physio/AhDa.xg)
+		Naming of auto-string variables has been revised to be robust against strings with 'reserved' characters
+		(notably square brackets). See 20030304 comments in Create_AutoVariable().
+	done: SetColour[] should accept 0 as 'ignore' return stringpointer.
+
+20040303
+	no-verbose[ popup[ printf[2, ....] ] ] can output a stray ')' onto the terminal (as in ~/work/data/SIMSICK1/boxfilt-val.xg).
+	Corrected.
+
+	It might be of use to have something like Associations2Array[] and the reverse.
+
+	Vertical and horizontal lines in 'floating mode' should always be visible. Why is it they're not?
+		Solved for pens.
+
+20040308
+	Added $SAS_Ignore_NaN and $SS_Ignore_NaN . I may add a bin-specific flag at one point. This causes the *ascanf* routines
+	to ignore NaNs
+
+20040311
+	Some work to make it compile without -fwritable-strings .
+
+20040315
+	When reading from something which is not a file (i.e. a pipe) invoked through the include file dialog (Mod1-f), we
+	should take care intalling as a SCRIPT_FILE when the window is drawable: non-seekable devices pose problems with this?!
+	  Simple: don't try to identify the format on a stream that is not seekable (but some pipes are seekable?!).
+
+20040408
+	Some work on runtime (= after initial startup) changes to the visual.
+
+20040419
+	$SS_Ignore_NaN now honoured by CollectPointStats() (in a rather blunt way).
+
+20040422:
+	Implement **ARGUMENTS** version.
+	Implement a mechanism by which to extend the library autoloading (learn which function resides in which library).
+		DONE. Now update the manpage.
+
+20040423
+	There is a weird (little?) bug, probably in AddPenPosition, which can cause a coredump. It looks like a recursive
+	calling (which can't be the case as it won't allow that). I have only seen this on a PIII; the same code on a P4
+	works fine (timing issue?). On the P3, it can be remedied by compiling xgPen.c with -gOpt.
+
+20040501
+	Moved string functions into strings.c .
+	Also made DMBase a static variable *per module*, which it probably ought to have been all along. (Although on the
+	platforms where it is really needed, the modules won't see each other's copy...). Has not yet been checked elsewhere
+	but under Linux (where DMBase is not used). Also, for that platform, we don't free the memory allocated for it (remedies
+	weird crash).
+
+20040508:
+	Regular expressions delimited by RE^ and $ (ascanf, *DRAW_SET*, ...) included the final $ but excluded the ^; this has
+	been corrected.
+	Added Mod1-BackSpace command to iconify all windows even if unmapnotify events are ignored.
+
+20040512:
+	Removed some leftover operations (from before auto-strings) which caused DCL[kk,"bah"] to behave differently from
+	DCL[kk, "bah"], and which caused an operation like basename[basename[kk],"xg"] to complain about missing brackets.
+	Also allowed creation of auto-strings (but not auto-vars) in ascanf_string().
+	Corrected a bug in contrib/GSRio.c (potential crash when ColumnSelector not specified/0 because of uninitialised internal
+	variable).
+
+20040514
+	On Mac OSX, use $HOME/Library/xgraph instead of $HOME/.Preferences/.xgraph as the state directory.
+	*** A bug was introduced 0512: DCL[kk,0,"red"] creates an array...
+	>>> corrected.
+
+20040525:
+	Some more corrections on the declaration-with-description issue (20040514). Declarations-with-description can now be
+	repeated without (potentially) changing a scalar into an array. (Could they ever *not* be repeated before?)
+	Also deactivated 'compiler would create variable' warning when ascanf_string() failed somewhere, e.g. when invoked
+	through interactive_IncludeFile() with a filename instead of an ascanf expr. (ascanf_string() tries to evaluate a pattern
+	as an ascanf expression that might return a string).
+
+20040531
+	Tweaked the filetime preservation mechanism somewhat. On slow, non-flushing media (USB-mounted DOS partition on a CF card
+	under Mac OS X, for instance), filetimes were not always preserved. Doing a sync() before and after (?!) the utime()
+	call seems to remedy this.
+
+20040602
+	*-Static-StringPointer: set internal field on these variables, causing ad2str to print them as strings.
+	ad2str() now expects char *handle* as 3rd argument, which will be expanded as necessary; it must be passed as a pointer
+	to a printable string (properly null-terminated). Expansion is done by allocating new memory; thus, the resulting return
+	buffer can always be deallocated, but if it is not equal to the passed pointer, that one may have to be deallocated also.
+
+20040605:
+	Some work on the BoxFilter mechanism. Implemented BoxFilter[].
+	An issue with pendrawing/colour was introduced as an artefact (see boxfilt-physio.xg in SIMSICK1): to be resolved!!
+	(due to changed printf'ing into rmsg??) (Pens are not drawn at all in that file??!!)
+	*** False alarm???
+
+20040607:
+	Arrows on set head/tail tend to be really smallish??
+
+20040608:
+	*PROCESS_RESULTS_DRAWN* no longer touches sets with the raw flag set.
+
+20040608/9:
+	Implementation of <columns> X <rows> N-Up printing in PostScript.
+
+20040619:
+	Corrected a bug in the dynamic module unloading mechanism that could cause crashes on platforms that need the DMBase
+	functionality. We now attempt to unload all modules with identical name and/or path name, and don't call closeDyMod
+	more than once per physical dynamic library. Also, the DMBase pointer in a library now points to a static variable,
+	no longer to dynamically allocate memory. There is thus no longer any need to deallocate it; it remains valid after
+	an unload request which did not result in the library being unloaded from the programme image (as under Mac OS X).
+	TODO:
+	Review ps_?_offset (bottom-offset, left-offset in ps files) mechanism. These values should probably be used in all
+	alignment methods, but in different ways. It should also be dependent on the PS scale. Finally, it ought to be specified
+	in cm instead of points!
+
+20040620:
+	Attempt to *not* unset the SyntaxCheck flag in certain cases, like when creating an autovariable within an expression
+	being compiled... To that end, small modification in _fascanf().
+	TODO:
+	Setting 1stSize in HO dialog can cause weird (scaling) behaviour, even *before* printing?! RESOLVED.
+
+20040622:
+	When doing a GS text/font size batch run (upbeat to printing), don't show scaling problem dialogs. Initial implementation
+	of this (dialogs are not posted when wi->fitting [as before] or wi->textrel.gs_batch [new of today]).
+
+20040625:
+	Some corrections to the "Auto" redraw function in the Settings dialog.
+
+20040630:
+	Implemented *EVAL_ALL* to evaluate ascanf code in all currently open windows, and its interactive variants (Shift-Mod1-p).
+	TODO: implement a BOX_FILTER_START command...!
+
+20040701:
+	PenDrawNow[] did not honour the NoPens and pen->skip settings, always drawing the pen. Corrected that.
+
+20040706:
+	Corrected some handling errors arising when -sqrtx0 was given.
+
+20040713:
+	SavGolay2Array[] now accepts an array pointer instead of its <start> scalar argument to retrieve only the currently
+	visible points (applying to the way the set is currently drawn; *not* to whether the SavGolay-filtered value would be
+	visible!!). Currently implemented only in fourconv3.c/so (but the SavGolay code should migrate to its own module anyway!).
+
+20040717:
+	Made it compile with gcc 3.4.0 "native" on Mac OS X.
+	NB: it may be necessary to add $HOME/Library/xgraph (or wherever you store your dynamic modules) to DYLD_LIBRARY_PATH;
+	e.g. when you use a module like fig_dist.so which is linked against another module.
+
+20040718:
+	Corrected a stupid fatal bug in ascanf_procedureName().
+	And one in the SS_AddArray callback: setting of the <end> variable was done incorrectly (broke in gcc 3.4.0).
+
+20040805:
+	A further simplification of the dymod convention could be applied. The DMBase variable could in fact be a single variable
+	in the xgraph memory space, a pointer to which is passed to InitDyMod()...
+
+20040830
+	Implementation (start of...) horizontal and vertical line markers. These are special versions of the existing UserLabels.
+	*** HandleMouse() should be cleaned up. Too much code is present at 2 locations (first 'click' and then for the mouse-move
+	events).
+
+20040901
+	UserLabels now preserve the order in which they were entered across saves.
+
+20040906:
+	Implemented the ascanf GetULabelNr function.
+
+20040919:
+	the *EXTREMES* data is (at last..) used to warn user of Endianness conflict if *ENDIAN* is 'off' and data read (1st line?)
+	is not within the specified range(s).
+	resolved a number of issues with dumping UserLabels in 'AllWin' mode.
+	Added XG_NUp_scale to avoid problems with overly large printing dimensions in XG_NUp_aspect printing. Those errors
+		should be tracked down and hung!
+
+20040921:
+	First attempt at horizontal tiling. For now works for 2 windows only (ignores all other open windows)??
+	Don't allocate space for empty, unplaced labels.
+	Update bbFlag global, to ensure that CopyFlags doesn't undo the setting of AW->bbFlag!
+	Implemented -Cross3 / CursorCross[3]
+	**** There should be a CROSS_WIN_PROCESS, allowing to avoid doing things double in case we want, e.g., the index in set B
+	for the time selected in a set A shown in a window Wa, while set B is shown in multiple views in multiple windows, as
+	could be the case when set B has multiple parameters sampled in time. Currently, we need to find that index for the time
+	selected in Wa in all windows showing set B, which can cause a serious performance penalty.
+	This could of course be done with CROSS_FROMWIN_PROCESS, by giving ActiveWin as the FROMWIN specifier. But in any
+	case, Draw_CCrosses() would have to be modified so that the window having the focus (the window it is called with?!) is
+	always treated first. The easiest way to do *that* is to initialise lwi outside the while(WL) loop, and then jump into
+	that loop just after checking if we processes the window.
+	*** Other idea: CursorCross_At[window, &x, &y[,set] ] to specify a position in the specified window from within the handler
+	to another window (or read it when <set> not set or False). When the 'structure' of what is shown in which window is well
+	defined, this would allow to do the correct transformations in all windows, for each of the possible 'source' windows. It
+	would thus be an alternative to supporting lists of CROSS_FROMWIN_PROCESSes.
+
+20041002:
+	See the 20031201 comment. There is still a case (provoked by diff-y-savgol.xg?!) where the first non-discarded (runtime)
+	point does NOT have the use_first field set, which causes XSegment to be addressed with index -1 (=> possible crash).
+	*** Solved. A check for DiscardedShadow was done too early, causing the use_first field not to be set for discarded points.
+	Also, when a discarded point is skipped and its corresponding use_first field is set to True, ALSO set the use_first field
+	of the following point, as the discarded point itself will (likely) be skipped.
+
+20041114:
+	Time preservation should also set the time on the intermediate file that will be archived.
+	*** Done.
+
+20041128
+	Resolved an issue with the calculation of the EXTREMES data.
+
+20041214:
+	Resolved an issue in which the CursorCross wasn't drawn properly over multiple windows. A ghosting issue remains, in that
+	case.
+
+20041217:
+	Solved the ghosting issue. DrawCCrosses() was called twice in succession. A somewhat kludgy remedy has been implemented.
+
+20041225:
+	Added nan_handling options to CopyArray and convolve .
+
+20050104:
+	Added $SS_Empty_Value.
+	Also corrected a missing special_fun initialisation for internal functions (currently only DCL?). This only had consequences
+	when using DCL? in compiled code, where it (could) cause the wrong variable to be referenced (only for arrays, apparently).
+
+20050106:
+	NaN values should *not* be taken into account for autoscale -- but the very first (index 0) is!!
+	* Solved.
+
+20050107:
+	Allowed array[Inf] to access highest element and array[-Inf] to acces elem 0 (for the time being: might become -2!!)
+
+20050109:
+	Allowed LinkedSet?[set,link-to,doit] . For this, Destroy_Set() was extended with a <relinking> argument, True only when
+	called from LinkSet2() (but see the 20050109 comment in that function).
+
+20050110:
+	Another attempt at more efficient handling of expose (and visibilitychange) events, to limit spurious redraws.
+
+20050111:
+	The old ascanf switch[] routine has been rebaptised switch0[]. The new version allows multiple cases sharing the same code,
+	as in C. This can be obtained by passing these case values in an arraypointer (e.g. switch[value, {a,b,c}, expr1, d, expr2]).
+	The test value itself must not be an arraypointer for this to work. The extra internal code makes this version a tad
+	slower, which is why the old version is still around.
+
+20050112:
+	ShiftSet invoked through the settings dialog causes a SEGV on redraw of the window (immediate if the shifted set is the
+	visible one). This happens at least for the large sets in work/data/SIMSICK1/Combi
+	*** 20050212: solved. Forgot to swap the pointVisible arrays...
+
+20050114:
+	hard-coded implementation of scroll-wheel support.
+
+20050115
+	^C and ^V copy/paste in text input fields (in addition to already existing copying via mouse buttons).
+	*** doesn't work in all input fields??!!
+
+20050121
+	Need to make MACH_ABSOLUTE_TIME_FACTOR a variable. It is not acceptable that it makes the code host-specific.
+
+20050122
+	The parse_ascanf_address() solution to use setjmp()/longjmp() to avoid SEGVs on illegal pointers caused incredible
+	slowdown. It in fact made execution SLOWER on a 1.8Ghz G5 biproc desktop than on a 1.5Ghz G4 laptop. Fortunately, it
+	turns out that the setjmp() call is necessary only once; this removes (most of) the speed penalty. tim-asc-parm.c now
+	provides a benchmark for this.
+	NB: doing this means we're jumping to a not perfectly valid jmpbuf. In other words, parts of the context will be wrong after
+	the jump. The user should know this, but will probably (hopefully!!) get other error messages when a pointer lookup fails.
+
+20050125:
+	Corrected a small issue in check_for_ascanf_function(), which caused parse_ascanf_address to bark on pointers passed
+	to it by Add_Form.
+
+20050128:
+	Thanks to a suggestion from Apple's Mike Stump, we now have a new address verification mechanism in ascanfcMap.cc .
+	It uses C++'s map or hash_map associative arrays to maintain a database of addresses. The principle is simple:
+	parse_ascanf_address() can reject any value that has not been the result of an earlier calculation by take_ascanf_address()...
+	we can't encode addresses by hand after all. (Well, we could, but now we cannot any longer :)). take_.._address registers
+	each address, and parse_.._address() verifies if the potential address has been registered, and has the correct type too.
+	Of course there are still speed penalties. This is more expensive than the earlier sigsetjmp() mechanism where the jmp_buf
+	(jump location) was updated only once per invocation of an ascanf toplevel expression. But there ought to be no
+	unpredictable side-effects, as there could be with that lazy sigsetjmp() scheme.
+	Unset USE_AA_REGISTER is you prefer not to (or just can not) mix C++ and C, or just prefer to live dangerously.
+
+20050129:
+	Review fft3 wisdom mechanism. Too much storage going on, and not everything??
+	*** USE_AA_REGISTER == 4,5 : review take_ascanf_address() invocations in callbacks with static return ascanf_Function vars.
+	  statsbin init. functions need no longer call delete_ascanf_Address().
+	  Done.
+
+20050131:
+	Some optimisations suggested by Apple's Shark. Seems we just won up to 10%... (on a PowerPC, of course).
+
+20050202:
+	While executing examples/fft-wisdom.xg::generate-wisdom[500,10000], fourconv3.so, $fftw-planner-level[2] :
+	"Incorrect checksum for freed object - object was probably modified after being freed; break at szone_error" errors for
+	size 575, 639, 1342, 1406
+	*** Should be fixed.
+
+20050211:
+	Stupid error in ParseArgs, -bs option: wamask wasn't initialised before the |= operation.
+
+20050212:
+	Improved handling of interrupted traces (e.g. with NaN values) with plot_interval>1 in PostScript dumps.
+
+20050311:
+	Some minor bug corrections, SubsetArray functionality, and psSetPage size specification.
+
+20050316:
+	XGraph AllWin dumps no longer duplicate a processing expression from a previous window into a newer window which doesn't
+	have an expression at that point. Could be done more elegantly (i.e. implement a single, "NOPROCS" statement).
+
+20050318:
+	Make-Histogram function in utils.c
+
+20050404:
+	Compile ascanfcMap.cc with -fno-exceptions
+	Changed the place of the ascanf_Function->sourceArray field. Stupidly, I had put it in a location where it messed up
+	the initialisation order used in existing static initialisations :(
+
+20050405:
+	Added support for colour specification to GetULabel[] and SetULabel[] (utils.so).
+
+20050409:
+	In printf[ 1, "%s#xn", @[{0, "a", "b", "c"},3] ], the auto-array only gets 3 elements! An additional scalar is necessary
+	to be able to retrieve the "c" element!!
+
+20050412:
+	Fixed a bug (accessing source==NULL) in ascanf_Apply2Array, and made Apply2Array INACTIVE during compilation (!!)
+
+20050415:
+	array[NaN] or any other out-of-bounds access should return NaN. Not yet implemented exhaustively in all places.
+
+20050420:
+	Column removal (and/or addition) could be handled by an ascanf routine. Specify column(s) to remove, de-allocate them
+	( xfree(this_set->column[i]) ), move the others to fill in the gaps, update this_set->nCols and then call reallocate_columns()
+	to update the other info. Must (before or afterwards) verify and update the set's labels.
+
+20050423:
+	Is it an attractive idea to support sparse columns, i.e. to NOT dump columns consisting of only NaNs, replacing them with
+	just a single marker?
+
+20050429:
+	Corrected a minor (but crashing) bug in ascanf_Monotone().
+
+20050501:
+	Synchronise code for {X,Y}LABEL and {X,Y}LABEL_TRANS opcodes.
+		Done.
+	Corrected bug in isNaN, isInf and isNaNorInf (missing initialisation of *result=0 in ascanf_misc_fun).
+
+20050503:
+	Implemented Spline-Resample and PWLInt-Resample.
+
+20050505:
+	Implemented stride specification for Apply2Array.
+
+20050508:
+	Did some work on the clipping for XGPen line drawing (PenMoveTo/PenLineTo). It has become a bit better, but I should
+	spend more time doing things properly.
+	Implemented the PenClipping routine.
+	Pen functionality really ought to go into a module...
+
+20050509:
+	BOX_FILTER now works properly when applied to a window that wasn't the last to be been drawn.
+	Auto-scaling could be configured to use Quantiles instead of the absolute min/max. See the remark in Fit_XYBounds.
+
+20050511:
+	Implemented handling of NaN values in SplineInit and Spline-Resample. NaN values *inside* the to-be-splined array
+	are (or seem to be) handled graciously by our algorithm (eliminate_NaNs; replaces "internal NaNs" with a linear interpol.),
+	but the need for the initial and final derivatives make our implementation sensitive to initial or final NaN values.
+	The solution is simple: find the "real" (numerical) boundaries of the array, and set the "surrounding" coefficients to NaN.
+	That way, surrounding NaN values in the input give rise to NaN values in the splined output (setting the coefficients to 0
+	would result in 0s in the output).
+	*** To be validated in the Spline-Resample function.
+
+20050512/13:
+	Some improvement of the printing resolution used with -Cross==2. Modified ActiveWinDataWin[] such that it is now possible
+	to keep the "user co-ordinates" feature off (i.e. to apply padding to the selected clipping region).
+
+20050515:
+	Corrected splines.so:eliminate_NaNs(). The last Y value had been forgotten.
+
+20050523:
+	Another correction to eliminate_NaNs(). Only allocate memory when needed.
+	*** There appears to be a memory leak that is triggered by examples/SplineResample.xg !
+
+20051103:
+	Fixed some annoying old issues related to reading 2-column data. May break some backward compatibility (see the 20051103
+	comments).
+
+20051216:
+	On Mac OS X, dynamic modules (plugins) are now built as twolevel_namespace bundles, which can actually be unloaded. It is
+	not possible to link against such modules.
+	Corrected an issue with the DyMod dependency management. When unloading a module, only dependencies for that module are
+	relaxed (destroyed). No more the dependencies to all other loaded modules of a given expression node depending on the unloaded
+	module. This caused crashes when expression nodes were unregistered from an auto-loaded module, before this module was
+	auto-unloaded because all its dependents were unregistered.
+
+20060426:
+	Implemented contrib/Python.so . Contains the bare subset of hooks to interface with ascanf variables and xgraph DataSets.
+	Only tested on Mac OS X. Probably requires Python 2.4 or higher.
+
+20060503
+	ascanf_call_method does not check if the provided argument buffer is at least as long as maximal argument list a function
+	can have. This should be done by its callers (to allow for more efficient argument caching??).
+	It was not being done -> crashes
+
+20060907:
+	the #ifdef __cplusplus extern "C" { } constructs should not contain #include statements. Each header file should have its own. Nesting these blocks is not a good idea if somewhere inside a C++ header file is included. The location of the faulty statement will be HARD to trace, then.
+
+20060920:
+	Python module should check if a Python module has already been loaded.
+		DONE
+
+20060926:
+	In fascanf.c::_EndJoin : protected against buffer[-1] access when buffer is empty...!
+	This bug caused an out-of-bounds write to occur somewhere, that messed up something in my
+	window-manager, which in turn caused it to request a ridiculous window-size when full-zooming
+	the first window opened after triggering of this bug. Which in its turn caused the X11 server
+	under Mac OS X 10.4.7 to crash...
+
+	In fact, those crashes also had to do with sloppy WM SizeHints handling. Improved. See the various 20060926 comments.
+
+20061014:
+	Added entry points to some of the standard dymods (constants, stats, splines) that will print warnings if these dymods
+	are found by processes other than XGraph, while trying to load their own shared libraries having the same name.
+	This can happen under Mac OS X 10.4 (and higher?), since on that platform the dlopen() call will look *first* in
+	the path specified by DYLD_LIBRARY_PATH, even if a complete, absolute path to the dymod was specified.
+	Currently known affected programmes: python (entry point init<dymodname>, e.g. initconstants) and R (entry point
+	R_init_<dymodname>, e.g. R_init_stats, R_init_splines).
+
+20061117:
+	A long-standing wish has been granted. Procedures can now have local variables. All variables created internally
+	(i.e. inside an IDict block) while a procedure is being compiled are local to that procedure, and are destroyed
+	(completely) when the procedure is deleted. So re-compiling a procedure creates a fresh set of local variables.
+
+20070201:
+	Corrected a bug in WaitForEvent (uninitialised local variable), and some design flaws in dymod.c .
+
+20070215:
+	Corrected a bug in ascanfc.c that would attempt to resize subsetted arrays.
+	Final corrections to dymod.c: auto-unloading of auto-loaded dymods is no longer possible recursively. Instead,
+	several passes are made if necessary. This prevents empty (zombie) entries in the DyModList.
+
+20070410:
+	The IPython package currently has an issue where even initialising the embedded interactive shell will mess up
+	error reporting in code loaded afterwards. Errors are raised, but no explicative traceback is given anymore.
+	This doesn't happen when the interact() method from the standard code package is used. Therefore, calling
+	Python-Shell with a negative argument will now use that method, and the xgraph package has a new interact method.
+
+20070607:
+	Find_Point can now ignore either the x or the y co-ordinate passed in. In the internal function, this is done with a pair
+	of new flags. In the ascanf version, x (y) will be ignored when it is NaN or Inf. In these cases, the lookup will be done
+	on the y (x) co-ordinate only. In a CROSS_FROMWIN application, passing NaN for the y will do a lookup of the data X closest
+	to the current pointer position (comput. expensive, memory cheap).
+
+20070608:
+	Returning multiple values:
+	If we have a way to be sure how many elements follow the one we store the address of in the ascb_callback structure,
+	callbacks (single expression nodes) could have a way of returning more than a single value.
+	The problem is how this is going to be taken into account in the various places where single expression nodes are
+	evaluated...
+
+20070611:
+	new_process_set_process() didn't take the "new" number of $DATA{} values into account, it was still 3. Corrected to 4.
+
+20070626:
+	addition to ascanf_check_event() and compiled_ascanf_function(): the latter stores the current frame (Compiled_Form) in
+	Evaluated_Form, so that the former can print out the currently evaluating expression when an event requires its
+	interruption.
+
+20070712:
+	Implemented a way to return multiple values from ascanf function calls from within Python; see the docstring to the
+	AscanfObject returnArgs method.
+
+20080321:
+	DEPROC-noEval[funplot, F1[$[0]] ]
+	with F1 a procedure returns 0?
+
+20080623
+	Invoking PenLineTo[&X,&Y] with X and Y quite long may provoke a connection-loss with the X11 server (on Mac OS X 10.4 only?)
+	in XDrawSegments() (called from seg_X()). As an attempt to avoid that, seg_X() now imposes synchronised drawing for the
+	duration of the XDrawSegments() call (if synchronised mode isn't already in effect).
+
+20080623
+	1 TODO: in cursorcross mode, it seems the values printed at the cursor are not updated in case of e.g. a mod-clickRight.
+	2 Also, do not hide the X11 cursor completely, use just a single pixel.
+	3 TODO: in excl. FitX or FitY mode, take into account only the visible Y resp. X co-ordinates
+
+20080627
+	Done 20080623 1 & 2
+
+20080630
+	Done 20080623 3
+
+20080706:
+	Now passing the address of a changed variable as the 3rd argument to _ascanf_function AccessHandlers
+
+20080708:
+	Further corrected 20080623, by forcedly cutting up the request into 2*MAXSEGS chunks
+
+20080709:
+	Todo: implement arrays that point to a dataset's column. These should function like normal arrays, except that
+	resizing shouldn't be allowed.
+	Compare with special handling of 'automatic arrays' (search for "automatic arrays" and AlwaysUpdateAutoArrays,
+	if necessary "->procedure->expr.*->array" ).
+	Special handling should include frequent/continuous comparisons of af->N and this_set->numPoints/this_set->ncols !
+		**DONE** (see linkedArray struct in ascanf_Function) -- initial implementation
+	Remains todo: a list of linkedArrays associated with each set, so that checking/updating can be done when relevant
+	(i.e. when deleting or resizing a dataset)
+		**DONE** 20080711
+
+20080710
+	The principle of never freeing internal Pen data except when a window is closed can quickly become stiffling
+	is there are many (think 100000s) commands in the pen. Add an argument to PenReset to invoke the code
+	used by DelWindow to free penstuff.
+
+20080716:
+	Corrected a dormant bug in Add_LoadDyMod.
+
+20080717P
+	Corrected a few bugs related to the new LinkedArray type.
+
+20080720:
+	Discovered that (vertical) ULabels that are outside the window do show up in EPS dumps
+
+20080901
+	Dynamic modules can now be specified without the .so extension, the loader will append platform-specific extensions
+	if the specified name doesn't load.
+
+20080909
+	Arrays can now be auto-expandable ($AllowArrayExpansion). Switching this to on deactivates the possibility to set all items
+	of an array to a fixed value using a[ a[-1], value ] (of course...)
+
+20080916:
+	fig_dist.so had become unusable because all functions therein were no longer accessible. An interface function
+	(ascanf_CheckFunction) to be called from the module's af_initialise() routine corrects this and prevents further
+	occurrences (hopefully).
+
+20081126:
+	Make the PROPERTIES command easier, or add possibilities to specify set-specific settings (like errorbars or not)
+
+20081127:
+	Assigning a value to a PyAscanfObject's value field had a side-effect in python 2.5.1 : subsequent import calls fail
+	with an error "TypeError: object of type 'int' has no len()"
+	This was due to calling PyObject_Length on a PyInt. We still do this, but now clear the error just afterwards...
+
+20081202:
+	ceased dumping variables from auto-loaded modules
+
+20081204:
+	small modification of Py_ImportVariableFromAscanf() : quickImport mode to avoid warnings when calling
+	the function with an ascanf_Functoin pointer that only needs to be converted to the appropriate Python object
+	(in which case a parse_ascanf_address call isn't required).
+
+20081205:
+	wrapped fgets() with some code (fascanf.c::_fgets()) that will translate \r\n EOLs with a "regular" '\n'.
+
+20081209:
+	need setter for the DataSet.columnlabels field in Python!
+		DONE!
+
+20081211:
+	More tweaks, including the possibility to request lines with "real-world" widths by specifying a negative width
+	value.
+
+	CHECK: saving bounds with 1:1 aspect ratio restores the wrong bounds??? Printing also shows some artefacts (bounds
+	changing)
+
+	20081215: start addressing this: wi->aspect_base_bounds field.
+
+20081217:
+	Added xfree() of memory passed to XStoreBuffer(): this is apparently OK to do.
+	New argument -bbox or -boundingbox
+	Selecting the Bounding Box info in the info popup (under the I key) puts a -bbox llx,lly,urx,ury argument on the clipboard
+
+20090112:
+	Some touches to RemoveTrend, which will now either do nothing to a series that has a NaN or Inf mean, or will
+	filter out NaN or Inf values inside the range being considered.
+	It should be able to determine a slope itself, rather than simply remove an offset when no slope is specified by the user.
+
+20090113:
+	Opcode to specify a python file to be loaded can now be python:: OR py:: (case insensitive); checking is moved to a
+	special function in dymod.c (PyOpcode_Check()). This should make it possible to provide Python functionality for the
+	fascanf family (pyscanf() !!) -- toplevel expressions only I presume. Something where a call to pyscanf with the argument
+	SomePythonFunction(a,b,c)
+	will store the 1st N values returned by SomePythonFunction in the 1st N elements of the specified array.
+	(fascanf("py::SomePythonFunction(a,b,c)" ...) would call into pyscanf( "SomePythonFunction(a,b,c)" ... ) )
+	It seems tempting to pass either the current values in the Data array OR a set of other values (X,Y,Error,... !)
+	as arguments to the function, but this is probably not the best for maximum transparency and usefulness.
+
+20090226:
+	Added the Gtk-based console/shell found in the PyGTK package, which is available via xgraph.gtkconsole or
+	which is launched by Python-Shell[] if xgraph isn't currently attached to an interactive terminal.
+	This is a rather rudimentary shell, in particular it lacks job control, so one cannot interrupt the evaluation
+	of an expression!
+	To use it, install PyGTK and then copy the example/ide/gtkcons.py file somewhere on Python's path (e.g. in
+	the XGraph preferences directory).
+	I removed the "Close" button in my own version, as it'll leave the shell's window as an orphan on the screen.
+
+20090317:
+	Yay, I discovered rl_event_hook (libreadline) and PyOS_InputHook - now windows remain interactive when in a console!
+
+20090410
+	TODO: exporting of arrays of strings to ascanf...!
+	IN ADDITION!!:
+		# Delaying declaration of pointer variable: DCL[TrialNames,`"[F40 F20 ER1 CD4D CD2G ER1 DC4D CD2D DC2D CD4G DC4G DC2G]"] @
+		*EXTRATEXT* Declaring variables, pointers, etc. that are pointers (strings), or are used as such
+		 It can be that they should have been declared before; this will lead to unexpected behaviour
+		 In that case, move their declaration manually...
+		 Pointers to procedures are omitted at this time.
+
+
+		*EXTRATEXT* Declaring variables, pointers, etc. that are pointers to procedures, or are used as such
+		 It can be that they should have been declared before; this will lead to unexpected behaviour
+		 In that case, move their declaration manually...
+
+
+		*EXTRATEXT*
+		There remain 1 pointer variables; this is probably a bug in XGraph!
+
+20090412:
+	"TrialNames issue" above probably resolved. Also handling unicode Python strings better now.
+
+20090414:
+	Done, exporting of arrays of strings to ascanf.
+
+20090428:
+	Create_AutoVariable() calls check_for_ascanf_function() twice, the 1st time in direct execution mode (not compiling),
+	but it's probably not a good idea to do array operations in that case, at least to avoid warnings about outside-bounds
+	accesses.
+
+20090624:
+	system.time[ verbose[ a, b, ... ] ] now prints simplified evaluation times for a, b, ...
+
+20090703:
+	xgraph cs. build as universal binaries on Mac OS X. Procedure and result tested only on PowerPC Macs.
+
+20090917:
+	corrected an error in Python_Arrays2Set()
+
+	TODO: allow to redefine/resynchronise ActiveWin from within Python (console): the association gets lost after opening
+	and closing a new window
+		DONE. grl_HandleEvents() that gets called from within libreadline and Python console handlers now sets ActiveWin
+		to LastDrawnWin when unset (= the last window that was redrawn successfully).
+
+20090920:
+	Shifting sets should update the target in linked sets!
+	20091120: apparently it does?!
+
+20090922:
+	Added sanity check to get_VariableWithName(), and no longer attempt to call spline() with a range of 1 and/or when the
+	first valid element is the last in the array (those 2 conditions should always be true together).
+	SEE 20090920
+
+
+20091125:
+	Something has changed in scipy 0.7.1 and/or numpy 1.2.1 and/or Python 2.6.4; I'm receiving 2D arrays as a result of importing
+	data through loadmat(). This might be to emulate Matlab more closely. Henche, it's become necessary to check if an array is
+	in fact a 1-dimensional array. ndArray_ShapeOK() does that. It *might* be necessary to accept only a >1 size for the 1st
+	dimension if we want to be sure to be able to convert the arena to a contiguous vector with the dedicated routine.
+
+20100111:
+	Investigate interest of Py_BEGIN_ALLOW_THREADS and Py_ENDALLOW_THREADS
+
+20100309:
+	Testing under 10.5 . There is a build issue with stdarg.h and float.h not being found using the MacOSX10.4u.sdk . No problem using the 10.5 sdk ...
+
+20100331:
+	Back-ported to Cygwin (the current version). Functions on MSWinXP32.
+	Added support for specification of dynamically-loaded shared-libs (libreadline, libfftw3, ...) via XG_LIBREADLINE,
+	XG_LIBFFTW3, XG_LIBFFTW3F, XG_LIBFFTW3_THREADED, XG_LIBFFTW3F_THREADED. These can be set in xg_init.xg .
+	Appending a '@' is no longer necessary in xg_init.xg to avoid expressions being added to the history.
+
+20100401:
+	implemented support for platform-specific *IF*/*ENDIF* conditional code
+	implemented a possibility to specify how complex the scan for X11-style defaults should be, via XG-GetDefaults (which
+	is always read in the most complex fashion).
+
+// 20100503: clearly the ret argument was foreseen as one allowing to pass in a local variable
+// ascanf_Function or something of the sort, but we are currently never called with a *ret
+// that points to a local variable. Instead, we can get called with a non-null *ret that is supposed
+// to receive the return value of a Python call from Ascanf; that ascanf_Function should thus not be converted
+// to an AscanfPythonObject!
+
+20100616:
+	__gnu_cxx::hash_map is obsolescent, and will have to be replaced. Either by unordered_set, or by google-sparsehash
+	which appears to be more of a drop-in replacement (but adds another dependency).
+	Done using google/dense_hash_map .
+
+20100616:
+	Verify Make-Histogram when an array of X values is specified. Should those be treated as values to check for, or as the
+	middle points of so many buckets?!
+
+20101015:
+	Moved to an Intel Macbook Pro running 10.6.4, and bumped into the issue described at 20031112 ... The symptom being that
+	the pen position's Y co-ordinate became a NaN when calling ascanf_PenLineTo via many ASCB_call()s.
+	This only happened with llvm-gcc-4.2, not with gcc-4.2 .
+	Solution: rewrote ascanf_PenLineTo and ascanf_PenMoveTo such that they can be called directly from C much more easily.
+
+20101020
+	Many more small rewrites, progressively getting rid of the use of alloca() in (core) ascanf (and elsewhere). ASCB_call
+	didn't cache ascanf_arguments (corrected). The Python getter callback for DataSet.data didn't return on success; it's a
+	miracle that the function ever worked (corrected). strrstr() rewritten so that it is impossible to loop across the
+	test string's starting address (the check was done only in the inner decrementing loop). Added the -DumpColours argument.
+	Went back to compiling with gcc-4.2 instead of llvm-gcc-4.2 (on Mac OS X 10.6).
+
+20101021:
+	remove_ascanf_variables() did not remove the correct entries from the VariableName register ... and none at all if
+	the registry was deactivated. This has been corrected, and the registry is activated (temporarily) when removing a series
+	of variables, so as not to leave dangling references. Also, the registry itself now has tests that allow to detect
+	a dangling reference (a variable registered from an unloaded library).
+
+20101025:
+	When importing an ascanf callable object by reference, its callback could get called, with the possibility of side-effects.
+	The Python interface now sets compilation ("syntax check") mode during such actions, so that callbacks can avoid
+	causing side-effects.
+	Changing the column labels of a set with links now updates the column labels of the linked sets.
+
+20101027:
+	Corrected a bug or two in fourconv3::ascanf_convolve_fft()
+
+20101103:
+	Re: 20101015, 20101020: found the reason. ASCB_call() was being called without prototype in xgPen.c . I don't understand
+	how this could mess things up even after a rewrite of ASCB_call() such that it didn't attempt to use va_start c.s. when
+	argc=0; evidently the declared arguments were all passed correctly. Copying the ASCB_call() prototype to ascanf.h
+	resolved the issue (I don't know why I declared the function in ascanfc-table.h instead, a header exclusive to ascanfc.c!)
+	The whole issue gave rise to an interesting discussion: http://arstechnica.com/civis/viewtopic.php?f=19&t=1125249
+
+20101114:
+	Did some work for better support of ascanf_separator != ',' which should allow to use a semicolon instead of a comma,
+	for instance. The separator used to define a range of expressions (that are being stored as strings in addition to
+	compiled expressions) is cached. This is not to guarantee that the modifications required to support runtime-changing of
+	the separator have been applied exhaustively!
+
+20110326:
+	xgraph builds as a universal 32/64bit application. ascanf_printf had to be corrected: the old kludge of passing an array
+	of string pointers to vsnprintf/vfprintf no longer worked. A simple replacement has been written that scans for the typical
+	format specifiers in the format string and replaces them with the subsequent elements from the string pointer array.
+	Also, variadic functions can no longer be called with a 0 instead of a NULL where pointers are expected, of course. This
+	concerned calls to concat, concat2 and SubstituteOpcodes. Other calls may still linger!
+
+20110926:
+	XGraph as a 'widget' ... would require a dedicated entrypoint (replacement for main, ˆ la dllmain) for initialisation on a
+	background thread, ought not to quit when there are no windows. A specific type of linked datasets would allow to keep the original
+	data in the parent process as long as it's in a compatible form (an array of double arrays, each corresponding to a 'column'
+	(vectors) of observables - controlled variables and data). Clever updating of the pointers in the parent array would
+	also allow to 'tap into' circular buffers and thus to have scrollable views.
+	Is it possible (on MS Windows) to load and use a Cygwin-based dll from a "standard" win32 application?!
+
+20111021:
+	cf. the 20110326 entry: we need to do the same thing for the call to vsscanf() in ascanf_scanf() !!
+	Also, consider a 'standalone' version of ReadData c.s. and ascanfc c.s. , for exporting the relevant functionality
+	to a Python library. The goal would be to enable Python to read XGraph datafiles and execute ascanf scripts.
+
+20111027:
+	Modified things so that fourconv3.c can be compiled as C++, which gives access to MacSTL's SIMD accelerated
+	stdext::valarray<double> type, currently used only for the _convolve() internal function.
+	This doesn't really make sense on PowerPC/Altivec, but there is a slight advantage on SSE2 and better; performance
+	is esp. less sensitive to CPU load.
+
+20111104:
+	splint and pwlint now test for sequential access as was suggested to be more optimal in the existing comment.
+	For large arrays, this can be around 4x faster than indiscriminate use of bisection.
+	(I've only tested this for sequential access through Spline-Resample, though!)
+
+20120414:
+	Spent a couple of days adapting to python 3.2 (and hopefully later). The only feature that has regressed is exporting
+	file objects opened in Python to ascanf because Python 3 no longer uses stdio buffered IO. File objects that have to be
+	shared between ascanf and Python code therefore have to be opened in ascanf. All other features seem to work, although
+	the MorBurr99 examples will not work in threaded mode with proper (?) locking.
+	When using Python 3, embedded Python can be converted ('fixed') automatically by using the *PYTHON2* opcode. Similar
+	transparent functionality does not exist for file-based import, but the Python plugin now prepends a version-dependent
+	directory at the head of the module search path. When using Python 2.x, modules are looked for first in ./py2k; when
+	using Python 3.x, in ./py3k .
+
+20120417:
+	Check why an expression like psaBest=ExportVariable('saBest', array([NaN]), IDict=True ) gives an ascanf_Function object
+	where saBest->own_address != take_ascanf_address(saBest) !
+
+20120501
+	Improved py3k "unicode/string' handling. Unix uses iso8859-1 encoding by default (Latin1); this presumption is now hardcoded
+	to avoid utf-8 encoding errors in Py_BuildValue("s", str) when characters >127 are present.
+
+20120508
+	Restored the delete-in-a-box functionality which was dysfunctional due to an X server weirdness (on Mac OS X??)

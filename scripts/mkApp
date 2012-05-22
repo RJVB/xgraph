@@ -1,0 +1,27 @@
+#!/bin/sh
+
+FILE="${1}"
+DIR="`dirname ${FILE}`"
+NAME="`basename ${FILE}`"
+
+RESSOURCE=/usr/local/wx/Current/share
+REZDEFINES="-d __WXMAC__  -d WXUSINGDLL"
+
+# NB: sample.r is taken from the samples directory in the wxWidgets distribution
+/Developer/Tools/Rez -d __DARWIN__ -t APPL -i "${DIR}" -i ${RESSOURCE} ${REZDEFINES} -o "${FILE}" Carbon.r sample.r
+/Developer/Tools/SetFile -a C "${FILE}"
+
+if [ "`basename ${0}`" = "mkAppBundle" ] ;then
+	mkdir "${FILE}.app"
+	mkdir "${FILE}.app"/Contents
+	mkdir "${FILE}.app"/Contents/MacOS
+	mkdir "${FILE}.app"/Contents/Resources
+
+	sed -e "s/IDENTIFIER/`echo ${FILE} | sed -e 's,\.\./,,g' | sed -e 's,/,.,g'`/" \
+	-e "s/EXECUTABLE/${NAME}/" \
+	-e "s/VERSION/2.8.9/" \
+	"${RESSOURCE}"/Info.plist.in >"${FILE}.app"/Contents/Info.plist
+	echo -n "APPL????" >"${FILE}.app"/Contents/PkgInfo
+	ln -f "${FILE}" "${FILE}.app"/Contents/MacOS/
+	cp -pf "${RESSOURCE}"/wxmac.icns "${FILE}.app"/Contents/Resources/
+fi

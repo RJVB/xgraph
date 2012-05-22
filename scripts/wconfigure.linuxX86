@@ -1,0 +1,258 @@
+#!/bin/sh -x
+
+ECHO=echo
+export ECHO
+
+RWSTRINGS=0 ; export RWSTRINGS
+if [ "$CONFIGURE" = "" ] ;then
+	if [ "`basename $0`" == "wfink" ] ;then
+		CONFIGURE="fink"
+	else
+		CONFIGURE="configure"
+	fi
+fi
+
+set +x
+# save vars passed on the commandline to override those in wconfigure.env:
+cliCPP="${CPP}"
+cliCC="${CC}"
+cliCXX="${CXX}"
+cliOBJC="${OBJC}"
+cliF77="${F77}"
+cliFC="${FC}"
+cliCPPFLAGS="${CPPFLAGS}"
+cliCFLAGS="${CFLAGS}"
+cliOBJCFLAGS="${OBJCFLAGS}"
+cliCXXFLAGS="${CXXFLAGS}"
+cliFFLAGS="${FFLAGS}"
+cliFCFLAGS="${FCFLAGS}"
+cliPYTHON="${PYTHON}"
+cliPYTHONPATH="${PYTHONPATH}"
+cliMACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
+set -x
+
+if [ -r wconfigure.env ] ;then
+	. wconfigure.env
+fi
+
+set +x
+if [ "${cliCPP}" != "" ] ;then
+	CPP="${cliCPP}" ; export CPP
+fi
+if [ "${cliCC}" != "" ] ;then
+	CC="${cliCC}" ; export CC
+fi
+if [ "${cliCXX}" != "" ] ;then
+	CXX="${cliCXX}" ; export CXX
+fi
+if [ "${cliOBJC}" != "" ] ;then
+	OBJC="${cliOBJC}" ; export OBJC
+fi
+if [ "${cliF77}" != "" ] ;then
+	F77="${cliF77}" ; export F77
+fi
+if [ "${cliFC}" != "" ] ;then
+	FC="${cliFC}" ; export FC
+fi
+if [ "${cliCPPFLAGS}" != "" ] ;then
+	CPPFLAGS="${cliCPPFLAGS}" ; export CPPFLAGS
+fi
+if [ "${cliCFLAGS}" != "" ] ;then
+	CFLAGS="${cliCFLAGS}" ; export CFLAGS
+fi
+if [ "${cliOBJCFLAGS}" != "" ] ;then
+	OBJCFLAGS="${cliOBJCFLAGS}" ; export OBJCFLAGS
+fi
+if [ "${cliCXXFLAGS}" != "" ] ;then
+	CXXFLAGS="${cliCXXFLAGS}" ; export CXXFLAGS
+fi
+if [ "${cliFFLAGS}" != "" ] ;then
+	FFLAGS="${cliFFLAGS}" ; export FFLAGS
+fi
+if [ "${cliFCFLAGS}" != "" ] ;then
+	FCFLAGS="${cliFCFLAGS}" ; export FCFLAGS
+fi
+if [ "${cliPYTHON}" != "" ] ;then
+	PYTHON="${cliPYTHON}" ; export PYTHON
+fi
+if [ "${cliPYTHONPATH}" != "" ] ;then
+	PYTHONPATH="${cliPYTHONPATH}" ; export PYTHONPATH
+fi
+if [ "${cliMACOSX_DEPLOYMENT_TARGET}" != "" ] ;then
+	MACOSX_DEPLOYMENT_TARGET="${cliMACOSX_DEPLOYMENT_TARGET}" ; export MACOSX_DEPLOYMENT_TARGET
+fi
+set -x
+
+# set NOWCC to the desired compiler script in order to attempt to retrieve its CC and CFLAGS settings
+# and pass those directly to configure. This may be necessary when the compiler is called from within
+# libtool.
+if [ "$NOWCC" != "" ] ;then
+	case $NOWCC in
+		default|system|none)
+			${ECHO} "Using (provided) defaults: CPP=${CPP} CC=${CC} CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} CXX=${CXX} CXXFLAGS=${CXXFLAGS} OBJC=${OBJC} OBJCFLAGS=${OBJCFLAGS} F77=${F77} FFLAGS=${FFLAGS} FC=${FC} FCFLAGS=${FCFLAGS} PYTHON=${PYTHON} PYTHONPATH=${PYTHONPATH}"
+			;;
+		*)
+			KK="kk$$"
+			${NOWCC} -cli > ${KK}
+			CC="`fgrep 'CPP=' ${KK} | sed -e 's/CPP=\([^ ]*\).*/\1/'`" ; export CPP
+			CC="`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\).*/\1/'`" ; export CC
+			OPTS=`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\)\(.*\)/\2/'`
+			CPPFLAGS="`fgrep CPPFLAGS= ${KK} | sed -e 's/CPPFLAGS=//'` ${CPPFLAGS}" ; export CPPFLAGS
+			CFLAGS="`fgrep CFLAGS= ${KK} | sed -e 's/CFLAGS=//'` ${CFLAGS}"
+			CFLAGS="${OPTS}${CFLAGS}" ; export CFLAGS
+			CXX="`${ECHO} ${CC} | sed -e 's/gcc/g++/g'`" ; export CXX
+			CXXFLAGS="${CFLAGS} ${CXXFLAGS}" ; export CXXFLAGS
+			OBJC="${CC}" ; export OBJC
+			OBJCFLAGS="${CFLAGS} ${OBJCFLAGS}" ; export OBJCFLAGS
+			PYTHON="${PYTHON}" ; export PYTHON
+			PYTHONPATH="${PYTHONPATH}" ; export PYTHONPATH
+			macosx_deployment_target="`fgrep 'MACOSX_DEPLOYMENT_TARGET=' ${KK} | sed -e 's/MACOSX_DEPLOYMENT_TARGET=\([^ ]*\).*/\1/'`"
+			rm -f ${KK}
+			;;
+	esac
+else
+	if [ "$CC" = "" ] ;then
+		CC=wcc ; export CC
+		${CC} -cli
+	fi
+	if [ "$CXX" = "" ] ;then
+		CXX=w++ ; export CXX
+	fi
+	if [ "$OBJC" = "" ] ;then
+		OBJC=wcc ; export OBJC
+		${OBJC} -cli
+	fi
+	if [ "$F77" = "" ] ;then
+		F77=w77 ; export F77
+	fi
+	if [ "$FC" = "" ] ;then
+		FC=w95 ; export FC
+		${FC} -cli
+	fi
+	if [ "$CPPFLAGS" = "" ] ;then
+		CPPFLAGS="" ; export CPPFLAGS
+	fi
+	if [ "$CFLAGS" = "" ] ;then
+		CFLAGS="" ; export CFLAGS
+	fi
+	if [ "$OBJCFLAGS" = "" ] ;then
+		OBJCFLAGS="" ; export OBJCFLAGS
+	fi
+	if [ "$CXXFLAGS" = "" ] ;then
+		CXXFLAGS="" ; export CXXFLAGS
+	fi
+	if [ "$FFLAGS" = "" ] ;then
+		FFLAGS="" ; export FFLAGS
+	fi
+	if [ "$FCFLAGS" = "" ] ;then
+		FCFLAGS="" ; export FCFLAGS
+	fi
+	if [ "$PYTHON" = "" ] ;then
+		PYTHON="" ; export PYTHON
+	fi
+	if [ "$PYTHONPATH" = "" ] ;then
+		PYTHONPATH="" ; export PYTHONPATH
+	fi
+	if [ "$MACOSX_DEPLOYMENT_TARGET" = "" ] ;then
+		if [ "$macosx_deployment_target" != "" ] ;then
+			MACOSX_DEPLOYMENT_TARGET="${macosx_deployment_target}" ; export MACOSX_DEPLOYMENT_TARGET
+		fi
+	fi
+fi
+
+# For those configure scripts that do not support CPPFLAGS: if requested, merge
+# those flags into CFLAGS.
+if [ $MERGE_CPPFLAGS ] ;then
+	CFLAGS="${CPPFLAGS} ${CFLAGS}" ; export CFLAGS
+	CPPFLAGS="" ; export CPPFLAGS
+fi
+
+GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE
+GCCOPT_QUIET=1 ; export GCCOPT_QUIET
+
+if [ "$WCC_STUB" = "" ] ;then
+	WCC_STUB=1 ; export WCC_STUB
+fi
+
+pwd
+# ${ECHO} "env compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@"
+# ${ECHO} "USE_GNOME_DIR=${USE_GNOME_DIR} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
+
+${ECHO} -n "env HOST=\"${HOST}\"" > wconfigure.call
+if [ "$LD_LIBRARY_PATH" != "" ] ;then
+	${ECHO} -n " LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\"" >> wconfigure.call
+fi
+if [ "$USE_GNOME_DIR" != "" ] ;then
+	${ECHO} -n " USE_GNOME_DIR=\"${USE_GNOME_DIR}\"" >> wconfigure.call
+fi
+if [ "$DYLD_LIBRARY_PATH" != "" ] ;then
+	${ECHO} -n " DYLD_LIBRARY_PATH=\"${DYLD_LIBRARY_PATH}\"" >> wconfigure.call
+fi
+if [ "$MACOSX_DEPLOYMENT_TARGET" != "" ] ;then
+	${ECHO} -n " MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\"" >> wconfigure.call
+fi
+if [ "$PYTHON" != "" ] ;then
+	${ECHO} -n " PYTHON=\"${PYTHON}\" ; export PYTHON" >> wconfigure.call
+fi
+if [ "$PYTHONPATH" != "" ] ;then
+	${ECHO} -n " PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> wconfigure.call
+fi
+${ECHO} " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@" >> wconfigure.call
+
+rm wconfigure.env
+if [ "${compiler}" != "" ] ;then
+	${ECHO} "compiler=\"${compiler}\" ; export compiler" >> wconfigure.env
+fi
+if [ "${CPP}" != "" ] ;then
+	${ECHO} "CPP=\"${CPP}\" ; export CPP" >> wconfigure.env
+fi
+${ECHO} "CC=\"${CC}\"" >> wconfigure.env
+${ECHO} "CPPFLAGS=\"${CPPFLAGS}\"" >> wconfigure.env
+${ECHO} "CFLAGS=\"${CFLAGS}\"" >> wconfigure.env
+${ECHO} "CXX=\"${CXX}\"" >> wconfigure.env
+if [ "${CXXFLAGS}" = "${CFLAGS}" ] ;then
+	${ECHO} 'CXXFLAGS="${CFLAGS}"' >> wconfigure.env
+else
+	${ECHO} "CXXFLAGS=\"${CXXFLAGS}\"" >> wconfigure.env
+fi
+if [ "${OBJC}" = "${CC}" ] ;then
+	${ECHO} 'OBJC="${CC}"' >> wconfigure.env
+else
+	${ECHO} "OBJC=\"${OBJC}\"" >> wconfigure.env
+fi
+if [ "${OBJCFLAGS}" = "${CFLAGS}" ] ;then
+	${ECHO} 'OBJCFLAGS="${CFLAGS}"' >> wconfigure.env
+else
+	${ECHO} "OBJCFLAGS=\"${OBJCFLAGS}\"" >> wconfigure.env
+fi
+${ECHO} "F77=\"${F77}\"" >> wconfigure.env
+if [ "${FFLAGS}" = "${CFLAGS}" ] ;then
+	${ECHO} 'FFLAGS="${CFLAGS}"' >> wconfigure.env
+else
+	${ECHO} "FFLAGS=\"${FFLAGS}\"" >> wconfigure.env
+fi
+if [ "${FC}" = "${F77}" ] ;then
+	${ECHO} 'FC="${F77}"' >> wconfigure.env
+else
+	${ECHO} "FC=\"${FC}\"" >> wconfigure.env
+fi
+if [ "${FCFLAGS}" = "${CFLAGS}" ] ;then
+	${ECHO} 'FCFLAGS="${CFLAGS}"' >> wconfigure.env
+elif [ "${FCFLAGS}" = "${FFLAGS}" ] ;then
+	${ECHO} 'FCFLAGS="${FFLAGS}"' >> wconfigure.env
+else
+	${ECHO} "FCFLAGS=\"${FCFLAGS}\"" >> wconfigure.env
+fi
+${ECHO} "LDFLAGS=\"${LDFLAGS}\"" >> wconfigure.env
+if [ "$MACOSX_DEPLOYMENT_TARGET" != "" ] ;then
+	${ECHO} "MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\" ; export MACOSX_DEPLOYMENT_TARGET" >> wconfigure.env
+fi
+if [ "$PYTHON" != "" ] ;then
+	${ECHO} "PYTHON=\"${PYTHON}\" ; export PYTHON" >> wconfigure.env
+fi
+if [ "$PYTHONPATH" != "" ] ;then
+	${ECHO} "PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> wconfigure.env
+fi
+${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> wconfigure.env
+
+exec "${CONFIGURE}" "$@"

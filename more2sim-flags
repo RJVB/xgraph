@@ -1,0 +1,12 @@
+-fno-caller-saves
+-fno-cse-follow-jumps
+-fno-cse-skip-blocks
+-fno-expensive-optimizations
+-fno-force-mem
+-fno-gcse
+-fno-optimize-register-move
+-fno-regmove
+-fno-rerun-cse-after-loop
+-fno-rerun-loop-opt
+-fno-schedule-insns2
+-fno-strength-reduce

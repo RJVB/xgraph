@@ -1,0 +1,52 @@
+#!/bin/sh
+# _obj_compress $background $compress $VERBOSE $Z $TARGET $COMPRESS
+
+background=$1 ; export background ; shift
+compress=$1 ; export compress ; shift
+VERBOSE=$1 ; export VERBOSE ; shift
+Z=$1 ; export Z ; shift
+TARGET=$1 ; export TARGET ; shift
+COMPRESS=$* ; export COMPRESS
+
+CleanUp(){
+	if [ -r $J.$Z ] ;then
+		gzcat $J.$Z > /dev/null
+		if [ $? != 0 ] ;then
+			echo "Removing incomplete compressed objectfile"
+			rm -f $J.$Z
+		fi
+	fi
+	exit 1
+}
+
+trap CleanUp 1
+trap CleanUp 2
+trap CleanUp 15
+
+do_compress(){
+	echo "Compressing $COMPRESS"
+	for J in $COMPRESS ;do
+		if [ -r $J ] ;then 
+			export J
+			rm -f $J.$Z
+			nice $compress $VERBOSE $J
+			/bin/echo -n "" > $J
+			touch -r $J.$Z $J
+		fi
+	done
+
+	if [ "$TARGET" != "" ] ;then
+		sleep 1
+		touch $TARGET 
+		echo "$0: $TARGET touched and done"
+	fi
+	sync
+}
+
+if [ $background != 0 ] ;then	
+	( do_compress < /dev/null > /dev/null 2>&1 & ) &
+	echo "$0: background"
+else
+	do_compress
+fi
+exit 0

@@ -1,0 +1,67 @@
+#!/bin/sh
+
+# 20001031 RJVB
+# a simple script that should output the machine dependent libraries. I.e., on an O2 (IP32 architecture),
+# we need a basic Performer library to get at the pfSinCos() routine.
+# 20020324: the env.variable XGLIBS can be used to (exceptionally) add libraries via the commandline.
+
+MACH="`uname -m`"
+
+if [ "`uname`" = "AIX" ] ;then
+	MACH="AIX"
+elif [ "`uname`" = "Linux" ] ;then
+	MACH="Linux"
+elif [ "`uname`" = "Darwin" ] ;then
+	if [ "${MACH}" = "x86_64" ] ;then
+		MACH="DarwinX864"
+	elif [ "${MACH}" != "Power Macintosh" ] ;then
+		MACH="DarwinX86"
+	fi
+fi
+
+LIBS=""
+
+FFTW="`grep '^[ 	]*#[ 	]*define[ 	][ 	]*HAVE_FFTW' config.h`"
+DFFTW="`grep '^[ 	]*#[ 	]*define[ 	][ 	]*FFTW_DYNAMIC' config.h`"
+NOLTDL="`grep '^[ 	]*#[ 	]*define[ 	][ 	]*NO_LTDL' config.h`"
+CPLPL="`grep '^[ 	]*#[ 	]*define[ 	][ 	]*USE_AA_REGISTER' config.h`"
+
+if [ "${FFTW}" != "" -a "${DFFTW}" = "" ] ;then
+	LIBS="${LIBS} -lrfftw -lfftw"
+fi
+
+# 20100616: xgraph is now linked with c++opt (c++ compiler)
+# if [ "${CPLPL}" != "" ] ;then
+# 	LIBS="${LIBS} -lstdc++"
+# fi
+
+echo "Determining required machine-dependent libraries; flags \"$*\"" 1>&2
+
+case $MACH in
+	IP22*|IP32*|IRIX*|AIX)
+		 # echo "-lstdc++"
+		if [ "`echo $* | fgrep q`" = "" ] ;then
+			  # build vscanf.a, but only if the flags passed to make-that-invokes-us are right!
+			nice cmake vscanf -d vscanf CC="`./machdepcomp`" -"$*" 2>&1 | tee vscanf_make.out 1>&2
+		fi
+		echo "${LIBS} -Lvscanf/ -lvscanf ${XGLIBS} -L/usr/lib -lgen"
+		;;
+	i686|i586|Linux)
+		if [ "${NOLTDL}" = "" ] ;then
+			LDL="-lltdl"
+		else
+			 # comment out for cygwin:
+			LDL="-ldl"
+		fi
+		# -lrt to get access to clock_gettime and clock_getres.
+		echo "${LIBS}" "${LDL}" "${XGLIBS}" -lrt #-lefence
+		;;
+	DarwinX86*)
+		echo "-framework Accelerate" "${LIBS}" "${XGLIBS}"
+		;;
+	"Power Macintosh")
+		 # Uncomment for systems before Panther (10.3)
+# 		LDL="-ldl"
+		echo "-framework Accelerate" "${LIBS}" "${LDL}" "${XGLIBS}" #-lefence
+		;;
+esac

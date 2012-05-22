@@ -1,0 +1,381 @@
+#!/bin/sh
+# gccopt script interface to gcc 1.37.91 on A/UX
+
+VOPTIMOPT="-O -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+OOPTIMOPT="-O -fstrength-reduce -fno-combine-regs -fno-force-mem -fno-force-addr -finline-functions -fkeep-inline-functions -fdelayed-branch"
+SIMOPT="-O"
+OPTIMOPT="${OOPTIMOPT}"
+DEBUGOPT=""
+INCLUDE="-I/usr/include/local -L/usr/local/lib"
+OTHEROPT="-fwritable-strings"
+PIPE="-pipe"
+# WARNINGS="-Wcomment -Wunused"
+WARNINGS="-Wcomment -Wunused"	# -Wformat"
+EXTRA_WARNINGS="-W -Wuninitialized -Wconversion"
+DEFINES="-D__GCCOPT__ -DmacII -D_SYSV_SOURCE"
+# -D_BSD_SOURCE -D_AUX_SOURCE
+
+LINK=1
+ANSILIBS="-lansi"
+LIBS=""
+
+ARGS=""
+VERBOSE=""
+
+COMPRESS="" ; export COMPRESS
+UNCOMPRESS="" ; export UNCOMPRESS
+COMPRESSING=0
+
+compress="gzip -9v"
+uncompress="gunzip"
+Z="gz"
+
+SYS="-DSYSV"
+
+SWITCHES="gcc"
+
+OUTPUT_SET=""
+
+while [ $# != 0 ] ; do
+	case $1 in
+		"-debug")
+			set -x
+			DEBUG=1 ; export DEBUG
+			;;
+		"-srcdir")
+			 # hardcode the full pathname in the objectfile. This
+			 # is useful for debugging: the debugger will always (?)
+			 # find the sourcefile
+			SRCDIR="`pwd`/"
+			;;
+		"-more_warnings")
+			WARNINGS="${WARNINGS} ${EXTRA_WARNINGS}"
+			echo "gcc warnings: ${WARNINGS}"
+			EXTRA_WARNINGS=""
+			;;
+		"-Ac")
+			ARGS="$ARGS -traditional"
+#			ANSILIBS=""
+			SWITCHES="${SWITCHES} -traditional"
+			;;
+		"-Aa")
+			ARGS="$ARGS -ansi"
+			ANSILIBS="-lansi"
+			SWITCHES="${SWITCHES} -ansi"
+			;;
+		"-Z"|"-Zbg") 
+			COMPRESSING=1
+			;;
+		"-emsg")
+			OUTPUT=$2
+			OUTPUT_SET="True"
+			shift
+			;;
+		"-E"|"-c"|"-fsyntax-only")
+# 			LINK=0
+# 			ARGS="$ARGS $1"
+# 			LIBDIR=""
+# 			SWITCHES="${SWITCHES} $1"
+# 			file="`echo $2 | sed -e 's/\.[csi]//g'`"
+# 			if [ "$OUTPUT_SET" != "True" ] ;then
+# 				OUTPUT=$2	#$file
+# 			fi
+# 			if [ -r "$file".c ] ;then
+# 				if [ "${TARGET}" != "" ] ;then
+# 					object="${TARGET}"
+# 				else
+# 					object="$file".o
+# 				fi
+# 				if [ -r "$object".Z ] ;then
+# 					UNCOMPRESS="$UNCOMPRESS ${object}.Z"
+# 				fi
+# 				if [ ! -s $object ] ;then
+# 					rm -f "$object"
+# 				fi
+# 				if [ ! -r $object -a $COMPRESSING = 1 ] ;then
+# 					COMPRESS="$COMPRESS $object"
+# 				fi
+# 			fi
+# 			;;
+			LINK=0
+			ARGS="$ARGS $1 ${SRCDIR}$2"
+			SWITCHES="${SWITCHES} $1 ${SRCDIR}$2"
+			LIBDIR=""
+			file="`echo $2 | sed -e 's/\.[csi]//g'`"
+			file="${SRCDIR}${file}"
+			if [ -r "$file".c ] ;then
+				OUTPUT=$2	#$file
+				if [ "${TARGET}" != "" ] ;then
+					object="${TARGET}"
+				else
+					object="$file".o
+				fi
+				if [ -r "$object".$Z ] ;then
+					UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+				fi
+# 				if [ ! -r $object -a $COMPRESSING != 0 ] ;then
+				if [ $COMPRESSING != 0 ] ;then
+					COMPRESS="$COMPRESS $object"
+				fi
+			else
+				echo "Warning: file ${file}.c doesn't exist - non-filename after -c ?"
+# 				COMPRESS="$COMPRESS ${file}.o"
+			fi
+			shift
+			;;
+		"-o")
+# 			TARGET="$2"
+# 			if [ "$OUTPUT_SET" != "True" ] ;then
+# 				OUTPUT=$2	#"`basename $2`"
+# 			fi
+# 			ARGS="$ARGS $1"
+# 			;;
+			TARGET="${SRCDIR}$2"
+			OUTPUT=$2	#"`basename $2`"
+			ARGS="$ARGS $1 $2"
+			SWITCHES="${SWITCHES} $1 ${SRCDIR}$2"
+			if [ $LINK = 0 ] ;then
+				echo "\"$1 $2\" was preceded by \"-c $file.c\": reverse for correct handling of compressed object-files!\n\
+\telse you run the risk of favouring the old object-file"
+			fi
+			shift
+			;;
+		*.o)
+# 			object=$1
+# 			if [ -r "$object".Z ] ;then
+# 				UNCOMPRESS="$UNCOMPRESS ${object}.Z"
+# 			fi
+# 			if [ ! -s $object ] ;then
+# 				rm -f "$object"
+# 			fi
+# 			if [ ! -r $object -a $COMPRESSING = 1 ] ;then
+# 				COMPRESS="$COMPRESS $object"
+# 			fi
+# 			ARGS="$ARGS $1"
+# 			;;
+			object=$1
+			if [ "$object" = "/usr/lib/end.o" ] ;then
+				ENDO=""
+			fi
+# 			if [ ! -s $object ] ;then
+# 				rm -f "$object"
+# 			fi
+			if [ -r "$object".$Z ] ;then
+				UNCOMPRESS="$UNCOMPRESS ${object}.$Z"
+			fi
+# 			if [ ! -r $object -a $COMPRESSING != 0 ] ;then
+			if [ $COMPRESSING != 0 ] ;then
+				COMPRESS="$COMPRESS $object"
+			fi
+			ARGS="$ARGS $1"
+			;;
+		"-v")
+			VERBOSE="yes"
+			OTHEROPT="-Q $OTHEROPT"
+			ARGS="$ARGS $1"
+			;;
+		"-I/usr/include/local")
+			echo "$0: /usr/include/local already included in headerfile searchtree"
+			;;
+		"-SERIAL")
+			PIPE=""
+			;;
+		"-g")
+			echo "DEBUG => NO \"simple\" optimisation (just -O)"
+#			OPTIMOPT="${SIMOPT}"
+			OPTIMOPT="-fkeep-inline-functions"
+			DEBUGOPT="-g -DDEBUG"
+			SRCDIR="`pwd`/"
+			;;
+		"-Opt")
+			OPTIMOPT="${OOPTIMOPT}"
+			echo "full Opt => no DEBUG"
+			;;
+		"-simOpt")
+			OPTIMOPT="${SIMOPT}"
+			;;
+		"-noOpt")
+			OPTIMOPT=""
+			VOPTIMOPT=""
+			;;
+		"-ZS"|"-SYSV")
+			DEFINES=$DEFINES
+			SYS="-DSYSV"
+			;;
+		"-ZP"|"-POSIX")
+			DEFINES="-D__GCCOPT__ -D_POSIX_SOURCE $DEFINES"
+			LIBS="$LIBS -lposix"
+			SYS="-Dposix"
+			;;
+		"-AUX")
+			DEFINES="-D__GCCOPT__ -D_AUX_SOURCE $DEFINES"
+			;;
+		"-ZB"|"-BSD")
+			DEFINES="-D__GCCOPT__ -D_BSD_SOURCE $DEFINES"
+			LIBS="$LIBS -lbsd"
+			SYS="-Dbsd"
+			;;
+		-lc*)
+			# -lansi should be linked before -lc
+			if [ "$1" = "-lc" -a "$DEBUGOPT" != "" ] ;then
+			  # On my mac, I move libc.a to libc_ns.a and libc_s.a to libc.a
+			  # (i.e. links with shared lib by default)
+			  # My version of gdb crashes on shared libs, so link with non-shared if debug
+				ANSILIBS="${ANSILIBS} -lc_ns"
+			else
+				ANSILIBS="${ANSILIBS} $1"
+			fi
+			;;
+		-l*)
+			if [ "$1" = "-lX11" -a "$DEBUGOPT" != "" ] ;then
+				LIBS="$LIBS -lX11_ns"
+			else
+				LIBS="$LIBS $1"
+			fi
+			;;
+		-*)
+			ARGS="$ARGS $1"
+			SWITCHES="${SWITCHES} `echo $1 | sed -e 's/\\\"/\\\\\"/g'`"
+			;;
+		*)
+# 			ARGS="$ARGS $1"
+# # 			SWITCHES="${SWITCHES} $1"
+# 			SWITCHES="${SWITCHES} `echo $1 | sed -e 's/\\\"/\\\\\"/g'`"
+# 			;;
+			if [ -r "$1" ] ;then
+				ARGS="$ARGS ${SRCDIR}$1"
+			else
+				ARGS="$ARGS $1"
+			fi
+# 			SWITCHES="${SWITCHES} $1"
+			SWITCHES="${SWITCHES} `echo $1 | sed -e 's/\\\"/\\\\\"/g'`"
+			;;
+	esac
+	shift 1
+done
+
+if [ $LINK = 0 ] ;then
+	LIBS=""
+	ANSILIBS=""
+#else
+#	LIBS="$ANSILIBS $LIBS"
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN="`cxgetenv INCREMENT_RETURN`"
+	if [ "$INCREMENT_RETURN" = "" ] ;then
+		INCREMENT_RETURN=0
+	fi
+fi
+rm -f .make_success
+
+if [ "$UNCOMPRESS" != "" ] ;then
+#  	echo "\tuncompressing $UNCOMPRESS"
+ 	echo "\tuncompressing \c"
+	for J in $UNCOMPRESS ;do
+# 		rm -f "`basename $J .$Z`"
+		( 
+			cd `dirname $J` ;\
+			UNC_OBJ="`basename $J .$Z`" ;\
+			OLD_UNC_OBJ="`basename $J .$Z`.old" ;\
+			mv $UNC_OBJ $OLD_UNC_OBJ ;\
+			echo "$J\c"
+			$uncompress $VERBOSE `basename $J` ;\
+			echo "; \c"
+			touch -r $OLD_UNC_OBJ $UNC_OBJ ;\
+			rm -f $OLD_UNC_OBJ )
+	done
+	echo "done"
+fi
+
+if [ "$VERBOSE" = "yes" ] ; then
+	echo gcc $INCLUDE $OTHEROPT $PIPE $VOPTIMOPT $WARNINGS $DEFINES $ARGS $LIBS $ANSILIBS
+	set -x
+fi
+
+SWITCHES="${SWITCHES} ${SYS} ${OPTIMOPT} ${DEBUGOPT}"
+
+echo "\tCompiling in `pwd`"
+if [ -d ./emsg -a "$OUTPUT" != "" -a -d "`dirname ${EMSG}`" ] ;then
+	echo "\tOutput saved in ./emsg/$OUTPUT.err"
+	EMSG="./emsg/$OUTPUT.err"
+else
+	EMSG="/dev/null"
+fi
+
+# gcc $INCLUDE $OTHEROPT $PIPE $OPTIMOPT $WARNINGS $DEFINES $ARGS $LIBS $ANSILIBS
+( gcc -DSWITCHES="\"${SWITCHES}\"" ${SYS} $INCLUDE $OTHEROPT $PIPE $OPTIMOPT $DEBUGOPT $WARNINGS $DEFINES $ARGS $LIBS $ANSILIBS 2>&1 ; cxsetenv RET $?) \
+	| tee ${EMSG}
+RET="`cxgetenv RET`" ; export RET
+set +x
+
+if [ "$RET" != "0" ] ;then
+	echo "Return code $RET" >> $EMSG
+fi
+
+if [ "${OUTPUT}" != "" -a "${LINK}" = 1 ] ;then
+	ll ${OUTPUT}*
+# 	what ${OUTPUT}
+fi
+
+# if [ "$COMPRESS" != "" ] ;then
+# 	if [ -r $COMPRESS ] ;then
+# 		compress $VERBOSE $COMPRESS
+# 		for J in $COMPRESS ;do
+# 			echo "\c" > $J
+# 			touch `timestamp $J.Z` $J
+# 		done
+# 		if [ $LINK != 0 ] ;then
+# 			(sleep 1 ; touch $TARGET) &
+# 		fi
+# 	fi
+# fi
+
+if [ "$COMPRESS" != "" ] ;then
+	echo "\tcompressing $COMPRESS"
+	if [ $LINK = 0 ] ;then
+		TOUCH=""
+		if [ $COMPRESSING = 2 ] ;then
+			COMPRESSING=1
+		fi
+	else	
+		TOUCH="$TARGET"
+	fi
+	export TOUCH
+	case $COMPRESSING in
+		0)
+			;;
+		1)
+			if [ $LINK != 0 ] ;then
+				_obj_compress 0 $compress $VERBOSE $Z $TARGET $COMPRESS
+			else
+				_obj_compress 0 $compress $VERBOSE $Z "" $COMPRESS
+			fi
+			;;
+		2)
+			if [ $LINK != 0 ] ;then
+				( system "_obj_compress </dev/null 1 $compress $VERBOSE $Z $TARGET $COMPRESS &" ) &
+			else
+				( system "_obj_compress </dev/null 0 $compress $VERBOSE $Z \"\" $COMPRESS &" ) &
+			fi
+			;;
+		*)
+			echo "Illegal value ($COMPRESSING) for COMPRESSING"
+			;;
+	esac
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN=`echo "$INCREMENT_RETURN + $RET" | bc`
+	cxsetenv INCREMENT_RETURN $INCREMENT_RETURN
+else
+	INCREMENT_RETURN=$RET
+fi
+
+if [ $INCREMENT_RETURN = 0 ] ;then
+	touch .make_success
+else
+	echo "(Incremental) exitcode $INCREMENT_RETURN"
+fi
+
+exit $RET

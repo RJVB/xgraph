@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# 20020422 RJVB
+# a simple script that should output the machine dependent optimal compiler to
+# compile the other (non ascanfc) modules with.
+# 20090703: added 'ar' command
+
+if [ "`uname -s`" = "Darwin" ] ;then
+	MACH="Darwin"
+elif [ "`uname`" = "Linux" ] ;then
+	MACH="Linux"
+else
+	MACH="`uname -m`"
+fi
+
+case $MACH in
+	IP22*|IP32*|IRIX*)
+		case $1 in
+			ascanf)
+				MACHDEPCOMP="ccopt"
+				;;
+			ar)
+				MACHDEPCOMP="ar r"
+				;;
+			*)
+				MACHDEPCOMP="gccopt"
+				;;
+		esac
+		;;
+	Darwin|"Power Macintosh")
+		case $1 in
+			dymod|ascanf)
+				MACHDEPCOMP="gccopt"
+				;;
+			ar)
+				MACHDEPCOMP="libtool -static -o"
+				;;
+			*)
+				MACHDEPCOMP="gccopt"
+				;;
+		esac
+		;;
+	i686|i586|x86_64|Linux)
+		case $1 in
+			dymod|ascanf)
+# 				MACHDEPCOMP="gccopt -compiler gcc295.3 -inline"
+				MACHDEPCOMP="gccopt"
+				;;
+			ar)
+				MACHDEPCOMP="ar r"
+				;;
+			*)
+				MACHDEPCOMP="gccopt"
+				;;
+		esac
+		;;
+	*)
+		MACHDEPCOMP="gccopt"
+		;;
+esac
+
+if [ "$2" = "c++" ] ;then
+	echo "${MACHDEPCOMP}" | sed -e 's/gccopt/c++opt/' -e 's/gcc/g++/'
+else
+	echo "${MACHDEPCOMP}"
+fi

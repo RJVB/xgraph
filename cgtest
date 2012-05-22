@@ -1,0 +1,1 @@
+make CLEVEL=-g > make.out 2>&1 && ( rm test.* ; x-plot 1,2,3 -db2 -print -pf test -f test5 ; less test.* )

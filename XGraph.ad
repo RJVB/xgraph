@@ -1,0 +1,42 @@
+#if defined COLOR
+	xgraph*Background: Black
+	xgraph*Foreground: White
+#else
+	xgraph*Background: White
+	xgraph*Foreground: Black
+#endif
+xgraph*ZeroColor:	Red
+xgraph*AxisWidth: 2
+xgraph*Postscript_Dimension:26.5
+xgraph.Postscript_maxWidth: 18.75
+xgraph.Postscript_maxHeight: 27
+xgraph*Postscript_PrinterName:atprint
+!! xgraph*Postscript_OutputTitleFont:Times-Bold
+xgraph*Postscript_OutputTitleFont:Helvetica-Narrow
+xgraph*Postscript_OutputTitleSize:10
+xgraph*Postscript_OutputLegendFont:Palatino-Bold
+xgraph*Postscript_OutputLegendSize:8
+xgraph*Postscript_OutputLabelFont:Palatino-Bold
+xgraph*Postscript_OutputLabelSize:10
+xgraph*Postscript_OutputAxisFont:Helvetica
+xgraph*Postscript_OutputAxisSize:7.5
+xgraph*PSmarkIncrement:1.4
+xgraph*PSdashPower: 0.65
+xgraph*Device:Postscript
+xgraph*Disposition:Append File
+xgraph*PrintCommand: %s
+!! xgraph*PrintCommand:deskjetps_print
+xgraph*HPGL*Dimension:26.5
+xgraph*MonoChrome: True
+xgraph*engX:	False
+xgraph*engY:	False
+xgraph*polarBase:	360
+xgraph*AxisFont: -*-helvetica-medium-r-*-*-8-*-*-*-*-*-*-*
+xgraph*CursorFont: cursor
+xgraph*DialogFont: -*-helvetica-medium-r-*-*-10-*-*-*-*-*-*-*
+xgraph*LegendFont: -*-lucidabright-demibold-r-*--8-*-*-*-*-*-*-*
+xgraph*LabelFont: -b&h-lucidabright-demibold-r-normal--10*
+xgraph*MarkFont: spc12x12e
+xgraph*TitleFont: *helvetica*medium-r*--10-*
+xgraph*HighlightTune: 0.8
+!! xgraph*HighlightColor: Yellow

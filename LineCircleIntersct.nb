@@ -1,0 +1,415 @@
+(***********************************************************************
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used on any computer system with Mathematica 4.0,
+MathReader 4.0, or any compatible application. The data for the notebook 
+starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do one of 
+the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing the 
+word CacheID, otherwise Mathematica-compatible applications may try to 
+use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+***********************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[      8451,        280]*)
+(*NotebookOutlinePosition[      9399,        310]*)
+(*  CellTagsIndexPosition[      9355,        306]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+    \(Solve[a\ x^2\  + \ b\ x\  + \ c\  \[Equal] \ 0, \ x]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(\(-b\) - \@\(b\^2 - 4\ a\ c\)\)\/\(2\ a\)}, {x \[Rule] \(\
+\(-b\) + \@\(b\^2 - 4\ a\ c\)\)\/\(2\ a\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(\(\[IndentingNewLine]\)\(Solve[\ 
+      a\ x\  + \ b\  \[Equal] \ x^2\  + \ y^2\  - \ R, \ {x, 
+        y}]\)\)\)], "Input"],
+
+Cell[BoxData[
+    \(Solve::"svars" \(\(:\)\(\ \)\) 
+      "Equations may not give solutions for all \"solve\" variables."\)], \
+"Message"],
+
+Cell[BoxData[
+    \({{y \[Rule] \(-\@\(b + R + a\ x - x\^2\)\)}, {y \[Rule] \@\(b + R + a\ \
+x - x\^2\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(eqns = {y \[Equal] a\ x\  + \ b, \ 
+        R \[Equal] \ x^2\  + \ y^2}\)], "Input"],
+
+Cell[BoxData[
+    \({y == b + a\ x, R == x\^2 + y\^2}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(sol = Simplify[\ Solve[eqns, \ {x, y}]\ ]\)], "Input"],
+
+Cell[BoxData[
+    \({{y \[Rule] \(b - a\ \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + a\^2\), 
+        x \[Rule] \(-\(\(a\ b + \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + 
+                  a\^2\)\)\)}, {y \[Rule] \(b + a\ \@\(\(-b\^2\) + R + a\^2\ \
+R\)\)\/\(1 + a\^2\), 
+        x \[Rule] \(\(-a\)\ b + \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + \
+a\^2\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Solve[eqns, x, y]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(\(-a\)\ b - \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + \
+a\^2\)}, {x \[Rule] \(\(-a\)\ b + \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + a\^2\
+\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(sol2 = 
+      Simplify[\ 
+        Solve[\ {y \[Equal] 
+              Tan[\[CurlyPhi]o\ Degree]\ x\  + \ \((yi\  - \ a\ xi)\), \ 
+            R \[Equal] \ x^2\  + \ y^2}, \ {x, y}]\ ]\)], "Input"],
+
+Cell[BoxData[
+    \({{y \[Rule] 
+          Cos[\[Degree]\ \[CurlyPhi]o]\^2\ \((\(-a\)\ xi + yi - 
+                Tan[\[Degree]\ \[CurlyPhi]o]\ \@\(R - \((\(-a\)\ xi + \
+yi)\)\^2 + R\ Tan[\[Degree]\ \[CurlyPhi]o]\^2\))\), 
+        x \[Rule] 
+          Cos[\[Degree]\ \[CurlyPhi]o]\^2\ \((\((a\ xi - 
+                      yi)\)\ Tan[\[Degree]\ \[CurlyPhi]o] - \@\(R - \((\(-a\)\
+\ xi + yi)\)\^2 + R\ Tan[\[Degree]\ \[CurlyPhi]o]\^2\))\)}, {y \[Rule] 
+          Cos[\[Degree]\ \[CurlyPhi]o]\^2\ \((\(-a\)\ xi + yi + 
+                Tan[\[Degree]\ \[CurlyPhi]o]\ \@\(R - \((\(-a\)\ xi + \
+yi)\)\^2 + R\ Tan[\[Degree]\ \[CurlyPhi]o]\^2\))\), 
+        x \[Rule] 
+          Cos[\[Degree]\ \[CurlyPhi]o]\^2\ \((\((a\ xi - 
+                      yi)\)\ Tan[\[Degree]\ \[CurlyPhi]o] + \@\(R - \((\(-a\)\
+\ xi + yi)\)\^2 + R\ Tan[\[Degree]\ \[CurlyPhi]o]\^2\))\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(sol\)], "Input"],
+
+Cell[BoxData[
+    \({{y \[Rule] \(b - a\ \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + a\^2\), 
+        x \[Rule] \(-\(\(a\ b + \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + 
+                  a\^2\)\)\)}, {y \[Rule] \(b + a\ \@\(\(-b\^2\) + R + a\^2\ \
+R\)\)\/\(1 + a\^2\), 
+        x \[Rule] \(\(-a\)\ b + \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + \
+a\^2\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(LineCircleIntersect[a_, b_, R_] = \ {x, y} /. sol\)], "Input"],
+
+Cell[BoxData[
+    \({{\(-\(\(a\ b + \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + 
+                a\^2\)\)\), \(b - a\ \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + a\
+\^2\)}, {\(\(-a\)\ b + \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + a\^2\), \(b + a\
+\ \@\(\(-b\^2\) + R + a\^2\ R\)\)\/\(1 + a\^2\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(LineCircleIntersect[0, 1, 1]\)], "Input"],
+
+Cell[BoxData[
+    \({{0, 1}, {0, 1}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(LineCircleIntersect2[xi_, yi_, \[CurlyPhi]o_, R_] = \ {x, y} /. 
+        sol2\)], "Input"],
+
+Cell[BoxData[
+    \({{Cos[\[Degree]\ \[CurlyPhi]o]\^2\ \((\((a\ xi - 
+                    yi)\)\ Tan[\[Degree]\ \[CurlyPhi]o] - \@\(R - \((\(-a\)\ \
+xi + yi)\)\^2 + R\ Tan[\[Degree]\ \[CurlyPhi]o]\^2\))\), 
+        Cos[\[Degree]\ \[CurlyPhi]o]\^2\ \((\(-a\)\ xi + yi - 
+              Tan[\[Degree]\ \[CurlyPhi]o]\ \@\(R - \((\(-a\)\ xi + yi)\)\^2 \
++ R\ Tan[\[Degree]\ \[CurlyPhi]o]\^2\))\)}, {Cos[\[Degree]\ \[CurlyPhi]o]\^2\ \
+\((\((a\ xi - 
+                    yi)\)\ Tan[\[Degree]\ \[CurlyPhi]o] + \@\(R - \((\(-a\)\ \
+xi + yi)\)\^2 + R\ Tan[\[Degree]\ \[CurlyPhi]o]\^2\))\), 
+        Cos[\[Degree]\ \[CurlyPhi]o]\^2\ \((\(-a\)\ xi + yi + 
+              Tan[\[Degree]\ \[CurlyPhi]o]\ \@\(R - \((\(-a\)\ xi + yi)\)\^2 \
++ R\ Tan[\[Degree]\ \[CurlyPhi]o]\^2\))\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(LineCircleIntersect2[\ 0, 0, \ 315, \ 1\ ]\)], "Input"],
+
+Cell[BoxData[
+    \({{\(-\(1\/\@2\)\), 1\/\@2}, {1\/\@2, \(-\(1\/\@2\)\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[""], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(LineCircleIntersect2[0, 1, 0, 1]\)], "Input"],
+
+Cell[BoxData[
+    \({{0, 1}, {0, 1}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(sol3 = 
+      Simplify[\ 
+        Solve[\ {x \[Equal] c\ \ px\  - \ s\ py\ , \ 
+            y \[Equal] \ c\ py\  + \ s\ px}, \ {s, c}]\ ]\)], "Input"],
+
+Cell[BoxData[
+    \({{s \[Rule] \(\(-py\)\ x + px\ y\)\/\(px\^2 + py\^2\), 
+        c \[Rule] \(px\ x + py\ y\)\/\(px\^2 + py\^2\)}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Simplify[
+      ArcTan[\((\(-py\)\ x + px\ y)\)\ /\ \((px\ x + py\ y)\)\ ]]\)], "Input"],
+
+Cell[BoxData[
+    \(ArcTan[\(\(-py\)\ x + px\ y\)\/\(px\ x + py\ y\)]\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(rotate[x_, y_, a_]\  = \ {Cos[a\ Degree]\ x\  - \ Sin[a\ Degree]\ y, \ 
+        Cos[a\ Degree]\ y\  + \ Sin[a\ Degree]\ x}\)], "Input"],
+
+Cell[BoxData[
+    \({x\ Cos[a\ \[Degree]] - y\ Sin[a\ \[Degree]], 
+      y\ Cos[a\ \[Degree]] + x\ Sin[a\ \[Degree]]}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(rotate[2, 0, 45]\)], "Input"],
+
+Cell[BoxData[
+    \({\@2, \@2}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(\(angle[x_, y_, px_, 
+        py_]\)\(\ \)\(=\)\(\ \)\(ArcTan[\((\((\(-py\)\ x + 
+                  px\ y)\)/\((px\^2 + py\^2)\))\)\ /\ \((\((px\ x + 
+                  py\ y)\)/\((px\^2 + py\^2)\))\)\ ]\)\(\ \)\)\)], "Input"],
+
+Cell[BoxData[
+    \(ArcTan[\(\(-py\)\ x + px\ y\)\/\(px\ x + py\ y\)]\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(angle[\(-1\), \(-0.1\), \ \(-1\), 0.1]\)], "Input"],
+
+Cell[BoxData[
+    \(0.19933730498232408`\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[""], "Input"]
+},
+FrontEndVersion->"4.0 for X",
+ScreenRectangle->{{0, 1024}, {0, 768}},
+WindowSize->{844, 608},
+WindowMargins->{{Automatic, 75}, {Automatic, 64}},
+PrintingPageRange->{Automatic, Automatic},
+PrintingOptions->{"PaperSize"->{597.562, 842.375},
+"PaperOrientation"->"Portrait",
+"PostScriptOutputFile":>FrontEnd`FileName[{$RootDirectory, "u4", "bhd", "pn", \
+"rbertin"}, "Untitled-1.ps", CharacterEncoding -> "ISO8859-1"],
+"Magnification"->1},
+Magnification->1
+]
+
+
+(***********************************************************************
+Cached data follows.  If you edit this Notebook file directly, not using
+Mathematica, you must remove the line containing CacheID at the top of 
+the file.  The cache data will then be recreated when you save this file 
+from within Mathematica.
+***********************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1739, 51, 85, 1, 24, "Input"],
+Cell[1827, 54, 150, 2, 37, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[2014, 61, 146, 3, 31, "Input"],
+Cell[2163, 66, 138, 3, 20, "Message"],
+Cell[2304, 71, 119, 2, 28, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[2460, 78, 104, 2, 24, "Input"],
+Cell[2567, 82, 67, 1, 27, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[2671, 88, 74, 1, 24, "Input"],
+Cell[2748, 91, 357, 6, 37, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[3142, 102, 50, 1, 24, "Input"],
+Cell[3195, 105, 184, 3, 37, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[3416, 113, 215, 5, 24, "Input"],
+Cell[3634, 120, 870, 15, 102, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[4541, 140, 36, 1, 24, "Input"],
+Cell[4580, 143, 357, 6, 37, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[4974, 154, 82, 1, 24, "Input"],
+Cell[5059, 157, 297, 4, 37, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[5393, 166, 61, 1, 24, "Input"],
+Cell[5457, 169, 50, 1, 24, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[5544, 175, 110, 2, 24, "Input"],
+Cell[5657, 179, 780, 12, 102, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[6474, 196, 75, 1, 24, "Input"],
+Cell[6552, 199, 88, 1, 36, "Output"]
+}, Open  ]],
+Cell[6655, 203, 26, 0, 24, "Input"],
+
+Cell[CellGroupData[{
+Cell[6706, 207, 65, 1, 24, "Input"],
+Cell[6774, 210, 50, 1, 24, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[6861, 216, 170, 4, 24, "Input"],
+Cell[7034, 222, 146, 2, 33, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[7217, 229, 108, 2, 24, "Input"],
+Cell[7328, 233, 83, 1, 33, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[7448, 239, 155, 2, 24, "Input"],
+Cell[7606, 243, 131, 2, 24, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[7774, 250, 49, 1, 24, "Input"],
+Cell[7826, 253, 44, 1, 27, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[7907, 259, 248, 4, 27, "Input"],
+Cell[8158, 265, 83, 1, 33, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[8278, 271, 71, 1, 24, "Input"],
+Cell[8352, 274, 54, 1, 24, "Output"]
+}, Open  ]],
+Cell[8421, 278, 26, 0, 24, "Input"]
+}
+]
+*)
+
+
+
+
+(***********************************************************************
+End of Mathematica Notebook file.
+***********************************************************************)
+

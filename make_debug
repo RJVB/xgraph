@@ -1,0 +1,23 @@
+#!/bin/sh
+
+
+if [ $# != 0 ] ;then
+	target="$1"
+	shift
+	while [ $# != 0 ] ;do
+		case $1 in
+			-*g|-g*Opt*|-*DEBUG)
+				set -x
+				mv ${target} ${target}.bin && cp -p ${target}-DB-script ${target}
+				touch -r ${target}.bin ${target}
+				exit $!
+				;;
+		esac
+		shift
+	done
+
+# make a (compressed) copy in ${target}.bin
+# the original is stripped
+	cp -p ${target} ${target}.bin
+	( strip -Sx ${target} ; gzip -9vf ${target}.bin )&
+fi

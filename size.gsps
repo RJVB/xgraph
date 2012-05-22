@@ -1,0 +1,80 @@
+%!PS
+% string stringwidth Wx Wy: return width and height of string in Wx and Wy respectively.
+/graph-scale 1.000000 def
+0.06 graph-scale mul 0.06 graph-scale mul scale
+/buf 128 string def
+/ps-old-font-offsets 0 def
+/c-f	%% stack: string fontsize fontname => ---
+{
+   findfont 
+   exch scalefont setfont
+   /string exch def
+   newpath
+   0 0 moveto ps-old-font-offsets 0 ne { (0) } { string } ifelse true charpath flattenpath pathbbox
+   /top exch def pop
+   /bottom exch def pop
+   bottom top bottom top add 2 div
+   /center-font-val exch def 
+   /upper-font-val exch def 
+   /lower-font-val exch def
+   /ps-old-font-offsets 0 def
+} def
+/c-rf	% stack: string angle fontsize fontname => ---
+{
+   findfont 
+   exch scalefont 
+   setfont
+   /R exch def
+   /string exch def
+   currentfont [R cos R sin R sin -1 mul R cos 0 0] makefont setfont
+   newpath
+   % 20010528: now passing the to-be-printed string as parameter; before, a string containing a single 0 was given (no descender)
+   0 0 moveto ps-old-font-offsets 0 ne { (0) }{ string } ifelse true charpath flattenpath pathbbox
+   /top exch def pop
+   /bottom exch def pop
+   bottom top bottom top add 2 div
+   /center-font-val exch def 
+   /upper-font-val exch def 
+   /lower-font-val exch def
+   %% RJVB: I have not yet understood around what point the rotation takes place. The following
+   %% empirically determined translation values put the printed string with its upper-left corner
+   %% at the requested co-ordinates (for upper-left justification, and 90deg rotation)
+   /vertical-adjust-x {upper-font-val center-font-val add} bind def
+   /vertical-adjust-y {upper-font-val lower-font-val add} bind def
+} def
+/theFont /Palatino-Bold def
+theFont findfont 333.333 scalefont setfont
+/teststring (MMnn1100\(\),) def
+(w=) print teststring stringwidth pop buf cvs print (\n) print
+(w=) print
+	theFont findfont 333.333 scalefont setfont
+(MM) stringwidth pop 
+	theFont findfont 333.333 scalefont setfont
+(nn) stringwidth pop add
+	theFont findfont 333.333 scalefont setfont
+(11) stringwidth pop add
+	theFont findfont 333.333 scalefont setfont
+(\(\),) stringwidth pop add
+	theFont findfont 333.333 scalefont setfont
+(00) stringwidth pop add buf cvs print (\n) print
+/ps-old-font-offsets 1 def
+teststring 333.333 theFont c-f
+(bottom=) print bottom buf cvs print ( top=) print top buf cvs print ( centre=) print center-font-val buf cvs print
+	( upper=) print upper-font-val buf cvs print ( lower=) print lower-font-val buf cvs print ( \(old style offsets\)\n) print
+/ps-old-font-offsets 0 def
+teststring 333.333 theFont c-f
+(bottom=) print bottom buf cvs print ( top=) print top buf cvs print ( centre=) print center-font-val buf cvs print
+	( upper=) print upper-font-val buf cvs print ( lower=) print lower-font-val buf cvs print (\n) print
+teststring 0 333.333 theFont c-rf
+(bottom=) print bottom buf cvs print ( top=) print top buf cvs print ( centre=) print center-font-val buf cvs print
+	( upper=) print upper-font-val buf cvs print ( lower=) print lower-font-val buf cvs print ( \(angle=0\)\n) print
+
+/ps-old-font-offsets 1 def
+teststring 90 333.333 theFont c-rf
+(vertical, bottom=) print bottom buf cvs print ( top=) print top buf cvs print ( centre=) print center-font-val buf cvs print
+	( upper=) print upper-font-val buf cvs print ( lower=) print lower-font-val buf cvs print ( \(old style offsets\)\n) print
+/ps-old-font-offsets 0 def
+teststring 90 333.333 theFont c-rf
+(vertical, bottom=) print bottom buf cvs print ( top=) print top buf cvs print ( centre=) print center-font-val buf cvs print
+	( upper=) print upper-font-val buf cvs print ( lower=) print lower-font-val buf cvs print (\n) print
+%%EOF

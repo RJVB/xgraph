@@ -1,0 +1,6 @@
+#define mark15_width 8
+#define mark15_height 8
+#define mark15_x_hot 3
+#define mark15_y_hot 3
+static char mark15_bits[] = {
+   0x3e, 0x5d, 0x6b, 0x77, 0x6b, 0x5d, 0x3e, 0x00};

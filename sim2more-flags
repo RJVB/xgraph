@@ -1,0 +1,12 @@
+-fcaller-saves
+-fcse-follow-jumps
+-fcse-skip-blocks
+-fexpensive-optimizations
+-fforce-mem
+-fgcse
+-foptimize-register-move
+-fregmove
+-frerun-cse-after-loop
+-frerun-loop-opt
+-fschedule-insns2
+-fstrength-reduce

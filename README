@@ -1,0 +1,44 @@
+This is xgraph, the X11 plotting programme. Originally by David Harrison, further
+development by R.J.V. Bertin (RJVB).
+
+Please, have a look at the other README files, especially README.INSTALL that contains
+detailed (I hope) instructions on building and installing. Sorry for the old-fashioned
+manual way in which this must be done, but I myself prefer to work that way :)
+Alternatively, if you have Linux running on (probably) at least a Pentium class processor,
+try the xgraph binary that *may* be provided together with the source distribution.
+
+Important note (added 20031008): the current way 'ascanf pointers' are implemented (see
+take_ascanf_address/parse_ascanf_address) for the internal programming language is quite
+likely INCOMPATIBLE WITH 64BIT PROCESSORS. At least when using 8 byte (ieee) doubles;
+with long doubles, it should work, but at a probably performance cost.
+
+This distribution changes often, whenever I find a bug, or need some new functionality.
+I won't comment on which of the two occur more frequently :) The only trustworthy
+indication of the version, revision etc. is the date of the distribution archive itself,
+and of the files contained within. I don't have the habit of bothering with version
+numbers, major, minor, and non-roman alphabet designations. You can consider the whole 
+thing a beta release, if you wish. If you insist, I'd say this is version 2001, release
+07, patchlevel 23 :)
+
+I do bother about backward compatibility, though, so you will generally not have to worry
+about your files no longer working, or having adverse side-effects like formatting your
+CD-ROM drive. This concerns xgraph files, of course. I won't make any commitments concerning
+the effects of reading files that were not meant to be read by XGraph!
+
+Above, before and during it all, have fun using it. It has been and still is my programme
+of choice for anything from quickly looking at data to complicated processing. I am not
+a professional programmer (just a nearly full-time one :)), nor a computer scientist. The
+original programme had many "hackery-kludgy" solutions for seemingly trivial problems like
+determining the correct printing width of a string. I am improving on many of these, but in
+many cases with a good solution of a similar nature (to stick with the example, those widths
+are now determined by invoking gs [ghostscript] with the string in question... Yes, I know,
+I could do these things with the T1lib, but see the TODOHIST file for some thoughts on that).
+
+This programme is freeware. You may use it for your own use, (re)distribute it, etc, as
+long as you keep the original copyright notice (from David Harrison) intact, as well
+as my own.
+
+If you find bugs, implement improvements or additional features (have a look at TODOHIST),
+PLEASE let me know about them!
+
+(C) R.J.V. Bertin, 1990 - now (Mon Jan  8 17:22:59 CET 2001)

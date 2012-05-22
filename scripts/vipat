@@ -1,0 +1,122 @@
+#!/bin/sh
+
+PARSE=1
+FIND="fgrep"
+FOPTS=""
+NONPAT=""
+RECURS=""
+INCL=""
+
+SELF="`basename $0`"
+if [ "$SELF" = "lesspat" ] ;then
+	FUNCTION="view"
+	PROGRAM="less"
+else
+	FUNCTION="edit"
+	PROGRAM="vi"
+fi
+
+help(){
+	echo "$SELF: $FUNCTION files containing a (f)grep pattern"
+	echo "Usage:"
+	echo "$SELF [-r] [-i] [-v] [-z] [--list] [-- grep_opt] [-R] [--include fpattern] [pattern] files"
+	echo "\t-r\t: use egrep instead of fgrep"
+	echo "\t-i\t: case-insenstive search"
+}
+
+if [ $# -lt 2 ] ;then
+	help
+	exit 1
+fi
+
+COMPRESSED=0
+
+while [ $PARSE = 1 ] ;do
+	case "$1" in
+		"-help")
+			help
+			exit 0
+			;;
+		"-v")
+			NONPAT="-v"
+			;;
+		"-z")
+			COMPRESSED=1
+			;;
+		"-r")
+			FIND="egrep"
+			;;
+		"--list")
+			FILES="`cat $2`"
+			shift 1
+			;;
+		"-i")
+			FOPTS="$FOPTS -i"
+#			EXINIT="`echo $EXINIT|sed -e 's/noignorecase//g'` ignorecase"
+#			export EXINIT
+#			echo $EXINIT
+			;;
+# 		"--")
+# 			FOPTS="$FOPTS --"
+# 			;;
+		"--")
+			FOPTS="$FOPTS -- $2"
+			shift
+			;;
+		"--include")
+			INCL="--include=$2"
+			shift
+			;;
+		"-R")
+			RECURS="-R"
+			;;
+		*)
+			PAT="$1"
+			if [ "$2" != "" ] ;then
+				shift 1
+				FILES=" $FILES $*"
+			fi
+			PARSE=0
+			;;
+	esac
+	shift 1
+done
+
+if [ $COMPRESSED = 1 ] ;then
+	FIND="z${FIND}"
+fi
+
+hotfiles="`$FIND -l $NONPAT $FOPTS $FLIST \"$PAT\" $RECURS $FILES`"
+if [ "$NONPAT" = "-v" ] ;then
+	HOTFILES=""
+	for file in $hotfiles ;do
+		$FIND $FOPTS \"$PAT\" < $file
+		RET=$?
+		if [ $RET != 0 ] ;then
+			HOTFILES="$HOTFILES $file"
+		fi
+	done
+else
+	HOTFILES="$hotfiles"
+fi
+export HOTFILES
+export PAT
+export FILES
+if [ "$HOTFILES" != "" ] ; then
+	#if [ $TERM = "xterm" ]
+	#then
+	#	/usr/bin/tput smcup
+	#	vi "+/$PAT" `$FIND -l $PAT $FILES`
+	#	/usr/bin/tput rmcup
+	#else
+		if [ $COMPRESSED = 1 ] ;then
+			for j in $HOTFILES ;do
+				less +vq $j
+			done
+		else
+			$PROGRAM "+/$PAT" $HOTFILES
+		fi
+	#fi
+else
+	echo \"$PAT\" not found in \($FILES\)
+fi

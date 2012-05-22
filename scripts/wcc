@@ -1,0 +1,86 @@
+#!/bin/sh
+# A wrapper for gccopt, which itself is a wrapper for gcc.
+# This wrapper allows to bypass gccopt, which can be useful
+# for running the omnipresent configure scripts, which often
+# break (partly) when invoked with CC=gccopt. For those,
+# do
+# env WCC_STUB=1 CC=wcc CFLAGS="" configure [options]
+# and then invoke make with:
+# env GCCOPT_SIMPLE=1 make [options]
+# To define DEBUG when called with -g, set WCC_DDEBUG=-DDEBUG !
+#
+# This can still break, when arguments passed to $(CC) contain spaces.
+# This is a more general problem, and would most likely cause gccopt
+# to break too.
+
+# Cache the arguments for braindead /bin/sh versions which ALTER $*/$@ when including .dev/wmachine gccopt....
+WCCARGS="$@"
+
+if [ "${WCC_STUB}" != "" ] ;then
+	if [ "${DEVPREFSDIR}" = "" ] ;then
+		DEVPREFSDIR="${HOME}/.Preferences/.dev"
+	fi
+	if [ -r ${DEVPREFSDIR}/wmachine ] ;then
+		. ${DEVPREFSDIR}/wmachine gccopt
+	fi
+fi
+
+case `basename $0` in
+	w77*)
+		comp="g77"
+		;;
+	w++*)
+		if [ "$DEFAULT_CXX" != "" ] ;then
+			comp="${DEFAULT_CXX}"
+		else
+			comp="c++"
+		fi
+		;;
+	cc)
+		comp="gcc"
+		GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE
+		GCCOPT_QUIET=1 ; export GCCOPT_QUIET
+		;;
+	*)
+		if [ "$DEFAULT_CC" != "" ] ;then
+			comp="${DEFAULT_CC}"
+		else
+			comp="gcc"
+		fi
+		;;
+esac
+
+# Some machine flags intended to optimise the output (review those for your system!):
+case `uname -m` in
+	i686*|i586*)
+		MARCH="-mcpu=pentiumpro -march=pentiumpro"
+		;;
+	IP32*)
+		MARCH="-mcpu=r5000 -mips2"
+		;;
+	*)
+		MARCH=""
+esac
+
+# LOCALINC should probably depend on the host: put a case .. in .. esac around it.
+LOCALINC="-I$HOME/work/include -I. -I/usr/include/X11 -I/usr/X11R6/include -I/usr/local/include -I/usr/local/include/libpng -I/usr/include/freetype"
+
+if [ "$WCC_STUB" != "" ] ;then
+	if [ $WCC_STUB = 0 ] ;then
+		WCC_STUB=""
+	fi
+fi
+
+if [ "$WCC_STUB" != "" ] ;then
+	if [ "$WCC_VERBOSE" != "" ] ;then
+		echo ${comp} ${MARCH} ${LOCALINC} ${WCC_OPTS} ${WCCARGS}
+	fi
+	GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE
+	GCCOPT_QUIET=1 ; export GCCOPT_QUIET
+	exec ${comp} ${MARCH} ${LOCALINC} ${WCC_OPTS} ${WCCARGS}
+else
+	if [ "$WCC_VERBOSE" != "" ] ;then
+		echo ${comp}opt -ddebug '"'${WCC_DDEBUG}'"' ${WCC_OPTS} ${WCCARGS}
+	fi
+	exec ${comp}opt -ddebug "$WCC_DDEBUG" ${WCC_OPTS} ${WCCARGS}
+fi

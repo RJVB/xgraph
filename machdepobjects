@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# 20001031 RJVB
+# a simple script that should output the machine dependent object files.
+
+MACH="`uname -m`"
+
+case $MACH in
+	IP22*|IP32*|IRIX*)
+		;;
+	i686|i586)
+		case `uname` in
+			Linux*|LINUX*)
+				echo "Warning: adding old x86_gcc_fpe.o module to dependencies" 1>&2
+				echo "x86_gcc_fpe.o"
+				;;
+			*)
+				;;
+		esac
+		;;
+esac

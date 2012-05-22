@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ $# -lt 2 ] ;then
+	echo "Usage: update_lib <library> <file1> ..."
+	exit 0
+fi
+
+lib=$1
+shift
+randit=0
+
+for J in $* ;do
+	if [ ! -s "$J" -a -s "$J".gz ] ;then
+		gunzip -f $J.gz
+	fi
+	if [ -s "$J" ] ;then
+		ar rv $lib "$J"
+		randit=1
+	else
+		ls -l "$J"
+	fi
+done
+if [ $randit != 0 ];then
+	ranlib $lib
+fi

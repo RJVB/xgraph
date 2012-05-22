@@ -1,0 +1,53 @@
+*PARAM_NOW* MEM[0,1],MEM[1,1000],verbose[SETMXY[4,add[1,MEM[1]]]]
+*PARAM_RANGE* MEM[0],50,MEM[1]
+
+*TITLE* Angle subtended by a visual target
+*XLABEL* Distance
+*YLABEL* Visual angle in degrees
+
+
+# *LEGEND* using arctan..
+# *PARAM_FUNCTIONS* self,MXY[0,counter,atan[div[MEM[0],self],360]],elapsed[0]
+# 
+# *LEGEND* using angsize2 (atan)
+# *PARAM_FUNCTIONS* self, MXY[1,counter,angsize2[MEM[0],self,360]], elapsed[0]
+# 
+# *LEGEND* using arcsin..
+# *PARAM_FUNCTIONS* self,MXY[2,counter,asin[div[MEM[0],self],360]],elapsed[0]
+# 
+# *LEGEND* using angsize1 (asin)
+# *PARAM_FUNCTIONS* self,MXY[3,counter,angsize1[MEM[0],self,360,0.1]],elapsed[0]
+# 
+# *LEGEND* 1-0
+# *PARAM_FUNCTIONS* self,sub[MXY[1,counter],MXY[0,counter]],elapsed[0]
+# 
+# *LEGEND* 3-2
+# *PARAM_FUNCTIONS* self,sub[MXY[3,counter],MXY[2,counter]],elapsed[0]
+# 
+# *LEGEND* 2-0
+# *PARAM_FUNCTIONS* self,sub[MXY[2,counter],MXY[0,counter]],elapsed[0]
+# 
+# *LEGEND* 3-1
+# *PARAM_FUNCTIONS* self,sub[MXY[3,counter],MXY[1,counter]],elapsed[0]
+# 
+# *LEGEND* asin[r/R] - r/R
+# *PARAM_FUNCTIONS* self,sub[ angsize1[MEM[0],self,360,0],degrees[div[MEM[0],self]]],elapsed[0]
+
+# This part is for benchmarking (only)
+*PARAM_NOW* MEM[0,1],MEM[1,10000]
+*PARAM_RANGE* MEM[0],50,MEM[1]
+
+*LEGEND* using angsize2 (atan)
+*PARAM_FUNCTIONS* self, angsize2[MEM[0],self,360,0.0], elapsed[0]
+
+*LEGEND* using angsize1 (asin)
+*PARAM_FUNCTIONS* self, angsize1[MEM[0],self,360,0.0],elapsed[0]
+
+*LEGEND* using angsize1 (asin)
+*PARAM_FUNCTIONS* self, angsize1[MEM[0],self,360,0.1],elapsed[0]
+
+*LEGEND* using angsize1 (asin)
+*PARAM_FUNCTIONS* self, angsize1[MEM[0],self,360,0.2],elapsed[0]
+
+*LEGEND* using angsize1 (asin)
+*PARAM_FUNCTIONS* self, angsize1[MEM[0],self,360,0.5],elapsed[0]

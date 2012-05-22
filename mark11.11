@@ -1,0 +1,6 @@
+#define mark11_width 8
+#define mark11_height 8
+#define mark11_x_hot 3
+#define mark11_y_hot 3
+static char mark11_bits[] = {
+   0x7f, 0x5d, 0x63, 0x63, 0x63, 0x5d, 0x7f, 0x00};

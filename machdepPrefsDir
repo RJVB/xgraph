@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ "${XGPREFSDIR}" = "" ] ;then
+	MACH="`uname -s`"
+
+	case $MACH in
+		"Darwin")
+			echo "$HOME/Library/xgraph"
+			;;
+		*)
+			echo "$HOME/.Preferences/.xgraph"
+			;;
+	esac
+else
+	echo "${XGPREFSDIR}"
+fi

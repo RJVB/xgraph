@@ -1,0 +1,197 @@
+#!/bin/sh
+# ccopt script interface to cc on A/UX
+
+VOPTIMOPT="-O"
+OOPTIMOPT="-O"
+SIMOPT="-O"
+OPTIMOPT="${OOPTIMOPT}"
+DEBUGOPT=""
+INCLUDE="-I/usr/include/local -L/usr/local/lib"
+OTHEROPT=""
+PIPE=""
+WARNINGS=""
+DEFINES="-D_SYSV_SOURCE -D_AUX_SOURCE"
+# -D_BSD_SOURCE -D_AUX_SOURCE
+
+LINK=1
+ANSILIBS="-lansi"
+LIBS=""
+
+ARGS=""
+VERBOSE=""
+
+COMPRESS="" ; export COMPRESS
+UNCOMPRESS="" ; export UNCOMPRESS
+COMPRESSING=0
+
+SYS="-DSYSV"
+
+SWITCHES="@(#) cc"
+
+while [ $# != 0 ] ; do
+	case $1 in
+		"-Ac")
+			;;
+		"-Aa")
+			;;
+		"-Z")
+			COMPRESSING=1
+			;;
+		"-E"|"-c")	
+			LINK=0
+			ARGS="$ARGS $1"
+			LIBDIR=""
+			file="`echo $2 | sed -e 's/\.[csi]//g'`"
+			OUTPUT=$2	#$file
+			if [ -r "$file".c ] ;then
+				object="$file".o
+				if [ -r "$object".Z ] ;then
+					UNCOMPRESS="$UNCOMPRESS ${object}.Z"
+				fi
+				if [ ! -s $object ] ;then
+					rm -f "$object"
+				fi
+				if [ ! -r $object -a $COMPRESSING = 1 ] ;then
+					COMPRESS="$COMPRESS $object"
+				fi
+			fi
+			;;
+		"-o")
+			TARGET="$2"
+			OUTPUT=$2	#"`basename $2`"
+			ARGS="$ARGS $1"
+			;;
+		*.o)
+			object=$1
+			if [ -r "$object".Z ] ;then
+				UNCOMPRESS="$UNCOMPRESS ${object}.Z"
+			fi
+			if [ ! -s $object ] ;then
+				rm -f "$object"
+			fi
+			if [ ! -r $object -a $COMPRESSING = 1 ] ;then
+				COMPRESS="$COMPRESS $object"
+			fi
+			ARGS="$ARGS $1"
+			;;
+		"-v")
+			VERBOSE="yes"
+			ARGS="$ARGS $1"
+			;;
+		"-I/usr/include/local")
+			echo "$0: /usr/include/local already included in headerfile searchtree"
+			;;
+		"-SERIAL")
+			PIPE=""
+			;;
+		"-g")
+			echo "DEBUG => NO \"simple\" optimisation (just -O)"
+#			OPTIMOPT="${SIMOPT}"
+			OPTIMOPT=""
+			DEBUGOPT="-g -DDEBUG"
+			;;
+		"-Opt")
+			OPTIMOPT="${OOPTIMOPT}"
+			echo "full Opt => no DEBUG"
+			;;
+		"-simOpt")
+			OPTIMOPT="${SIMOPT}"
+			;;
+		"-noOpt")
+			OPTIMOPT=""
+			VOPTIMOPT=""
+			;;
+		"-ZS"|"-SYSV")
+			DEFINES=$DEFINES
+			SYS="-DSYSV"
+			;;
+		"-ZP"|"-POSIX")
+			DEFINES="-D_POSIX_SOURCE $DEFINES"
+			LIBS="$LIBS -lposix"
+			SYS="-Dposix"
+			;;
+		"-AUX")
+			DEFINES="-D_AUX_SOURCE $DEFINES"
+			;;
+		"-ZB"|"-BSD")
+			DEFINES="-D_BSD_SOURCE $DEFINES"
+			LIBS="$LIBS -lbsd"
+			SYS="-Dbsd"
+			;;
+		-l*)
+			LIBS="$LIBS $1"
+			;;
+		*)
+			ARGS="$ARGS $1"
+			SWITCHES="${SWITCHES} $1"
+			;;
+	esac
+	shift 1
+done
+
+if [ $LINK = 0 ] ;then
+	LIBS=""
+	ANSILIBS=""
+#else
+#	LIBS="$ANSILIBS $LIBS"
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN="`cxgetenv INCREMENT_RETURN`"
+	if [ "$INCREMENT_RETURN" = "" ] ;then
+		INCREMENT_RETURN=0
+	fi
+fi
+rm -f .make_success
+
+if [ "$UNCOMPRESS" != "" ] ;then
+	uncompress $VERBOSE $UNCOMPRESS
+fi
+
+if [ "$VERBOSE" = "yes" ] ; then
+	echo cc $INCLUDE $OTHEROPT $PIPE $VOPTIMOPT $WARNINGS $DEFINES $ANSILIBS $ARGS $LIBS
+	set -x
+fi
+
+SWITCHES="${SWITCHES} ${SYS} ${OPTIMOPT} ${DEBUGOPT}"
+
+if [ -d ./emsg -a "$OUTPUT" != "" ] ;then
+	echo "\tOutput saved in ./emsg/$OUTPUT.err"
+	EMSG="./emsg/$OUTPUT.err"
+else
+	EMSG="/dev/null"
+fi
+
+# cc $INCLUDE $OTHEROPT $PIPE $OPTIMOPT $WARNINGS $DEFINES $ANSILIBS $ARGS $LIBS
+( cc -DSWITCHES="\"${SWITCHES}\"" ${SYS} $INCLUDE $OTHEROPT $PIPE $OPTIMOPT $DEBUGOPT $WARNINGS $DEFINES $ARGS $ANSILIBS $LIBS 2>&1 ; cxsetenv RET $?) \
+	| tee ${EMSG}
+RET="`cxgetenv RET`" ; export RET
+set +x
+
+if [ "$COMPRESS" != "" ] ;then
+	if [ -r $COMPRESS ] ;then
+		compress $VERBOSE $COMPRESS
+		for J in $COMPRESS ;do
+			echo "\c" > $J
+			touch `timestamp $J.Z` $J
+		done
+		if [ $LINK != 0 ] ;then
+			(sleep 1 ; touch $TARGET) &
+		fi
+	fi
+fi
+
+if [ "$USE_INCREMENT_RETURN" = "1" ] ;then
+	INCREMENT_RETURN=`echo "$INCREMENT_RETURN + $RET" | bc`
+	cxsetenv INCREMENT_RETURN $INCREMENT_RETURN
+else
+	INCREMENT_RETURN=$RET
+fi
+
+if [ $INCREMENT_RETURN = 0 ] ;then
+	touch .make_success
+else
+	echo "(Incremental) exitcode $INCREMENT_RETURN"
+fi
+
+exit $RET

@@ -1,0 +1,6 @@
+#!/bin/sh
+# simple shell script to convert the most frequent UTF16 representations of accented characters into their Latin1 (iso8859)
+# representation.
+# Probably only of interest on Macintosh, and care should be taken with (partly) binary files!!!
+
+exec sed -e 's/\\303\\251/é/g' -e 's/Ã©/é/g'

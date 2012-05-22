@@ -1,0 +1,6 @@
+call:
+limit coredumpsize unlimited
+
+core will be in /cores/
+
+see http://www.osxbook.com/book/bonus/chapter8/core/ for mrore info, esp. on the systcl -w kern.corerfile= command

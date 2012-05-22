@@ -1,0 +1,68 @@
+-auto	force auto scaling (ignore indications in files)
+-aw w	set width of axis lines [2]
+-bar	Draw bar graph with base -brb and width -brw [0,-1]
+-bb[01]	No Box / Box around data
+-Cxye	order of x, y, error columns in input
+-db	Turns on debugging mode
+-detach	Detach after initial communication with X-Server
+-eng[XY]<01>	Engineering notation on X or Y axis
+-fli[01]	Increment lineWidth for each new file [0]
+-fn[01]	show filename to the right of the legend [0]
+-help	Print help
+-legend_ul <x>,<y>	place the upper left corner of the legend box at coordinate (x,y) [0,0]
+	Can also be done by Shift-clicking with the mouse
+-ln{x,y}[01]	Linear / Logarithmic scale for X or Y axis [0,0]
+-log_zero_{x,y} X	Subsitute X for 0 in input on a log x/y axis [0,0]
+-log_zero_sym_{x,y} S	Show symbol S at log_zero location [,]
+                     		(default: 0*)
+-lw w	set width of lines [1]
+-lx x1,x2	Set x axis to interval x1,x2 [0,0]
+-ly y1,y2	Set y axis to interval y1,y2 [0,0]
+-m -M	Mark points distinctively (M varies with color)
+-mlx x1,x2	Limit x axis to interval x1,x2 [0,0]
+-mly y1,y2	Limit y axis to interval y1,y2 [0,0]
+-nl	Don't draw lines (scatter plot)
+-noerr	Don't draw errorbars. Can be changed in print dialog,
+      	so scaling accounts for values in error column
+-nosort	SpreadSheet save will not sort on XValue
+-PSm	set base and increment size for PS markers [2.5,1.5]
+    		also activated by zooming with 2nd mousebutton
+-p -P	Mark points with dot (P means big dot)
+-maxWidth|-maxHeight	hardcopy output dimensions [9.8 x 13.06]
+-page	All debug output to $PAGER [/usr/local/bin/less]
+-pf	Filename for printfile (extension is added)
+-plot_only_file <#>	Initially plot only sets in file number <#>
+-polar[base]	Draw data in polar plot, with base (e.g. 360, or PI) [360]
+	DEFECT
+-print	post a hardcopy dialog without drawing the data
+-progname <name>	set name of program to <name>: this is used to find X defaults [xgraph]
+-pow{x,y}[01] <val>	Power value for "sqrt" scale for X or Y axis [0,0]
+-rv	Reverse video on black and white displays
+-scale_av_{x,y} X	set x,y range to average of x,y +/- X times the st.deviation [3,3]
+-sqrt{x,y}[01]	Linear / Square-root scale for X or Y axis [0,0]
+-stats	print some statistics about each *FILE* [0]
+-tk[01]	Grid / tick marks
+-triangle	Draw error "triangles"
+-{x,y}step	Controls labelling of {x,y} axis [1,1]
+-zero eps	treat eps as zero if range is larger [2.22045e-16]
+Command line arguments override settings in inputfiles
+
+Format options in inputfile (Multiplot compatible):
+	*XTITLE*	<title>
+	*XLABEL* (*XYLABEL*)	<{y- or} x-axis label>
+	*YLABEL* (*YXLABEL*)	<{x- or} y-axis label>
+	*FILE*	<filename>
+	*LEGEND*	<set_name>
+	        	prepend <set_name> with a '\' to get greekFont
+	*XAXISDAT*	<MajTic>(unsupp) <SubDiv>(unsupp) <axmin> <axmax> <axlog> <dum> <more>
+	          		<more> lines to skip
+	*YAXISDAT*	<MajTic>(unsupp) <SubDiv>(unsupp) <axmin> <axmax> <axlog> <dum> <more>
+	          		<more> lines to skip
+	*AUTOSCRIPT*	1 <errorFlags> <AxSpec> <margin>(unsupp)
+	            	               0: ticks, nobox; 1: grid, nobox (default); 2: ticks, box; 3: grid, box
+	*AUTOSCRIPT*	<colour> <type> <linestyle> <marksize>(unsupp) <linewidth> <dum> <dum>
+	            	          ^ 0: line; 1: scatter (-nl -m); 2: scatter,line (-m); 4: bar (-bar -nl -m)
+	            	                  ^1: solid line
+	*SCALEFACT*	<file-wide XScale> <file-wide YScale> <file-wide ErrorScale>
+	*SCALFACT*	<set-spec. XScale> <set-spec. YScale> <set-spec. ErrorScale>
+	*EXTRATEXT*	starts Multiplot private section until next empty line

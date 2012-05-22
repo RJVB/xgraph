@@ -1,0 +1,93 @@
+X version 11 Utility Routines
+
+David Harrison
+University of California,  Berkeley
+1988
+
+Display *ux11_open_display(argc, argv)
+int argc;
+char *argv[];
+
+	Searches a command line argument list for the -display option.
+	If found,  the named display is opened and returned.  If no
+	display option is found,  the default display is opened.  The
+	routine causes the program to exit if no display can be
+	opened.
+
+char *ux11_get_value(argc, argv, value, def)
+int argc;
+char *argv[];
+char *value;
+char *def;
+
+	Reads through all arguments looking for `value' (which is
+	usually a name preceeded by a - sign) and returns the
+	value found.  If no value is found,  def is returned.
+
+int ux11_std_vismap(disp, rtn_vis, rtn_cmap, rtn_scrn, rtn_depth)
+Display *disp;			/* Display to examine */
+Visual **rtn_vis;		/* Returned visual    */
+Colormap *rtn_cmap;		/* Returned colormap  */
+int *rtn_scrn;			/* Returned screen    */
+int *rtn_depth;			/* Returned depth     */
+
+	This routine tries to find a visual/colormap pair that
+	supports color for `disp'.  The following steps are
+	used to determine this pair:
+	 1.  The default depth of the default screen is examined.
+	     If it is more than four,  the default visual and
+	     colormap for the display is returned.
+	 2.  ux11_find_visual is used to see if there is a good
+	     alternate visual available (better than the default).
+	     If so,  a new colormap is made for the visual
+	     and it is returned.  If no good alternative is
+	     found,  the routine returns the default visual/colormap.
+	The routine returns zero if unsuccessful.  It returns UX11_DEFAULT
+	if the default is returned,  and UX11_ALTERNATE if a non-defualt
+	visual/colormap is returned.  The visual rating function used
+	is ux11_color_vis.
+
+int ux11_color_vis(vis)
+XVisualInfo *vis;		/* Visual to examine */
+
+	Returns a desirability index for the passed visual.
+	This functions preference list is:
+	  PsuedoColor
+	  DirectColor
+	  StaticColor
+	  TrueColor
+	  GrayScale
+	  StaticGray
+	
+
+int ux11_find_visual(disp, good_func, rtn_vis)
+Display *disp;			/* What display to examine */
+int (*good_func)();		/* Desirability function   */
+XVisualInfo *rtn_vis;		/* VisualInfo to fill in   */
+
+	Locates an appropriate color visual.
+	Uses `cost_func' to evaluate all visuals.  The function
+	has the following form:
+	  int good_func(vis)
+	  XVisualInfo *vis;
+	Should return the desirability of the visual (larger values
+	mean better visuals).  Returns a non-zero status if successful.
+
+unsigned long ux11_fill_gcvals(gcvals, name, value, ... , UX11_END)
+XGCValues *gcvals;
+
+	Sets the values of an XGCValues structure using variable
+	argument lists..  The returned value is the value_mask
+	indicating what field is set.  The field names are are those
+	described for the value mask (e.g. GCFunction, etc).
+
+unsigned long ux11_fill_wattr(wattr, name, value, ... , UX11_END)
+XSetWindowAttributes *wattr;
+
+	Sets items in a fresh window attribute structure using
+	variable argument lists.  The settable fields are given by the
+	value mask (e.g. CWBackPixmap, etc).  The return value is the
+	valuemask of those fields set in the structure.
+
+
+

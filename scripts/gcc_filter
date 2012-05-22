@@ -1,0 +1,12 @@
+#!/bin/sh
+
+grep -v "mathdef\.h.*redefined" $* |\
+grep -v 'pointer.* combination, op ' |\
+grep -v 'warning.* incompatible pointer' |\
+fgrep -v "& before" |\
+fgrep -v "Duplicate entry" |\
+fgrep -v "time in" |\
+fgrep -v "ignored" |\
+fgrep -v "In function" |\
+	sed -e 's/.*: warning:/	&/g'
+

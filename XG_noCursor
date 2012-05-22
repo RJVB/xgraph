@@ -1,0 +1,6 @@
+#define XG_noCursor_width 1
+#define XG_noCursor_height 1
+#define XG_noCursor_x_hot 0
+#define XG_noCursor_y_hot 0
+static unsigned char XG_noCursor_bits[] = {
+   0x01};

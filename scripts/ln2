@@ -1,0 +1,8 @@
+#!/bin/sh
+
+ln -f $1 $2 2>/dev/null
+
+if [ $? != 0 ] ;then
+	echo "Can't hard-link across devices; softlinking $2 to $1."
+	ln -sf $1 $2
+fi

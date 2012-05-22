@@ -1,0 +1,156 @@
+#!/bin/sh
+# cut specified columns from a datafile
+# lines starting with '#' are removed
+# lines with a ';' somewhere are removed too (too support "empty" data columns)
+# multiple blank lines are removed as well
+# If a file does not exist, plot-cut attempts to use its compress(1)ed or gzip(1)ped
+# form. The pager 'less' is used to perform the required decoding.
+
+SORT=""
+
+DECODER="rless"
+
+if [ "$NODATA_FILTER" = "" ] ;then
+	NODATA_FILTER=";"
+fi
+if [ "$NODATA" = "" ] ;then
+	NODATA="$NODATA_FILTER"
+fi
+if [ "$NODATA_SUBST" = "" ] ;then
+	NODATA_SUBST="0"
+fi
+
+help(){
+	echo -e "`basename $0`: extension to the cut(1) command."
+	echo -e "`basename $0` [options] [files]"
+	echo -e "\tCan pass file through \$CPP (e.g. /lib/cpp) to perform C preprocessing (#include <>!)"
+	echo -e "\tIt then filters out multiple blank lines, and lines that"
+	echo -e "\t*\tStart with a '#'"
+	echo -e "\t*\tHave an embedded '${NODATA_FILTER}' (\$NODATA_FILTER, default ';') or '?.'"
+	echo -e "\tthe pattern '${NODATA}' (\$NODATA, default \$NODATA_FILTER) is substituted for '${NODATA_SUBST}' (\$NODATA_SUBST, default '0')"
+	echo -e "\t*COLUMNS* specifications are (necessarily) removed from the file."
+	echo -e "\tIf a file does not exist, checks are made for the"
+	echo -e "\tcompress(1)ed (.Z) and gzip(1)ped (.gz) versions."
+	echo -e "\tUses the \'$DECODER\' command as first in pipe to perform decoding"
+	echo -e "\tOptions:"
+	echo -e "\t*\t[-d|-c|-f option] [-s]\t: passed to cut(1)"
+	echo -e "\t*\t[-sort <sortcolumn>]\t: sort column <sortcolumn> numerically"
+	echo -e "\t*\t[-dir <dir>]"
+	echo -e "\t*\t[-leave_comment]\t: leave lines starting with #"
+	exit 0
+}
+
+if [ $# = 0 ] ;then
+	help
+fi
+
+CUTOPT="-l 4096"
+COLS=""
+CUTCOMMENT="^#|"
+
+# CUT0OPT="-S ${NODATA_FILTER} -M <substitute_switch> -0"
+CUT0OPT="-S ${NODATA_SUBST} -M <substitute_switch> -0"
+
+while [ $# != 0 ] ;do
+	case $1 in
+		-x)
+			set -x
+			;;
+		-leave_comment)
+			CUTCOMMENT=""
+			;;
+		-dir)
+			cd $2
+			shift 1
+			;;
+		-f)
+			CUTOPT="$CUTOPT $1 $2"
+			COLS="*Cxye*$2"
+			shift 1
+			;;
+		-d|-c|-l)
+			CUTOPT="$CUTOPT $1 $2"
+			shift 1
+			;;
+		-s)
+			CUTOPT="$CUTOPT $1"
+			;;
+		-nosubst)
+			CUT0OPT=""
+			;;
+		-sort)
+			SORTCOL=$2
+			SORTCOL0="`echo $SORTCOL 1 - p | dc`"
+			SORT="sort -n +${SORTCOL0}.0bn -${SORTCOL}.0bn"
+			shift 1
+			;;
+		*)
+			FILES="$FILES $1"
+			;;
+	esac
+	shift 1
+done
+
+tell_cols(){
+	echo "${COLS}"
+	cat $*
+}
+
+# call_CPP(){
+# 	if [ "$CPP" != "" ] ;then
+# 		$CPP
+# 	else
+# 		cat
+# 	fi
+# }
+
+if [ "$CPP" = "" ] ;then
+	call_CPP="cat"
+else
+	call_CPP="$CPP"
+fi
+
+plotcut(){
+	if [ "$1" = "-" ] ;then
+		if [ "$TERM" = "xterm" ] ;then
+			xterm_title "plot-cut $COLS stdin $CUT0OPT $CUTOPT filter $CUTCOMMENT,$NODATA_FILTER $NODATA->$NODATA_SUBST" > /dev/tty
+		fi
+		cat $1 | $DECODER 2>/dev/null | $call_CPP | cut $CUT0OPT $CUTOPT | egrep -v "$CUTCOMMENT""${NODATA_FILTER}|\?\.|^\*COLUMNS\*.*" | sed -e "s/^	*$//" -e "s/${NODATA}/${NODATA_SUBST}/g" | ssp | tell_cols
+	else
+# 		if [ "$TERM" = "xterm" ] ;then
+			xterm_title "plot-cut $COLS $1 $CUT0OPT $CUTOPT filter $CUTCOMMENT,$NODATA_FILTER $NODATA->$NODATA_SUBST" > /dev/tty
+# 		fi
+		fgrep -nl BINARYDATA $1 > /dev/null 2>&1
+		if [ $? = 0 ] ;then
+			echo "Converting $1 to ASCII (removes *COLUMNS* specifications from file!)" 1>&2
+			xgraph -DumpRead -DumpIncluded0 $1 | $call_CPP | cut $CUT0OPT $CUTOPT | egrep -v "$CUTCOMMENT""${NODATA_FILTER}|\?\.|^\*COLUMNS\*.*" | sed -e "s/^	*$//" -e "s/${NODATA}/${NODATA_SUBST}/g" | ssp | tell_cols
+		else
+			$DECODER -r $1 2>/dev/null | $call_CPP | cut $CUT0OPT $CUTOPT | egrep -v "$CUTCOMMENT""${NODATA_FILTER}|\?\.|^\*COLUMNS\*.*" | sed -e "s/^	*$//" -e "s/${NODATA}/${NODATA_SUBST}/g" | ssp | tell_cols
+		fi
+	fi
+}
+
+PlotCut(){
+	if [ "$SORT" != "" ] ;then
+		plotcut $1 | $SORT
+	else
+		plotcut $1
+	fi
+}
+
+for J in $FILES ;do
+# supposes zcat also cat's uncompressed files (script version)
+	if [ -r $J -o "$J" = "-" ] ;then
+		PlotCut $J
+	else
+		if [ -r $J.Z ] ;then
+			PlotCut $J.Z
+		elif [ -r $J.gz ] ;then
+			PlotCut $J.gz
+		else
+			echo "plot-cut: $J: not found" 1>&2
+		fi
+	fi
+# Output a blank line
+	echo
+done

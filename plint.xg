@@ -1,0 +1,125 @@
+#!/Users/bertin/bin/GXraph -uniq
+# Generated: Sat Feb 12 12:41:01 2005
+
+# vim:ts=4:sw=4:nowrap:
+*ENDIAN*0
+*BUFLEN* 1024
+
+*ARGUMENTS* -pf plint
+*EXTRATEXT*
+Printing file name specified through Print Dialog;
+Current working directory is /Users/bertin/work/src/xgraph
+
+
+*VERSION_LIST*
+</Users/bertin/Library/xgraph/xg_init.xg>
+ XGraph init file 20020507/20040701
+<examples/boxfilt-nan.xg>
+Fri Jan 14 17:12:08 CET 2005
+ Set Y values in a certain region to NaN, in order to introduce a gap.
+
+
+
+*AXVAL_MINDIGITS*2
+*EXTRATEXT* Some commandline options...
+
+*ARGUMENTS* -detach -bb1 -htk1 -vtk1 -mindlegend1 -fn0 -sqrtx0 -sqrty0 -biasX 0.005 -biasY -1 -process_bounds0 -transform_axes0 -fit_after0 -exact_X1 -exact_Y1 -ValCat_X0 -ValCat_X_levels 1 -ValCat_X_grid0 -ValCat_Y0 -all_ValCat_I0 -ValCat_I0 -aspect0 -x_symm0 -y_symm0  -fli0
+*ARGUMENTS* -Cxye -legendtype 1 -radix 360 -radix_offset 0 -tcl0 -tas0 -frac0 -splits_disconnect1
+*EVAL* $AllowGammaCorrection[1] @
+*ARGUMENTS* -bw 2 -aw 2 -lw 2 -ew 1
+*ARGUMENTS* -gw 2 -zw 3 -gp 0
+
+
+
+
+*ARGUMENTS* -XGDump_PrintPars1
+*ARGUMENTS* -geometry 600x400 -spax0 -spay0
+*ARGUMENTS* -maxWidth 27 -maxHeight 18.5
+*ARGUMENTS* -hl_mode 0 -hl_pars 0.75,1
+# PostScript Settings:
+*ARGUMENTS* -Landscape -ps_scale 100 -ps_xpos 1 -ps_ypos 1 -ps_offset 0,0 -ps_rgb0 -ps_transp0 -ps_fest 0.675 -gs_twidth1 -gs_twidth_auto1 -ps_eps0 -ps_dsc1 -ps_setpage0
+*ARGUMENTS* -ps_tf "Helvetica-Narrow" -ps_tf_size 10 -ps_lef "Palatino-Bold" -ps_lef_size 8
+*ARGUMENTS* -ps_laf "Palatino-Bold" -ps_laf_size 10 -ps_af "Helvetica" -ps_af_size 8
+*ARGUMENTS* -tf "-adobe-helvetica*-medium-r-normal--8-*-*-*-p-*-*-*" -lef "-adobe-helvetica*-medium-r-normal--8-*-*-*-p-*-*-*"
+*ARGUMENTS* -laf "-adobe-new century schoolbook-bold-r-normal--12-120-75-75-p-77-iso8859-1" -af "-*-helvetica-medium-r-*--10-*-*-*-*-*-*-*"
+*ARGUMENTS* -bar_legend_dimension 3,1.5,1
+*ARGUMENTS* -PSm 1.5,1.4
+
+
+*XLABEL*X
+*XLABEL_TRANS*
+*YLABEL*Y
+*YLABEL_TRANS*
+
+*COLUMNLABELS* new
+
+
+*EVAL* DCL[$curve_len-with-discarded,0] @
+*EVAL* DCL[$disable_SET_PROCESS,0] @
+*EVAL* DCL[$SET_PROCESS_last,1] @
+*EVAL* DCL[$SAS_converts_angle,0] @
+*EVAL* DCL[$SAS_converts_result,1] @
+*EVAL* DCL[$SAS_exact,0] @
+*EVAL* DCL[$SS_exact,0] @
+*EVAL* DCL[$SAS_Ignore_NaN,0] @
+*EVAL* DCL[$SS_Ignore_NaN,0] @
+*EVAL* DCL[$SS_Empty_Value,0] @
+*EVAL* DCL[$verbose,0] @
+*EVAL* DCL[$popup_verbose,1] @
+*EVAL* DCL[$compile_verbose,0] @
+*EVAL* DCL[$IDict,0] @
+*EVAL* DCL[$ReDo_DRAW_BEFORE,0] @
+*EVAL* DCL[$Really_DRAW_AFTER,0] @
+*EVAL* DCL[$ReCalculate,0] @
+*EVAL* DCL[$VariableInit,1] @
+*EVAL* DCL[$ExitOnError,0] @
+*EVAL* DCL[$UseConstantsLists,1] @
+*EVAL* DCL[$AllowSimpleArrayOps,0] @
+*EVAL* DCL[$AlwaysUpdateAutoArrays,0] @
+*EVAL* DCL[$SyncedAnimation,0] @
+*EVAL* DCL[$AllowSomeCompilingInitialisations,1] @
+*EVAL* DCL[$AllowGammaCorrection,1] @
+*EVAL* DCL[$gsTextWidthBatch,0] @
+*EVAL* DCL[$Dprint-file,1] @
+*EVAL* DCL[$DataWin-before-Processing,1] @
+
+
+
+
+*Set* 0,1 (#0 dumped)
+#no set-title..
+*TITLE*
+*LEGEND*stdin
+*FILE*stdin
+
+*ERROR_TYPE* 1
+*COLUMNS* N=3 x=0 y=1 e=2 n=-1
+*PROPERTIES* colour=0 flags=0x36 linestyle=1 mS=8 lineWidth=2 elinestyle=0 marker=-1 elineWidth=1
+*POINTS* 6
+*N* 2
+*VECTORPARS* 0,1
+*SET_INFO_LIST*0
+ Set #0, column 1: introduced gap at t=[1.867204301075269,3.168279569892473] y=[0.9462643678160919,1.069540229885058] to y=NaN (points set to NaN)
+
+*EXTREMES* 0,5, 1,1, 0,0
+0	1
+1	1
+2	NaN
+3	NaN
+4	1
+5	1
+
+
+*EXTRATEXT* dumped 1 sets of 128
+
+*PROCESS_HISTORY*examples/boxfilt-nan.xg
+ xgraph
+
+
+*EXTRATEXT* Created by command:
+ xgraph
+ XGraph build version 20050211; gcc3.4.3[Feb 12 2005 11:45:22,"Darwin portia.local 7.7.0 Power Macintosh ; CC='gccopt -DXGRAPH ' ACC='gccopt -DXGRAPH '"]
+ Executed d.d. Sat Feb 12 12:38:07 2005
+ Working directory: /Users/bertin/work/src/xgraph
+ Last opened on display :0.0/600/400 (visual 0x22, 24 planes TrueColor) by bertin
+

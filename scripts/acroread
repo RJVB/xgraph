@@ -1,0 +1,19 @@
+#!/bin/sh
+
+ACROREAD="/cygdrive/c/Program Files/Adobe/Acrobat 7.0/Reader/acrord32.exe"
+CYGWINPATH="d:/cygwin"
+
+ARGS=""
+while [ $# != 0 ] ;do
+	case ${1} in
+		-*)
+			ARGS="${ARGS} ${1}"
+			;;
+		*)
+			ARGS="${ARGS} ${CYGWINPATH}/${1}"
+			;;
+	esac
+	shift
+done
+
+exec "${ACROREAD}" ${ARGS}

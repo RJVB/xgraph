@@ -1,0 +1,528 @@
+]0;/Users/bertin/Library/xgraph/xg_init.xg: 0% (0 of 4415): line 0.0
+Current xgraph info:
+ xgraph Python.32.so examples/Python3kBench.xg
+ XGraph build (64 bit) version 20101111; gcc4.2.1[Apr 14 2012 13:34:34,"Darwin portia.local 10.8.0 x86_64 ; CC='gccopt -DXGRAPH  ' ACC='gccopt -DXGRAPH  '"]
+ Executed d.d. Sat Apr 14 15:10:02 2012
+ Working directory: /Volumes/Debian/Users/bertin/work/src/xgraph
+ Last opened on display :1.0/-1/-1 (visual 0x22, 24 planes TrueColor) by bertin
+
+
+]0;Python.32.so: 0% (0 of 444632): line 0.0You're loading a shared library: will load it as a dynamic module!
+Python/Python.c::initDyMod(): Initialising Python.32.so loaded from ./Python.32.so (build: XGraph v20101111 'Python/Python.c'-[Apr 14 2012,15:09:08]), call 1
+Python/Python.c loading Python .AX<<Python importing ascanf module>>
+<<Python importing xgraph module>>
+.....Loaded module Python.32.so from ./Python.32.so, total modules 1
+	(XGraph v20101111 'Python/Python.c'-[Apr 14 2012,15:09:08] compiled with Python 3.2.3)
+ A dynamic module (library) that contains
+ hooks to interface with the Python language.
+No numerical data in "Python.32.so"
+]0;examples/Python3kBench.xg: 0% (0 of 5463): line 0.0Python.so: Python.32.so already loaded from ./Python.32.so; overloading is impossible; using the existing module.
+Python/Python.c::closeDyMod(1): Closing Python.so loaded from ./Python.so, call 1
+#1: 	verbose[ Python-Eval[ "ExportVariable('NoOp',idle, as_PObj=1 )" ] ] *EVAL*
+#		&"Xx13e8508727bd3475a9"={0x101b20080:0x12345600|0x4}==0xd90040:12345604
+#3 	DCL[0,0]== 0	->
+#		`"ExportVariable('NoOp',idle, as_PObj=1 )"={0x101b20080:0x22345600|0x4}==0xd90040:22345604
+#		`"ExportVariable('NoOp',idle, as_PObj=1 )"={0x101b20080:0x22345600|0x100000004}==0xd90040:22345604
+#2 	Python-Eval[`"ExportVariable('NoOp',idle, as_PObj=1 )"]==  (0xd90040:22345604=={0xd90040:0x22345604}==`"ExportVariable('NoOp',idle, as_PObj=1 )":"ExportVariable('NoOp',idle, as_PObj=1 )")== #		&NoOp={0x101b203e0:0x12345600|0x7fff00000004}==0xd901f0:12345604
+#1 	DCL[0]== 0	  ,
+ (can't determine nr. of arguments to python function "idle", allowing the current ascanf maximum for "NoOp") #		&NoOp={0x101b203e0:0x12345600|0x100000009}==0xd901f0:12345609
+0	->
+#1 	verbose[0]== 0	  ,
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N2, add[ 1, 2, 3, 4, 5] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 9.352e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N2, call[&add, 1, 2, 3, 4, 5] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 8.481e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): call(a_add, (1,2,3,4,5));" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.278e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): callr(a_add, (1,2,3,4,5));" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.211e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): call(a_addP, (1,2,3,4,5));" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.036e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): callr(a_addP, (1,2,3,4,5));" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.201e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ Python-Eval[ "print(a_addP.reentrant())"] ] *EVAL*
+#		&"Xx23954a2bd5b7af6795"={0x101b21560:0x12345600|0x100000004}==0xd90ab0:12345604
+#sc:4 	DCL[0,0]== 0	->
+#		`"print(a_addP.reentrant())"={0x101b21560:0x22345600|0x4}==0xd90ab0:22345604
+#		`"print(a_addP.reentrant())"={0x101b21560:0x22345600|0x100000004}==0xd90ab0:22345604
+ (0xd90ab0:22345604=={0xd90ab0:0x22345604}==`"print(a_addP.reentrant())":"print(a_addP.reentrant())")== #ac:3 	Python-Eval[`"print(a_addP.reentrant())"]== 0	->
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): a_addP(1,2,3,4,5);" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.507e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ Python-Eval[ "print(a_addP.reentrant(0))"] ] *EVAL*
+#		&"Xx253f9b8a83752ae10d"={0x101b21f00:0x12345600|0x100000004}==0xd90f80:12345604
+#sc:4 	DCL[0,0]== 0	->
+#		`"print(a_addP.reentrant(0))"={0x101b21f00:0x22345600|0x4}==0xd90f80:22345604
+#		`"print(a_addP.reentrant(0))"={0x101b21f00:0x22345600|0x100000004}==0xd90f80:22345604
+ (0xd90f80:22345604=={0xd90f80:0x22345604}==`"print(a_addP.reentrant(0))":"print(a_addP.reentrant(0))")== #ac:3 	Python-Eval[`"print(a_addP.reentrant(0))"]== 0	->
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): a_addP(1,2,3,4,5);" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.213e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): call(a_call, (a_add, 1,2,3,4,5));" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.221e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): call(a_call, a_args);" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.391e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): callr(a_call, a_args);" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.154e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "call(a_call, a_args, N2)" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.121e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "callr(a_call, a_args, N2)" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.441e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-EvalValue[ "for i in range(N): ascanf.ReturnValue= ImportVariable('$loop');" ] ] ], ?Python-EvalValue ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.378e-05s (0% CPU)
+#ac:2 	verbose[0,NaN]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[ "ascanf.ReturnValue= ImportVariable('$loop')" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 9.039e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-EvalValue[ "ascanf.ReturnValue= ImportVariable('$loop')" ] ] ] ], ?Python-EvalValue ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.804e-05s (0% CPU)
+#ac:2 	verbose[0,NaN]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ DCL[cexpr,Python-Compile[ "ascanf.ReturnValue= ImportVariable('$loop')" ]], for-toMAX[0, N, Python-EvalValueCompiled[cexpr]  ] ] ], ?Python-EvalValueCompiled ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 1.981e-04s (0% CPU)
+#ac:2 	verbose[0,NaN]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N): kk= int(ImportVariable('$loop'));" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.057e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[ "kk= int(ImportVariable('$loop'))" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 9.741e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N): ImportVariable('$loop');" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.579e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[ "ImportVariable('$loop')" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 8.208e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ DCL[cexpr, Python-Compile[ "ImportVariable('$loop')" ]], for-toMAX[0, N, Python-EvalCompiled[cexpr] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 1.605e-04s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[ "idle(kk,'$loop')" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.659e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[ "idle(1,'$loop')" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.817e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ DCL[cexpr2, Python-Compile[ "idle(1,'$loop')" ]], for-toMAX[0, N, Python-EvalCompiled[cexpr2] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 1.690e-04s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[ "idle(1)" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.654e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[ "idle()" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.884e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ DCL[cexpr3, Python-Compile[ "idle()" ]], for-toMAX[0, N, Python-EvalCompiled[cexpr3] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 1.609e-04s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Call[ &NoOp, 1,"$loop" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 8.469e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Call[ &NoOp, 1 ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 5.207e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, Python-Call[ &NoOp ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 4.136e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, NoOp[ 1, "$loop" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 8.299e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, NoOp[ 1 ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 4.446e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N, NoOp[,] ] ] ] ] *EVAL*
+#ac:6 	NoOp called with empty argument list while compiling
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 4.003e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N): idle(kk,'$loop');" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.878e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N): idle(1);" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.365e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N): idle();" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.466e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N2, Python-Eval[ "kk" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.717e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N2, Python-Eval[ "1" ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 7.626e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N2, Python-Eval[ 0 ] ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 4.811e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N2, $loop ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 3.393e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ Python-Eval[ "for i in range(N2): i;" ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 6.714e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N2, 0 ] ] ] ] *EVAL*
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 4.077e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+#ac2: 	verbose[ system.time[ no-verbose[ for-toMAX[0, N2 ] ] ] ] *EVAL*
+#ac5 	 for-toMAX[0, N2 ]  :
+#ac5 	"for-toMAX[0, N2 ]" warning: function call with only 2 parameters
+#ac:3 	system.time[0]== <delayed!>	->
+## Compilation time: user 0s, system 0s, total 3.988e-05s (0% CPU)
+#ac:2 	verbose[0]== 0	->
+## Compilation time: user 0s, system 0s, total 0.005281s (0% CPU)
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ 
+#C3: 	    for-toMAX[0, N2, add[<C>1, 2, 3, 4, 5]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.15:0.145631s>	->
+#C# Evaluation time 'no-verbose': user 0.1500s, system 0s, total 0.1456s (103.0% CPU)
+#C2 	verbose[0.1500]== 0.1500 <0:3.0126e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ 
+#C3: 	    for-toMAX[0, N2, call[<C>&add, 1, 2, 3, 4, 5]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.2:0.197719s>	->
+#C# Evaluation time 'no-verbose': user 0.2000s, system 0s, total 0.1977s (101.2% CPU)
+#C2 	verbose[0.2000]== 0.2000 <0:4.1786e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): call(a_add, (1,2,3,4,5));"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.47:0.473994s>	->
+#C# Evaluation time 'no-verbose': user 0.4700s, system 0s, total 0.4740s (99.16% CPU)
+#C2 	verbose[0.4700]== 0.4700 <0:2.9778e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): callr(a_add, (1,2,3,4,5));"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.93:0.928225s>	->
+#C# Evaluation time 'no-verbose': user 0.9300s, system 0s, total 0.9282s (100.2% CPU)
+#C2 	verbose[0.9300]== 0.9300 <0:2.9291e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): call(a_addP, (1,2,3,4,5));"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.45:0.456074s>	->
+#C# Evaluation time 'no-verbose': user 0.4500s, system 0s, total 0.4561s (98.67% CPU)
+#C2 	verbose[0.4500]== 0.4500 <0:2.982e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): callr(a_addP, (1,2,3,4,5));"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.92:0.912218s>	->
+#C# Evaluation time 'no-verbose': user 0.9200s, system 0s, total 0.9122s (100.9% CPU)
+#C2 	verbose[0.9200]== 0.9200 <0:2.986e-05s>	->
+#C2: 	verbose[
+#C3: 	    Python-Eval[<C>`"print(a_addP.reentrant())"]
+#C2: 	] *EVAL*
+#		`"print(a_addP.reentrant())"={0x101b21560:0x22345600|0x4}==0xd90ab0:22345604
+#Cecal4: 	`"print(a_addP.reentrant())"==`"print(a_addP.reentrant())"
+#C3 	Python-Eval[<C>`"print(a_addP.reentrant())"]==  (0xd90ab0:22345604=={0xd90ab0:0x22345604}==`"print(a_addP.reentrant())":"print(a_addP.reentrant())")== 0 <0:0.000129959s>	->
+#C2 	verbose[0]== 0 <0:1.626e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): a_addP(1,2,3,4,5);"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.8:0.801848s>	->
+#C# Evaluation time 'no-verbose': user 0.8000s, system 0s, total 0.8019s (99.77% CPU)
+#C2 	verbose[0.8000]== 0.8000 <0:3.026e-05s>	->
+#C2: 	verbose[
+#C3: 	    Python-Eval[<C>`"print(a_addP.reentrant(0))"]
+#C2: 	] *EVAL*
+#		`"print(a_addP.reentrant(0))"={0x101b21f00:0x22345600|0x4}==0xd90f80:22345604
+#Cecal4: 	`"print(a_addP.reentrant(0))"==`"print(a_addP.reentrant(0))"
+#C3 	Python-Eval[<C>`"print(a_addP.reentrant(0))"]==  (0xd90f80:22345604=={0xd90f80:0x22345604}==`"print(a_addP.reentrant(0))":"print(a_addP.reentrant(0))")== 0 <0:0.000115637s>	->
+#C2 	verbose[0]== 0 <0:1.5595e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): a_addP(1,2,3,4,5);"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.38:0.385819s>	->
+#C# Evaluation time 'no-verbose': user 0.3800s, system 0s, total 0.3858s (98.49% CPU)
+#C2 	verbose[0.3800]== 0.3800 <0:2.9727e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): call(a_call, (a_add, 1,2,3,4,5));"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.59:0.589015s>	->
+#C# Evaluation time 'no-verbose': user 0.5900s, system 0s, total 0.5890s (100.2% CPU)
+#C2 	verbose[0.5900]== 0.5900 <0:3.0383e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): call(a_call, a_args);"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.51:0.512283s>	->
+#C# Evaluation time 'no-verbose': user 0.5100s, system 0s, total 0.5123s (99.55% CPU)
+#C2 	verbose[0.5100]== 0.5100 <0:2.9008e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): callr(a_call, a_args);"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <1.01:1.00951s>	->
+#C# Evaluation time 'no-verbose': user 1.010s, system 0s, total 1.010s (100.1% CPU)
+#C2 	verbose[1.010]== 1.010 <0:2.9367e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"call(a_call, a_args, N2)"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.09:0.0862833s>	->
+#C# Evaluation time 'no-verbose': user 0.08000s, system 0.01000s, total 0.08629s (104.3% CPU)
+#C2 	verbose[0.08000]== 0.08000 <0:3.0494e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"callr(a_call, a_args, N2)"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.07:0.0722395s>	->
+#C# Evaluation time 'no-verbose': user 0.07000s, system 0s, total 0.07225s (96.89% CPU)
+#C2 	verbose[0.07000]== 0.07000 <0:2.9657e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-EvalValue[<C>
+#C3: 	    `"for i in range(N): ascanf.ReturnValue= ImportVariable('$loop');"] ] ], ?Python-EvalValue
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.05:0.0525297s>	->
+#C# Evaluation time 'no-verbose': user 0.05000s, system 0s, total 0.05254s (95.17% CPU)
+#C2 	verbose[0.05000,0]== return[0]== 0 <0:3.5644e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[<C>
+#C3: 	        `"ascanf.ReturnValue= ImportVariable('$loop')"]
+#C3: 	    ] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <1.76:1.7583s>	->
+#C# Evaluation time 'no-verbose': user 1.760s, system 0s, total 1.758s (100.1% CPU)
+#C2 	verbose[1.760]== 1.760 <0:2.9646e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-EvalValue[<C>
+#C3: 	        `"ascanf.ReturnValue= ImportVariable('$loop')"]
+#C3: 	    ] ] ], ?Python-EvalValue
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <1.78:1.77867s>	->
+#C# Evaluation time 'no-verbose': user 1.770s, system 0.01000s, total 1.779s (100.1% CPU)
+#C2 	verbose[1.770,1.000e+05]== return[0]== 0 <0:3.6752e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ DCL[cexpr, Python-Compile[<C>`"ascanf.ReturnValue= ImportVariable('$loop')"]], 
+#C3: 	    for-toMAX[0, N, Python-EvalValueCompiled[<C>cexpr]] ] ], ?Python-EvalValueCompiled
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.13:0.125526s>	->
+#C# Evaluation time 'no-verbose': user 0.1300s, system 0s, total 0.1255s (103.6% CPU)
+#C2 	verbose[0.1300,1.000e+05]== return[0]== 0 <0:3.6901e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N): kk= int(ImportVariable('$loop'));"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.06:0.060832s>	->
+#C# Evaluation time 'no-verbose': user 0.06000s, system 0s, total 0.06084s (98.62% CPU)
+#C2 	verbose[0.06000]== 0.06000 <0:3.0141e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[<C>`"kk= int(ImportVariable('$loop'))"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <1.92:1.926s>	->
+#C# Evaluation time 'no-verbose': user 1.920s, system 0s, total 1.926s (99.69% CPU)
+#C2 	verbose[1.920]== 1.920 <0:2.9736e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N): ImportVariable('$loop');"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.04:0.0422219s>	->
+#C# Evaluation time 'no-verbose': user 0.04000s, system 0s, total 0.04223s (94.72% CPU)
+#C2 	verbose[0.04000]== 0.04000 <0:3.0221e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[<C>`"ImportVariable('$loop')"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <1.44:1.43791s>	->
+#C# Evaluation time 'no-verbose': user 1.440s, system 0s, total 1.438s (100.2% CPU)
+#C2 	verbose[1.440]== 1.440 <0:2.9939e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ DCL[cexpr, Python-Compile[<C>`"ImportVariable('$loop')"]], for-toMAX[0, N, 
+#C3: 	        Python-EvalCompiled[<C>cexpr]
+#C3: 	    ] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.08:0.0830144s>	->
+#C# Evaluation time 'no-verbose': user 0.08000s, system 0s, total 0.08302s (96.36% CPU)
+#C2 	verbose[0.08000]== 0.08000 <0:3.1045e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[<C>`"idle(kk,'$loop')"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <1.44:1.44224s>	->
+#C# Evaluation time 'no-verbose': user 1.440s, system 0s, total 1.442s (99.84% CPU)
+#C2 	verbose[1.440]== 1.440 <0:3.0595e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[<C>`"idle(1,'$loop')"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <1.41:1.40681s>	->
+#C# Evaluation time 'no-verbose': user 1.410s, system 0s, total 1.407s (100.2% CPU)
+#C2 	verbose[1.410]== 1.410 <0:2.9957e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ DCL[cexpr2, Python-Compile[<C>`"idle(1,'$loop')"]], for-toMAX[0, N, 
+#C3: 	        Python-EvalCompiled[<C>cexpr2]
+#C3: 	    ] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.03:0.0294062s>	->
+#C# Evaluation time 'no-verbose': user 0.03000s, system 0s, total 0.02941s (102.0% CPU)
+#C2 	verbose[0.03000]== 0.03000 <0:2.8375e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[<C>`"idle(1)"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <1.24:1.23083s>	->
+#C# Evaluation time 'no-verbose': user 1.230s, system 0.01000s, total 1.231s (100.8% CPU)
+#C2 	verbose[1.230]== 1.230 <0:3.0211e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-Eval[<C>`"idle()"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <1.02:1.02639s>	->
+#C# Evaluation time 'no-verbose': user 1.020s, system 0s, total 1.026s (99.38% CPU)
+#C2 	verbose[1.020]== 1.020 <0:3.0191e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ DCL[cexpr3, Python-Compile[<C>`"idle()"]], for-toMAX[0, N, 
+#C3: 	        Python-EvalCompiled[<C>cexpr3]
+#C3: 	    ] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.03:0.0262515s>	->
+#C# Evaluation time 'no-verbose': user 0.03000s, system 0s, total 0.02626s (114.3% CPU)
+#C2 	verbose[0.03000]== 0.03000 <0:2.7324e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ 
+#C3: 	    for-toMAX[0, N, Python-Call[&NoOp, 1, `"$loop"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.09:0.0893283s>	->
+#C# Evaluation time 'no-verbose': user 0.08000s, system 0.01000s, total 0.08950s (100.6% CPU)
+#C2 	verbose[0.08000]== 0.08000 <0:0.000199399s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-Call[&NoOp, 1]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.05:0.049832s>	->
+#C# Evaluation time 'no-verbose': user 0.05000s, system 0s, total 0.04984s (100.3% CPU)
+#C2 	verbose[0.05000]== 0.05000 <0:3.019e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, Python-Call[&NoOp]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.03:0.0362576s>	->
+#C# Evaluation time 'no-verbose': user 0.03000s, system 0s, total 0.03626s (82.73% CPU)
+#C2 	verbose[0.03000]== 0.03000 <0:2.5357e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, NoOp[<C>1, `"$loop"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.07:0.0692409s>	->
+#C# Evaluation time 'no-verbose': user 0.07000s, system 0s, total 0.06925s (101.1% CPU)
+#C2 	verbose[0.07000]== 0.07000 <0:3.0805e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, NoOp[<C>1]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.04:0.0403223s>	->
+#C# Evaluation time 'no-verbose': user 0.04000s, system 0s, total 0.04033s (99.19% CPU)
+#C2 	verbose[0.04000]== 0.04000 <0:3.1223e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N, NoOp] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.02:0.0250165s>	->
+#C# Evaluation time 'no-verbose': user 0.02000s, system 0s, total 0.02502s (79.93% CPU)
+#C2 	verbose[0.02000]== 0.02000 <0:2.8682e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N): idle(kk,'$loop');"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.02:0.0153106s>	->
+#C# Evaluation time 'no-verbose': user 0.02000s, system 0s, total 0.01532s (130.6% CPU)
+#C2 	verbose[0.02000]== 0.02000 <0:4.7065e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N): idle(1);"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.01:0.0110873s>	->
+#C# Evaluation time 'no-verbose': user 0.01000s, system 0s, total 0.01109s (90.15% CPU)
+#C2 	verbose[0.01000]== 0.01000 <0:2.9014e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N): idle();"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.01:0.00864617s>	->
+#C# Evaluation time 'no-verbose': user 0.01000s, system 0s, total 0.008651s (115.6% CPU)
+#C2 	verbose[0.01000]== 0.01000 <0:2.5207e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N2, Python-Eval[<C>`"kk"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <9.71:9.71886s>	->
+#C# Evaluation time 'no-verbose': user 9.700s, system 0.01000s, total 9.719s (99.91% CPU)
+#C2 	verbose[9.700]== 9.700 <0:3.102e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N2, Python-Eval[<C>`"1"]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <8.4:8.39946s>	->
+#C# Evaluation time 'no-verbose': user 8.390s, system 0.01000s, total 8.400s (100.0% CPU)
+#C2 	verbose[8.390]== 8.390 <0:3.0075e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[0, N2, Python-Eval[<C>0]] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.13:0.125684s>	->
+#C# Evaluation time 'no-verbose': user 0.1300s, system 0s, total 0.1257s (103.4% CPU)
+#C2 	verbose[0.1300]== 0.1300 <0:3.0028e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[<C>0, N2, $loop] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.03:0.032418s>	->
+#C# Evaluation time 'no-verbose': user 0.03000s, system 0s, total 0.03243s (92.52% CPU)
+#C2 	verbose[0.03000]== 0.03000 <0:3.1463e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ Python-Eval[<C>`"for i in range(N2): i;"] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.06:0.0619879s>	->
+#C# Evaluation time 'no-verbose': user 0.06000s, system 0s, total 0.06200s (96.78% CPU)
+#C2 	verbose[0.06000]== 0.06000 <0:2.9405e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[<C>0, N2, 0] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0.03:0.0305071s>	->
+#C# Evaluation time 'no-verbose': user 0.03000s, system 0s, total 0.03051s (98.32% CPU)
+#C2 	verbose[0.03000]== 0.03000 <0:2.757e-05s>	->
+#C2: 	verbose[
+#C3: 	    system.time[ no-verbose[ for-toMAX[<C>0, N2] ] ]
+#C2: 	] *EVAL*
+#C3 	system.time[0]== <delayed!> <0:1.1847e-05s>	->
+#C# Evaluation time 'no-verbose': user 0s, system 0s, total 1.570e-05s (0% CPU)
+#C2 	verbose[0]== 0 <0:2.3908e-05s>	->
+#C# Evaluation time 'verbose': user 37.64s, system 0.08000s, total 37.72s (100.00% CPU)
+]0;examples/Python3kBench.xg: 100% (5463 of 5463): line 0.73Only (5) command(s) in "examples/Python3kBench.xg"
+xgraph: maxitems=0, setNumber=0; no data found
+Python/Python.c::closeDyMod(1): Closing Python.32.so loaded from ./Python.32.so, call 1<function PyAscanfObject "add">
+1
+0
+  3.2.3 (default, Apr 13 2012, 12:10:44) 
+[GCC 4.2.1 Compatible Clang Compiler]
+100000 1000000
+
+

@@ -1,0 +1,139 @@
+% whether or not to reencode:
+/reencode 1 def
+reencode 0 gt{
+	/ski/ISOLatin1Encoding where{pop true}{false}ifelse def
+	/reencodesmalldict 12 dict def
+	/ReEncodeSmall { 
+		reencodesmalldict begin
+			/newcodesandnames exch def
+			/newfontname exch def
+			/basefontname exch def
+			/basefontdict basefontname findfont def
+			/newfont basefontdict maxlength dict def
+
+			basefontdict
+			{
+				exch dup /FID ne
+				{ 
+					dup /Encoding eq
+					{ 
+						ski
+						{
+							exch pop
+							ISOLatin1Encoding dup length array copy
+						}{
+							exch dup length array copy
+						}
+						ifelse
+						newfont 3 1 roll put
+					}{
+						exch newfont 3 1 roll put
+					}
+					ifelse
+				}{
+					pop pop
+				}
+				ifelse
+			} forall
+
+			newfont /FontName newfontname put
+			newcodesandnames aload pop
+			newcodesandnames length 2 idiv
+			{
+				newfont /Encoding get 3 1 roll put
+			} repeat
+
+			newfontname newfont definefont pop
+		end
+	} def
+
+	/changesvec [
+		16#80 /euro
+		16#82 /quotesinglbase
+		16#83 /florin
+		16#84 /quotedblbase
+		16#85 /ellipsis
+		16#86 /dagger
+		16#87 /daggerdbl
+		16#88 /circumflex
+		16#89 /perthousand
+		16#8a /Scaron
+		16#8b /guilsinglleft
+		16#8c /OE
+		16#8e /zcaron
+		16#91 /quoteleft
+		16#92 /quoteright
+		16#93 /quotedblleft
+		16#94 /quotedblright
+		16#95 /bullet
+		16#96 /endash
+		16#97 /emdash
+		16#98 /tilde
+		16#99 /trademark
+		16#9a /scaron
+		16#9b /guilsinglright
+		16#9c /oe
+		16#9e /zcaron
+		16#9f /Ydieresis
+	] def
+	% example:
+	/Helvetica-Narrow-Bold /Helvetica-Narrow-Bold-MS changesvec ReEncodeSmall
+	/Helvetica-Narrow-Bold-MSenc /Helvetica-Narrow-Bold-MS def
+	% The <fontname>-MS font can then be used as any other standard font. In Acrobat, it will show up as the base
+	% font with a custom encoding. The font <fontname>-MSenc can be used as any other font, but without the leading
+	% '/' character (it is a variable after all...)
+
+     %<oldfont> <newname> <newencoding> reencode_font
+     /reencodedict 5 dict def
+     /reencode_font { reencodedict begin
+       /newencoding exch def
+       /newname exch def
+       /basefont exch def
+       /basefontdict basefont findfont def
+       /newfont basefontdict maxlength dict def
+       basefontdict {
+          exch dup dup /FID ne exch /Encoding ne and
+            { exch newfont 3 1 roll put }
+            { pop pop }
+            ifelse
+       } forall
+       newfont /Encoding newencoding put
+       newname newfont definefont pop
+     end } def
+     % Latin1252/iso8859-1 encoding vector, with stubs (naXXX) at the places (XXX) that are empty.
+     % The '-' character (between the comma and the period; ascii 45) must be /hyphen (or hyphen-minus)
+     % and not /minus to ensure that Illustrator 8 will show something at that location! I don't know
+     % if this is a bug in Illustrator (printing goes OK with /minus).
+     /Latin1252Encoding [
+		/.notdef /na001 /na002 /na003 /na004 /breve /dotaccent /na007 /ring /hungarumlaut /ogonek /caron
+		/dotlessi /na0014 /na0015 /na0016 /na0017 /na0018 /na0019 /na0020 /na0021 /na0022 /na0023 /na0024
+		/na0025 /fraction /fi /fl /Lslash /lslash /Zcaron /zcaron
+		/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle /parenleft /parenright
+		/asterisk /plus /comma /hyphen /period /slash
+		/zero /one /two /three /four /five /six /seven /eight /nine
+		/colon /semicolon /less /equal /greater /question /at
+		/A /B /C /D /E /F /G /H /I /J /K /L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z
+		/bracketleft /backslash /bracketright /asciicircum /underscore /grave
+		/a /b /c /d /e /f /g /h /i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z
+		/braceleft /bar /braceright /asciitilde /na127 /Euro /na129
+		/quotesinglbase /florin /quotedblbase /ellipsis /dagger /daggerdbl /circumflex /perthousand /Scaron
+		/guilsinglleft /OE /na141 /na142 /na143 /na144 /quoteleft /quoteright /quotedblleft /quotedblright
+		/bullet /endash /emdash /tilde /trademark /scaron /guilsinglright /oe /na157 /na158 /Ydieresis
+		/nbspace /exclamdown /cent /sterling /currency /yen /brokenbar /section /dieresis /copyright /ordfeminine /guillemotleft
+		/logicalnot /sfthyphen /registered /macron /degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph
+		/periodcentered /cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown
+		/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla /Egrave /Eacute /Ecircumflex
+		/Edieresis /Igrave /Iacute /Icircumflex /Idieresis /Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde
+		/Odieresis /multiply /Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls
+		/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla /egrave /eacute /ecircumflex
+		/edieresis /igrave /iacute /icircumflex /idieresis /eth /ntilde /ograve /oacute /ocircumflex /otilde
+		/odieresis /divide /oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis
+     ] readonly def
+
+     % example:
+     % /Helvetica-Narrow-Bold /Helvetica-Narrow-Bold-L1 Latin1252Encoding reencode_font
+     % /Helvetica-Narrow-Bold-Latin1252 /Helvetica-Narrow-Bold-L1 def
+
+} {
+	/Helvetica-Narrow-Bold-MSenc /Helvetica-Narrow-Bold def
+} ifelse

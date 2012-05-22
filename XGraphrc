@@ -1,0 +1,3 @@
+# Put your initialisations in this file, and this
+# file in a directory .xgraph in your home directory.
+# It will be read by XGraph as a first file to pass to xgraph.

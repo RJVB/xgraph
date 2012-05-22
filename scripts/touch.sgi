@@ -1,0 +1,27 @@
+#!/bin/sh
+# Adds the -r REFERENCEFILE option to
+# IRIX's or A/UX's touch command
+
+if [ `uname -r` -ge 6.2 ] ;then
+	exec /bin/touch $*
+fi
+
+ARGS=""
+TOUCH="/bin/touch"
+
+while [ $# != 0 ] ;do
+	case $1 in
+		-r)
+			if [ -r $2 ] ;then
+				ARGS="${ARGS} `timestamp $2`"
+				shift
+			fi
+			;;
+		*)
+			ARGS="${ARGS} $1"
+			;;
+	esac
+	shift
+done
+
+exec ${TOUCH} ${ARGS}

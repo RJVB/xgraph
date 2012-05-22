@@ -1,0 +1,22 @@
+#!/bin/sh
+
+SELF="`basename $0`"
+if [ $# -lt 2 ] ;then
+	echo "Usage: $SELF <signal> <file> [files]"
+	exit 10
+fi
+
+SIGNAL=$1
+shift 1
+
+# while [ $# != 0 ] ;do
+	procs="`fuser -u 2>/dev/null $*`"
+	procs="`echo $procs | sed -e 's/[^0-9 ]*//g' | sed -e 's/	/ /g'`"
+	lprocs="`echo $procs | sed -e 's/ /,/g'`"
+	if [ "$procs" != "" ] ;then
+		echo "kill $SIGNAL $procs ($*)"
+		kill $SIGNAL $procs
+		ps -flp $lprocs
+	fi
+# 	shift 1
+# done

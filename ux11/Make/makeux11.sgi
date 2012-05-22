@@ -1,0 +1,45 @@
+#
+# Makefile for X11 Utility Library
+#
+
+CHECK=-c
+DEBUG = 
+CLEVEL	= 
+CFLAGS	= $(DEBUG) $(CLEVEL) -DXGRAPH
+COMP=gccopt
+CC	= $(COMP) -simOpt
+
+TARGET	= libux11.a
+
+SOURCES = ux11.h \
+	ux11f_watter.c		ux11_open.c \
+	ux11f_gcvals.c		ux11g_value.c		ux11s_vismap.c \
+	ux11f_hints.c		ux11n_font.c		\
+	ux11n_visual.c		ux11f_xa.c		ux11_err.c
+
+OBJECTS = \
+	ux11f_watter.o		ux11_open.o \
+	ux11f_gcvals.o		ux11g_value.o		ux11s_vismap.o \
+	ux11f_hints.o		ux11n_font.o		\
+	ux11n_visual.o		ux11f_xa.o		ux11_err.o
+
+TAGFILE	= TAGS
+
+#---------------
+
+.c.o:
+		(cd .. ; $(CC) $(CFLAGS) -Iux11/ -o ux11/$*.o $(CHECK) ux11/$*.c )
+		ar r $(TARGET) $*.o
+		zero $*.o
+
+$(TARGET):	$(OBJECTS)
+		-ls -ailsF $(TARGET)
+		touch .make_success ../ux11_m
+
+tags:		$(TAGFILE)
+
+$(TAGFILE):	$(SOURCES)
+		ctags -eut $(SOURCES)
+	
+clean:
+		rm -f $(TARGET) $(OBJECTS) $(OBJECTS:.o=.o.gz) ../emsg/ux11/* *.cer*

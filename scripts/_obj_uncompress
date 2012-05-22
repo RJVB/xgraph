@@ -1,0 +1,37 @@
+#!/bin/sh
+
+ARGS=""
+FILES=""
+
+CleanUp() {
+	if [ "$UNC_OBJ" != "" -a "$OLD_UNC_OBJ" != "" ] ;then
+		cp -p $OLD_UNC_OBJ $UNC_OBJ
+	fi
+}
+
+trap CleanUp 1
+trap CleanUp 2
+trap CleanUp 15
+
+while [ $# != 0 ] ;do
+	case $1 in
+		-*)
+			ARGS="$ARGS $1"
+			;;
+		*)
+			FILES="$FILES $1"
+			;;
+	esac
+	shift
+done
+
+for J in $FILES ;do
+	gzcat < $J > /dev/null
+	if [ $? = 0 ] ;then
+		gunzip $ARGS $J
+	else
+		echo "Removing garbled compressed objectfile $J"
+		CleanUp;
+		rm -f $J
+	fi
+done

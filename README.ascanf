@@ -1,0 +1,155 @@
+Release notes for ascanf, the programming/processing facility in XGraph.
+
+The intention of this document is not to provide a manual to the external use of the facility (an attempt to this
+is made in the xgraph manpage). Rather, it intends to provide some background information for those who would like
+to extend the functionality further, by adding their own functions.
+
+What is it?
+
+ascanf was originally developped as a family of versions of scanf() that read arrays (lists) of numbers; the one
+reading floating point is called fascanf(). It is currently at the basis of an increasingly complete programming
+language that provides the processing facilities to XGraph.
+
+How does it work?
+
+The concept is simple: input can consist of a list (by default comma separated) of expressions, that are parsed, and
+stored (in order) in the array that is passed to the toplevel fascanf() invocation. Here, an expression may be
+a number (including hexadecimal numbers in 0xYY format, fractions, NaN and Inf), or another similar list of expressions.
+Much like in LISP. In the latter case, the value taken for expression element i in a list is the value that expression
+element 0 of that expression i evaluates to.
+
+A non-numerical expression can consist of any combination of 4 (non-numerical) objects: scalar variables (variable),
+1D array variables (array; integer or double), procedures, and functions. In addition, several operator prefixes are
+defined that alter the result of an expression: negation, binary not, last value, address-of. A procedure is nothing
+more than a pointer to another expression. A function is an interface to an internal callback; variables and arrays
+are in a way special case functions without internal callback.
+
+What can I do with it?
+
+Many things. For the moment, you need XGraph to get at it. The syntax is based on my rather basic knowledge of
+Mathematica, and some things that come from LISP. In XGraph, it gives you rather extended control over that graphing
+programme and the data it is designed to handle. The day may well come that you can create ascanf expressions in
+ascanf, and than evaluate them. I guess that that day, it will be truly universal. Not that that is a goal that I'm
+actively pursuing (I am, after all, my own product's main user), but you asked what you can do with it... :)
+
+Does it have a name?
+
+No. Would you have a suggestion? To me, it is usually just "my parameter control language", "my processing language",
+"ascanf" or whatever. I have the impression that all intuitive one-letter names are already taken (R, A, B, C, etc.)
+Etc would be a name that is (methinks) still free, but somehow it doesn't seem to pertain really well to the product...
+
+Can I modify it?
+
+1) Fine tuning modifications
+Yes. A number of those are "preconfigured" as compile time switches. These are all located at the top of the ascanf.h
+header file, with sufficient description to make educated guesses as to what they control :)
+If you mean other fine tuning, see under 2).
+
+2) Extensions etc.
+Yes. It isn't even particularly difficult, as, to my knowledge, there is no lexical token analyser, or all this stuff
+that you risk to find in "modern day parsers". There are basically 2 ways to extend/modify etc (see it doesn't really work
+as a name?). The simplest is to add a function. As long as that function does not directly (have to) control the
+evaluation flow, this boils down to writing the callback, and adding the appropriate entries to the main function
+table. The more complex, other way is an extension of the language itself, like adding a new type of variable, support
+for lambda expressions, a new prefix operator, a signal handling mechanism, you name it. For this, you will have to
+delve into the real bowels of my programming prowess. It is not impossible, however - the code is well documented
+(in places, of course); all you need is some imagination and to be quite precise. I'll explain below.
+
+Adding a function (callback).
+
+This is a relatively simple task. All functions and initially defined variables are currently grouped in a single
+table called vars_ascanf_Functions[] that is declared in ascanfc-table.c .
+The format is straightforward: you make a new entry with 1) the function's
+name, 2) the name (address) of the internal callback, 3) a type definition (see below) and 4) a description that
+starts with the function's invocation syntax. The type definition is either NOT_EOF_OR_RETURN (for functions that
+accept a variable number of arguments) or NOT_EOF (for functions that expect a fixed number). This distinction is
+historical, and may well disappear or be renamed during the next spring cleanup. For variable definitions, the
+format is similar but slightly different. The callback to be used is the ascanf_Variable callback (a stub) or
+ascanf_Procedure (for a procedure, should you want to create one...). The type must be set to either _ascanf_variable,
+_ascanf_array or _ascanf_procedure. The initial value can be set through the value field (NB: the table is an
+array of ascanf_Function structures), for an array, you need to provide a pointer to an actual array (see e.g.
+the entry for $IntensityRGB) or allocate it dynamically in the initialisation routine.
+Of course, you will need a callback. The calling convention is defined in varsintr.h, and is currently the one
+provided by the ASCANF_ALTERNATE mechanism. In order for your callback to be recognised and automatically declared
+to ascanfc-table.c (so that you can create an entry invars_ascanf_Functions), it MUST use the ASCB_ARGLIST macro
+to declare the callback arguments.
+Macros are available that can be used in the function definition and
+for retrieving the important, user-passed parameters in a transparent fashion. The 2 most important ones (and
+historically the only ones) are <args> (a double* array) and <result> (another double*). <args> contains
+<ascanf_arguments> initialised elements (out of a maximum of ASCANF_MAX_ARGS, which is a macro to a variable).
+<ascanf_arguments> is a global variable, like <ascanf_arg_error> (a flag to set to signal an error) and
+<ascanf_emsg> (a char* to point to an error message). Currently, a callback routine is called after all
+"downstream" parsing is done, so there is no danger that these global variables will change during the execution
+of the callback. If you decide to parse an expression, however, this may happen, and you will need to cache local
+copies of their values.
+A callback should return 1 upon success, and 0 upon (serious) error.
+NB: if you define an internal variable, make sure its name starts with a $: this will prevent it from being deleteable.
+Certain of these $variables are also not listed in XGraph dumps, like e.g. $DATA{0}. You'll have to figure out
+for yourself how this is achieved :)
+
+Extending/modifying the syntax/grammar
+
+This is much less trivial, because a single change may need modifications at several levels. A short evolutionnary
+history will make this clear.
+
+The parser/compiler.
+As mentioned above, the whole facility evolved from a simple array-reading fascanf() version. The first implementation
+was a pure interpreter/parser, that would parse the string argument containing the expression according to a simple
+strategy. NaN and Inf are easy to find, if not, check for an ascanf_Function (check_for_ascanf_function() does that),
+else, try to convert it to a number using sscanf(). If it is a function, the potentially available argument list
+must be retrieved from the sub-string, and parsed with another call to fascanf(), and the results passed to the callback.
+This was and is the function of ascanf_function(). Gradually, ascanf_function() and check_for_ascanf_function() evolved.
+Flow controlling functions like <for-to>, <whiledo> and <ifelse> appeared, that required some form of look-ahead parsing
+of their arguments. The loop functions because one of these arguments would contain the number of times to loop, whereas
+others should be evaluated that many times. The conditional <ifelse> because it could be quite expensively useless to
+evaluate both branches whereas by definition only one would need to be (not to speak about unwanted side-effects!).
+The calling chain is fascanf() [toplevel, user interface] -> _fascanf() [internal] -> _fascanf_parser() -> 
+check_for_ascanf_function() -> ascanf_function()
+
+Then, when I coupled this evolving library to XGraph, it soon dawned upon me that I could speed processing up considerably
+by adding a compiler. Where the compiled expression would be a tree that just represents the (parsed) expression in a
+way that it can be evaluated much quicker, without processing of strings, doing table lookups etc. This is a job
+that is done by the once-only interpreter/parser, fascanf() - it takes an additional parameter that is a pointer to the
+top (root) of the tree to be built for this. The compiled result is a tree consisting of Compiled_Form nodes, in which
+each node can be a number, scalar, etc, with a pointer to the corresponding vars_ascanf_Functions[] entry, a pointer to
+the arguments to this object, a current value and some other administrative stuff. 
+Whereas the construction of this tree can be done by the interpreter, evaluating it requires a different set of
+routines, that basically do the same thing, but using different input data: compiled_fascanf(), _compiled_fascanf(),
+compiled_check_for_ascanf_function() and compiled_ascanf_function(). These are simpler, but still basically copies of
+their compiling counterparts. A number of the things that ascanf_function() does on each invocation (like allocation,
+serial if/elif/else-style matching of the callback,...) are stored within the Compiled_Form frames that form the nodes
+of the compiled tree. This can speed things up quite a bit, and helps making compiled_ascanf_function() simpler than
+its counterpart.
+Meanwhile, I also implemented the non-function objects (scalars, etc). To keep things somewhat simple, I made 2 fundamental
+decisions. 1) there would be only global variables and 2) definition of variables can not be done from a compiled expression.
+That latter is of no big consequence: including a declaration/definition in an expression to be compiled (or even an unknown
+non-number) will cause that variable to be defined during the compilation. Compiled evaluation of that sub-expression will
+at most set the value of the variable. There is one drawback: you can't delete variables when you no longer need them,
+to re-declare them again when they're needed (a backdoor to local variables) - at least not from/in compiled expressions.
+The lack of local variables is mostly a semantic nuisance, or one to those who insist on always using the same set of
+loop variables. The reason for this decision is that I have not yet seen the need to make the effort necessary to devise
+and implement a robust and transparent mechanism that allows variables to be associated with a given level in a given
+expression, and that in a way that does not compromise speed.
+Speed has always been a concern. I do quite complex processing with this language, sometimes on large amounts of data. 
+Therefore, there are a number of "manual recursion-unrolling" attempts that I made to try to speed things up. One of these
+is the principle of lists-of-constants. These are lists that consist of only readouts of numbers, scalars and arrays. For
+such lists, it is not necessary to pass them to _compiled_fascanf() to have them evaluated by the full compiled-expression
+parser. Instead, they can be evaluated locally, at the same level of recursion, in whatever function that would otherwise
+call _compiled_fascanf(). Needless to say that this can speed up things considerably.
+
+Adding functionality will thus require changes to at least one of _fascanf, _fascanf_parser, check_for_ascanf_function and/or
+ascanf_function AND its/their compiled_... homologues (_fascanf_parser doesn't have one). Altering the variable declaration\
+syntax requires mostly changes to ascanf_function(), but you may want to provide a similar functionality to compiled expressions
+(like being able to delete a certain selection). Adding another prefix operator requires in addition changes at many other
+places (notably in the big macro that does the evaluation of lists-of-constants): see all the places where a test for the
+negate (or last_value) flag is done.
+
+
+Can it be used outside of XGraph?
+
+Well, yes, why not? I am toying with the idea of making this a bit easier. Currently, the modules do not depend on any
+XGraph specific features for their functioning, other than the use of the StdErr global variable that is controlled
+by XGraph. There are however quite a few functions (callbacks) that use XGraph defined globals, there are quite a few
+callbacks outside the library that are not "hooked in" in a way that can easily be uncoupled, there is an event-checking
+routine, etc. Apart from that latter routine (I want it to be called as directly as possible, to avoid overhead),
+this could all be organised a bit better.

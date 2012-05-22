@@ -1,0 +1,481 @@
+# .cshrc
+# sample of commands commonly found in .cshrc
+# The .cshrc file is run everytime you invoke Csh
+# We have found the following settings to be useful
+# Feel free to make modifications and add your own
+
+# set verbose=1
+# set echo=1
+
+if ( $?CSHRCED != 0 ) then
+	unsetenv CSHRCED
+	exit
+endif
+
+if ( $?HOLE == 0 && $?loginsh == 1 ) then
+	setenv HOLE $HOME
+	setenv CSHRC 1
+# 	echo "sourcing .login"
+# 	source $HOME/.login
+# 	echo "done..."
+endif
+
+if ( $?csh_sleep != 0 ) then
+	nice UpdateHistory &
+	echo "Sleeping $csh_sleep seconds (to allow faster startup of another shell/programme, while $HOME/HistLog is updated?)..."
+	sleep $csh_sleep
+	unsetenv csh_sleep
+	set savehist=4000
+else if ( $?SAVEHIST != 0 ) then
+	set savehist=$SAVEHIST
+else
+	unset savehist
+endif
+
+if ( $?SHELL == 0 ) then
+	setenv SHELL /bin/tcsh
+endif
+
+setenv SHELL "`basename $shell`"
+setenv SHELL "`which $SHELL`"
+# Set CSHRC...
+if ( $?CSHRC == 0 ) then
+	setenv CSHRC
+endif
+
+# if ( $?prompt != 0 ) then
+# 	if ( $?SHELL == 0 || "$SHELL" != "/bin/tcsh" ) then
+# 		setenv SHELL "/bin/tcsh"
+# 		echo "Switched to tcsh"
+# 		exec $SHELL -l
+# 	else
+# 		if ( "`basename $shell`" != "`basename $SHELL`" ) then
+# 			echo "Switched to $SHELL"
+# 			exec $SHELL -l
+# 		endif
+# 	endif
+# endif
+
+if ( $?XUFSP == 0 ) then
+	if( $?XUSERFILESEARCHPATH == 0 ) then
+# 		setenv XUSERFILESEARCHPATH "$HOME/.desktop-cdf-lppa.in2p3.fr/%N"
+# 		setenv XUFSP True
+	else
+		setenv XUSERFILESEARCHPATH "$HOME/.desktop-cdf-lppa.in2p3.fr/%N:${XUSERFILESEARCHPATH}"
+		setenv XUFSP True
+	endif
+endif
+
+set shellname="`basename $shell`"
+
+if ( $?TERM != 0 ) then
+	set term=$TERM
+endif
+setenv TERMDEVICE "`tty`"
+setenv APOLLO_STATUS true
+setenv MAKEDIR	"Make/"
+
+set _id = (`/usr/bin/id`)                                # get information on user
+set _uid = `expr "$_id[1]" : 'uid=\([0-9]*\)'`  # get user ID number
+setenv uid "$_uid"
+setenv id "$_id"
+set id="$_id" uid="$_uid"
+unset _id _uid
+
+if ( $?HNAM == 0 ) then
+	setenv HNAM "`hostname -s`"
+endif
+if ( $?HOST == 0 ) then
+	setenv HOST `hostname -s`
+endif
+setenv _HOST "$HOST"
+
+if ( $?REMOTEHOST == 0 ) then
+	setenv REMOTEHOST `rhostname -q -s`
+endif
+
+#         set up search path
+
+alias path_add 'set path=($path \!*);rehash'
+alias path_cons 'set path=(\!* $path);rehash'
+
+if ( $?OrgPath == 0 ) then
+	set OrgPath = ($path)
+endif
+
+alias path_add 'set path=($path \!*);rehash'
+alias path_cons 'set path=(\!* $path);rehash'
+
+switch ($HNAM)
+	case "fysae":
+		set path = (. ~ ~/script ~/bin /usr/bin/X11 /bin /usr/local/bin /usr/bin /usr/apollo/bin\
+			/user/tools/medfys/commands\
+			/usr/ucb /bsd4.3/bin /bsd4.3/usr/bin /bsd4.3/usr/ucb\
+			/bsd4.3/usr/lib /etc /systest/ssr_util /sys5.3/usr/bin/graf)
+		breaksw
+	case "neuretV":
+	case "neuretv":
+	case "NeurEtV":
+	case "NeurEtV.biol.ruu.nl":
+		setenv MANPATH ".:/usr/man:/usr/man/contrib:/usr/local/man:/mnt/fysbr.fys/usr/local/man:/mnt/neuretD/user/manuals/a_man:\
+/mnt/neuretD/user/manuals/u_man:/mnt/neuretD/user/manuals/x_man"
+		set path = (. ~ ~/script ~/bin /usr/local/bin /usr/bin/X11 /bin /usr/local/bin/xrooms /usr/bin \
+/etc )
+		alias ver 'echo HPUX'
+		breaksw
+	case "blackbird":
+		alias ver 'uname'
+		set path = (. ~/script ~/bin /usr/sbin /usr/bsd /usr/gnu/bin /mnt/concorde/usr/gnu/bin /sbin /usr/bin /bin /usr/bin/X11 /mnt/concorde/usr/local/bin /usr/local/bin /etc /usr/etc /usr/etc/appletalk ~)
+		setenv PRECMD2	"history -r 1"
+		breaksw
+	case "Concorde":
+	case "concorde":
+	case "Spin":
+	case "spin":
+	case "bola":
+		alias ver 'uname'
+		set path = (. ./script ~/script ~/bin /usr/local/bin /usr/sbin /usr/bsd /usr/gnu/bin /sbin /usr/bin /bin /usr/bin/X11 /etc /usr/etc /usr/etc/appletalk ~)
+		setenv PRECMD2	"history -r 1"
+		if ( "$HNAM" == "Spin" || "$HOST" == "Spin.in2p3.fr" ) then
+			path_add /usr/gfx
+		endif
+		if ( -d ~/bin/Office51 ) then
+			path_add ~/bin/Office51/bin
+		endif
+		breaksw
+	default:
+		alias ver 'uname'
+		set path = (. ~/script ~/bin /usr/sbin /usr/bsd /usr/gnu/bin /sbin /usr/bin /bin /usr/bin/X11 /local/bin /usr/local/bin /usr/tex/bin /etc /usr/etc ~ ~/bertin)
+		setenv PRECMD2	"history -r 1"
+		breaksw
+endsw
+
+# set path = ($path[1-3] $lpath $path[4-])
+#set path = ($path /etc /usr/etc)
+
+set path = ($path)
+set filec
+
+alias	h	history		# short name for history command
+alias	l	ls -FC		# list files in columns and mark directories
+
+set lcd = ( )  #  add parents of frequently used directories
+set cdpath = (.. ~ ~/bin ~/src $lcd)
+
+#         set this for all shells
+
+unset noclobber
+
+#alias mv            'mv -i'
+alias rmi            'rm -i'
+unalias rm
+unalias cp
+unalias dvips
+unalias rlogin
+unalias top
+
+# unalias resize
+# alias resize	"`which resize`"
+
+alias pg            'PG'
+alias la            'ls -aF --color=never'
+#alias vi          'resize >&/dev/null ; /bsd4.3/usr/ucb/vi'
+#alias less		'(resize >&/dev/null ; /usr/local/bin/less)'
+# alias Less		'\!* |& less'
+if ( "$HNAM" == "fysae" ) then
+	alias vi          'resize >&/dev/null ; /bsd4.3/usr/ucb/vi'
+	alias ll	        'ls -ailsFS --color=never'
+	alias lL	        'ls -ailsF --color=never'
+else
+	alias ll          'ls -ailsF --color=never'
+	alias lL          'ls -ailLsF --color=never'
+endif
+if ( "$shellname" == "tcsh" ) then
+	alias lc			'ls-F -asCF --color=never'
+else
+	alias lc			'ls -asCF --color=never'
+endif
+
+alias llast	'll -tr \!* | tail'
+
+if ( $?shlvl != 0 ) then
+	setenv SHLEVEL $shlvl
+else
+	if ( $?SHLEVEL == 0 ) then
+		setenv SHLEVEL 1
+	else
+		setenv SHLEVEL `echo "$SHLEVEL 1+ps" | dc`
+	endif
+endif
+
+if ( $?term != 0 ) then
+	if ( $term != "xterm" ) then
+		alias cwd_cmd		'set CWD="$SHLEVEL $_HOST":"$cwd (`ver`) =$$"'
+		alias pwd           'set cwd=`/bin/pwd`;echo $cwd ; cwd_cmd'
+#		setenv PRECMD 'eval `resize >&/dev/null`;'
+		if ( $term == "hpterm" ) then
+			setenv PRECMD 'eval `/usr/bin/X11/resize </dev/null` >&/dev/null;'
+# 			alias less		'(eval `resize` ; /usr/local/bin/less)'
+			if ( $?DISPLAY == 0 ) setenv DISPLAY ""
+			if ( $DISPLAY == "neuretV:0.0" ) then
+				stty $TTYSTATE
+				stty -istrip
+#				stty erase 
+				setenv TTYSTATE `stty -g`
+			endif
+		else
+			setenv PRECMD ""
+		endif
+	else
+# we are running in an xterm window, so we'll make
+# use of some of its possibilities.
+		if ( $?DISPLAY == 0 ) then
+			setenv DISPLAY "`rhostname -q -s`:0.0"
+			echo -n "Is your X11 DISPLAY $DISPLAY (y|n|<correct name>)? "
+			set DD=`line`
+			if ( "$DD" == "n" || "$DD" == "N" ) then
+				unsetenv DISPLAY
+			else if ( "$DD" != "y" && "$DD" != "Y" && "$DD" != "" ) then
+				setenv DISPLAY "$DD"
+			endif
+			unset DD
+		endif
+#		setenv PRECMD 'eval `resize </dev/null`>&/dev/null;echo -n ]0\;"$_HOST" \(`ver`\)\[$DISPLAY\] "$cwd" \$=$$'
+# 		if ( "`rhostname`" != "130.161.220.115" ) then
+#			setenv PRECMD		'eval `/usr/bin/X11/resize </dev/null`>&/dev/null;echo -n ]0\;"$CWD";'
+			setenv PRECMD		'echo -n ]0\;"$CWD";'
+# 		else
+# 			setenv PRECMD		'echo -n ]0\;"$CWD";'
+# 		endif
+		alias cwd_cmd		'set CWD="$SHLEVEL $_HOST":"$cwd (`ver`)[$DISPLAY] =$$"'
+#		alias pwd           'set cwd=`/bin/pwd`;echo $cwd ; echo -n ]0\;"$_HOST" \(`ver`\)\[$DISPLAY\] "$cwd" \$=$$'
+		alias pwd           'set cwd=`/bin/pwd`;echo $cwd ; cwd_cmd ; echo -n ]0\;"$CWD"'
+# 		alias less		'(eval `resize` ; /usr/local/bin/less)'
+	endif
+endif
+
+alias timex	'/usr/bin/timex \!* ; put_stderr \!*'
+
+alias wman		'less `whereis -m \!* | sed -e "s/.*: //"`'
+alias nrman		'env MANPAGER="$PAGER -#2" man \!*'
+
+if ( $?PRECMD != 0 ) then
+	setenv PRE_CMD	"${PRECMD}${PRECMD2}"
+	alias pre_cmd		'alias precmd "${PRE_CMD}"'
+endif
+
+# set mail="/usr/mail/$LOGNAME"
+# set mail=(15 /usr/mail/$LOGNAME /mnt/neuretD/usr/mail/bertin /usr/spool/mqueue/watch_dir)
+#   set mail=(15 /usr/mail/$LOGNAME /usr/spool/mqueue/watch_dir)
+
+alias cd            'cd \!*;pwd'
+alias CD            '(cd  \!:^ ; \!:2*)'
+
+################################################################################
+if ( $?prompt == 0 || $?CSHRC == 0 ) exit
+
+switch ( $TERM )
+	case 'mac2cs'
+	case "xterm"
+	case "hpterm"
+# 		eval `/usr/bin/X11/resize`
+		eval `resize`
+		breaksw
+	case "mac2"
+		setenv LINES 70
+		setenv COLUMNS 162
+		breaksw
+	case "vt100"
+		eval `resize | fgrep LINES`
+		breaksw
+endsw
+
+# stty intr  erase  -istrip
+stty intr  -istrip
+setenv TTYSTATE "`stty -g`"
+
+#          settings  for interactive shells
+
+cwd_cmd
+
+alias cd            'cd \!*;pwd'
+alias pre_cmd		'alias precmd "$PRECMD""$PRECMD2"'
+
+set time=50
+
+# alias precmd "$PRECMD"
+alias precmd pre_cmd
+
+if (  "$shellname" == "tcsh" ) then
+	if ( $uid == 0) then
+		set prompt = "%L$SHLEVEL.%h_%S%m%s_$$ $ "
+		# watch is set in the root .login. Unsetting
+		# it here means it only works in the first
+		# (== login== console) shell.
+	else
+		set prompt = "%L$SHLEVEL.%h_%S%m%s_$$# "
+#		unset watch
+	endif
+	set prompt2 = "%S%R? %s"
+	set prompt3 = "%SMAYBE YOU MEAN>%s%U%R (y|n)?%u "
+
+	set edit=vi
+	set printexitvalue
+
+	limit coredumpsize unlimited
+
+	bindkey -v
+
+	bindkey ¬ history-search-backward
+	bindkey ® history-search-forward
+	bindkey ¼ history-search-backward
+	bindkey ¾ history-search-forward
+	bindkey  history-search-backward
+	bindkey  load-average
+# reverse BackSpace and Delete:
+# 	if( "$TERM" != "linux" &&  "$REMOTEHOST" == "`hostname -s`" ) then
+# 		echo "Using BackSpace==^H and Delete==^?"
+# 		bindkey  backward-delete-char
+# 		bindkey  backward-char
+# # reverse BackSpace and Delete:
+# 	bindkey -a  backward-delete-char
+# 	bindkey -a  backward-char
+# 		stty erase 
+# 		setenv TTYSTATE `stty -g`
+# 	endif
+
+# vi-mode alternate:
+	bindkey -a ¬ history-search-backward
+	bindkey -a ® history-search-forward
+	bindkey -a ¼ history-search-backward
+	bindkey -a ¾ history-search-forward
+	bindkey -a  history-search-backward
+	bindkey -a  load-average
+
+	complete cd	'n/*/d/'
+	complete mkdir	'n/*/d/'
+
+#	alias logout 'source ~/.logout ; exit'
+	alias cwdcmd	`alias cwd_cmd`
+	set listlinks
+	set listjobs=long
+	set correct=all
+	set autocorrect
+	set autolist
+	set autoexpand
+	unset autologout
+	set chase_symlinks
+	set symlinks=chase
+	if ( $?old_time == 0 ) then
+		set old_time=$time
+	endif
+	set time=($old_time "%U user_cpu %S kernel_cpu %E total_time %P% CPU {%WW %XX %DD %KK %MM %FF %RR %II %OO %rr %ss %kk %ww %cc}")
+# recognize_only_executables slows down lesser machines a lot!!
+ 	set recognize_only_executables
+	set rmstar
+	set listjobs=long
+	set watch=(1 any any any)
+#	stty 526:5:bd:21b:3:1c:7f:15:4:ff:ff:ff
+	if ( ! -e ~/LOGGING_IN$$ ) then
+#		unset watch
+	else
+		source ~/.logincrc
+		rm -f ~/LOGGING_IN$$
+	endif
+else
+	if ( $uid == 0 ) then
+		set prompt = "$SHLEVEL.\!_`hostname`_$$$ "
+	else
+		set prompt = "$SHLEVEL.\!_`hostname`_$$# "
+	endif
+	alias lc			'ls -asCF --color=never'
+	if ( -e ~/LOGGING_IN$$ ) then
+		rm -f ~/LOGGING_IN$$
+	endif
+endif
+
+set filec
+set history=4000
+set ignoreeof
+set notify
+# set savehist=0
+# set mail="/usr/mail/$LOGNAME"
+set mail=(15 /usr/mail/$LOGNAME /mnt/neuretD/usr/mail/bertin)
+
+alias sterm 'setenv TERM \!^;set term=$TERM'
+if ( $TERM == "hp" ) then
+	sterm hpterm
+endif
+
+
+alias h            'history 40'
+
+alias nice		'~/script/Nice \!*'
+
+alias             clear
+alias m 			more
+alias mroe          more
+alias more			'more -c'
+# alias pg			'pg -c -s -n -p "-- %d --"'
+alias pg            'PG'
+
+alias .             'echo $cwd;set dot=$cwd'
+alias ..            'set dot=$cwd;cd ..'
+alias ,             'cd $dot '
+
+alias pdw           'pwd'
+#alias ff           'find . -name \!* -print'
+#alias ls           'ls -1F --color=never'
+unalias ls
+
+#alias pd           dirs
+#alias po           popd
+#alias pp           pushd
+
+alias bdf			'df -hT \!*'
+
+alias j             'jobs -l'
+alias f             'fg %\!*'
+alias lo            logout
+
+alias bye           logout
+
+#alias k            kill
+
+#alias r            rlogin
+# alias run          source
+#alias slay 'set j=`ps -ax|grep \!*|head -1`; kill -9 `echo $j[1]`'
+
+alias nms 'tbl \!* | nroff -ms | more'                  # nroff -ms
+alias tms 'tbl \!* | troff -t -ms >! troff.output &'    # troff -ms
+alias tpr 'tbl \!* | troff -t -ms | lpr -t &'           # troff & print
+alias ppr 'lpr -t \!* &'                                # print troffed
+
+alias edit          'launch /mac/bin/texteditor \!* &'
+alias elm_neD		'env MAIL=$mail[3] elm23 -Vz \!*'
+
+alias help          man
+alias key           'man -k'
+
+alias proverb		'/usr/games/fortune -a'
+
+alias wiskunde		'wiskunde.math.ruu.nl'
+
+alias resetty		'stty $TTYSTATE'
+
+alias who			'who -HTRu'
+resetty
+
+if ( $?savehist != 0 ) then
+	setenv SAVEHIST $savehist
+	echo "History[$savehist] will be saved"
+else
+	echo "No history will be saved"
+endif
+
+cd $cwd
+
+unset verbose
+unsetenv LANG
+unsetenv LANGUAGE
+setenv LC_ALL C

@@ -1,0 +1,75 @@
+#!/bin/sh
+# A simple script that is supposed to output a define statement for FFTW_CYCLES_PER_SEC. Basically, this is the
+# number of clock cycles the cpu rips through per second, and hence the number of ticks of the lowlevel hardware
+# clock.
+
+# 20050128: also generate defines for other platform-specific timing-related settings.
+
+if [ "$HOST" = "" ] ;then
+	HOST="$HOSTNAME"
+fi
+
+case ${USER}@${HOST} in
+	bertin@bola)
+		# 		/* Just the actual number of cycles per second  */
+		echo "#	define FFTW_CYCLES_PER_SEC	448057000.0"
+		;;
+	bertin@irancy)
+		# 		/* Just the actual number of cycles per second  */
+		echo "#	define FFTW_CYCLES_PER_SEC	2599593000.0"
+		;;
+	bertin@CuneiPower.local)
+		# 		/* Not so simple; calibration is required, use e.g. tim-asc-parm.c with FFTW_CYCLES_PER_SEC
+		# 		 \ initially set to 1.0 !!
+		# 		 \ Here we use multiply instead of division which is faster on the PPC!!!
+		# 		 \ (This is for a 1Ghz G4)
+		# 		 \ (calibration: timebase.numer/timebase.denom x 10e-9 : see tim-asc-parm.c)
+		# 		 */
+		# /* #	define FFTW_CYCLES_PER_SEC	1.0/18423355.89477622509 */
+# 		echo "#	define FFTW_CYCLES_PER_SEC	5.4278927558661605151e-08"
+		# /* #	define FFTW_CYCLES_PER_SEC	1.0/18434045.882812969387 */
+		# /* #	define FFTW_CYCLES_PER_SEC	5.4247450958791010805e-08 */
+# 		echo "#	define FFTW_CYCLES_PER_SEC	1"
+		echo "#	define MACH_ABSOLUTE_TIME_FACTOR	54.254508332624411082e-09"
+		;;
+	bertin@Zygiella.local)
+		 #         /* (This is for a 1.8Ghz biproc G5 in a january 2005 PowerMac G5 */
+		echo "#	define FFTW_CYCLES_PER_SEC	1"
+		echo "#	define MACH_ABSOLUTE_TIME_FACTOR	30.000516008875351304e-09"
+# 		echo "#	define USE_AA_REGISTER	3"
+		;;
+#	bertin@portia.local)
+#		# 		/* (This is for a 1.5Ghz G4 in a summer 2004 PowerBook 15" */
+#		echo "#	define FFTW_CYCLES_PER_SEC	1"
+#		echo "#	define MACH_ABSOLUTE_TIME_FACTOR	54.254508332624411082e-09"
+#		;;
+	rbertin@Gaspoesie.local*)
+		# 		/* Not so simple; calibration is required, use e.g. tim-asc-parm.c with FFTW_CYCLES_PER_SEC
+		# 		 \ initially set to 1.0 !!
+		# 		 \ Here we use multiply instead of division which is faster on the PPC!!!
+		# 		 \ (This is for a 500Mhz G3, using the mach_absolute_time() function)
+		# 		 \ (calibration: timebase.numer/timebase.denom x 10e-9 : see tim-asc-parm.c)
+		# 		 */
+		echo "#	define FFTW_CYCLES_PER_SEC	1"
+#		echo "#	define MACH_ABSOLUTE_TIME_FACTOR	3.9873734603709542751e-08"
+		echo "#	define MACH_ABSOLUTE_TIME_FACTOR	40.065277555415484301e-09"
+		;;
+	*)
+		case `uname` in
+			"Linux" )
+				echo "#define	FFTW_CYCLES_PER_SEC	`cat /proc/cpuinfo | fgrep -i "cpu MHz" | line | sed -e 's/.*: \(.*\)/\1 * 1000000/g' | bc -s | sed -e 's/\.00*//g'`"
+				;;
+			"Darwin")
+				echo "#define FFTW_CYCLES_PER_SEC	1"
+				echo "#define MACH_ABSOLUTE_TIME_FACTOR `sysctl -n hw.tbfrequency | sed -e 's,.*,scale=30;1.0 / &.0,g' | bc -s`"
+				;;
+			CYGWIN*|Cygwin*|cygwin*)
+				echo "#define	FFTW_CYCLES_PER_SEC	`cat /proc/cpuinfo | fgrep -i "cpu MHz" | line | sed -e 's/.*: \(.*\)/\1e06/g'`"
+#				echo "#define USE_PERFORMANCECOUNTER 1"
+				;;
+			*)
+				echo "#undef FFTW_CYCLES_PER_SEC"
+				;;
+		esac
+		;;
+esac

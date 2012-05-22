@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>BlankDocument</key>
+	<false/>
+	<key>BuildID</key>
+	<string>120</string>
+	<key>DebugOn</key>
+	<false/>
+	<key>DebugOutput</key>
+	<false/>
+	<key>FontName</key>
+	<string>Monaco</string>
+	<key>FontSize</key>
+	<integer>10</integer>
+	<key>OnlyIfNoOutput</key>
+	<true/>
+	<key>QuitAfterLastWindow</key>
+	<true/>
+	<key>QuitWhenDone</key>
+	<true/>
+	<key>RunDoubleClickedFiles</key>
+	<true/>
+	<key>UnlessRunning</key>
+	<false/>
+</dict>
+</plist>

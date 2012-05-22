@@ -1,0 +1,42 @@
+#!/bin/sh
+# file with machine specific definitions for external libraries
+
+
+case $1 in
+	Python)
+
+		machine="`uname -o 2>/dev/null`"
+
+		if [ "${PYTHON}" != "" ] ;then
+			 echo "import sys;print sys.version_info[0]*10 + sys.version_info[1]" | ${PYTHON}
+		elif [ "${machine}" = "Cygwin" ] ;then
+			 echo "import sys;print sys.version_info[0]*10 + sys.version_info[1]" | python
+		else
+			case $HOST in
+				obsolete|Gaspoesie.local)
+					;;
+
+				Zygiella.local)
+					echo "25"
+					;;
+
+				oportia.local)
+					echo "25"
+					;;
+
+				portia.local)
+#					echo "26"
+#					echo "sys"
+					echo "27"
+					;;
+
+				*)
+					echo "import sys;print sys.version_info[0]*10 + sys.version_info[1]" | python
+					;;
+			esac
+		fi
+		;;
+	*)
+		echo "$0: PROBLEM: we should never be called with unknown argument >$1<"
+		;;
+esac

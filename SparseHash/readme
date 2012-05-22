@@ -1,0 +1,4 @@
+Google sparsehash v1.7
+
+move the google subdirectory into the include path if you do not have this header library installed;
+ascanfcMap.cc depends on it.

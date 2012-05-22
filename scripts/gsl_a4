@@ -1,0 +1,4 @@
+#!/bin/sh
+# gs postscript preview in A4 landscape mode.
+
+exec /usr/local/bin/gs -g1065x754+0+0 landscap.ps $*

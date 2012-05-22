@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# 20020422 RJVB
+# a simple script that should output the machine dependent optimal compiler to
+# compile the ascanfc modules with.
+
+MACH="`uname -m`"
+
+if [ "`uname`" = "AIX" ] ;then
+	MACH="AIX"
+elif [ "`uname`" = "Linux" ] ;then
+	MACH="Linux"
+elif [ "`uname`" = "Darwin" ] ;then
+	if [ "${MACH}" = "x86_64" ] ;then
+		MACH="DarwinX864"
+	elif [ "${MACH}" != "Power Macintosh" ] ;then
+		MACH="DarwinX86"
+	fi
+fi
+
+
+case $MACH in
+	IP22*|IP32*|IRIX*)
+		echo "ccopt"
+		;;
+	i686|i586|Linux)
+		echo "gccopt"
+		;;
+	DarwinX86*|"Power Macintosh")
+		echo "gccopt" # -framework Accelerate"
+		;;
+	*)
+		echo "gccopt"
+		;;
+esac

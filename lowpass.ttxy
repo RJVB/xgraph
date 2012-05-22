@@ -1,0 +1,17 @@
+*TITLE* Lowpass filtering
+
+*PARAM_RANGE* 0,1,30
+
+*LEGEND* sin
+*PARAM_FUNCTIONS* self,sin[self,1], elapsed[0]
+
+*LEGEND* nlowpass(sin,2), dt=1/30
+*PARAM_FUNCTIONS* self,nlowpass[sin[self,1],2,1], elapsed[0]
+
+*PARAM_RANGE* 0,1,10000
+
+*LEGEND* sin
+*PARAM_FUNCTIONS* self,sin[self,1], elapsed[0]
+
+*LEGEND* nlowpass(sin,2), dt=1/10000
+*PARAM_FUNCTIONS* self,nlowpass[sin[self,1],2,1], elapsed[0]

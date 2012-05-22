@@ -1,0 +1,346 @@
++ gcc-4.0.0 -mcpu=G5 -mpowerpc-gpopt -mpowerpc-gfxopt -mcpu=G5 -mtune=G5 -mpowerpc64 -malign-natural -maltivec -mabi=altivec -mhard-float -mnew-mnemonics -mfused-madd -pipe -mstring -mmultiple -misel=yes -fno-fast-math -fno-float-store -fomit-frame-pointer -fno-strict-aliasing '-DSWITCHES="gcc-4.0.0  -mcpu=G5 -mpowerpc-gpopt -mpowerpc-gfxopt -mcpu=G5 -mtune=G5 -mpowerpc64 -malign-natural -maltivec -mabi=altivec -mhard-float -mnew-mnemonics -mfused-madd -pipe -mstring -mmultiple -misel=yes -fno-fast-math -fno-float-store -fomit-frame-pointer -fno-strict-aliasing  -O3 -fstrength-reduce -falign-loops=32 -falign-functions=32 -falign-jumps=32  -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops -ftree-vectorize -faltivec -ftracer     -DXGRAPH -Ixtb -Iux11 -c xgraph.c -mdynamic-no-pic "' -Q -I/Users/bertin/work/include -I. -I/usr/include/X11 -I/usr/X11R6/include -I/usr/local/include/libpng -I/usr/include/freetype -fdollars-in-identifiers -O3 -fstrength-reduce -falign-loops=32 -falign-functions=32 -falign-jumps=32 -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops -ftree-vectorize -faltivec -ftracer -Wcomment -Wunused -Winline -Wchar-subscripts -Wparentheses -Wcast-align -D_PROTOTYPES -D__GCCOPT__ -D_IEEE -D_MACOSX_SOURCE -DXGRAPH -v -Ixtb -Iux11 -c xgraph.c -mdynamic-no-pic
+
+Using built-in specs.
+Configured with: /Volumes/Debian/Users/bertin/work/src/new/gcc-400-build/../gcc_40-4061/configure --prefix=/usr/local/gnu/gcc/4.0.0 --enable-languages=c++,obj-c++
+Thread model: posix
+gcc version 4.0.0 20041026 (Apple Computer, Inc. build 4061)
+ /usr/local/gnu/gcc/4.0.0/libexec/gcc/powerpc-apple-darwin7.9.0/4.0.0/cc1 -v -I/Users/bertin/work/include -I. -I/usr/include/X11 -I/usr/X11R6/include -I/usr/local/include/libpng -I/usr/include/freetype -Ixtb -Iux11 -D__DYNAMIC__ -DSWITCHES="gcc-4.0.0  -mcpu=G5 -mpowerpc-gpopt -mpowerpc-gfxopt -mcpu=G5 -mtune=G5 -mpowerpc64 -malign-natural -maltivec -mabi=altivec -mhard-float -mnew-mnemonics -mfused-madd -pipe -mstring -mmultiple -misel=yes -fno-fast-math -fno-float-store -fomit-frame-pointer -fno-strict-aliasing  -O3 -fstrength-reduce -falign-loops=32 -falign-functions=32 -falign-jumps=32  -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops -ftree-vectorize -faltivec -ftracer     -DXGRAPH -Ixtb -Iux11 -c xgraph.c -mdynamic-no-pic " -D_PROTOTYPES -D__GCCOPT__ -D_IEEE -D_MACOSX_SOURCE -DXGRAPH xgraph.c -dumpbase xgraph.c -mcpu=G5 -mpowerpc-gpopt -mpowerpc-gfxopt -mcpu=G5 -mtune=G5 -mpowerpc64 -malign-natural -maltivec -mabi=altivec -mhard-float -mnew-mnemonics -mfused-madd -mstring -mmultiple -misel=yes -mpim-altivec -mpim-altivec -mdynamic-no-pic -auxbase xgraph -O3 -Wcomment -Wunused -Winline -Wchar-subscripts -Wparentheses -Wcast-align -version -fno-fast-math -fno-float-store -fomit-frame-pointer -fno-strict-aliasing -fdollars-in-identifiers -fstrength-reduce -falign-loops=32 -falign-functions=32 -falign-jumps=32 -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops -ftree-vectorize -faltivec -ftracer -o - |
+ as -arch ppc -o xgraph.o
+ignoring nonexistent directory "/usr/local/gnu/gcc/4.0.0/lib/gcc/powerpc-apple-darwin7.9.0/4.0.0/../../../../powerpc-apple-darwin7.9.0/include"
+ignoring nonexistent directory "/usr/include/freetype"
+#include "..." search starts here:
+#include <...> search starts here:
+ /Users/bertin/work/include
+ .
+ /usr/include/X11
+ /usr/X11R6/include
+ /usr/local/include/libpng
+ xtb
+ ux11
+ /usr/local/include
+ /usr/local/gnu/gcc/4.0.0/include
+ /usr/local/gnu/gcc/4.0.0/lib/gcc/powerpc-apple-darwin7.9.0/4.0.0/include
+ /usr/include
+ /System/Library/Frameworks
+ /Library/Frameworks
+End of search list.
+GNU C version 4.0.0 20041026 (Apple Computer, Inc. build 4061) (powerpc-apple-darwin7.9.0)
+	compiled by GNU C version 4.0.0 20041026 (Apple Computer, Inc. build 4061).
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=8192
+options passed:  -v -I/Users/bertin/work/include -I. -I/usr/include/X11
+ -I/usr/X11R6/include -I/usr/local/include/libpng -I/usr/include/freetype
+ -Ixtb -Iux11 -D__DYNAMIC__
+ -DSWITCHES="gcc-4.0.0  -mcpu=G5 -mpowerpc-gpopt -mpowerpc-gfxopt -mcpu=G5 -mtune=G5 -mpowerpc64 -malign-natural -maltivec -mabi=altivec -mhard-float -mnew-mnemonics -mfused-madd -pipe -mstring -mmultiple -misel=yes -fno-fast-math -fno-float-store -fomit-frame-pointer -fno-strict-aliasing  -O3 -fstrength-reduce -falign-loops=32 -falign-functions=32 -falign-jumps=32  -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops -ftree-vectorize -faltivec -ftracer     -DXGRAPH -Ixtb -Iux11 -c xgraph.c -mdynamic-no-pic "
+ -D_PROTOTYPES -D__GCCOPT__ -D_IEEE -D_MACOSX_SOURCE -DXGRAPH -mcpu=G5
+ -mpowerpc-gpopt -mpowerpc-gfxopt -mcpu=G5 -mtune=G5 -mpowerpc64
+ -malign-natural -maltivec -mabi=altivec -mhard-float -mnew-mnemonics
+ -mfused-madd -mstring -mmultiple -misel=yes -mpim-altivec -mpim-altivec
+ -mdynamic-no-pic -auxbase -O3 -Wcomment -Wunused -Winline
+ -Wchar-subscripts -Wparentheses -Wcast-align -fno-fast-math
+ -fno-float-store -fomit-frame-pointer -fno-strict-aliasing
+ -fdollars-in-identifiers -fstrength-reduce -falign-loops=32
+ -falign-functions=32 -falign-jumps=32 -fexpensive-optimizations
+ -frerun-cse-after-loop -fschedule-insns -fschedule-insns2
+ -finline-functions -funroll-loops -ftree-vectorize -faltivec -ftracer
+options enabled:  -falign-loops -fargument-alias -fbranch-count-reg
+ -fcaller-saves -fcommon -fcprop-registers -fcrossjumping
+ -fcse-follow-jumps -fcse-skip-blocks -fdefer-pop
+ -fdelete-null-pointer-checks -feliminate-unused-debug-types
+ -fexpensive-optimizations -fforce-mem -ffunction-cse -fgcse
+ -fgcse-after-reload -fgcse-lm -fguess-branch-probability -fident
+ -fif-conversion -fif-conversion2 -fivcanon -fivopts -fkeep-static-consts
+ -fleading-underscore -floop-optimize -floop-optimize2 -fmath-errno
+ -fmerge-constants -fomit-frame-pointer -foptimize-register-move
+ -foptimize-sibling-calls -fpeephole -fpeephole2 -freg-struct-return
+ -fregmove -freorder-functions -frerun-cse-after-loop -frerun-loop-opt
+ -fsched-spec -fsched-stalled-insns-dep -fschedule-insns -fschedule-insns2
+ -fsplit-ivs-in-unroller -fstrength-reduce -fstrict-aliasing -fthread-jumps
+ -ftracer -ftrapping-math -ftree-ccp -ftree-ch -ftree-copyrename -ftree-dce
+ -ftree-dominator-opts -ftree-dse -ftree-fre -ftree-loop-im
+ -ftree-loop-ivcanon -ftree-loop-optimize -ftree-lrs -ftree-pre -ftree-sra
+ -ftree-ter -ftree-vectorize -funit-at-a-time -funroll-loops
+ -funswitch-loops -fvar-tracking -fzero-initialized-in-bss -mpowerpc
+ -mpowerpc-gpopt -mpowerpc-gfxopt -mpowerpc64 -maltivec -mnew-mnemonics
+ -mmultiple -mstring -msched-prolog -msched-epilog -maix-struct-return
+ -mno-svr4-struct-return -mmfcrf -mdynamic-no-pic -mcpu=G5 -mtune=G5
+ -mabi=altivec -misel=yes -malign-natural -mpim-altivec -mno-pim-altivec
+ xg_id_string_stub
+ __sputc
+ __maskrune
+ __istype
+ __isctype
+ __toupper
+ __tolower
+ CFRangeMake
+ CFStringInitInlineBuffer
+ CFStringGetCharacterFromInlineBuffer
+ CFByteOrderGetCurrent
+ CFSwapInt16
+ CFSwapInt32
+ CFSwapInt64
+ CFSwapInt16BigToHost
+ CFSwapInt32BigToHost
+ CFSwapInt64BigToHost
+ CFSwapInt16HostToBig
+ CFSwapInt32HostToBig
+ CFSwapInt64HostToBig
+ CFSwapInt16LittleToHost
+ CFSwapInt32LittleToHost
+ CFSwapInt64LittleToHost
+ CFSwapInt16HostToLittle
+ CFSwapInt32HostToLittle
+ CFSwapInt64HostToLittle
+ CFConvertFloat32HostToSwapped
+ CFConvertFloat32SwappedToHost
+ CFConvertFloat64HostToSwapped
+ CFConvertFloat64SwappedToHost
+ CFConvertFloatHostToSwapped
+ CFConvertFloatSwappedToHost
+ CFConvertDoubleHostToSwapped
+ CFConvertDoubleSwappedToHost
+ CFUserNotificationCheckBoxChecked
+ CFUserNotificationSecureTextField
+ CFUserNotificationPopUpSelection
+ UCIsSurrogateHighCharacter
+ UCIsSurrogateLowCharacter
+ UCGetUnicodeScalarValueForSurrogatePair
+ OSReadSwapInt16
+ OSReadSwapInt32
+ OSReadSwapInt64
+ OSWriteSwapInt16
+ OSWriteSwapInt32
+ OSWriteSwapInt64
+ _OSSwapInt16
+ _OSSwapInt32
+ _OSSwapInt64
+ OSHostByteOrder
+ OSReadBigInt16
+ OSReadBigInt32
+ OSReadBigInt64
+ OSWriteBigInt16
+ OSWriteBigInt32
+ OSWriteBigInt64
+ OSReadLittleInt16
+ OSReadLittleInt32
+ OSReadLittleInt64
+ OSWriteLittleInt16
+ OSWriteLittleInt32
+ OSWriteLittleInt64
+ OSSwapHostToBigInt16
+ OSSwapHostToBigInt32
+ OSSwapHostToBigInt64
+ OSSwapBigToHostInt16
+ OSSwapBigToHostInt32
+ OSSwapBigToHostInt64
+ CFSocketStreamSOCKSGetErrorSubdomain
+ CFSocketStreamSOCKSGetError
+ Check_Ignore_NaN
+ {GC 16385k -> 9501k} IMIN
+ _xfree
+ _xfree_setitem
+ _strcpy
+ CopyFlags
+ check_wi
+ _int_MAX
+ INSIDE
+ WINSIDE
+ SCREENX
+ SCREENY
+ SCREENXDIM
+ SCREENYDIM
+ cus_sqrt
+ cus_pow
+ cus_powX
+ cus_powY
+ wilog10
+ clog10
+ cus_log10X
+ cus_log10Y
+ nlog10X
+ nlog10Y
+ cus_sqr
+ cus_pow_y_pow_xX
+ cus_pow_y_pow_xY
+ Reform_X
+ Reform_Y
+ X_Value
+ Y_Value
+ Trans_X
+ Trans_Y
+ Trans_XY
+ Trans_YX
+ splitmodestring
+ SetWindowTitle
+ TitleMessage
+ AdaptWindowSize
+ draw_set
+ _DiscardedPoint
+ drawingOrder
+ cycle_plot_only_set
+ cycle_drawn_sets
+ cycle_highlight_sets
+ files_and_groups
+ cycle_plot_only_group
+ cycle_plot_only_file
+ SwapSets
+ ShowAllSets
+ msgGC
+ Get_YAverageSorting
+ Add_mStats
+ PS_STATE
+ RedrawAgain
+ RedrawNow
+ ExposeEvent
+ RedrawSet
+ ChangeCrossGC
+ DrawCCross
+ DrawCCrosses
+ label_func
+ _Handle_An_Event
+ Handle_MaybeLockedWindows
+ Handle_An_Event
+ Handle_An_Events
+ UpdateWindowSettings
+ X_sleep_wakeup
+ xgraph
+
+xgraph.c: In function 'xgraph':
+xgraph.c:6706: warning: pointer targets in passing argument 3 of 'XCreateBitmapFromData' differ in signedness
+ XG_df_fun
+ XG_GetString
+ check_marked_hlt
+ update_LinkedLabel
+ HandleMouse
+ Initialise_Sets
+ InitSets
+ reset_Scalers
+ do_TRANSFORM
+ do_transform
+ Draw_Process
+ AlterGeoBounds
+ Reset_AFTFit_History
+ Fit_After_Draw
+ DBE_Swap
+ DrawWindow
+ ParseTitlestringOpcodes
+ DrawTitle
+ CShrinkArea
+ HL_WIDTH
+ MarkerSizes
+ TransformCompute
+ {GC 19529k -> 16316k} Find_ValCat
+ sort_ValCat
+ Add_ValCat
+ ValCat_N
+ Free_ValCat
+ AddAxisValue
+ AxisValueCurrentLabelled
+ CompactAxisValues
+ DrawGridAndAxis
+ initGrid
+ stepGrid
+ RoundUp
+ clipcode
+ ClipWindow
+ make_vector
+ make_sized_marker
+ DrawData_process
+ HighlightSegment
+ CollectPointStats
+ make_arrow_point1
+ Check_Columns
+ Retrieve_IntensityColour
+ Draw_Bar
+ Draw_valueMark
+ Draw_ErrorBar
+ WindowAspect
+ DrawData
+ Check_Process_Dependencies
+ Reset_SetUndo
+
+Analyzing compilation unit
+Performing intraprocedural optimizations
+Assembling functions:
+ _xfree
+ _strcpy
+ _int_MAX
+ INSIDE
+ WINSIDE
+ SCREENX
+ SCREENY
+ SCREENXDIM
+ SCREENYDIM
+ cus_sqrt
+ cus_pow
+ wilog10
+ clog10
+ cus_sqr
+ splitmodestring
+ TitleMessage
+ AdaptWindowSize
+ draw_set
+ _DiscardedPoint
+ drawingOrder
+ cycle_plot_only_set
+ cycle_drawn_sets
+ cycle_highlight_sets
+ files_and_groups
+ SwapSets
+ ShowAllSets
+ msgGC
+ Get_YAverageSorting
+ Add_mStats
+ PS_STATE
+ ExposeEvent
+ ChangeCrossGC
+ DrawCCross
+ X_sleep_wakeup
+ XG_df_fun
+ Find_ValCat
+ Initialise_Sets
+ reset_Scalers
+ do_TRANSFORM
+ Draw_Process
+ Reset_AFTFit_History
+ DBE_Swap
+ CShrinkArea
+ HL_WIDTH
+ sort_ValCat
+ ValCat_N
+ AxisValueCurrentLabelled
+ RoundUp
+ stepGrid
+ clipcode
+ make_vector
+ make_sized_marker
+ HighlightSegment
+ make_arrow_point1
+ {GC 32651k -> 18878k} Check_Columns
+ Retrieve_IntensityColour
+ WindowAspect
+ Reset_SetUndo
+ xg_id_string_stub
+ SetWindowTitle
+ Fit_After_Draw
+ MarkerSizes
+ DrawData_process
+ cycle_plot_only_group
+ cycle_plot_only_file
+ CollectPointStats
+ _xfree_setitem
+ UpdateWindowSettings
+ update_LinkedLabel
+ InitSets
+ ParseTitlestringOpcodes
+
+xgraph.c: In function 'ParseTitlestringOpcodes':
+xgraph.c:13309: error: unrecognizable insn:
+(insn 2489 2488 49 0 (set (mem/s:TI (plus:SI (reg:SI 8 r8)
+                (const_int 181 [0xb5])) [317 lcol+0 S16 A8])
+        (reg:TI 11 r11)) -1 (nil)
+    (nil))
+xgraph.c:13309: internal compiler error: in extract_insn, at recog.c:2018
+Please submit a full bug report,
+with preprocessed source if appropriate.
+See <URL:http://developer.apple.com/bugreporter> for instructions.
+{standard input}:18589:FATAL:.abort  detected.  Assembly stopping.

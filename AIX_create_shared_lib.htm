@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN"><html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Creating a Shared Library</title></head>
+
+<body bgcolor="#fcfbf0">
+<center>
+[  <a href="http://www.unet.univie.ac.at/aix/aixprggd/genprogc/address_space.htm">Next Article</a>  |
+<a href="http://www.unet.univie.ac.at/aix/aixprggd/genprogc/lazyload.htm">Previous Article</a>  |
+<a href="http://www.unet.univie.ac.at/aix/aixprggd/genprogc/toc.htm" target="_parent">Book Contents</a> |
+<a href="http://www.unet.univie.ac.at/cgi-bin/ds_form?lang=en_US&amp;viewset=AIX&amp;config=/usr/share/man/info/en_US/a_doc_lib/data/base.cfg" target="_top">Library Home</a> |
+<a href="http://www.unet.univie.ac.at/aix/aixprggd/genprogc/edition.htm">Legal</a> |
+<a href="http://www.unet.univie.ac.at/cgi-bin/ds_form?lang=en_US&amp;viewset=AIX&amp;config=/usr/share/man/info/en_US/a_doc_lib/data/base.cfg" target="_top">Search</a> ]
+<hr>
+<font color="#a62a2a" size="+2">
+<i>General Programming Concepts: Writing and Debugging Programs</i></font>
+</center>
+<hr size="3" noshade="noshade">
+<a name="A144C1671"></a><h2>Creating a Shared Library</h2>
+
+
+
+<h3><a name="A144C1672"></a>Prerequisite Tasks</h3>
+
+<ol><li><a name="A144C1673"></a>Create one or more source files that are
+to be compiled and linked to create a shared library. These files contain
+the exported symbols that are referenced in other source files. <p><a name="A144C1674"></a>For the examples in this article, two source files, <samp>share1.c</samp> and <samp>share2.c</samp>, are used. The <samp>share1.c </samp>file contains the following code:</p>
+
+
+
+
+<pre><a name="A144C1675"></a>/************
+ * share1.c: shared library source.
+*************/
+ 
+#include &lt;stdio.h&gt;
+ 
+void func1 ()
+ {
+   printf("func1 called\n");
+ }
+ 
+void func2 ()
+ {
+   printf("func2 called\n");
+ }</pre>
+
+
+The <samp>share2.c</samp> file contains the following code:
+
+<pre><a name="A144C1677"></a>/************
+ * share2.c: shared library source.
+*************/
+ 
+void func3 ()
+ {
+   printf("func3 called\n");
+ }</pre>
+
+
+The exported symbols in these files are <samp>func1</samp>, <samp>func2</samp>, and <samp>func3</samp>. </li>
+<li><a name="A144C1679"></a>Create a main source file that references the exported symbols that will be contained in the shared library. 
+
+
+<p><a name="A144C167a"></a>For the examples in this article the main source file named <samp>main.c</samp> is used. The <samp>main.c </samp>file contains the following code:</p>
+
+
+
+
+<pre><a name="A144C167b"></a>/************
+ * main.c: contains references to symbols defined
+ * in share1.c and share2.c
+*************/
+ 
+#include &lt;stdio.h&gt;
+ 
+  extern void func1 (),
+                 unc2 (),
+                 func3 ();
+main ()
+ {
+                 func1 ();
+                 func2 ();
+                 func3 ();
+ }</pre></li>
+<li><a name="A144C167c"></a>Create the exports file necessary to explicitly
+export the symbols in the shared library that are referenced by other object
+modules. <p><a name="A144C167d"></a>For the examples in this article, an exports file named <samp>shrsub.exp</samp> is used. The <samp>shrsub.exp </samp>file contains the following code:</p>
+
+
+
+
+<pre><a name="A144C167e"></a>#! /home/sharelib/shrsub.o 
+* Above is full pathname to shared library object file
+func1
+func2
+func3</pre>
+
+
+The <samp>#!</samp> line is meaningful only when the file is being used as an import file. In this case, the <samp>#!</samp> line identifies the name of the shared library file to be used at run time. </li></ol>
+
+
+<h3><a name="A144C1680"></a>Procedure</h3>
+
+
+
+<ol><li><a name="A144C1681"></a>Compile and link the two source code files to be shared. (This procedure assumes you are in the <b>/home/sharedlib</b> directory.) To compile and link the source files, enter the following commands:
+
+<a name="A144C1682"></a>
+<pre>cc -c share1.c
+cc -c share2.c
+cc -o shrsub.o share1.o share2.o -bE:shrsub.exp -bM:SRE -bnoentry</pre>
+
+
+This creates a shared library name <samp>shrsub.o</samp> in the <b>/home/sharedlib</b> directory.
+
+<table><tbody><tr valign="top"><td nowrap="NOWRAP" rowspan="1" colspan="1"><b>-bM:SRE</b> flag</td>
+<td rowspan="1" colspan="1">Marks the resultant object file <samp>shrsub.o</samp> as a re-entrant, shared library</td></tr></tbody></table>
+
+ 
+
+
+<p>Each process that uses the shared code gets a private copy of the data in its private process area.</p>
+
+
+
+
+<table><tbody><tr valign="top"><td nowrap="NOWRAP" rowspan="1" colspan="1"> flag</td>
+<td rowspan="1" colspan="1">Sets the dummy entry point <samp>_nostart</samp> to override the default entry point, <samp>_start</samp></td></tr>
+<tr valign="top"><td rowspan="1" colspan="1"><b>-bnoentry</b> flag</td>
+<td rowspan="1" colspan="1">Tells the linkage editor that the shared library does not have an entry point</td></tr></tbody></table>
+
+
+ 
+<p>A shared library may have an entry point, but the system loader does not
+make use of an entry point when a shared library is loaded.</p>
+
+</li>
+<li>Use the following command to put the shared library in an archive file:
+
+<pre>ar qv libsub.a shrsub.o</pre>This step is optional. Putting the shared
+library in an archive makes it easier to specify the shared library when
+linking your program, because you can use the <b>-l </b> and <b>-L</b> flags with the <b>ld</b> command.</li>
+<li><a name="A144C1684"></a>Compile and link the main source code with the
+shared library to create the executable file. (This step assumes your current
+working directory contains the <b>main.c</b> file.) Use the following command:
+
+<pre><a name="A144C1685"></a>cc -o main main.c -lsub -L/home/sharedlib</pre>
+
+
+If the shared library is not in an archive, use the command:
+
+<pre>cc -o main main.c /home/sharedlib/shrsub.o -L/home/sharedlib</pre>
+
+
+
+The program <samp>main</samp> is now executable. The <samp>func1</samp>, <samp>func2</samp>, and <samp>func3</samp>
+symbols have been marked for load-time deferred resolution. At run time,
+the system loader loads the module in to the shared library (unless the module
+is already loaded) and dynamically resolves the references. </li></ol>
+
+
+
+
+
+<table><tbody><tr valign="top"><td nowrap="NOWRAP" rowspan="1" colspan="1"><a name="A144C1687"></a><b>-L</b> flag</td>
+<td rowspan="1" colspan="1"> 
+Adds the specified directory (in this case, <samp>/home/sharedlib</samp>) to the library search path, which is saved in the loader section of the program.</td></tr></tbody></table>
+
+ 
+
+<p>At run time the library search path is used to tell the loader where to find shared libraries.</p>
+
+ 
+
+<table><tbody><tr valign="top"><td rowspan="1" colspan="1"><b>LIBPATH</b> environment variable</td>
+<td rowspan="1" colspan="1">A colon-separated list of directory paths that
+can also be used to specify a different library search path. Its format is
+identical to that of the <b>PATH</b> environment variable.</td></tr></tbody></table>
+
+ 
+
+<p>The directories in the list are searched to resolve references to shared objects. The <b>/usr/lib</b> and <b>/lib</b> directories contain shared libraries and should normally be included in your library search path.</p>
+
+
+
+
+<h3>Related Information</h3>
+
+
+
+
+
+<p>The <a href="http://www.unet.univie.ac.at/aix/aixprggd/genprogc/shared_libs_mem.htm#A144C1694">Shared Library Overview</a>
+.</p>
+
+
+
+
+
+<p>The <!--:cmds:aixcmds1:--><a href="http://www.unet.univie.ac.at/aix/cmds/aixcmds1/ar.htm#A0949a5b"><b>ar</b></a> command, <!--:cmds:aixcmds1:--><a href="http://www.unet.univie.ac.at/aix/cmds/aixcmds1/as.htm#D2e0shad"><b>as</b></a> command, <b>cc </b>command, <!--:cmds:aixcmds3:--><a href="http://www.unet.univie.ac.at/aix/cmds/aixcmds3/ld.htm#A09493ac"><b>ld</b></a> command.</p>
+
+
+
+
+
+<p>The <!--:libs:basetrf1:--><a href="http://www.unet.univie.ac.at/aix/libs/basetrf1/load.htm#A1289a2c"><b>load</b></a> subroutine, <!--:libs:basetrf1:--><a href="http://www.unet.univie.ac.at/aix/libs/basetrf1/loadquery.htm#A12F03c"><b>loadquery</b></a> subroutine, <!--:libs:basetrf1:--><a href="http://www.unet.univie.ac.at/aix/libs/basetrf1/loadbind.htm#A262B9118"><b>loadbind</b></a> subroutine, <!--:libs:basetrf2:--><a href="http://www.unet.univie.ac.at/aix/libs/basetrf2/unload.htm#A2019d34"><b>unload</b></a> subroutine.</p>
+
+
+
+
+
+<p>The <!--:files:aixfiles:--><a href="http://www.unet.univie.ac.at/aix/files/aixfiles/XCOFF.htm"><b>XCOFF</b></a> object (<b>a.out</b>) file format. </p>
+
+<hr><center>
+[  <a href="http://www.unet.univie.ac.at/aix/aixprggd/genprogc/address_space.htm">Next Article</a>  |
+<a href="http://www.unet.univie.ac.at/aix/aixprggd/genprogc/lazyload.htm">Previous Article</a>  |
+<a href="http://www.unet.univie.ac.at/aix/aixprggd/genprogc/toc.htm" target="_parent">Book Contents</a> |
+<a href="http://www.unet.univie.ac.at/cgi-bin/ds_form?lang=en_US&amp;viewset=AIX&amp;config=/usr/share/man/info/en_US/a_doc_lib/data/base.cfg" target="_top">Library Home</a> |
+<a href="http://www.unet.univie.ac.at/aix/aixprggd/genprogc/edition.htm">Legal</a> |
+<a href="http://www.unet.univie.ac.at/cgi-bin/ds_form?lang=en_US&amp;viewset=AIX&amp;config=/usr/share/man/info/en_US/a_doc_lib/data/base.cfg" target="_top">Search</a> ]
+</center></body></html>

@@ -1,0 +1,41 @@
+Paris, 2001/03/12
+
+This directory contains an implementation of the vscanf(), vfscanf() and vsscanf() routines, the variadic variants to
+scanf, fscanf and sscanf that come in each C library.
+
+This implementation is taken from glibc 2.1.1, the GNU replacement of the standard C library. I herewith place
+my standalone versions under the same licence/copyright.
+
+Some modifications had to be done. Most of these had to do with the fact that the original lowlevel routine,
+__vfscanf(), called a number of internal functions and macros directly. These have all been replaced with
+their "externally visible" counterparts.
+I removed the __xxxxx versions.
+vsscanf() was implemented as a call to vfscanf(), using libio mechanisms to access a stringpointer through a
+streamed filepointer (FILE) mechanism. Since this is not portable, I made another version of vsscanf(). This
+is a direct copy of vfscanf(), with rewritten getc and ungetc routines. Not the most elegant option, but it
+works.
+The ARGCHECK() macro has also been modified; it now only checks for a valid filepointer/stringpointer, and no
+longer whether the file is in the right mode, etc.
+To allow compilation on the MIPSpro compiler (my only non-gcc compiler!), I had to change the ARG macro. It is
+now split into one code-conditional submacro, FINDARG, that selects the appropriate argument, and a (quite stub)
+macro ARG that evaluates to the selected (var) argument. I don't know in how far an lvalue can be within curly
+braces and in the 'else' branch of an ()? : statement, in compilers other than gcc!
+I commented most if not all changes in the source (look for RJVB).
+
+I did not extensively test these routines. They compile and function under linux (of course...), and under irix 6.3
+with the gcc 2.7.2.2 (for irix 5.3) compiler, and the MIPSpro compiler version 7.1 . There is a small test programme,
+also from the glibc distribution, that will compare the vscanf() versions with their non-variadic counterparts.
+It also runs on an IBM PowerPC running AIX.
+
+You may need gmake (GNU make) to process the makefile. You may also need to edit the script update_lib to point it
+to your tcsh path.
+
+If you port this to another platform, please let me know, especially if there were changes to be made. If there are
+bugs, also let me know!
+
+rjvbertin@hotmail.com
+
+20020818:
+	vsnprintf() had been provided with a module extracted from the R distribition (www.r-project.org), that itself
+	had taken it from wget. Today, I replaced it by "the Portable snprintf distribution" (http://www.ijs.si/software/snprintf)
+	that appears to be more complete. That complete distr is in ../snprintf_2.2 .
