@@ -9,7 +9,7 @@ mcpu="-mcpu"
 # for universal binary builds:
 AUTOVECx86="-msse3 -mssse3"
 AUTOVECppc="-faltivec"
-DEFAULTARCH="-arch i386"
+DEFAULTARCH="-arch x86_64"
 ARCHS32="-arch ppc -arch i386"
 ARCHS64="-arch ppc -arch i386 -arch x86_64"
 SDK="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4"
