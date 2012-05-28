@@ -355,7 +355,9 @@ int XG_DisplayHeightMM( Display *disp, int screen )
 		return( DisplayHeight_MM );
 	}
 	else{
-		return( DisplayWidthMM(disp, screen) );
+// 		return( DisplayWidthMM(disp, screen) );
+		// 20120528!!!
+		return( DisplayHeightMM(disp, screen) );
 	}
 }
 
