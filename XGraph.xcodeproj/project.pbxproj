@@ -1255,12 +1255,12 @@
 			buildConfigurationList = D6BCD8821451ABE100B3B804 /* Build configuration list for PBXLegacyTarget "cmake-All" */;
 			buildPhases = (
 			);
-			buildToolPath = cmake;
+			buildToolPath = scripts/cmake;
 			buildWorkingDirectory = $PROJECT_DIR;
 			dependencies = (
 			);
 			name = "cmake-All";
-			passBuildSettingsInEnvironment = 0;
+			passBuildSettingsInEnvironment = 1;
 			productName = "cmake-All";
 		};
 /* End PBXLegacyTarget section */

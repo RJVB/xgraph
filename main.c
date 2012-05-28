@@ -175,8 +175,10 @@ void CheckEndianness()
 	char t[2];
 	short s;
   } e;
+#if 0
   short one16= 1;
   unsigned char one8= (*((unsigned char*) &one16));
+#endif
 	e.t[0]= 'a';
 	e.t[1]= 'b';
 	switch( e.s ){

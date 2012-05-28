@@ -7,6 +7,9 @@
 #	Makefiles are read from directory $MAKEDIR
 #(C)(R) R. J. Bertin 7/11/'89
 
+# echo "$0 $@"
+# printenv 2>&1 | sort
+
 if [ "$MAKEDIR" = "" ] ;then
 	echo "MAKEDIR not set - assuming Make/"
 	MAKEDIR="Make/"
@@ -113,19 +116,21 @@ then
 	echo "Make options:" '"'"$OP"'"'
 fi
 
-# if [ -r .$ERRFILE ]
-# then
-# 	DONTREMOVE=1
-# 	if [ ! -r $ERRFILE ]
+if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+# 	if [ -r .$ERRFILE ]
 # 	then
-# 		ln -s .$ERRFILE $ERRFILE
+# 		DONTREMOVE=1
+# 		if [ ! -r $ERRFILE ]
+# 		then
+# 			ln -s .$ERRFILE $ERRFILE
+# 		fi
+# 		echo ".$ERRFILE already exists"
+# 	else
+		DONTREMOVE=0
+		rm -f $ERRFILE
+		ln -s .$ERRFILE $ERRFILE
 # 	fi
-# 	echo ".$ERRFILE already exists"
-# else
-	DONTREMOVE=0
-	rm -f $ERRFILE
-	ln -s .$ERRFILE $ERRFILE
-# fi
+fi
 
 TAILPID=0
 
@@ -246,24 +251,53 @@ echo "${CALLEDAS}" >> .$ERRFILE
 # 	DO_FKILL=1 ; export DO_FKILL
 # fi
 
-if [ "$DEBUG" != "" ] ;then
-	if [ $SILENT = 1 ] ;then
-		echo "doing SILENT with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE
-		${MAKE} $OP -kf $MAKEFILE "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE
+DoMake () {
+	if [ "$DEBUG" != "" ] ;then
+		${MAKE} $OP -kf $MAKEFILE "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
 	else
-		echo "doing with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 | tee -a .$ERRFILE
-		${MAKE} $OP -kf $MAKEFILE "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 | tee -a .$ERRFILE
+		${MAKE} $OP -kf $MAKEFILE "$CLIB" "$DCLIB" "$GLLIBS"
+	fi
+	cxsetenv RET $?
+}
+
+if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+	if [ "$DEBUG" != "" ] ;then
+		if [ $SILENT = 1 ] ;then
+			echo "doing SILENT with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE
+			DoMake 2>&1 >> .$ERRFILE
+		else
+			echo "doing with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 | tee -a .$ERRFILE
+			DoMake 2>&1 | tee -a .$ERRFILE
+		fi
+	else
+		if [ $SILENT = 1 ] ;then
+			echo "doing SILENT ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE
+			DoMake 2>&1 >> .$ERRFILE
+		else
+			echo "doing ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 | tee -a .$ERRFILE
+			DoMake 2>&1 | tee -a .$ERRFILE
+		fi
 	fi
 else
-	if [ $SILENT = 1 ] ;then
-		echo "doing SILENT ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE
-		${MAKE} $OP -kf $MAKEFILE "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE
+	if [ "$DEBUG" != "" ] ;then
+		if [ $SILENT = 1 ] ;then
+			echo "doing SILENT with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
+			DoMake
+		else
+			echo "doing with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
+			DoMake
+		fi
 	else
-		echo "doing ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 | tee -a .$ERRFILE
-		${MAKE} $OP -kf $MAKEFILE "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 | tee -a .$ERRFILE
+		if [ $SILENT = 1 ] ;then
+			echo "doing SILENT ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS"
+			DoMake
+		else
+			echo "doing ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS"
+			DoMake
+		fi
 	fi
 fi
-RET=$?
+RET="`cxgetenv RET`" ; export RET
 
 if [ ! -r .make_success ] ;then
 	RET=1

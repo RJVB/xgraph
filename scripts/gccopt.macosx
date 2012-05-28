@@ -884,26 +884,30 @@ if [ "$VERBOSE" != "" ] ; then
 	set -x
 fi
 
-if [ ! -d ./emsg -a "$EMSGMAKE" !=  "" ] ;then
-	${ECHO} "$0: creating `pwd`/emsg"
-	mkdir ./emsg
-fi
 if [ "$OUTPUT" = "" ] ;then
 	eOUTPUT=""
 else
 	eOUTPUT="`basename $OUTPUT`"
 fi
+
 EMSGb=""
 EMSG="/dev/null"
-if [ -d ./emsg -a "$eOUTPUT" != "" ] ;then
-	EMSGb="./emsg/$eOUTPUT"
-	EMSG="${EMSGb}.msg"
-	if [ -d "`dirname ${EMSG}`" -a $QUIET = 0 ] ;then
-		${ECHO} -e "#\tOutput saved in ${EMSG}"
-		rm -f ${EMSGb}.msg ${EMSGb}.err
-	else
-		EMSGb=""
-		EMSG="/dev/null"
+
+if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+	if [ ! -d ./emsg -a "$EMSGMAKE" !=  "" ] ;then
+		${ECHO} "$0: creating `pwd`/emsg"
+		mkdir ./emsg
+	fi
+	if [ -d ./emsg -a "$eOUTPUT" != "" ] ;then
+		EMSGb="./emsg/$eOUTPUT"
+		EMSG="${EMSGb}.msg"
+		if [ -d "`dirname ${EMSG}`" -a $QUIET = 0 ] ;then
+			${ECHO} -e "#\tOutput saved in ${EMSG}"
+			rm -f ${EMSGb}.msg ${EMSGb}.err
+		else
+			EMSGb=""
+			EMSG="/dev/null"
+		fi
 	fi
 fi
 
@@ -939,28 +943,41 @@ fi
 
 # ${ECHO} $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS 1>&2
 
-( $TIME $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS 2>&1 ; cxsetenv RET $? )\
-					| ${TEE} $EMSG
+DoCompile () {
+	$TIME $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS
+	cxsetenv RET $?
+}
+
+# ( $TIME $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS 2>&1 ; cxsetenv RET $? )\
+# 					| ${TEE} $EMSG
+
+if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+	DoCompile 2>&1 | ${TEE} $EMSG
+else
+	DoCompile
+fi
 RET="`cxgetenv RET`" ; export RET
 
 if [ $DEBUG != 1 ] ;then
 	set +x
 fi
 
-${ECHO} "$Compile $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS" >> $EMSG
-${ECHO} -e "\t$COMMANDLINE" >> $EMSG
-${ECHO} -e "\tArguments passed to source: SWITCHES=\"${SWITCHES}\"" >> $EMSG
+if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+	${ECHO} "$Compile $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS" >> $EMSG
+	${ECHO} -e "\t$COMMANDLINE" >> $EMSG
+	${ECHO} -e "\tArguments passed to source: SWITCHES=\"${SWITCHES}\"" >> $EMSG
 
-if [ "$RET" != "0" ] ;then
-	${ECHO} "Return code $RET" >> $EMSG
-	if [ "$EMSGb" != "" -a "$RET" != "0" ] ;then
-		${ECHO} "`tput bold`Messages in ${EMSGb}.err`tput sgr0`"
-		mv "$EMSG" "${EMSGb}.err"
+	if [ "$RET" != "0" ] ;then
+		${ECHO} "Return code $RET" >> $EMSG
+		if [ "$EMSGb" != "" -a "$RET" != "0" ] ;then
+			${ECHO} "`tput bold`Messages in ${EMSGb}.err`tput sgr0`"
+			mv "$EMSG" "${EMSGb}.err"
+		fi
 	fi
-fi
 
-if [ "${OUTPUT}" != "" -a "${LINK}" = 1 -a $QUIET != 1 ] ;then
-	ll ${OUTPUT}*
+	if [ "${OUTPUT}" != "" -a "${LINK}" = 1 -a $QUIET != 1 ] ;then
+		ll ${OUTPUT}*
+	fi
 fi
 
 if [ "$COMPRESS" != "" ] ;then

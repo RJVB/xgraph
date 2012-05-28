@@ -127,8 +127,8 @@ Libs: $(DEPLIBS)
 
 $(TARGET):	config.h $(DEPLIBS) main.c xgsupport.o xgraph.o
 # 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LIBS)
-	-no | mv $(TARGET) $(TARGET).prev
-	-gzip -9vf $(TARGET).prev
+	-(no | mv $(TARGET) $(TARGET).prev 2>&1 > /dev/null )
+	-(gzip -9vf $(TARGET).prev 2>&1 > /dev/null )
 # 	-rm -f $(TARGET).prev
 # we always compile main.c with DEBUG to have a maximum of debugging info available, at little or no cost:
 	echo "#define XGraphBuildPlatform \"`uname -nmrs` ; CC=\'$(CC)\' ACC=\'$(ACC)\'\"" > buildplatform.h
@@ -140,8 +140,8 @@ $(TARGET):	config.h $(DEPLIBS) main.c xgsupport.o xgraph.o
 	./make_debug $(TARGET) CFLAGS= $(CFLAGS) XCFLAGS= $(XCFLAGS) XG_FLAGS= $(XG_FLAGS) DEBUGSUPPORT= $(DEBUGSUPPORT)
 	rm buildplatform.h
 	mkdirhier $(PREFSDIR)
-	-scripts/ln2 $(PWD)/scripts/noprocs.xg $(PREFSDIR)
-	-scripts/ln2 $(PWD)/scripts/xg_init.xg $(PREFSDIR)
+	-scripts/ln2 $(PWD)/scripts/noprocs.xg $(PREFSDIR) 2>&1
+	-scripts/ln2 $(PWD)/scripts/xg_init.xg $(PREFSDIR) 2>&1
 	touch -r $(TARGET) .make_success
 
 refresh: $(OBJS) $(TARGET)
