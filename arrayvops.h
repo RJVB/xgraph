@@ -34,7 +34,7 @@ extern void _convolve( double *Data, size_t NN, double *Mask, double *Output, in
 	{
 		return ceil(a);
 	}
-	static inline double ssflor(double a)
+	static inline double ssfloor(double a)
 	{
 		return floor(a);
 	}

@@ -209,6 +209,8 @@ select_debug_mode () {
 		DEBUGOPT="-g ${DDEBUG} -fno-inline-functions -fno-omit-frame-pointer"
 	elif [ "$1" = "-gOpt3" ] ;then
 		DEBUGOPT="-g ${DDEBUG} -fno-omit-frame-pointer"
+	elif [ "$1" = "-symbolsOnly" ] ;then
+		DEBUGOPT="-g"
 	elif [ "$1" = "-symbols" ] ;then
 		DEBUGOPT="-g -fno-omit-frame-pointer"
 	else
@@ -478,7 +480,7 @@ while [ $# != 0 ] ; do
 			select_debug_mode $*
 			${ECHO} "\"simple\" optimisation and DEBUG"
 			;;
-		"-gOpt"|"-gOpt3"|"-symbols")
+		"-gOpt"|"-gOpt3"|-symbols*)
 			OPTIMOPT=""
 			select_debug_mode $*
 			${ECHO} "\"full\" optimisation and DEBUG"

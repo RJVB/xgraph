@@ -219,7 +219,7 @@ ReadData.o: ReadData.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer
 	$(CC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
 # 	ar rv libxgraph.a $@; zero $@
 
-xgsupport.o: xgsupport.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XGPen.h dymod.h
+xgsupport.o: xgsupport.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XGPen.h dymod.h arrayvops.h
 # 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
 	$(CC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
 
@@ -228,7 +228,7 @@ LegendsNLabels.o: LegendsNLabels.c xgraph.h hard_devices.h ascanf.h Elapsed.h lo
 	$(CC) $(COPTS) $(XCFLAGS) $(DEBUGSUPPORT) $(XG_FLAGS) $(CHECK) $<
 # 	ar rv libxgraph.a $@; 
 
-xgraph.o: xgraph.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XXseg.h XGPen.h Python/PythonInterface.h
+xgraph.o: xgraph.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XXseg.h XGPen.h Python/PythonInterface.h arrayvops.h
 # 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(DEBUGSUPPORT) $(XG_FLAGS) $(CHECK) $<
 	$(CC) $(COPTS) $(XCFLAGS) $(DEBUGSUPPORT) $(XG_FLAGS) $(CHECK) $<
 
@@ -248,7 +248,7 @@ new_ps.o: new_ps.c xgout.h xgraph.h new_ps.h xtb/xtb.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
 # 	ar rv libxgraph.a $@; zero $@
 
-matherr.o: matherr.c
+matherr.o: matherr.c arrayvops.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
 # 	ar rv libxgraph.a $@; zero $@
 
@@ -283,7 +283,7 @@ ascanfc2.o: ascanfc2.c ascanf.h compiled_ascanf.h Elapsed.h lowlevel_timer.h xgA
 	$(ACC) -BSD $(COPTS) $(XG_FLAGS) $(CFLAGS) $(CHECK) $<
 # 	ar rv libxgraph.a $@; zero $@
 
-ascanfc3.o: ascanfc3.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h dymod.h
+ascanfc3.o: ascanfc3.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h dymod.h arrayvops.h
 # pass XCFLAGS and XG_FLAGS because these routines used to be in xgraph.c and xgsupport.c until 20010718.
 	$(ACC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
 # 	ar rv libxgraph.a $@; zero $@

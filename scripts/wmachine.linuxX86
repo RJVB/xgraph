@@ -137,6 +137,55 @@ setopts() {
 			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse"
 			;;
 
+		*Athlon*)
+			DEFAULT_CC="gcc-4.4"
+			DEFAULT_CXX="g++-4.4"
+			CPU="native"
+			ALT_CPU="" ##pentium-m"
+			mcpu="-march"
+
+			case $compil in
+				clang*)
+# clang accepts -O4 but activates an additional mode that is not supported by g++ ... which will be
+# called for c++ inputs...
+					VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+					OOPTIMOPT="-O3" #-fdelayed-branch"
+					DEFAULT_CXX="$compil -stdlib=libstdc++"
+					USINGCLANG=1
+					;;
+				*)
+					VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+					OOPTIMOPT="-O3" #-fdelayed-branch"
+					;;
+			esac
+# The options that get turned on by maximal optimisation (default):
+			# OOPTIMOPT="$OOPTIMOPT  -fgcse-lm -fsched-interblock -freorder-blocks -freorder-blocks-and-partition -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops"
+			OOPTIMOPT="$OOPTIMOPT -funroll-loops"
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+			NODEBUGOPT="" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+			MARCH=""
+			MARCHUNI=""
+			MARCHUNI64=""
+			ARCHS32="-m32"
+			ARCHS64="-m64"
+			SDK=""
+
+
+			RWSTRINGS=0
+
+			LNKOPTS=""
+
+			if [ "$compil" = "" ] ;then
+				compil="${DEFAULT_CC}"
+			fi
+			setautovec "`uname -m`" "-msse4 -mssse3 -mfpmath=sse"
+			;;
+
 		x86)
 			DEFAULT_CC="gcc-4.4"
 			DEFAULT_CXX="g++-4.4"
