@@ -131,7 +131,7 @@ else
 	USE_MAKE_SUCCESS=0
 fi
 
-if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" ] ;then
 # 	if [ -r .$ERRFILE ]
 # 	then
 # 		DONTREMOVE=1
@@ -277,7 +277,7 @@ DoMake () {
 	cxsetenv RET $?
 }
 
-if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" ] ;then
 	if [ "$DEBUG" != "" ] ;then
 		if [ $SILENT = 1 ] ;then
 			echo "doing SILENT with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE

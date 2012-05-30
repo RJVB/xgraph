@@ -895,7 +895,7 @@ fi
 EMSGb=""
 EMSG="/dev/null"
 
-if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" ] ;then
 	if [ ! -d ./emsg -a "$EMSGMAKE" !=  "" ] ;then
 		${ECHO} "$0: creating `pwd`/emsg"
 		mkdir ./emsg
@@ -953,7 +953,7 @@ DoCompile () {
 # ( $TIME $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS 2>&1 ; cxsetenv RET $? )\
 # 					| ${TEE} $EMSG
 
-if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" ] ;then
 	DoCompile 2>&1 | ${TEE} $EMSG
 else
 	DoCompile
@@ -964,7 +964,7 @@ if [ $DEBUG != 1 ] ;then
 	set +x
 fi
 
-if [ "${XCODE_VERSION_MAJOR}" = "" ] ;then
+if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" ] ;then
 	${ECHO} "$Compile $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS" >> $EMSG
 	${ECHO} -e "\t$COMMANDLINE" >> $EMSG
 	${ECHO} -e "\tArguments passed to source: SWITCHES=\"${SWITCHES}\"" >> $EMSG
