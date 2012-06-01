@@ -474,6 +474,101 @@
 		D64869F712841B2D00C350CB /* xfree.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = xfree.h; sourceTree = "<group>"; };
 		D651278A136ECFA400AF508B /* 64typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 64typedefs.h; sourceTree = "<group>"; };
 		D6614AA2128F1C8900ECF74A /* LocalWin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalWin.h; sourceTree = "<group>"; };
+		D67260261579311800FE8669 /* algorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algorithm.h; path = /usr/local/include/macstl/algorithm.h; sourceTree = "<absolute>"; };
+		D67260271579311800FE8669 /* boolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = boolean.h; path = /usr/local/include/macstl/boolean.h; sourceTree = "<absolute>"; };
+		D67260281579311800FE8669 /* channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = channel.h; path = /usr/local/include/macstl/channel.h; sourceTree = "<absolute>"; };
+		D67260291579311800FE8669 /* com.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = com.h; path = /usr/local/include/macstl/com.h; sourceTree = "<absolute>"; };
+		D672602A1579311800FE8669 /* complex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = complex.h; path = /usr/local/include/macstl/complex.h; sourceTree = "<absolute>"; };
+		D672602B1579311800FE8669 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core.h; path = /usr/local/include/macstl/core.h; sourceTree = "<absolute>"; };
+		D672602C1579311800FE8669 /* functional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = functional.h; path = /usr/local/include/macstl/functional.h; sourceTree = "<absolute>"; };
+		D672602E1579311800FE8669 /* allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = allocator.h; path = /usr/local/include/macstl/impl/allocator.h; sourceTree = "<absolute>"; };
+		D672602F1579311800FE8669 /* com_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = com_ptr.h; path = /usr/local/include/macstl/impl/com_ptr.h; sourceTree = "<absolute>"; };
+		D67260301579311800FE8669 /* com_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = com_type.h; path = /usr/local/include/macstl/impl/com_type.h; sourceTree = "<absolute>"; };
+		D67260311579311800FE8669 /* com_uuid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = com_uuid.h; path = /usr/local/include/macstl/impl/com_uuid.h; sourceTree = "<absolute>"; };
+		D67260321579311800FE8669 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = /usr/local/include/macstl/impl/config.h; sourceTree = "<absolute>"; };
+		D67260331579311800FE8669 /* core_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_allocator.h; path = /usr/local/include/macstl/impl/core_allocator.h; sourceTree = "<absolute>"; };
+		D67260341579311800FE8669 /* core_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_array.h; path = /usr/local/include/macstl/impl/core_array.h; sourceTree = "<absolute>"; };
+		D67260351579311800FE8669 /* data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = data.h; path = /usr/local/include/macstl/impl/data.h; sourceTree = "<absolute>"; };
+		D67260361579311800FE8669 /* doxygen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = doxygen.h; path = /usr/local/include/macstl/impl/doxygen.h; sourceTree = "<absolute>"; };
+		D67260371579311800FE8669 /* generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = generator.h; path = /usr/local/include/macstl/impl/generator.h; sourceTree = "<absolute>"; };
+		D67260381579311800FE8669 /* mach_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mach_allocator.h; path = /usr/local/include/macstl/impl/mach_allocator.h; sourceTree = "<absolute>"; };
+		D67260391579311800FE8669 /* mach_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mach_vector.h; path = /usr/local/include/macstl/impl/mach_vector.h; sourceTree = "<absolute>"; };
+		D672603A1579311800FE8669 /* meta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = meta.h; path = /usr/local/include/macstl/impl/meta.h; sourceTree = "<absolute>"; };
+		D672603B1579311800FE8669 /* valarray_algorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_algorithm.h; path = /usr/local/include/macstl/impl/valarray_algorithm.h; sourceTree = "<absolute>"; };
+		D672603C1579311800FE8669 /* valarray_altivec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_altivec.h; path = /usr/local/include/macstl/impl/valarray_altivec.h; sourceTree = "<absolute>"; };
+		D672603D1579311800FE8669 /* valarray_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_base.h; path = /usr/local/include/macstl/impl/valarray_base.h; sourceTree = "<absolute>"; };
+		D672603E1579311800FE8669 /* valarray_function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_function.h; path = /usr/local/include/macstl/impl/valarray_function.h; sourceTree = "<absolute>"; };
+		D672603F1579311800FE8669 /* valarray_gslice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_gslice.h; path = /usr/local/include/macstl/impl/valarray_gslice.h; sourceTree = "<absolute>"; };
+		D67260401579311800FE8669 /* valarray_indirect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_indirect.h; path = /usr/local/include/macstl/impl/valarray_indirect.h; sourceTree = "<absolute>"; };
+		D67260411579311800FE8669 /* valarray_mask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_mask.h; path = /usr/local/include/macstl/impl/valarray_mask.h; sourceTree = "<absolute>"; };
+		D67260421579311800FE8669 /* valarray_mmaparray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_mmaparray.h; path = /usr/local/include/macstl/impl/valarray_mmaparray.h; sourceTree = "<absolute>"; };
+		D67260431579311800FE8669 /* valarray_mmx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_mmx.h; path = /usr/local/include/macstl/impl/valarray_mmx.h; sourceTree = "<absolute>"; };
+		D67260441579311800FE8669 /* valarray_refarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_refarray.h; path = /usr/local/include/macstl/impl/valarray_refarray.h; sourceTree = "<absolute>"; };
+		D67260451579311800FE8669 /* valarray_shift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_shift.h; path = /usr/local/include/macstl/impl/valarray_shift.h; sourceTree = "<absolute>"; };
+		D67260461579311800FE8669 /* valarray_slice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_slice.h; path = /usr/local/include/macstl/impl/valarray_slice.h; sourceTree = "<absolute>"; };
+		D67260471579311800FE8669 /* valarray_statarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_statarray.h; path = /usr/local/include/macstl/impl/valarray_statarray.h; sourceTree = "<absolute>"; };
+		D67260481579311800FE8669 /* valarray_valarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_valarray.h; path = /usr/local/include/macstl/impl/valarray_valarray.h; sourceTree = "<absolute>"; };
+		D67260491579311800FE8669 /* valarray_vec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_vec.h; path = /usr/local/include/macstl/impl/valarray_vec.h; sourceTree = "<absolute>"; };
+		D672604A1579311800FE8669 /* vec_altivec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec_altivec.h; path = /usr/local/include/macstl/impl/vec_altivec.h; sourceTree = "<absolute>"; };
+		D672604B1579311800FE8669 /* vec_mmx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec_mmx.h; path = /usr/local/include/macstl/impl/vec_mmx.h; sourceTree = "<absolute>"; };
+		D672604C1579311800FE8669 /* mach.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mach.h; path = /usr/local/include/macstl/mach.h; sourceTree = "<absolute>"; };
+		D672604E1579311800FE8669 /* algorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algorithm.h; path = /usr/local/include/macstl/macstl/algorithm.h; sourceTree = "<absolute>"; };
+		D672604F1579311800FE8669 /* boolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = boolean.h; path = /usr/local/include/macstl/macstl/boolean.h; sourceTree = "<absolute>"; };
+		D67260501579311800FE8669 /* channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = channel.h; path = /usr/local/include/macstl/macstl/channel.h; sourceTree = "<absolute>"; };
+		D67260511579311800FE8669 /* com.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = com.h; path = /usr/local/include/macstl/macstl/com.h; sourceTree = "<absolute>"; };
+		D67260521579311800FE8669 /* complex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = complex.h; path = /usr/local/include/macstl/macstl/complex.h; sourceTree = "<absolute>"; };
+		D67260531579311800FE8669 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core.h; path = /usr/local/include/macstl/macstl/core.h; sourceTree = "<absolute>"; };
+		D67260541579311800FE8669 /* functional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = functional.h; path = /usr/local/include/macstl/macstl/functional.h; sourceTree = "<absolute>"; };
+		D67260561579311800FE8669 /* allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = allocator.h; path = /usr/local/include/macstl/macstl/impl/allocator.h; sourceTree = "<absolute>"; };
+		D67260571579311800FE8669 /* com_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = com_ptr.h; path = /usr/local/include/macstl/macstl/impl/com_ptr.h; sourceTree = "<absolute>"; };
+		D67260581579311800FE8669 /* com_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = com_type.h; path = /usr/local/include/macstl/macstl/impl/com_type.h; sourceTree = "<absolute>"; };
+		D67260591579311800FE8669 /* com_uuid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = com_uuid.h; path = /usr/local/include/macstl/macstl/impl/com_uuid.h; sourceTree = "<absolute>"; };
+		D672605A1579311800FE8669 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = /usr/local/include/macstl/macstl/impl/config.h; sourceTree = "<absolute>"; };
+		D672605B1579311800FE8669 /* core_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_allocator.h; path = /usr/local/include/macstl/macstl/impl/core_allocator.h; sourceTree = "<absolute>"; };
+		D672605C1579311800FE8669 /* core_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_array.h; path = /usr/local/include/macstl/macstl/impl/core_array.h; sourceTree = "<absolute>"; };
+		D672605D1579311800FE8669 /* data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = data.h; path = /usr/local/include/macstl/macstl/impl/data.h; sourceTree = "<absolute>"; };
+		D672605E1579311800FE8669 /* doxygen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = doxygen.h; path = /usr/local/include/macstl/macstl/impl/doxygen.h; sourceTree = "<absolute>"; };
+		D672605F1579311800FE8669 /* generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = generator.h; path = /usr/local/include/macstl/macstl/impl/generator.h; sourceTree = "<absolute>"; };
+		D67260601579311800FE8669 /* mach_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mach_allocator.h; path = /usr/local/include/macstl/macstl/impl/mach_allocator.h; sourceTree = "<absolute>"; };
+		D67260611579311800FE8669 /* mach_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mach_vector.h; path = /usr/local/include/macstl/macstl/impl/mach_vector.h; sourceTree = "<absolute>"; };
+		D67260621579311800FE8669 /* meta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = meta.h; path = /usr/local/include/macstl/macstl/impl/meta.h; sourceTree = "<absolute>"; };
+		D67260631579311800FE8669 /* valarray_algorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_algorithm.h; path = /usr/local/include/macstl/macstl/impl/valarray_algorithm.h; sourceTree = "<absolute>"; };
+		D67260641579311800FE8669 /* valarray_altivec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_altivec.h; path = /usr/local/include/macstl/macstl/impl/valarray_altivec.h; sourceTree = "<absolute>"; };
+		D67260651579311800FE8669 /* valarray_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_base.h; path = /usr/local/include/macstl/macstl/impl/valarray_base.h; sourceTree = "<absolute>"; };
+		D67260661579311800FE8669 /* valarray_function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_function.h; path = /usr/local/include/macstl/macstl/impl/valarray_function.h; sourceTree = "<absolute>"; };
+		D67260671579311800FE8669 /* valarray_gslice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_gslice.h; path = /usr/local/include/macstl/macstl/impl/valarray_gslice.h; sourceTree = "<absolute>"; };
+		D67260681579311800FE8669 /* valarray_indirect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_indirect.h; path = /usr/local/include/macstl/macstl/impl/valarray_indirect.h; sourceTree = "<absolute>"; };
+		D67260691579311800FE8669 /* valarray_mask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_mask.h; path = /usr/local/include/macstl/macstl/impl/valarray_mask.h; sourceTree = "<absolute>"; };
+		D672606A1579311800FE8669 /* valarray_mmaparray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_mmaparray.h; path = /usr/local/include/macstl/macstl/impl/valarray_mmaparray.h; sourceTree = "<absolute>"; };
+		D672606B1579311800FE8669 /* valarray_mmx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_mmx.h; path = /usr/local/include/macstl/macstl/impl/valarray_mmx.h; sourceTree = "<absolute>"; };
+		D672606C1579311800FE8669 /* valarray_refarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_refarray.h; path = /usr/local/include/macstl/macstl/impl/valarray_refarray.h; sourceTree = "<absolute>"; };
+		D672606D1579311800FE8669 /* valarray_shift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_shift.h; path = /usr/local/include/macstl/macstl/impl/valarray_shift.h; sourceTree = "<absolute>"; };
+		D672606E1579311800FE8669 /* valarray_slice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_slice.h; path = /usr/local/include/macstl/macstl/impl/valarray_slice.h; sourceTree = "<absolute>"; };
+		D672606F1579311800FE8669 /* valarray_statarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_statarray.h; path = /usr/local/include/macstl/macstl/impl/valarray_statarray.h; sourceTree = "<absolute>"; };
+		D67260701579311800FE8669 /* valarray_valarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_valarray.h; path = /usr/local/include/macstl/macstl/impl/valarray_valarray.h; sourceTree = "<absolute>"; };
+		D67260711579311800FE8669 /* valarray_vec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray_vec.h; path = /usr/local/include/macstl/macstl/impl/valarray_vec.h; sourceTree = "<absolute>"; };
+		D67260721579311800FE8669 /* vec_altivec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec_altivec.h; path = /usr/local/include/macstl/macstl/impl/vec_altivec.h; sourceTree = "<absolute>"; };
+		D67260731579311800FE8669 /* vec_mmx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec_mmx.h; path = /usr/local/include/macstl/macstl/impl/vec_mmx.h; sourceTree = "<absolute>"; };
+		D67260741579311800FE8669 /* mach.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mach.h; path = /usr/local/include/macstl/macstl/mach.h; sourceTree = "<absolute>"; };
+		D67260751579311800FE8669 /* mmapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mmapping.h; path = /usr/local/include/macstl/macstl/mmapping.h; sourceTree = "<absolute>"; };
+		D67260761579311800FE8669 /* pixel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pixel.h; path = /usr/local/include/macstl/macstl/pixel.h; sourceTree = "<absolute>"; };
+		D67260771579311800FE8669 /* psl-license.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = "psl-license.rtf"; path = "/usr/local/include/macstl/macstl/psl-license.rtf"; sourceTree = "<absolute>"; };
+		D67260781579311800FE8669 /* refptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = refptr.h; path = /usr/local/include/macstl/macstl/refptr.h; sourceTree = "<absolute>"; };
+		D67260791579311800FE8669 /* rpl-license.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = "rpl-license.rtf"; path = "/usr/local/include/macstl/macstl/rpl-license.rtf"; sourceTree = "<absolute>"; };
+		D672607A1579311800FE8669 /* typelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = typelist.h; path = /usr/local/include/macstl/macstl/typelist.h; sourceTree = "<absolute>"; };
+		D672607B1579311800FE8669 /* valarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray.h; path = /usr/local/include/macstl/macstl/valarray.h; sourceTree = "<absolute>"; };
+		D672607C1579311800FE8669 /* vec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec.h; path = /usr/local/include/macstl/macstl/vec.h; sourceTree = "<absolute>"; };
+		D672607E1579311800FE8669 /* altivec2macstl.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = altivec2macstl.pl; path = /usr/local/include/macstl/macstlizer/altivec2macstl.pl; sourceTree = "<absolute>"; };
+		D672607F1579311800FE8669 /* altivec2mmx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = altivec2mmx.h; path = /usr/local/include/macstl/macstlizer/altivec2mmx.h; sourceTree = "<absolute>"; };
+		D67260801579311800FE8669 /* mmapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mmapping.h; path = /usr/local/include/macstl/mmapping.h; sourceTree = "<absolute>"; };
+		D67260811579311800FE8669 /* pixel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pixel.h; path = /usr/local/include/macstl/pixel.h; sourceTree = "<absolute>"; };
+		D67260821579311800FE8669 /* psl-license.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = "psl-license.rtf"; path = "/usr/local/include/macstl/psl-license.rtf"; sourceTree = "<absolute>"; };
+		D67260831579311800FE8669 /* readme.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = readme.rtf; path = /usr/local/include/macstl/readme.rtf; sourceTree = "<absolute>"; };
+		D67260841579311800FE8669 /* refptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = refptr.h; path = /usr/local/include/macstl/refptr.h; sourceTree = "<absolute>"; };
+		D67260851579311800FE8669 /* rpl-license.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = "rpl-license.rtf"; path = "/usr/local/include/macstl/rpl-license.rtf"; sourceTree = "<absolute>"; };
+		D67260861579311800FE8669 /* typelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = typelist.h; path = /usr/local/include/macstl/typelist.h; sourceTree = "<absolute>"; };
+		D67260871579311800FE8669 /* valarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valarray.h; path = /usr/local/include/macstl/valarray.h; sourceTree = "<absolute>"; };
+		D67260881579311800FE8669 /* vec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec.h; path = /usr/local/include/macstl/vec.h; sourceTree = "<absolute>"; };
 		D67485020FF4CAB00087FC0B /* FileCirc50.def */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = text; name = FileCirc50.def; path = ../../../WinBertin/work/doc/Grants97/INRETS/SIMACOM/IEFBin2ASCII/FileCirc50.def; sourceTree = SOURCE_ROOT; };
 		D67485030FF4CAB00087FC0B /* FileCirc50.mod */ = {isa = PBXFileReference; fileEncoding = 12; languageSpecificationIdentifier = xcode.lang.modula2; lastKnownFileType = text; name = FileCirc50.mod; path = ../../../WinBertin/work/doc/Grants97/INRETS/SIMACOM/IEFBin2ASCII/FileCirc50.mod; sourceTree = SOURCE_ROOT; };
 		D67485040FF4CAB00087FC0B /* Math2D3D.def */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = text; name = Math2D3D.def; path = ../../../WinBertin/work/doc/Grants97/INRETS/SIMACOM/IEFBin2ASCII/Math2D3D.def; sourceTree = SOURCE_ROOT; };
@@ -945,9 +1040,149 @@
 			name = Extern;
 			sourceTree = "<group>";
 		};
+		D67260251579311800FE8669 /* macstl */ = {
+			isa = PBXGroup;
+			children = (
+				D67260261579311800FE8669 /* algorithm.h */,
+				D67260271579311800FE8669 /* boolean.h */,
+				D67260281579311800FE8669 /* channel.h */,
+				D67260291579311800FE8669 /* com.h */,
+				D672602A1579311800FE8669 /* complex.h */,
+				D672602B1579311800FE8669 /* core.h */,
+				D672602C1579311800FE8669 /* functional.h */,
+				D672602D1579311800FE8669 /* impl */,
+				D672604C1579311800FE8669 /* mach.h */,
+				D672604D1579311800FE8669 /* macstl */,
+				D672607D1579311800FE8669 /* macstlizer */,
+				D67260801579311800FE8669 /* mmapping.h */,
+				D67260811579311800FE8669 /* pixel.h */,
+				D67260821579311800FE8669 /* psl-license.rtf */,
+				D67260831579311800FE8669 /* readme.rtf */,
+				D67260841579311800FE8669 /* refptr.h */,
+				D67260851579311800FE8669 /* rpl-license.rtf */,
+				D67260861579311800FE8669 /* typelist.h */,
+				D67260871579311800FE8669 /* valarray.h */,
+				D67260881579311800FE8669 /* vec.h */,
+			);
+			name = macstl;
+			path = /usr/local/include/macstl;
+			sourceTree = "<absolute>";
+		};
+		D672602D1579311800FE8669 /* impl */ = {
+			isa = PBXGroup;
+			children = (
+				D672602E1579311800FE8669 /* allocator.h */,
+				D672602F1579311800FE8669 /* com_ptr.h */,
+				D67260301579311800FE8669 /* com_type.h */,
+				D67260311579311800FE8669 /* com_uuid.h */,
+				D67260321579311800FE8669 /* config.h */,
+				D67260331579311800FE8669 /* core_allocator.h */,
+				D67260341579311800FE8669 /* core_array.h */,
+				D67260351579311800FE8669 /* data.h */,
+				D67260361579311800FE8669 /* doxygen.h */,
+				D67260371579311800FE8669 /* generator.h */,
+				D67260381579311800FE8669 /* mach_allocator.h */,
+				D67260391579311800FE8669 /* mach_vector.h */,
+				D672603A1579311800FE8669 /* meta.h */,
+				D672603B1579311800FE8669 /* valarray_algorithm.h */,
+				D672603C1579311800FE8669 /* valarray_altivec.h */,
+				D672603D1579311800FE8669 /* valarray_base.h */,
+				D672603E1579311800FE8669 /* valarray_function.h */,
+				D672603F1579311800FE8669 /* valarray_gslice.h */,
+				D67260401579311800FE8669 /* valarray_indirect.h */,
+				D67260411579311800FE8669 /* valarray_mask.h */,
+				D67260421579311800FE8669 /* valarray_mmaparray.h */,
+				D67260431579311800FE8669 /* valarray_mmx.h */,
+				D67260441579311800FE8669 /* valarray_refarray.h */,
+				D67260451579311800FE8669 /* valarray_shift.h */,
+				D67260461579311800FE8669 /* valarray_slice.h */,
+				D67260471579311800FE8669 /* valarray_statarray.h */,
+				D67260481579311800FE8669 /* valarray_valarray.h */,
+				D67260491579311800FE8669 /* valarray_vec.h */,
+				D672604A1579311800FE8669 /* vec_altivec.h */,
+				D672604B1579311800FE8669 /* vec_mmx.h */,
+			);
+			name = impl;
+			path = /usr/local/include/macstl/impl;
+			sourceTree = "<absolute>";
+		};
+		D672604D1579311800FE8669 /* macstl */ = {
+			isa = PBXGroup;
+			children = (
+				D672604E1579311800FE8669 /* algorithm.h */,
+				D672604F1579311800FE8669 /* boolean.h */,
+				D67260501579311800FE8669 /* channel.h */,
+				D67260511579311800FE8669 /* com.h */,
+				D67260521579311800FE8669 /* complex.h */,
+				D67260531579311800FE8669 /* core.h */,
+				D67260541579311800FE8669 /* functional.h */,
+				D67260551579311800FE8669 /* impl */,
+				D67260741579311800FE8669 /* mach.h */,
+				D67260751579311800FE8669 /* mmapping.h */,
+				D67260761579311800FE8669 /* pixel.h */,
+				D67260771579311800FE8669 /* psl-license.rtf */,
+				D67260781579311800FE8669 /* refptr.h */,
+				D67260791579311800FE8669 /* rpl-license.rtf */,
+				D672607A1579311800FE8669 /* typelist.h */,
+				D672607B1579311800FE8669 /* valarray.h */,
+				D672607C1579311800FE8669 /* vec.h */,
+			);
+			name = macstl;
+			path = /usr/local/include/macstl/macstl;
+			sourceTree = "<absolute>";
+		};
+		D67260551579311800FE8669 /* impl */ = {
+			isa = PBXGroup;
+			children = (
+				D67260561579311800FE8669 /* allocator.h */,
+				D67260571579311800FE8669 /* com_ptr.h */,
+				D67260581579311800FE8669 /* com_type.h */,
+				D67260591579311800FE8669 /* com_uuid.h */,
+				D672605A1579311800FE8669 /* config.h */,
+				D672605B1579311800FE8669 /* core_allocator.h */,
+				D672605C1579311800FE8669 /* core_array.h */,
+				D672605D1579311800FE8669 /* data.h */,
+				D672605E1579311800FE8669 /* doxygen.h */,
+				D672605F1579311800FE8669 /* generator.h */,
+				D67260601579311800FE8669 /* mach_allocator.h */,
+				D67260611579311800FE8669 /* mach_vector.h */,
+				D67260621579311800FE8669 /* meta.h */,
+				D67260631579311800FE8669 /* valarray_algorithm.h */,
+				D67260641579311800FE8669 /* valarray_altivec.h */,
+				D67260651579311800FE8669 /* valarray_base.h */,
+				D67260661579311800FE8669 /* valarray_function.h */,
+				D67260671579311800FE8669 /* valarray_gslice.h */,
+				D67260681579311800FE8669 /* valarray_indirect.h */,
+				D67260691579311800FE8669 /* valarray_mask.h */,
+				D672606A1579311800FE8669 /* valarray_mmaparray.h */,
+				D672606B1579311800FE8669 /* valarray_mmx.h */,
+				D672606C1579311800FE8669 /* valarray_refarray.h */,
+				D672606D1579311800FE8669 /* valarray_shift.h */,
+				D672606E1579311800FE8669 /* valarray_slice.h */,
+				D672606F1579311800FE8669 /* valarray_statarray.h */,
+				D67260701579311800FE8669 /* valarray_valarray.h */,
+				D67260711579311800FE8669 /* valarray_vec.h */,
+				D67260721579311800FE8669 /* vec_altivec.h */,
+				D67260731579311800FE8669 /* vec_mmx.h */,
+			);
+			name = impl;
+			path = /usr/local/include/macstl/macstl/impl;
+			sourceTree = "<absolute>";
+		};
+		D672607D1579311800FE8669 /* macstlizer */ = {
+			isa = PBXGroup;
+			children = (
+				D672607E1579311800FE8669 /* altivec2macstl.pl */,
+				D672607F1579311800FE8669 /* altivec2mmx.h */,
+			);
+			name = macstlizer;
+			path = /usr/local/include/macstl/macstlizer;
+			sourceTree = "<absolute>";
+		};
 		D67962530E0BA04F00E282EF /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				D67260251579311800FE8669 /* macstl */,
 				D6BECA62146813DB009AF681 /* sse_mathfun.h */,
 				D651278A136ECFA400AF508B /* 64typedefs.h */,
 				D6614AA2128F1C8900ECF74A /* LocalWin.h */,
@@ -1433,6 +1668,16 @@
 		1DEB928A08733DD80010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_AUTO_VECTORIZATION = YES;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
+				GCC_ENABLE_SSE41_EXTENSIONS = YES;
+				GCC_ENABLE_SSE42_EXTENSIONS = YES;
+				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					USE_SSE2,
+					USE_SSE3,
+					USE_SSE4,
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
@@ -1443,6 +1688,16 @@
 		1DEB928B08733DD80010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_AUTO_VECTORIZATION = YES;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
+				GCC_ENABLE_SSE41_EXTENSIONS = YES;
+				GCC_ENABLE_SSE42_EXTENSIONS = YES;
+				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					USE_SSE2,
+					USE_SSE3,
+					USE_SSE4,
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;

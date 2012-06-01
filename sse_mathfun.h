@@ -137,6 +137,7 @@ typedef __m64 v2si;   // vector of 2 int (mmx)
 #	define _MM_SETZERO_SI128()	_mm_setzero_si128()
 #	define _MM_SETZERO_SI64()	_mm_setzero_si64()
 #endif
+#define VELEM(type,a,n)			(((type*)&a)[n])
 
 /* declare some SSE constants -- why can't I figure a better way to do that? */
 #define _PS_CONST(Name, Val)                                            \
@@ -1262,20 +1263,58 @@ static inline double scalCumSumSumSq( double *xa, int n, double *sumSQ )
 	/*!
 		SSE2 'intrinsic' to take the absolute value of a
 	 */
-	static inline v2df _mm_abs_pd( v2df a )
+	static inline v2df _mm_abs_pd( register v2df a )
 	{ const long long am[2] = {~0x8000000000000000LL,~0x8000000000000000LL};
 		return _mm_and_pd(a, *((v2df*)am) );
+	}
+	static inline double _mm_abs_sd( double a )
+	{ const long long am = {~0x8000000000000000LL};
+	  v2si r = _mm_and_si64( *((v2si*)&a), *((v2si*)&am) );
+		return *((double*) &r);
 	}
 #	else
 	// no native support for 64bit ints: don't lose time on that!
 	/*!
 		SSE2 'intrinsic' to take the absolute value of a
 	 */
- 	static inline v2df _mm_abs_pd( v2df a )
+ 	static inline v2df _mm_abs_pd( register v2df a )
  	{ const v4si am = _mm_set_epi32(~0x80000000L,~0x00000000L,~0x80000000L,~0x00000000L);
  		return _mm_and_pd(a, *((v2df*)&am) );
  	}
-#endif
+	static inline double _mm_abs_sd( double a )
+	{ const int am[2] = {~0x80000000L,~0x00000000L};
+	  v2si r = _mm_and_si64( *((v2si*)&a), *((v2si*)am) );
+		return *((double*) &r);
+	}
+#endif // USE_SSE2
+#ifdef USE_SSE4
+	static inline double ssceil(double a)
+	{ v2df va = _mm_ceil_pd( _MM_SETR_PD(a,0) );
+		return *((double*)&va);
+	}
+
+	static inline double ssfloor(double a)
+	{ v2df va = _mm_floor_pd( _MM_SETR_PD(a,0) );
+		return *((double*)&va);
+	}
+	static inline double ssround( double a )
+	{ v2df va = _mm_round_pd( _MM_SETR_PD(a,0), _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC);
+		return *((double*)&va);
+	}
+#else
+	static inline double ssceil(double a)
+	{
+		return ceil(a);
+	}
+	static inline double ssfloor(double a)
+	{
+		return floor(a);
+	}
+	static inline double ssround( double a )
+	{
+		return (a >= 0)? floor( a + 0.5 ) : -ceil( -a - 0.5 );
+	}
+#endif //USE_SSE4
 
 /*!
 	clip a value to a min/max range
