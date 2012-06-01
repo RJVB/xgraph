@@ -732,7 +732,7 @@ int ascanf_SavGolInit ( ASCB_ARGLIST )
 			   */
 			if( ascanf_arguments > 4 && args[4] ){
 			  savgol_flp p;
-				if( args[4]> 0 && (p= floor(args[4]))< MAXINT ){
+				if( args[4]> 0 && (p= ssfloor(args[4]))< MAXINT ){
 					pad= p;
 				}
 				else{
@@ -742,7 +742,7 @@ int ascanf_SavGolInit ( ASCB_ARGLIST )
 			else{
 				pad= 0;
 			}
-			pwr2= (unsigned long) ceil( log(SavGolN+ 2* pad)/log(2) );
+			pwr2= (unsigned long) ssceil( log(SavGolN+ 2* pad)/log(2) );
 			  /* 991021: does it have to be <= ??	*/
 			if( (N= 1 << pwr2)< SavGolN+ 2* pad ){
 				while( N< SavGolN+ 2* pad ){

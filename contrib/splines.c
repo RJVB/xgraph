@@ -172,17 +172,20 @@ void spline( double *x, double *y, int n, double yp1, double ypn, double *y2)
 }
 
 /* RJVB: as spline() above, but now do a piecewise linear interpolation: */
+// 20120601: ii not needed and j cannot be >n ?! (NB: x and y are double[1..n])
 void pwlint_coeffs( double *x, double *y, int n, double *coeff)
 { int i;
 	eliminate_NaNs( x, y, n );
 	for( i= 1; i< n; i++ ){
-	  int ii= i, j= i+1;
-		if( j<= n ){
-			coeff[i]= (y[j] - y[ii]) / (x[j] - x[ii]);
+	  int /*ii= i,*/ j= i+1;
+// 		if( j<= n )
+		{
+// 			coeff[i]= (y[j] - y[ii]) / (x[j] - x[ii]);
+			coeff[i]= (y[j] - y[i]) / (x[j] - x[i]);
 		}
-		else{
-			set_NaN( coeff[i] );
-		}
+// 		else{
+// 			set_NaN( coeff[i] );
+// 		}
 	}
 }
 
