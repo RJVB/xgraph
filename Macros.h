@@ -8,6 +8,10 @@
 #ifndef _MACRO_H
 #define _MACRO_H
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 #ifndef _CPU_H
 #	include "cpu.h"
 #endif
@@ -18,21 +22,23 @@
 
 /* Original SUN macro.h file included for convenience: */
 
-#ifdef NULL
-#	undef NULL
+#ifndef __cplusplus
+#	ifdef NULL
+#		undef NULL
+#	endif
+#	define NULL    ((void*)0)
 #endif
-#define NULL    ((void*)0)
 
 #define reg     register
 
 #define MAXUSHORT	USHRT_MAX
 #ifndef MAXSHORT
-#	define MAXSHORT	SHRT_MAX
+#define MAXSHORT	SHRT_MAX
 #endif
 #ifndef MAXINT
-#	define MAXINT		INT_MAX		/* works with 16 and 32 bit ints	*/
-#	define MAXUINT	UINT_MAX
-#	define MAXLONG	LONG_MAX
+#define MAXINT		INT_MAX		/* works with 16 and 32 bit ints	*/
+#define MAXUINT	UINT_MAX
+#define MAXLONG	LONG_MAX
 #endif
 #define MAXULONG	ULONG_MAX
 
@@ -160,16 +166,16 @@
 #ifdef False
 #	undef False
 #endif
-#ifdef Boolean
-#	undef Boolean
-#endif
+#	ifdef Boolean
+#		undef Boolean
+#	endif
 
-#ifndef _XtIntrinsic_h
-	typedef enum Boolean { False, True} Boolean;
-#else
-#	define True 1
-#	define False 0
-#endif
+#	ifndef _XtIntrinsic_h
+		typedef enum Boolean { False, True} Boolean;
+#	else
+#		define True 1
+#		define False 0
+#	endif
 
 #ifdef MCH_AMIGA
 #	define sleep(x)	Delay(60*x)
@@ -207,9 +213,9 @@
 		static inline void sincos(double a, double *s, double *c)
 		{ const int nn = 1;
 			vvsincos( s, c, &a, &nn );
-		}
+	}
 #		define NATIVE_SINCOS	1
-#	endif
+#endif
 #else
 
 #	define SinCos(a,s,c)	*(s)=Sin((a)),*(c)=Cos((a))
@@ -424,4 +430,7 @@ extern char *EnvDir;						/* ="tmp:"; variables here	*/
 
 #include "pragmas.h"
 
+#ifdef __cplusplus
+	}
+#endif
 #endif

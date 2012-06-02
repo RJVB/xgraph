@@ -29,15 +29,25 @@
 #define COPYRIGHT "\015\013\t\tXGraph: Copyright (c) 1989-93,\015\013\t\tRegents of the University of California\015\013\t\tRJB 1990-1994\015\013\t\tAll rights reserved.\015\013\t"
 static char copyright[] = COPYRIGHT;
 
+#if defined(i386) || defined(__i386__)
+#	define __ARCHITECTURE__	"i386"
+#elif defined(__x86_64__) || defined(x86_64) || defined(_LP64)
+#	define __ARCHITECTURE__	"x86_64"
+#elif defined(__ppc__)
+#	define __ARCHITECTURE__	"ppc"
+#else
+#	define __ARCHITECTURE__	""
+#endif
+
 #ifndef SWITCHES
 #	ifdef DEBUG
-#		define _IDENTIFY(s,i)	static const char *ident= "@(#) '" __FILE__ "'-[" __DATE__ "," __TIME__ "]-(" s ") DEBUG version" i
+#		define _IDENTIFY(s,i)	static const char *ident= "@(#) '" __FILE__ "'-[" __DATE__ "," __TIME__ "]-(" s ") DEBUG version" i __ARCHITECTURE__ " $"
 #	else
-#		define _IDENTIFY(s,i)	static const char *ident= "@(#) '" __FILE__ "'-[" __DATE__ "," __TIME__ "]-(" s ")" i
+#		define _IDENTIFY(s,i)	static const char *ident= "@(#) '" __FILE__ "'-[" __DATE__ "," __TIME__ "]-(" s ")" i __ARCHITECTURE__ " $"
 #	endif
 #else
   /* SWITCHES contains the compiler name and the switches given to the compiler.	*/
-#	define _IDENTIFY(s,i)	static const char *ident= "@(#) '" __FILE__ "'-[" __DATE__ "," __TIME__ "]-(" s ")["SWITCHES"]"
+#	define _IDENTIFY(s,i)	static const char *ident= "@(#) '" __FILE__ "'-[" __DATE__ "," __TIME__ "]-(" s ")["__ARCHITECTURE__" "SWITCHES"]" " $"
 #endif
 
 #define __IDENTIFY(s,i)\
