@@ -206,6 +206,7 @@ setopts() {
 			MARCHUNI64=""
 			ARCHS32="-arch i386"
 			ARCHS64="-arch i386 -arch x86_64"
+			AUTOVECppc=""
 			SDK="-isysroot /Developer/SDKs/MacOSX10.6.sdk -mmacosx-version-min=10.6"
 
 

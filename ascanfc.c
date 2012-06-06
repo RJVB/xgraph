@@ -324,6 +324,9 @@ double Elapsed_Since( Time_Struct *then, int update )	/* return number of second
 		then->HRTot_T= fftw_time_diff_to_sec( &t );
 		if( update || then->do_reset ){
 			then->Tot_tv= t.t2;
+			then->TimeStamp= ES_Now;
+			then->sTimeStamp= sES_Now;
+			then->Tot_TimeStamp= ES_Tot_Now;
 			then->do_reset= False;
 		}
 	}
@@ -341,16 +344,13 @@ double Elapsed_Since( Time_Struct *then, int update )	/* return number of second
 			then->HRTot_T= (ES_tv.tv_sec - then->Tot_tv.tv_sec) + (ES_tv.tv_usec- then->Tot_tv.tv_usec)* 1e-6;
 		if( update || then->do_reset ){
 			then->Tot_tv= ES_tv;
+			then->TimeStamp= ES_Now;
+			then->sTimeStamp= sES_Now;
+			then->Tot_TimeStamp= ES_Tot_Now;
 			then->do_reset= False;
 		}
 	}
 #endif
-	  /* 20020418: also test for then->do_reset: ! */
-	if( update || then->do_reset ){
-		then->TimeStamp= ES_Now;
-		then->sTimeStamp= sES_Now;
-		then->Tot_TimeStamp= ES_Tot_Now;
-	}
 	return( (Used_Time= Elapsed) );
 }
 
@@ -8793,16 +8793,16 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 						for( i = 0 ; i < N ; i += 2 ){
 							if( pragma_unlikely(i == N_1) ){
 								if( pragma_unlikely(a->iarray) ){
-									va = _mm_set_pd1( a->iarray[i] );
+									va = _MM_SET1_PD( (double) a->iarray[i] );
 								}
 								else{
-									va = _mm_set_pd1( a->array[i] );
+									va = _MM_SET1_PD( a->array[i] );
 								}
 								if( pragma_unlikely(b->iarray) ){
-									vb = _mm_set_pd1( b->iarray[i] );
+									vb = _MM_SET1_PD( (double) b->iarray[i] );
 								}
 								else{
-									vb = _mm_set_pd1( b->array[i] );
+									vb = _MM_SET1_PD( b->array[i] );
 								}
 								vlen = _mm_sqrt_pd( _mm_add_pd(
 									_mm_mul_pd(va,va), _mm_mul_pd(vb,vb) ) );
@@ -8869,16 +8869,16 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 							if( pragma_unlikely(i == N_1) ){
 								nn = 1;
 								if( pragma_unlikely(a->iarray) ){
-									va = _mm_set_pd1( a->iarray[i] );
+									va = _MM_SET1_PD( a->iarray[i] );
 								}
 								else{
-									va = _mm_set_pd1( a->array[i] );
+									va = _MM_SET1_PD( a->array[i] );
 								}
 								if( pragma_unlikely(b->iarray) ){
-									vb = _mm_set_pd1( b->iarray[i] );
+									vb = _MM_SET1_PD( b->iarray[i] );
 								}
 								else{
-									vb = _mm_set_pd1( b->array[i] );
+									vb = _MM_SET1_PD( b->array[i] );
 								}
 								vvpow( (double*) &vlen, (const double*) &vb, (const double*) &va, &nn );
 								sum += (*array++ = ((double*)&vlen)[0]);
@@ -8920,10 +8920,10 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 							if( pragma_unlikely(i == N_1) ){
 								nn = 1;
 								if( pragma_unlikely(a->iarray) ){
-									va = _mm_set_pd1( a->iarray[i] );
+									va = _MM_SET1_PD( a->iarray[i] );
 								}
 								else{
-									va = _mm_set_pd1( a->array[i] );
+									va = _MM_SET1_PD( a->array[i] );
 								}
 								vvpow( (double*) &vlen, (const double*) &vb, (const double*) &va, &nn );
 								sum += (*array++ = ((double*)&vlen)[0]);
@@ -10231,16 +10231,16 @@ int ascanf_sincos ( ASCB_ARGLIST )
 				  double *v2 = (double*) &va;
 				  int scale;
 					if( (scale = (args[1] != M_2PI)) ){
-						vbase = _mm_set_pd1((M_2PI/args[1]));
+						vbase = _MM_SET1_PD((M_2PI/args[1]));
 					}
 					for( i = 0 ; i < v->N ; i += 2 ){
 						if( pragma_unlikely(i == N_1) ){
 							nn = 1;
 							if( scale ){
-								va = _mm_mul_pd( _mm_set_pd1( v->array[i] ), vbase );
+								va = _mm_mul_pd( _MM_SET1_PD( v->array[i] ), vbase );
 							}
 							else{
-								va = _mm_set_pd1( v->array[i] );
+								va = _MM_SET1_PD( v->array[i] );
 							}
 						}
 						else{

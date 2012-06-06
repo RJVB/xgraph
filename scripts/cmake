@@ -131,6 +131,13 @@ else
 	USE_MAKE_SUCCESS=0
 fi
 
+if [ "${compiler}" != "" ] ;then
+	echo "Using compiler=${compiler}"
+elif [ "${CC}" != "" ] ;then
+	compiler="${CC}" ; export compiler
+	echo "Setting compiler=${compiler} from CC"
+fi
+
 if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" ] ;then
 # 	if [ -r .$ERRFILE ]
 # 	then

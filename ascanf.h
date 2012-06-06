@@ -295,7 +295,7 @@ struct ascanf_Function{
 	double old_value,
 		  /* accesHandler parameters:	*/
 		aH_par[3];
-	int aH_flags[2];
+	int aH_flags[3];
 	FILE *fp;
 	int fp_is_pipe;
 	char *fp_mode, *label;

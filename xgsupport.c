@@ -6720,7 +6720,7 @@ int RememberedFont( Display *disp, XGFontStruct *font, char **rfont_name)
 	if( !DisplayDirectory( name, sizeof(name) ) ){
 		return( 0);
 	}
-	sprintf( name, "%s/%s", name, FontName( font) );
+	sprintf( &name[strlen(name)-1], "/%s", FontName( font) );
 #if defined(__CYGWIN__)
 	Platform_FileName_Adapt( name );
 #endif

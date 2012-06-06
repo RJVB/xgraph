@@ -206,7 +206,7 @@ select_debug_mode () {
 	if [ "$1" = "-gi" ] ;then
 		DEBUGOPT="-g ${DDEBUG} -finline-functions -fkeep-inline-functions -fno-omit-frame-pointer"
 	elif [ "$1" = "-g" -o "$1" = "-gOpt" -o "$1" = "-gsimOpt" ] ;then
-		DEBUGOPT="-g ${DDEBUG} -fno-inline-functions -fno-omit-frame-pointer"
+		DEBUGOPT="-g ${DDEBUG} ${FNOINLINE} -fno-omit-frame-pointer"
 	elif [ "$1" = "-gOpt3" ] ;then
 		DEBUGOPT="-g ${DDEBUG} -fno-omit-frame-pointer"
 	elif [ "$1" = "-symbolsOnly" ] ;then
@@ -214,7 +214,7 @@ select_debug_mode () {
 	elif [ "$1" = "-symbols" ] ;then
 		DEBUGOPT="-g -fno-omit-frame-pointer"
 	else
-		DEBUGOPT="-g ${DDEBUG} -fno-inline-functions -fno-omit-frame-pointer"
+		DEBUGOPT="-g ${DDEBUG} ${FNOINLINE} -fno-omit-frame-pointer"
 	fi
 	 # debugging: hardcode full sourcefile path.
 	 # supposes we're compiling where the file stands...
@@ -553,9 +553,9 @@ while [ $# != 0 ] ; do
 			INLINING="-finline-functions"
 			;;
 		"-noinline")
-# 			OPTIMOPT="${OPTIMOPT} -fno-inline-functions"
+# 			OPTIMOPT="${OPTIMOPT} ${FNOINLINE}"
 # 			INLINE=""
-			INLINING="-fno-inline-functions"
+			INLINING="${FNOINLINE}"
 			;;
 		-pg|-p)
 # 			${ECHO} "Profiling => no Optim"
@@ -749,7 +749,7 @@ if [ "$compiler" = "" ] ;then
 	fi
 fi
 
-#kludge:
+#kludges:
 case $compiler in
 	clang*|*gcc400*|*gcc-4.0.0*)
 		${ECHO} "${MARCH}" | fgrep -- -mstring >& /dev/null
@@ -762,6 +762,14 @@ case $compiler in
 			${ECHO} "Removing -fno-omit-frame-pointer from gcc options to prevent problems..." 1>&2
 			DEBUGOPT="`echo ${DEBUGOPT} | sed -e 's/-fno-omit-frame-pointer//g'`"
 		fi
+		;;
+esac
+case $compiler in
+	clang*)
+		FNOINLINE=""
+		;;
+	*)
+		FNOINLINE="-fno-inline-functions"
 		;;
 esac
 

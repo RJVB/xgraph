@@ -85,8 +85,8 @@ char **rtn_name;		/* Font name (returned)    */
 {
     int font_count, i, new=0;
     long max_eval= ux11_find_font_start, eval;
-    char **font_list, *chosen_name= NULL;
-    XFontStruct *Font_Data, *font_data, *chosen_data= NULL;
+    char **font_list = NULL, *chosen_name= NULL;
+    XFontStruct *Font_Data = NULL, *font_data, *chosen_data= NULL;
 	extern FILE *StdErr;
 	char *mesg= "";
 
