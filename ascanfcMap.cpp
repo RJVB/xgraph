@@ -789,6 +789,6 @@ void delete_FILEsDescriptor( FILE *fp )
 			fd2fpHTable.resize(0);
 		}
 #endif
-}
+	}
 }
 

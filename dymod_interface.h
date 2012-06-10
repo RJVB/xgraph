@@ -125,6 +125,11 @@ typedef struct DyMod_Interface{
 	int (*p_new_param_now)( char *ExprBuf, double *val, int N);
 	// 20081203:
 	int (*p_Ascanf_AllocMem)( int elems );
+	// 20120610:
+#if !defined(__APPLE__)
+	char * (*p_XGdirname)(char *path);
+	char * (*p_XGbasename)(char *path);
+#endif
 
 	void ***p_gnu_rl_event_hook;
 	int *p_Num_Windows;
@@ -272,6 +277,11 @@ static pragma_unused const char *ident= "@(#) " __FILE__ ": code and definitions
 #define	RedrawSet		(DMBase->p_RedrawSet)
 #define	new_param_now		(DMBase->p_new_param_now)
 #define	Ascanf_AllocMem	(DMBase->p_Ascanf_AllocMem)
+	// 20120610:
+#if !defined(__APPLE__)
+#	define	XGdirname		(DMBase->p_XGdirname)
+#	define	XGbasename	(DMBase->p_XGbasename)
+#endif
 #define	gnu_rl_event_hook	(*(DMBase->p_gnu_rl_event_hook))
 #define	Num_Windows		(*(DMBase->p_Num_Windows))
 

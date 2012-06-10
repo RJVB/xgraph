@@ -236,7 +236,9 @@ StoreSwitch() {
 }
 
 DefaultArgHandler() {
-	ARGS="$ARGS $1"
+	if [ "$1" != -fPIC ] ;then
+		ARGS="$ARGS $1"
+	fi
 	StoreSwitch $1
 	case $1 in
 		-dynamic|-fno-common|-fPIC)

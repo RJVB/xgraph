@@ -1275,6 +1275,10 @@ struct DyMod_Interface *Init_DyMod_Interface( struct DyMod_Interface *base )
 			base->p_RedrawSet= RedrawSet;
 			base->p_new_param_now= new_param_now;
 			base->p_Ascanf_AllocMem= Ascanf_AllocMem;
+#if !defined(__APPLE__)
+			base->p_XGdirname = XGdirname;
+			base->p_XGbasename = XGbasename;
+#endif
 
 			base->p_gnu_rl_event_hook= &gnu_rl_event_hook;
 			base->p_Num_Windows = &Num_Windows;
