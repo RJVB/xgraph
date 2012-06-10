@@ -7,7 +7,7 @@
 # rm NTAGS  ) 2>&1 | tee -a emsg/tags.msg
 
 echo ctags -wtmu "$@" > emsg/tags.msg
-( ctags -wtmu "$@" ;\
+( ctags "$@" ;\
 grep -v 'dymod_interface.h.*#define' tags > NTAGS ;\
 mv NTAGS tags ;\
 wc tags ) 2>&1 | tee -a emsg/tags.msg
