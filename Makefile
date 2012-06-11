@@ -161,7 +161,7 @@ cpu_cycles_per_second.h: cpu_cycles_per_second
 SYSHEADERS = /usr/include/X11/*.h /usr/local/include/*.h
 
 #tags: $(SRC) $(DSRC) $(PYTHONSRC) Python/DM_Python.h Python/PyObjects.h $(SYSHEADERS) xgraph.h DataSet.h xgout.h new_ps.h ascanf.h Macros.h Sinc.h ux11/*.[ch] xtb/*.[ch] Elapsed.h lowlevel_timer.h xgALLOCA.h SS.h XXseg.h XGPen.h dymod.[ch] compiled_ascanf.h NaN.h fdecl.h config.h matherr.[ch] ReadData.h ascanfcMap.cpp arrayvops.[ch]
-tags: $(SRC) $(DYMOD_SOURCES) $(SYSHEADERS) xgraph.h DataSet.h xgout.h new_ps.h ascanf.h Macros.h Sinc.h ux11/*.[ch] xtb/*.[ch] Elapsed.h lowlevel_timer.h xgALLOCA.h SS.h XXseg.h XGPen.h dymod.[ch] compiled_ascanf.h NaN.h fdecl.h config.h matherr.[ch] ReadData.h ascanfcMap.cpp arrayvops.[ch] $(DYMOD_DEPHEADERS)
+tags: $(SRC) $(DYMOD_SOURCES) $(SYSHEADERS) xgraph.h DataSet.h xgout.h new_ps.h ascanf.h Macros.h Sinc.h ux11/*.[ch] xtb/*.[ch] Elapsed.h lowlevel_timer.h xgALLOCA.h SS.h XXseg.h XGPen.h dymod.[ch] compiled_ascanf.h NaN.h fdecl.h config.h matherr.[ch] ReadData.h ascanfcMap.cpp arrayvops.[ch] $(DYMOD_DEPHEADERS) sse_mathfun.h
 	-xgctags $?
 	-touch tags
 

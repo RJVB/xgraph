@@ -190,7 +190,13 @@ char greek_inf[4]= { '\\', 0xa5, '\\', '\0'},
 
 double Entier(double x)
 {
-	return( (x>0)? ssfloor(x) : ssceil(x) );
+	if( x>0 ){
+		x = ssfloor(x);
+	}
+	else{
+		x = ssceil(x);
+	}
+	return x;
 }
 
 /* Searching for possible (shorter printing) fractions does take some time, so some of

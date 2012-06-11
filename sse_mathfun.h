@@ -1313,15 +1313,24 @@ static inline v2df _mm_setr_clipped_pd( double val0, double val1, v2df valMin, v
 #ifdef USE_SSE4
 	static inline double ssceil(double a)
 	{ v2df va = _mm_ceil_pd( _MM_SETR_PD(a,0) );
+#	if !defined(__x86_64__) && !defined(x86_64) && !defined(_LP64)
+		_mm_empty();
+#	endif
 		return *((double*)&va);
 	}
 
 	static inline double ssfloor(double a)
 	{ v2df va = _mm_floor_pd( _MM_SETR_PD(a,0) );
+#	if !defined(__x86_64__) && !defined(x86_64) && !defined(_LP64)
+		_mm_empty();
+#	endif
 		return *((double*)&va);
 	}
 	static inline double ssround( double a )
 	{ v2df va = _mm_round_pd( _MM_SETR_PD(a,0), _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC);
+#	if !defined(__x86_64__) && !defined(x86_64) && !defined(_LP64)
+		_mm_empty();
+#	endif
 		return *((double*)&va);
 	}
 #else

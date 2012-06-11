@@ -44,6 +44,10 @@ AF_prefix_sub	ascanfc.c	/^static char *AF_prefix_sub( ascanf_Function *form)$/;"
 AH_EXPR	ascanf.h	/^#	define AH_EXPR	/;"	d
 AH_EXPR	compiled_ascanf.h	/^#	define AH_EXPR	/;"	d
 AH_EXPR	compiled_ascanf.h	/^#	undef AH_EXPR$/;"	d
+ALIGN16_BEG	sse_mathfun.h	/^# define ALIGN16_BEG /;"	d
+ALIGN16_BEG	sse_mathfun.h	/^# define ALIGN16_BEG$/;"	d
+ALIGN16_END	sse_mathfun.h	/^# define ALIGN16_END /;"	d
+ALIGN16_END	sse_mathfun.h	/^# define ALIGN16_END$/;"	d
 ALIGN_SIZE	alloca.c	/^#	define	ALIGN_SIZE	/;"	d	file:
 ALIVE	/usr/include/X11/Xdmcp.h	/^    FAILED, KEEPALIVE, ALIVE$/;"	e	enum:__anon80
 ALLOCA	xgALLOCA.h	/^#			define ALLOCA(/;"	d
@@ -1505,6 +1509,8 @@ CONTROL_X	xtb/xtb.c	/^#define CONTROL_X	/;"	d	file:
 CONVERTER	/usr/local/include/xmltok.h	/^typedef int (*CONVERTER)(void *userData, const char *p);$/;"	t
 COPYRIGHT	ux11/copyright.h	/^#define COPYRIGHT /;"	d
 COPYRIGHT	ux11/copyright.h	/^IDENTIFY(COPYRIGHT);$/;"	v
+COPY_MM_TO_XMM	sse_mathfun.h	/^#define COPY_MM_TO_XMM(/;"	d
+COPY_XMM_TO_MM	sse_mathfun.h	/^#define COPY_XMM_TO_MM(/;"	d
 CRTIMPORT	/usr/local/include/tcl.h	/^#           define CRTIMPORT /;"	d
 CRTIMPORT	/usr/local/include/tcl.h	/^#           define CRTIMPORT$/;"	d
 CRTIMPORT	/usr/local/include/tcl.h	/^#       define CRTIMPORT /;"	d
@@ -1747,6 +1753,9 @@ Create_ascanfString	Python/DM_Python.h	/^#		define Create_ascanfString	/;"	d
 Create_ascanfString	ascanfc2.c	/^ascanf_Function *Create_ascanfString( char *string, int *level )$/;"	f
 Create_ascanfString_ptr	Python/Python.c	/^	ascanf_Function *(*Create_ascanfString_ptr)( char *string, int *level );$/;"	v
 CricketDump	xgsupport.c	/^int CricketDump( FILE *fp, int width, int height, int orient,$/;"	f
+CumSum	sse_mathfun.h	/^static inline double CumSum( double *xa, int n )$/;"	f
+CumSumSq	sse_mathfun.h	/^static inline double CumSumSq( double *xa, int n )$/;"	f
+CumSumSumSq	sse_mathfun.h	/^static inline double CumSumSumSq( double *xa, int n, double *sumSQ )$/;"	f
 Current	ascanfcMap2.c	/^	SymbolTable *Table, *Current;$/;"	m	struct:SymbolTableList	file:
 CurrentTime	/usr/include/X11/X.h	/^#define CurrentTime /;"	d
 Cursor	/usr/include/X11/X.h	/^typedef XID Cursor;$/;"	t
@@ -9522,14 +9531,20 @@ USE_SSE2	ascanfc2.c	/^#	define USE_SSE2$/;"	d	file:
 USE_SSE2	ascanfc3.c	/^#	define USE_SSE2$/;"	d	file:
 USE_SSE2	ascanfcSS.c	/^#	define USE_SSE2$/;"	d	file:
 USE_SSE2	matherr.c	/^#	define USE_SSE2$/;"	d	file:
+USE_SSE2	sse_mathfun.h	/^#		define USE_SSE2$/;"	d
+USE_SSE2	sse_mathfun.h	/^#	define USE_SSE2$/;"	d
 USE_SSE2	xgraph.c	/^#	define USE_SSE2$/;"	d	file:
 USE_SSE2	xgsupport.c	/^#	define USE_SSE2$/;"	d	file:
+USE_SSE3	sse_mathfun.h	/^#		define USE_SSE3$/;"	d
+USE_SSE3	sse_mathfun.h	/^#	define USE_SSE3$/;"	d
 USE_SSE4	SS.c	/^#	define USE_SSE4$/;"	d	file:
 USE_SSE4	ascanfc.c	/^#	define USE_SSE4$/;"	d	file:
 USE_SSE4	ascanfc2.c	/^#	define USE_SSE4$/;"	d	file:
 USE_SSE4	ascanfc3.c	/^#	define USE_SSE4$/;"	d	file:
 USE_SSE4	ascanfcSS.c	/^#	define USE_SSE4$/;"	d	file:
 USE_SSE4	matherr.c	/^#	define USE_SSE4$/;"	d	file:
+USE_SSE4	sse_mathfun.h	/^#		define USE_SSE4$/;"	d
+USE_SSE4	sse_mathfun.h	/^#	define USE_SSE4$/;"	d
 USE_SSE4	xgraph.c	/^#	define USE_SSE4$/;"	d	file:
 USE_SSE4	xgsupport.c	/^#	define USE_SSE4$/;"	d	file:
 USE_SSE_AUTO	contrib/fourconv3.c	/^#define USE_SSE_AUTO$/;"	d	file:
@@ -9621,6 +9636,7 @@ VCat_XFont	xgraph.c	/^CustomFont *VCat_XFont, *VCat_YFont, *VCat_IFont;$/;"	v
 VCat_Y	xgraph.c	/^ValCategory *VCat_X= NULL, *VCat_Y= NULL, *VCat_I= NULL;$/;"	v
 VCat_YFont	xgraph.c	/^CustomFont *VCat_XFont, *VCat_YFont, *VCat_IFont;$/;"	v
 VDPI	new_ps.h	/^#define VDPI	/;"	d
+VELEM	sse_mathfun.h	/^#define VELEM(/;"	d
 VERBOSE_CONSTANTS_EVALUATION	compiled_ascanf.h	/^#define VERBOSE_CONSTANTS_EVALUATION /;"	d
 VERSION_MAJOR	config.h	/^#define VERSION_MAJOR	/;"	d
 VERSION_MINOR	config.h	/^#define VERSION_MINOR	/;"	d
@@ -14496,6 +14512,16 @@ _MAIN_C	ux11/ux11_open.c	/^#define _MAIN_C$/;"	d	file:
 _MAIN_C	xtb/xtb.c	/^#define _MAIN_C$/;"	d	file:
 _MALLOC_H	/usr/local/include/malloc.h	/^#	define _MALLOC_H$/;"	d
 _MDYscale	xgraph.c	/^	_MDYscale= 1.0;$/;"	v
+_MM_SET1_PD	sse_mathfun.h	/^#	define _MM_SET1_PD(/;"	d
+_MM_SET1_PS	sse_mathfun.h	/^#	define _MM_SET1_PS(/;"	d
+_MM_SETR_PD	sse_mathfun.h	/^#	define _MM_SETR_PD(/;"	d
+_MM_SETR_PS	sse_mathfun.h	/^#	define _MM_SETR_PS(/;"	d
+_MM_SETZERO_PD	sse_mathfun.h	/^#	define _MM_SETZERO_PD(/;"	d
+_MM_SETZERO_PS	sse_mathfun.h	/^#	define _MM_SETZERO_PS(/;"	d
+_MM_SETZERO_SI128	sse_mathfun.h	/^#	define _MM_SETZERO_SI128(/;"	d
+_MM_SETZERO_SI64	sse_mathfun.h	/^#	define _MM_SETZERO_SI64(/;"	d
+_MM_SET_PD	sse_mathfun.h	/^#	define _MM_SET_PD(/;"	d
+_MM_SET_PS	sse_mathfun.h	/^#	define _MM_SET_PS(/;"	d
 _MPFR_H_HAVE_FILE	/usr/local/include/mpfr.h	/^#define _MPFR_H_HAVE_FILE /;"	d
 _MXscale	xgraph.c	/^	_MXscale= 1.0,$/;"	v
 _MYscale	xgraph.c	/^	_MYscale= 1.0,$/;"	v
@@ -14509,6 +14535,9 @@ _ObjectRec	/usr/include/X11/ObjectP.h	/^typedef struct _ObjectRec {$/;"	s
 _OldXSizeHints	/usr/include/X11/ShellP.h	/^	struct _OldXSizeHints {	\/* pre-R4 Xlib structure *\/$/;"	s	struct:__anon48
 _OverrideShellClassRec	/usr/include/X11/ShellP.h	/^typedef struct _OverrideShellClassRec {$/;"	s
 _PDI_h_	/usr/include/X11/PassivGraI.h	/^#define _PDI_h_$/;"	d
+_PD_CONST	sse_mathfun.h	/^#define _PD_CONST(/;"	d
+_PD_CONST_TYPE	sse_mathfun.h	/^#define _PD_CONST_TYPE(/;"	d
+_PI32_CONST	sse_mathfun.h	/^#define _PI32_CONST(/;"	d
 _POINTBLOCK	/usr/include/X11/Xregion.h	/^typedef struct _POINTBLOCK {$/;"	s
 _POSIX_SOURCE	/usr/include/X11/InitialI.h	/^#define _POSIX_SOURCE$/;"	d
 _POSIX_SOURCE	/usr/include/X11/InitialI.h	/^#undef _POSIX_SOURCE$/;"	d
@@ -14520,6 +14549,8 @@ _POSIX_SOURCE	/usr/include/X11/Xos_r.h	/^#   define _POSIX_SOURCE$/;"	d
 _POSIX_SOURCE	/usr/include/X11/Xos_r.h	/^#   undef _POSIX_SOURCE$/;"	d
 _POSIX_THREAD_SAFE_FUNCTIONS	/usr/include/X11/Xos_r.h	/^# undef _POSIX_THREAD_SAFE_FUNCTIONS$/;"	d
 _PROTO	/usr/local/include/mpfr.h	/^#define _PROTO(/;"	d
+_PS_CONST	sse_mathfun.h	/^#define _PS_CONST(/;"	d
+_PS_CONST_TYPE	sse_mathfun.h	/^#define _PS_CONST_TYPE(/;"	d
 _PYTHONINTERFACE_H	Python/PythonInterface.h	/^#define _PYTHONINTERFACE_H$/;"	d
 _PYTHON_H	Python/DM_Python.h	/^#define _PYTHON_H$/;"	d
 _ParamInfoRec	/usr/include/X11/SelectionI.h	/^typedef struct _ParamInfoRec {$/;"	s
@@ -14549,6 +14580,7 @@ _SCREENYDIM	xgX.c	/^static double _SCREENYDIM(LocalWin *ws, double userY)$/;"	f	
 _SGI_MP_SOURCE	/usr/include/X11/Xlibint.h	/^#define _SGI_MP_SOURCE /;"	d
 _SINC_H	Sinc.h	/^#	define _SINC_H$/;"	d
 _SIZEOF	/usr/include/X11/Xmd.h	/^#define _SIZEOF(/;"	d
+_SSE_MATHFUN_H	sse_mathfun.h	/^#define _SSE_MATHFUN_H$/;"	d
 _SS_Median	SS.c	/^static double _SS_Median( SimpleStats *SS, SS_Sample *samples )$/;"	f	file:
 _SS_sprint	SS.c	/^char *_SS_sprint( char *buffer, int len, char *format, char *sep, double min_err, SimpleStats *a)$/;"	f
 _STDARG_H	ux11/ux11_internal.h	/^#		define _STDARG_H$/;"	d
@@ -15601,6 +15633,15 @@ _lopX	LocalWin.h	/^    double _loX, _lopX, _hinY, _loY, _lopY, _hiX, _hiY;	\/* L
 _lopY	LocalWin.h	/^    double _loX, _lopX, _hinY, _loY, _lopY, _hiX, _hiY;	\/* Local bounding box of window         *\/$/;"	m	struct:local_boundaries
 _maxvalue	xtb/xtb.c	/^	double _minvalue, _maxvalue;$/;"	m	struct:sr_info	file:
 _minvalue	xtb/xtb.c	/^	double _minvalue, _maxvalue;$/;"	m	struct:sr_info	file:
+_mm_abs_pd	sse_mathfun.h	/^	static inline v2df _mm_abs_pd( register v2df a )$/;"	f
+_mm_abs_pd	sse_mathfun.h	/^ 	static inline v2df _mm_abs_pd( register v2df a )$/;"	f
+_mm_abs_sd	sse_mathfun.h	/^	static inline double _mm_abs_sd( double a )$/;"	f
+_mm_clip_pd	sse_mathfun.h	/^static inline v2df _mm_clip_pd( v2df val, v2df valMin, v2df valMax )$/;"	f
+_mm_cmpeq_ps	sse_mathfun.h	/^#define _mm_cmpeq_ps /;"	d
+_mm_cmpgt_ps	sse_mathfun.h	/^#define _mm_cmpgt_ps /;"	d
+_mm_cmplt_ps	sse_mathfun.h	/^#define _mm_cmplt_ps /;"	d
+_mm_movehl_ps	sse_mathfun.h	/^#define _mm_movehl_ps /;"	d
+_mm_setr_clipped_pd	sse_mathfun.h	/^static inline v2df _mm_setr_clipped_pd( double val0, double val1, v2df valMin, v2df valMax )$/;"	f
 _mp_a	/usr/local/include/gmp.h	/^  mpz_t _mp_a;			\/* Multiplier. *\/$/;"	m	struct:__anon388
 _mp_alg	/usr/local/include/gmp.h	/^  gmp_randalg_t _mp_alg;	\/* Algorithm used.  *\/$/;"	m	struct:__anon389
 _mp_algdata	/usr/local/include/gmp.h	/^  } _mp_algdata;$/;"	m	struct:__anon389	typeref:union:__anon389::__anon390
@@ -17458,6 +17499,7 @@ core_class	/usr/include/X11/ShellP.h	/^  	CoreClassPart      core_class;$/;"	m	s
 core_class	/usr/include/X11/VendorP.h	/^  	CoreClassPart      core_class;$/;"	m	struct:_VendorShellClassRec
 correct_constants_args_list	ascanfc.c	/^void correct_constants_args_list( Compiled_Form *form, int *level, char *file, int line )$/;"	f
 cos_dom	matherr.c	/^	gon_mod= 0, pow_x_inf= 0, pow_x__inf= 0, sin_dom= 0, cos_dom= 0, fmod_dom= 0;$/;"	v	file:
+cos_ps	sse_mathfun.h	/^static inline v4sf cos_ps(v4sf x)$/;"	f
 cosdeg	fdecl.h	/^#define cosdeg(/;"	d
 count	/usr/include/X11/CallbackI.h	/^    unsigned short count;$/;"	m	struct:internalCallbackRec
 count	/usr/include/X11/InitialI.h	/^    short count;			\/* num of assigned entries in list *\/$/;"	m	struct:_XtAppStruct
@@ -18680,6 +18722,7 @@ execvp	/usr/include/X11/Xw32defs.h	/^#define execvp	/;"	d
 execvpe	/usr/include/X11/Xw32defs.h	/^#define execvpe /;"	d
 exit_flag	/usr/include/X11/InitialI.h	/^    Boolean exit_flag;$/;"	m	struct:_XtAppStruct
 exp_over	matherr.c	/^	exp_over= 0, pow_neg_over= 0, pow_pos_over= 0, pow_0_over= 0,$/;"	v	file:
+exp_ps	sse_mathfun.h	/^static inline v4sf exp_ps(v4sf x)$/;"	f
 exp_timestamp	/usr/local/include/gpgme.h	/^  unsigned long exp_timestamp;$/;"	m	struct:_gpgme_signature
 exp_under	matherr.c	/^	exp_under= 0, pow_under= 0, log_= 0, log_0= 0,$/;"	v	file:
 expired	/usr/local/include/gpgme.h	/^  unsigned int expired : 1;$/;"	m	struct:_gpgme_key
@@ -20208,6 +20251,7 @@ initsplines	contrib/splines.c	/^void initsplines()$/;"	f
 initstats	stats.c	/^void initstats()$/;"	f
 inline	/usr/local/include/internal.h	/^#define inline /;"	d
 inline	/usr/local/include/internal.h	/^#define inline$/;"	d
+inline	sse_mathfun.h	/^# define inline	/;"	d
 inlist	/usr/local/include/f2c.h	/^} inlist;$/;"	t	typeref:struct:__anon377
 inname	/usr/local/include/f2c.h	/^	char	*inname;$/;"	m	struct:__anon377
 innamed	/usr/local/include/f2c.h	/^	ftnint	*innamed;$/;"	m	struct:__anon377
@@ -20811,6 +20855,7 @@ logYFlag	xgraph.c	/^int logYFlag;			\/* Logarithmic Y axis      *\/$/;"	v
 logYFlag2	dialog_s.c	/^int logXFlag2, logYFlag2;$/;"	v
 log_	matherr.c	/^	exp_under= 0, pow_under= 0, log_= 0, log_0= 0,$/;"	v	file:
 log_0	matherr.c	/^	exp_under= 0, pow_under= 0, log_= 0, log_0= 0,$/;"	v	file:
+log_ps	sse_mathfun.h	/^static inline v4sf log_ps(v4sf x)$/;"	f
 log_zero_sym_x	LocalWin.h	/^	char log_zero_sym_x[MAXBUFSIZE], log_zero_sym_y[MAXBUFSIZE];	\/* symbol to indicate log_zero	*\/$/;"	m	struct:LocalWin
 log_zero_sym_x	xgraph.c	/^char log_zero_sym_x[MAXBUFSIZE+1], log_zero_sym_y[MAXBUFSIZE+1];	\/* symbol to indicate log_zero	*\/$/;"	v
 log_zero_sym_y	LocalWin.h	/^	char log_zero_sym_x[MAXBUFSIZE], log_zero_sym_y[MAXBUFSIZE];	\/* symbol to indicate log_zero	*\/$/;"	m	struct:LocalWin
@@ -21179,6 +21224,15 @@ minvalue	xtb/xtb.c	/^	double minvalue, maxvalue, delta;$/;"	m	struct:sr_info	fil
 mips	/usr/local/include/f2c.h	/^#undef mips$/;"	d
 mkdir	/usr/include/X11/Xw32defs.h	/^#define mkdir	/;"	d
 mktemp	/usr/include/X11/Xw32defs.h	/^#define mktemp	/;"	d
+mm	sse_mathfun.h	/^  __m64 mm[2];$/;"	m	union:xmm_mm_union
+mm_abs_pd	sse_mathfun.h	/^static inline v2df *mm_abs_pd( v2df *val, v2df *a )$/;"	f
+mm_add_pd	sse_mathfun.h	/^static inline v2df *mm_add_pd( v2df *c, v2df *a, v2df *b )$/;"	f
+mm_clip_pd	sse_mathfun.h	/^static inline v2df *mm_clip_pd( v2df *val, v2df *valMin,  v2df *valMax )$/;"	f
+mm_div_pd	sse_mathfun.h	/^static inline v2df *mm_div_pd( v2df *c, v2df *a, v2df *b )$/;"	f
+mm_mul_pd	sse_mathfun.h	/^static inline v2df *mm_mul_pd( v2df *c, v2df *a, v2df *b )$/;"	f
+mm_round_pd	sse_mathfun.h	/^static inline v2df *mm_round_pd( v2df *val, v2df *a )$/;"	f
+mm_setr_clipped_pd	sse_mathfun.h	/^static inline v2df *mm_setr_clipped_pd( v2df *val, double val0, double val1, v2df *valMin,  v2df *valMax )$/;"	f
+mm_sub_pd	sse_mathfun.h	/^static inline v2df *mm_sub_pd( v2df *c, v2df *a, v2df *b )$/;"	f
 mmx_bitdepth_threshold	/usr/local/include/png.h	/^   png_byte     mmx_bitdepth_threshold;$/;"	m	struct:png_struct_def
 mmx_rowbytes_threshold	/usr/local/include/png.h	/^   png_uint_32  mmx_rowbytes_threshold;$/;"	m	struct:png_struct_def
 mng_features_permitted	/usr/local/include/png.h	/^   png_byte mng_features_permitted;$/;"	m	struct:png_struct_def
@@ -21810,6 +21864,10 @@ multiline_warning	/usr/local/include/gettext-po.h	/^  void (*multiline_warning) 
 mumble	/usr/include/X11/ConstrainP.h	/^    XtPointer   mumble;		\/* No new fields, keep C compiler happy *\/$/;"	m	struct:_ConstraintPart
 mwidth	/usr/include/X11/Xlib.h	/^	int mwidth, mheight;	\/* width and height of  in millimeters *\/$/;"	m	struct:__anon87
 myLog10	xgraph.c	/^double myLog10(double x)$/;"	f
+my_cmpeq_ps	sse_mathfun.h	/^inline __m128 my_cmpeq_ps(__m128 a, const __m128 b) {$/;"	f
+my_cmpgt_ps	sse_mathfun.h	/^inline __m128 my_cmpgt_ps(__m128 a, const __m128 b) {$/;"	f
+my_cmplt_ps	sse_mathfun.h	/^inline __m128 my_cmplt_ps(__m128 a, const __m128 b) {$/;"	f
+my_movehl_ps	sse_mathfun.h	/^inline __m128 my_movehl_ps(__m128 a, const __m128 b) {$/;"	f
 n	/usr/local/include/fftw3.h	/^     int n;                     \/* dimension size *\/$/;"	m	struct:fftw_iodim_do_not_use_me
 nChars	/usr/include/X11/Xproto.h	/^    BYTE nChars;$/;"	m	struct:__anon314
 nDepths	/usr/include/X11/Xproto.h	/^    CARD8          nDepths;  \/* number of xDepth structures following *\/$/;"	m	struct:__anon190
@@ -23955,6 +24013,9 @@ savgol_flp	contrib/fourconv3.c	/^	typedef float savgol_flp;$/;"	t	file:
 saw_Adobe_marker	/usr/local/include/jpeglib.h	/^  boolean saw_Adobe_marker;	\/* TRUE iff an Adobe APP14 marker was found *\/$/;"	m	struct:jpeg_decompress_struct
 saw_JFIF_marker	/usr/local/include/jpeglib.h	/^  boolean saw_JFIF_marker;	\/* TRUE iff a JFIF APP0 marker was found *\/$/;"	m	struct:jpeg_decompress_struct
 sbuf	/usr/include/X11/Xos_r.h	/^    char                sbuf[X_LINE_MAX];$/;"	m	struct:__anon167
+scalCumSum	sse_mathfun.h	/^static inline double scalCumSum( double *xa, int n )$/;"	f
+scalCumSumSq	sse_mathfun.h	/^static inline double scalCumSumSq( double *xa, int n )$/;"	f
+scalCumSumSumSq	sse_mathfun.h	/^static inline double scalCumSumSumSq( double *xa, int n, double *sumSQ )$/;"	f
 scal_pixel_height	/usr/local/include/png.h	/^   double scal_pixel_height;   \/* height of one pixel *\/$/;"	m	struct:png_info_struct
 scal_pixel_width	/usr/local/include/png.h	/^   double scal_pixel_width;    \/* width of one pixel *\/$/;"	m	struct:png_info_struct
 scal_s_height	/usr/local/include/png.h	/^   png_charp scal_s_height;    \/* string containing width *\/$/;"	m	struct:png_info_struct
@@ -24370,11 +24431,14 @@ simple	/usr/include/X11/TranslateI.h	/^    TMSimpleBindDataRec		simple;$/;"	m	un
 simple	/usr/include/X11/TranslateI.h	/^    TMSimpleStateTreeRec	simple;$/;"	m	union:_TMStateTreeRec
 simple_array_op	ascanfc.c	/^int simple_array_op( double *args, int argc, int op, double *result, int *level, Compiled_Form *form )$/;"	f
 sin_dom	matherr.c	/^	gon_mod= 0, pow_x_inf= 0, pow_x__inf= 0, sin_dom= 0, cos_dom= 0, fmod_dom= 0;$/;"	v	file:
+sin_ps	sse_mathfun.h	/^static inline v4sf sin_ps(v4sf x)$/;"	f
 sinc	Sinc.h	/^	} sinc;$/;"	m	struct:Sinc	typeref:union:Sinc::file_or_string
 sincos	Macros.h	/^		static inline void sincos(double a, double *s, double *c)$/;"	f
 sincos	Macros.h	/^#	define sincos(/;"	d
 sincos	fdecl.h	/^		static inline void sincos(double a, double *s, double *c)$/;"	f
 sincos	fdecl.h	/^#	define sincos(/;"	d
+sincos_pd	sse_mathfun.h	/^static inline void sincos_pd(v2df x, v2df *s, v2df *c)$/;"	f
+sincos_ps	sse_mathfun.h	/^static inline void sincos_ps(v4sf x, v4sf *s, v4sf *c)$/;"	f
 sindeg	fdecl.h	/^#define sindeg(/;"	d
 sink	/usr/local/include/gd.h	/^    int (*sink) (void *context, const char *buffer, int len);$/;"	m	struct:__anon383
 size	/usr/include/X11/Intrinsic.h	/^    Cardinal	    size;$/;"	m	struct:__anon15
@@ -24518,10 +24582,13 @@ srandom	/usr/include/X11/Xw32defs.h	/^#define srandom /;"	d
 src	/usr/local/include/jpeglib.h	/^  struct jpeg_source_mgr * src;$/;"	m	struct:jpeg_decompress_struct	typeref:struct:jpeg_decompress_struct::jpeg_source_mgr
 src	/usr/local/include/tk.h	/^    char *src;			\/* Value to be used in setting dst; usage$/;"	m	struct:__anon438
 srgb_intent	/usr/local/include/png.h	/^   png_byte srgb_intent; \/* sRGB rendering intent [0, 1, 2, or 3] *\/$/;"	m	struct:png_info_struct
+ssceil	sse_mathfun.h	/^	static inline double ssceil(double a)$/;"	f
+ssfloor	sse_mathfun.h	/^	static inline double ssfloor(double a)$/;"	f
 ssht_frame	LocalWin.h	/^		settings_frame, info_frame, label_frame, ssht_frame, label_IFrame, YAv_Sort_frame;$/;"	m	struct:LocalWin
 ssht_func	xgsupport.c	/^xtb_hret ssht_func( Window win, int bval, xtb_data info)$/;"	f
 ssize_t	/usr/local/include/gpgme.h	/^  typedef long ssize_t;$/;"	t
 ssize_t	/usr/local/include/gpgme.h	/^typedef long ssize_t;$/;"	t
+ssround	sse_mathfun.h	/^	static inline double ssround( double a )$/;"	f
 st_count	ux11/st.h	/^#define st_count(/;"	d
 st_foreach_item	ux11/st.h	/^#define st_foreach_item(/;"	d
 st_generator	ux11/st.h	/^struct st_generator {$/;"	s
@@ -26442,6 +26509,11 @@ ux11_vis_class	ux11/ux11.h	/^#define ux11_vis_class	/;"	d
 ux11_vis_class	ux11/ux11s_vismap.c	/^#undef ux11_vis_class$/;"	d	file:
 ux11_vis_class	ux11/ux11s_vismap.c	/^static int ux11_min_depth= UX11_MIN_DEPTH, ux11_vis_class= -1, ux11_useDBE= 0;$/;"	v	file:
 ux11_win_props	ux11/ux11w_props.c	/^void ux11_win_props( VA_DCL  )$/;"	f
+v2df	sse_mathfun.h	/^typedef __m128d v2df; \/\/ vector of 2 double (sse2)$/;"	t
+v2si	sse_mathfun.h	/^typedef __m64 v2si;   \/\/ vector of 2 int (mmx)$/;"	t
+v4sf	sse_mathfun.h	/^typedef __m128 v4sf;  \/\/ vector of 4 float (sse1)$/;"	t
+v4si	sse_mathfun.h	/^	typedef __m128i v4si; \/\/ vector of 4 int (sse2)$/;"	t
+v4si	sse_mathfun.h	/^	typedef int	v4si __attribute__ ((__vector_size__ (16), __may_alias__));$/;"	t
 v_prime	/usr/include/X11/Xcms.h	/^    XcmsFloat v_prime;		\/* 0.0 - 1.0 *\/$/;"	m	struct:__anon72
 v_samp_factor	/usr/local/include/jpeglib.h	/^  int v_samp_factor;		\/* vertical sampling factor (1..4) *\/$/;"	m	struct:__anon409
 v_star	/usr/include/X11/Xcms.h	/^    XcmsFloat v_star;$/;"	m	struct:__anon75
@@ -27131,6 +27203,9 @@ xmalloc	/usr/include/X11/Xthreads.h	/^#define xmalloc /;"	d
 xmap	/usr/include/X11/Xlib.h	/^	XMapEvent xmap;$/;"	m	union:_XEvent
 xmapping	/usr/include/X11/Xlib.h	/^	XMappingEvent xmapping;$/;"	m	union:_XEvent
 xmaprequest	/usr/include/X11/Xlib.h	/^	XMapRequestEvent xmaprequest;$/;"	m	union:_XEvent
+xmm	sse_mathfun.h	/^  __m128 xmm;$/;"	m	union:xmm_mm_union
+xmm_mm_union	sse_mathfun.h	/^typedef union xmm_mm_union {$/;"	u
+xmm_mm_union	sse_mathfun.h	/^} xmm_mm_union;$/;"	t	typeref:union:xmm_mm_union
 xmotion	/usr/include/X11/Xlib.h	/^	XMotionEvent xmotion;$/;"	m	union:_XEvent
 xmutex_clear	/usr/include/X11/Xthreads.h	/^#define xmutex_clear(/;"	d
 xmutex_free	/usr/include/X11/Xthreads.h	/^#define xmutex_free(/;"	d
