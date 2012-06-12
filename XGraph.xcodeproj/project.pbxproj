@@ -775,6 +775,7 @@
 		D6EBFCCE11D0ADF0009F11C0 /* Python_headers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Python_headers.h; path = Python/Python_headers.h; sourceTree = "<group>"; };
 		D6F1D3FC0F417F0F00719A29 /* CSVio.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = CSVio.c; path = Import/CSVio.c; sourceTree = "<group>"; };
 		D6F1D4CD0F41BD2300719A29 /* xgraph.1 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.man; name = xgraph.1; path = man/xgraph.1; sourceTree = "<group>"; };
+		D6F3396915878AA300EE650A /* lowlevel_timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lowlevel_timer.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -854,6 +855,7 @@
 				D6B36AE50E1D371600556945 /* scripts */,
 				D6BECAF314683219009AF681 /* arrayvops.h */,
 				D6BECAF414683219009AF681 /* arrayvops.cpp */,
+				D6F3396915878AA300EE650A /* lowlevel_timer.c */,
 			);
 			name = Source;
 			sourceTree = "<group>";

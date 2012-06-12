@@ -62,10 +62,7 @@ extern double Mach_Absolute_Time_Factor;
 
 #elif defined(USE_PERFORMANCECOUNTER)
 
-// #include <windows.h>
-
-extern void QueryPerformanceCounter(long long *);
-extern int QueryPerformanceFrequency(long long *);
+//extern void QueryPerformanceCounter(long long *);
 
 typedef long long fftw_time;
 typedef struct fftw_timers{
@@ -82,12 +79,14 @@ static __inline__ fftw_time read_tsc()
      return ret;
 }
 
-static __inline__ fftw_time fftw_get_time(void *t)
-{ long long tt;
-	QueryPerformanceCounter( &tt );
-// 	return *((fftw_time*)t) = tt.QuadPart;
-	return *((fftw_time*)t) = tt;
-}
+//static __inline__ fftw_time fftw_get_time(void *t)
+//{ long long tt;
+//	QueryPerformanceCounter( &tt );
+//// 	return *((fftw_time*)t) = tt.QuadPart;
+//	return *((fftw_time*)t) = tt;
+//}
+
+extern fftw_time fftw_get_time(void *t);
 
 #	define fftw_time_diff(diff) (((diff)->t2) - ((diff)->t1))
 #	define fftw_time_to_sec(t) (((double) (*t))*PerformanceCounter_Calibrator)

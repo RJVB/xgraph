@@ -17,6 +17,9 @@ extern double ArrayCumAddScalar(double *xa, double b, double *sums, int N);
 extern double ArrayCumAddArray(double *xa, double *xb, double *sums, int N);
 extern void _convolve( double *Data, size_t NN, double *Mask, double *Output, int Start, int End, int Nm );
 
+#define USE_SSE_AUTO
+#include "sse_mathfun.h"
+
 // moved to sse_mathfun.h
 //#ifdef USE_SSE4
 //	static inline double ssceil(double a)

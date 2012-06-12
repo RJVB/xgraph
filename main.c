@@ -268,9 +268,9 @@ extern int Check_Option( int (*compare_fun)(), char *arg, char *check, int len),
 /* #if defined(__GNUC__) && (defined(__MACH__) || defined(__APPLE_CC__)) && FFTW_CYCLES_PER_SEC == 1	*/
 #if (defined(__MACH__) || defined(__APPLE_CC__)) && defined(MACH_ABSOLUTE_TIME_FACTOR)
 #include <mach/mach_time.h>
-double Mach_Absolute_Time_Factor;
+	double Mach_Absolute_Time_Factor;
 #elif defined(USE_PERFORMANCECOUNTER)
-double PerformanceCounter_Calibrator;
+	void init_PerformanceCounter();
 #endif
 
 int XGmain( int argc, char *argv[] )
@@ -390,15 +390,7 @@ int XGmain( int argc, char *argv[] )
 		}
 	}
 #elif defined(USE_PERFORMANCECOUNTER)
-	{ long long lpFrequency;
-		if( !QueryPerformanceFrequency(&lpFrequency) ){
-			PerformanceCounter_Calibrator = 0;
-		}
-		else{
-// 			PerformanceCounter_Calibrator = 1.0 / ((double) lpFrequency.QuadPart);
-			PerformanceCounter_Calibrator = 1.0 / ((double) lpFrequency);
-		}
-	}
+	init_PerformanceCounter();
 #endif
 
 	return(0);

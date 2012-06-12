@@ -65,7 +65,7 @@ case ${USER}@${HOST} in
 				;;
 			CYGWIN*|Cygwin*|cygwin*)
 				echo "#define	FFTW_CYCLES_PER_SEC	`cat /proc/cpuinfo | fgrep -i "cpu MHz" | line | sed -e 's/.*: \(.*\)/\1e06/g'`"
-#				echo "#define USE_PERFORMANCECOUNTER 1"
+				echo "#define USE_PERFORMANCECOUNTER 1"
 				;;
 			*)
 				echo "#undef FFTW_CYCLES_PER_SEC"

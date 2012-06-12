@@ -183,7 +183,7 @@ setopts() {
 			if [ "$compil" = "" ] ;then
 				compil="${DEFAULT_CC}"
 			fi
-			setautovec "`uname -m`" "-msse4 -mssse3 -mfpmath=sse"
+			setautovec "`uname -m`" "-mssse3 -mfpmath=sse"
 			;;
 
 		x86)

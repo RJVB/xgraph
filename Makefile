@@ -59,8 +59,8 @@ PREFSDIR:=$(shell ./machdepPrefsDir)
 # Compile time options above now defined in config.h!
 
 ASCANFSRC = ascanfc-table.c ascanfc3.c ascanfcSS.c ascanfc.c ascanfc2.c ascanfcMap2.c vscanf/asscanf.c
-SRC	= main.c xgX.c hard_devices.c dialog.c dialog_s.c new_ps.c matherr.c SS.c dymod.c xgPen.c ReadData.c xgInput.c xgsupport.c LegendsNLabels.c xgraph.c alloca.c $(ASCANFSRC) fascanf.c regex.c # hpgl.c idraw.c params.c 
-LIBOBJ = xgX.o hard_devices.o dialog.o dialog_s.o new_ps.o matherr.o SS.o dymod.o xgPen.o alloca.o $(ASCANFSRC:.c=.o) arrayvops.o ascanfcMap.o fascanf.o ReadData.o xgInput.o LegendsNLabels.o regex.o # hpgl.o idraw.o params.o 
+SRC	= main.c xgX.c hard_devices.c dialog.c dialog_s.c new_ps.c matherr.c SS.c dymod.c xgPen.c ReadData.c xgInput.c xgsupport.c LegendsNLabels.c xgraph.c alloca.c $(ASCANFSRC) fascanf.c regex.c lowlevel_timer.c # hpgl.c idraw.c params.c 
+LIBOBJ = xgX.o hard_devices.o dialog.o dialog_s.o new_ps.o matherr.o SS.o dymod.o xgPen.o alloca.o $(ASCANFSRC:.c=.o) arrayvops.o ascanfcMap.o fascanf.o ReadData.o xgInput.o LegendsNLabels.o regex.o lowlevel_timer.o # hpgl.o idraw.o params.o 
 OBJS	  = $(LIBOBJ) xgsupport.o xgraph.o # hpgl.o idraw.o params.o
 DSRC = constants.c utils.c stats.c strings.c
 
