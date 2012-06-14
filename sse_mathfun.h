@@ -1288,6 +1288,7 @@ static inline double scalCumSumSumSq( double *xa, int n, double *sumSQ )
 	  const v4si am1 = _mm_set_epi32(~0x80000000L,~0x00000000L,~0x80000000L,~0x00000000L);
 	  union { double d; v2si r; } ret;
 		ret.r = _mm_and_si64( *((v2si*)&a), *((v2si*)&am1) );
+		_mm_empty();
 		a = ret.d;
 		return a;
 	}

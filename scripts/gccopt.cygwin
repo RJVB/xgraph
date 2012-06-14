@@ -7,6 +7,13 @@
 # GCCOPT_NOINC: don't specify the include file path (-I options). Needed to prevent clashes
 #	with installed headerfiles when compiling updates (e.g. of libraries).
 
+if [ "$OSTYPE" != "cygwin" -o "$CMAKE" = "" ] ;then
+# this would be the case if we get launched from outside a cygwin command shell, e.g. through a
+# cygwin executable calling a shell script like us.
+	PATH="`echo 'echo $PATH' | env DISPLAY=:0.0 REMOTEHOST=localhost HNAM=localhost HOST=localhost csh -t`" ; export PATH
+	GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE
+fi
+
 lbasename () {
 #	echo "basename $@" 1>&2
 	if [ "$*" != "" ] ;then
