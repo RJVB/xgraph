@@ -6056,7 +6056,7 @@ DyModTypes initDyMod( INIT_DYMOD_ARGUMENTS )
 		fprintf( StdErr, "." ); fflush( StdErr );
 
 #ifdef IS_PY3K
-		{ PyObject *Py_stdin= PyFile_FromFile(stdin, "stdin", "w", Python_No_fclosing );
+		{ PyObject *Py_stdin= PyFile_FromFile(stdin, "stdin", "r", Python_No_fclosing );
 			if( Py_stdin ){
 				PyModule_AddObject( SysModule, "stdin", Py_stdin );
 			}
