@@ -6196,12 +6196,12 @@ int closeDyMod( DyModLists *target, int force )
 			if( pythonActive ){
 				fprintf( StdErr, "\n### Sending SIGINT to running Python\n" );
 				PyErr_SetInterrupt();
-#ifdef IS_PY3K
-				PyRun_SimpleString( "try:\n\tprint( '### Python receiving SIGINT', file=sys.stderr )\nexcept:\n\tpass\n" );
-#else
-				PyRun_SimpleString( "try:\n\tprint >>sys.stderr, '### Python receiving SIGINT\nexcept:\n\tpass\n'" );
-#endif
-// 				PyErr_CheckSignals();
+// #ifdef IS_PY3K
+// 				PyRun_SimpleString( "try:\n\tprint( '### Python receiving SIGINT', file=sys.stderr )\nexcept:\n\tpass\n" );
+// #else
+// 				PyRun_SimpleString( "try:\n\tprint >>sys.stderr, '### Python receiving SIGINT\nexcept:\n\tpass\n'" );
+// #endif
+ 				PyErr_CheckSignals();
 				PyErr_Clear();
 			}
 

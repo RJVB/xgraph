@@ -74,6 +74,15 @@ PyObject *PyAscanfObject_FromAscanfFunction( ascanf_Function *af )
 			af->PyAOself.selfaf = &(self->af);
 			memset( self->opts, 0, sizeof(PAO_Options) );
 			self->opts->call_reentrant= 1;
+			if( af->usage && !af->is_usage ){
+				if( PyObject_HasAttrString( (PyObject*) self, "__doc__" ) ){
+				  int e = PyErr_Occurred();
+					PyObject_SetAttrString( (PyObject*) self, "__doc__", PyString_FromString(af->usage) );
+					if( !e && PyErr_Occurred() ){
+						PyErr_Clear();
+					}
+				}
+			}
 		}
 		else{
 			if( self ){
@@ -1469,7 +1478,7 @@ static PyNumberMethods AO_as_number= {
 #ifndef IS_PY3K
 	NULL,	/* nb_coerce */
 #endif
-	NULL,	/* nb_int */
+	(unaryfunc) PyAscanfObject_size,	/* nb_int */
 	NULL,	/* nb_long or nb_reserved in py3k */
      (unaryfunc) AO_address,	/* nb_float;	*/
 };
