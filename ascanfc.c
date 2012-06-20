@@ -8555,7 +8555,7 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 			}
 			break;
 		}
-		case 1:
+		case 1:{
 			if( argc== 1 ){
 				return_sum= False;
 				N= a->N;
@@ -8566,8 +8566,9 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 					}
 				}
 				else{
-#ifdef USE_SSE4
+#ifdef USE_SSE2
 					*result = CumSum(a->array, N);
+					i = N;
 #else
 					*result= a->array[0];
 					for( i= 1; i< N; i++ ){
@@ -8581,9 +8582,14 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 				if( dest->iarray ){
 				  int *iarray= dest->iarray;
 					if( b ){
+#if defined(_ARRAYVOPS_H)
+						ArrayCumAddIArraySSE( &sum, a->iarray, b->iarray, iarray, N );
+						i = N;
+#else
 						for( i= 0; i< N; i++ ){
 							sum+= (*iarray++= (int) (ARRVAL(a,i) + ARRVAL(b,i)));
 						}
+#endif
 					}
 					else{
 						for( i= 0; i< N; i++ ){
@@ -8597,6 +8603,10 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 #ifdef _ARRAYVOPS_H0
 						// slower!!
 						sum += ArrayCumAddArray( a->array, b->array, array, N );
+						i = N;
+#elif defined(_ARRAYVOPS_H)
+						ArrayCumAddArraySSE( &sum, a->array, b->array, array, N );
+						i = N;
 #else
 						for( i= 0; i< N; i++ ){
 							sum+= (*array++= ARRVAL(a,i) + ARRVAL(b,i));
@@ -8607,6 +8617,9 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 #ifdef _ARRAYVOPS_H0
 						// slower!!
 						sum += ArrayCumAddScalar( a->array, args[barg], array, N );
+#elif defined(_ARRAYVOPS_H)
+						ArrayCumAddScalarSSE( &sum, a->array, args[barg], array, N );
+						i = N;
 #else
 						for( i= 0; i< N; i++ ){
 							sum+= (*array++= ARRVAL(a,i) + args[barg]);
@@ -8616,14 +8629,20 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 				}
 			}
 			break;
-		case 2:
+		}
+		case 2:{
 			N= dest->N;
 			if( dest->iarray ){
 			  int *iarray= dest->iarray;
 				if( b ){
+#if defined(_ARRAYVOPS_H)
+					ArrayCumSubIArraySSE( &sum, a->iarray, b->iarray, iarray, N );
+					i = N;
+#else
 					for( i= 0; i< N; i++ ){
 						sum+= (*iarray++= (int) (ARRVAL(a,i) - ARRVAL(b,i)));
 					}
+#endif
 				}
 				else{
 					for( i= 0; i< N; i++ ){
@@ -8634,18 +8653,29 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 			else{
 			  double *array= dest->array;
 				if( b ){
+#if defined(_ARRAYVOPS_H)
+					ArrayCumSubArraySSE( &sum, a->array, b->array, array, N );
+					i = N;
+#else
 					for( i= 0; i< N; i++ ){
 						sum+= (*array++= ARRVAL(a,i) - ARRVAL(b,i));
 					}
+#endif
 				}
 				else{
+#if defined(_ARRAYVOPS_H)
+					ArrayCumAddScalarSSE( &sum, a->array, -args[barg], array, N );
+					i = N;
+#else
 					for( i= 0; i< N; i++ ){
 						sum+= (*array++= ARRVAL(a,i) - args[barg]);
 					}
+#endif
 				}
 			}
 			break;
-		case 3:
+		}
+		case 3:{
 			if( argc== 1 ){
 				return_sum= False;
 				N= a->N;
@@ -8656,10 +8686,15 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 					}
 				}
 				else{
+#ifdef USE_SSE2
+					*result = CumMul(a->array, N);
+					i = N;
+#else
 					*result= a->array[0];
 					for( i= 1; i< N; i++ ){
 						*result*= a->array[i];
 					}
+#endif
 				}
 			}
 			else{
@@ -8680,18 +8715,29 @@ int simple_array_op( double *args, int argc, int op, double *result, int *level,
 				else{
 				  double *array= dest->array;
 					if( b ){
+#if defined(_ARRAYVOPS_H)
+						ArrayCumMulArraySSE( &sum, a->array, b->array, array, N );
+						i = N;
+#else
 						for( i= 0; i< N; i++ ){
 							sum+= (*array++= ARRVAL(a,i) * ARRVAL(b,i));
 						}
+#endif
 					}
 					else{
+#if defined(_ARRAYVOPS_H)
+						ArrayCumMulScalarSSE( &sum, a->array, args[barg], array, N );
+						i = N;
+#else
 						for( i= 0; i< N; i++ ){
 							sum+= (*array++= ARRVAL(a,i) * args[barg]);
 						}
+#endif
 					}
 				}
 			}
 			break;
+		}
 		case 4:{
 		  double u, v;
 			N= dest->N;
@@ -12211,8 +12257,8 @@ int ascanf_printf ( ASCB_ARGLIST )
 				}
 			}
 			for( ; arg< narg; arg++ ){
-				arglist[arg]= "<!MISSING!>";
-				free_this[arg]= 0;
+				arglist[arg]= (char*) "<!MISSING!>";
+				free_this[arg]= '\0';
 			}
 			arglist[narg-1] = NULL;
 			  /* 20020314: I added a 'compiled' field to the callback frame variable. Check the arguments
@@ -12272,8 +12318,8 @@ int ascanf_printf ( ASCB_ARGLIST )
 						(free_this= (char*) XGrealloc( free_this, narg* sizeof(char) ))
 					){
 						for( ; arg< narg; arg++ ){
-							arglist[arg]= "<!MISSING!>";
-							free_this[arg]= 0;
+							arglist[arg]= (char*) "<!MISSING!>";
+							free_this[arg]= '\0';
 						}
 						arglist[narg-1] = NULL;
 					}

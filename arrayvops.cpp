@@ -56,6 +56,155 @@ double ArrayCumAddArray(double *xa, double *xb, double *sums, int N)
 	return sum;
 }
 
+void ArrayCumAddIArraySSE(double *rsum, int *xa, int *xb, int *sums, int N)
+{
+	if( xa && xb && sums && N > 0 ){
+	  v4si *va = (v4si*) xa, *vb = (v4si*) xb, *vs = (v4si*) sums, vsum = _MM_SETZERO_SI128();
+	  int i, N_4;
+		N_4 = N-4 + 1;
+		for( i = 0 ; i < N_4 ; va++, vb++, vs++ ){
+			*vs = _mm_add_epi32( *va, *vb );
+			vsum = _mm_add_epi32( vsum, *vs );
+			i += 4;
+		}
+		_mm_empty();
+		*rsum = (double)VELEM(int,vsum,0) + (double)VELEM(int,vsum,1) + (double)VELEM(int,vsum,2) + (double)VELEM(int,vsum,3);
+		for( ; i < N; i++ ){
+			*rsum += (sums[i] = xa[i] + xb[i]);
+		}
+	}
+	else{
+		*rsum = 0.0;
+	}
+}
+
+void ArrayCumAddArraySSE(double *rsum, double *xa, double *xb, double *sums, int N)
+{
+	if( xa && xb && sums && N > 0 ){
+	  v2df *va = (v2df*) xa, *vb = (v2df*) xb, *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+	  int i, N_1;
+		N_1 = N-1;
+		for( i = 0 ; i < N_1 ; va++, vb++, vs++ ){
+			*vs = _mm_add_pd( *va, *vb );
+			vsum = _mm_add_pd( vsum, *vs );
+			i += 2;
+		}
+		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+		if( i == N_1 ){
+			*rsum += (sums[i] = xa[i] + xb[i]);
+		}
+	}
+	else{
+		*rsum = 0.0;
+	}
+}
+
+void ArrayCumAddScalarSSE(double *rsum, double *xa, double xb, double *sums, int N)
+{
+	if( xa && xb && sums && N > 0 ){
+	  v2df *va = (v2df*) xa, vb = _MM_SET1_PD(xb), *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+	  int i, N_1;
+		N_1 = N-1;
+		for( i = 0 ; i < N_1 ; va++, vs++ ){
+			*vs = _mm_add_pd( *va, vb );
+			vsum = _mm_add_pd( vsum, *vs );
+			i += 2;
+		}
+		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+		if( i == N_1 ){
+			*rsum += (sums[i] = xa[i] + xb);
+		}
+	}
+	else{
+		*rsum = 0.0;
+	}
+}
+
+void ArrayCumSubIArraySSE(double *rsum, int *xa, int *xb, int *sums, int N)
+{
+	if( xa && xb && sums && N > 0 ){
+	  v4si *va = (v4si*) xa, *vb = (v4si*) xb, *vs = (v4si*) sums, vsum = _MM_SETZERO_SI128();
+	  int i, N_4;
+		N_4 = N-4+1;
+		for( i = 0 ; i < N_4 ; va++, vb++, vs++ ){
+			*vs = _mm_sub_epi32( *va, *vb );
+			vsum = _mm_add_epi32( vsum, *vs );
+			i += 4;
+		}
+		_mm_empty();
+		*rsum = (double)VELEM(int,vsum,0) + (double)VELEM(int,vsum,1) + (double)VELEM(int,vsum,2) + (double)VELEM(int,vsum,3);
+		for( ; i < N; i++ ){
+			*rsum += (sums[i] = xa[i] - xb[i]);
+		}
+	}
+	else{
+		*rsum = 0.0;
+	}
+}
+
+void ArrayCumSubArraySSE(double *rsum, double *xa, double *xb, double *sums, int N)
+{
+	if( xa && xb && sums && N > 0 ){
+	  v2df *va = (v2df*) xa, *vb = (v2df*) xb, *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+	  int i, N_1;
+		N_1 = N-1;
+		for( i = 0 ; i < N_1 ; va++, vb++, vs++ ){
+			*vs = _mm_sub_pd( *va, *vb );
+			vsum = _mm_add_pd( vsum, *vs );
+			i += 2;
+		}
+		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+		if( i == N_1 ){
+			*rsum += (sums[i] = xa[i] - xb[i]);
+		}
+	}
+	else{
+		*rsum = 0.0;
+	}
+}
+
+void ArrayCumMulArraySSE(double *rsum, double *xa, double *xb, double *sums, int N)
+{
+	if( xa && xb && sums && N > 0 ){
+	  v2df *va = (v2df*) xa, *vb = (v2df*) xb, *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+	  int i, N_1;
+		N_1 = N-1;
+		for( i = 0 ; i < N_1 ; va++, vb++, vs++ ){
+			*vs = _mm_mul_pd( *va, *vb );
+			vsum = _mm_add_pd( vsum, *vs );
+			i += 2;
+		}
+		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+		if( i == N_1 ){
+			*rsum += (sums[i] = xa[i] * xb[i]);
+		}
+	}
+	else{
+		*rsum = 0.0;
+	}
+}
+
+void ArrayCumMulScalarSSE(double *rsum, double *xa, double xb, double *sums, int N)
+{
+	if( xa && xb && sums && N > 0 ){
+	  v2df *va = (v2df*) xa, vb = _MM_SET1_PD(xb), *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+	  int i, N_1;
+		N_1 = N-1;
+		for( i = 0 ; i < N_1 ; va++, vs++ ){
+			*vs = _mm_mul_pd( *va, vb );
+			vsum = _mm_add_pd( vsum, *vs );
+			i += 2;
+		}
+		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+		if( i == N_1 ){
+			*rsum += (sums[i] = xa[i] * xb);
+		}
+	}
+	else{
+		*rsum = 0.0;
+	}
+}
+
 void _convolve( double *Data, size_t NN, double *Mask, double *Output, int Start, int End, int Nm )
 { int nm= Nm/ 2, i, j;
   size_t end = NN - nm;

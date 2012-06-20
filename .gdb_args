@@ -1,2 +1,2 @@
-set arg -progname xgraph  -nodetach  -nodetach "/Volumes/Debian/Users/bertin/work/src/xgraph/examples/benching.xg" -progname xgraph
+set arg -progname xgraph  -nodetach  -IPN -progname xgraph
 show arg

@@ -15,6 +15,15 @@ extern "C" {
 
 extern double ArrayCumAddScalar(double *xa, double b, double *sums, int N);
 extern double ArrayCumAddArray(double *xa, double *xb, double *sums, int N);
+
+extern void ArrayCumAddIArraySSE(double *rsum, int *xa, int *xb, int *sums, int N);
+extern void ArrayCumAddArraySSE(double *rsum, double *xa, double *xb, double *sums, int N);
+extern void ArrayCumAddScalarSSE(double *rsum, double *xa, double xb, double *sums, int N);
+extern void ArrayCumSubIArraySSE(double *rsum, int *xa, int *xb, int *sums, int N);
+extern void ArrayCumSubArraySSE(double *rsum, double *xa, double *xb, double *sums, int N);
+extern void ArrayCumMulArraySSE(double *rsum, double *xa, double *xb, double *sums, int N);
+extern void ArrayCumMulScalarSSE(double *rsum, double *xa, double xb, double *sums, int N);
+
 extern void _convolve( double *Data, size_t NN, double *Mask, double *Output, int Start, int End, int Nm );
 
 #define USE_SSE_AUTO

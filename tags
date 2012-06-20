@@ -1753,7 +1753,9 @@ Create_ascanfString	Python/DM_Python.h	/^#		define Create_ascanfString	/;"	d
 Create_ascanfString	ascanfc2.c	/^ascanf_Function *Create_ascanfString( char *string, int *level )$/;"	f
 Create_ascanfString_ptr	Python/Python.c	/^	ascanf_Function *(*Create_ascanfString_ptr)( char *string, int *level );$/;"	v
 CricketDump	xgsupport.c	/^int CricketDump( FILE *fp, int width, int height, int orient,$/;"	f
+CumMul	sse_mathfun.h	/^static inline double CumMul(double *xa, int N)$/;"	f
 CumSum	sse_mathfun.h	/^static inline double CumSum( double *xa, int n )$/;"	f
+CumSum	sse_mathfun.h	/^static inline double CumSum(double *xa, int N)$/;"	f
 CumSumSq	sse_mathfun.h	/^static inline double CumSumSq( double *xa, int n )$/;"	f
 CumSumSumSq	sse_mathfun.h	/^static inline double CumSumSumSq( double *xa, int n, double *sumSQ )$/;"	f
 Current	ascanfcMap2.c	/^	SymbolTable *Table, *Current;$/;"	m	struct:SymbolTableList	file:
@@ -4288,7 +4290,7 @@ MYscale	xgraph.c	/^	MYscale= 1.0,$/;"	v
 M_2PI	matherr.c	/^#define M_2PI /;"	d	file:
 M_8	contrib/ddeltaNEC.c	/^	} M_8;$/;"	m	union:__anon5	typeref:struct:__anon5::__anon6	file:
 MacStartUp	xgraph.c	/^int StartUp= 1, MacStartUp= 0, ReadPipe= False;$/;"	v
-Mach_Absolute_Time_Factor	main.c	/^double Mach_Absolute_Time_Factor;$/;"	v
+Mach_Absolute_Time_Factor	main.c	/^	double Mach_Absolute_Time_Factor;$/;"	v
 MainDictionary	Python/Python.c	/^PyObject *MainDictionary= NULL;$/;"	v
 MainModule	Python/Python.c	/^PyObject *MainModule= NULL;$/;"	v
 MakeBigReq	/usr/include/X11/Xlibint.h	/^#define MakeBigReq(/;"	d
@@ -5234,7 +5236,7 @@ PenReset	xgPen.c	/^int PenReset( XGPen *pen, int dealloc )$/;"	f
 PenTextDimensions	xgPen.c	/^void PenTextDimensions( LocalWin *wi, XGPenPosition *pos )$/;"	f
 PerDisplayTable	/usr/include/X11/InitialI.h	/^} PerDisplayTable, *PerDisplayTablePtr;$/;"	t	typeref:struct:_PerDisplayTable
 PerDisplayTablePtr	/usr/include/X11/InitialI.h	/^} PerDisplayTable, *PerDisplayTablePtr;$/;"	t	typeref:struct:_PerDisplayTable
-PerformanceCounter_Calibrator	main.c	/^double PerformanceCounter_Calibrator;$/;"	v
+PerformanceCounter_Calibrator	lowlevel_timer.c	/^	double PerformanceCounter_Calibrator;$/;"	v
 Pixel	/usr/include/X11/Intrinsic.h	/^typedef unsigned long	Pixel;	    \/* Index into colormap		*\/$/;"	t
 Pixel	/usr/include/X11/xpm.h	/^typedef unsigned long Pixel;	\/* Index into colormap *\/$/;"	t
 Pixmap	/usr/include/X11/X.h	/^typedef XID Pixmap;$/;"	t
@@ -9547,6 +9549,7 @@ USE_SSE4	sse_mathfun.h	/^#		define USE_SSE4$/;"	d
 USE_SSE4	sse_mathfun.h	/^#	define USE_SSE4$/;"	d
 USE_SSE4	xgraph.c	/^#	define USE_SSE4$/;"	d	file:
 USE_SSE4	xgsupport.c	/^#	define USE_SSE4$/;"	d	file:
+USE_SSE_AUTO	arrayvops.h	/^#define USE_SSE_AUTO$/;"	d
 USE_SSE_AUTO	contrib/fourconv3.c	/^#define USE_SSE_AUTO$/;"	d	file:
 USE_ZEND_ALLOC	/usr/local/include/php_config.h	/^#define USE_ZEND_ALLOC /;"	d
 USGISH	/usr/include/X11/Xosdefs.h	/^#define USGISH$/;"	d
@@ -18907,6 +18910,7 @@ fftw_free	contrib/fourconv3.c	/^#	define fftw_free	/;"	d	file:
 fftw_free	contrib/fourconv3.c	/^#	undef fftw_free$/;"	d	file:
 fftw_free	contrib/fourconv3.c	/^#define fftw_free	/;"	d	file:
 fftw_get_res	lowlevel_timer.h	/^static __inline__ fftw_time fftw_get_res()$/;"	f
+fftw_get_time	lowlevel_timer.c	/^	fftw_time fftw_get_time(void *t)$/;"	f
 fftw_get_time	lowlevel_timer.h	/^#		define fftw_get_time(/;"	d
 fftw_get_time	lowlevel_timer.h	/^#	define fftw_get_time(/;"	d
 fftw_get_time	lowlevel_timer.h	/^static __inline__ fftw_time fftw_get_time(void *t)$/;"	f
@@ -20194,6 +20198,7 @@ init_D2P	ascanfcMap.cpp	/^static void init_D2P()$/;"	f	file:
 init_DWI	ascanfcMap.cpp	/^#	define init_DWI(/;"	d	file:
 init_DWI	ascanfcMap.cpp	/^static void init_DWI()$/;"	f	file:
 init_DataSet_module	Python/DataSet.c	/^int init_DataSet_module()$/;"	f
+init_PerformanceCounter	lowlevel_timer.c	/^	void init_PerformanceCounter()$/;"	f
 init_Static_StringPointer	ascanfc2.c	/^ascanf_Function *init_Static_StringPointer( ascanf_Function *af, char *AFname )$/;"	f
 init_ULabel_module	Python/ULabel.c	/^int init_ULabel_module()$/;"	f
 init_VNR	ascanfcMap.cpp	/^#	define init_VNR(/;"	d	file:

@@ -1079,20 +1079,39 @@ static inline void sincos_pd(v2df x, v2df *s, v2df *c)
 /*!
 	computes the cumulative sum of the double array xa[n] using SSE2 intrinsics
  */
-static inline double CumSum( double *xa, int n )
-{ __m128d vsum;
-  register int i, N_4 = n-4+1;
-  register double sum = 0;
-	for( i = 0 ; i < N_4 ; i+=4, xa+=4 ){
-#ifdef __GNUC__
-		vsum = *((__m128d*)&xa[2]) + *((__m128d*)xa);
-#else
-		vsum = _mm_add_pd( *((__m128d*)&xa[2]), *((__m128d*)xa) );
-#endif
-		sum += *((double*)&vsum) + ((double*)&vsum)[1];
+// static inline double CumSum( double *xa, int n )
+// { __m128d vsum;
+//   register int i, N_4 = n-4+1;
+//   register double sum = 0;
+// 	for( i = 0 ; i < N_4 ; i+=4, xa+=4 ){
+// #ifdef __GNUC__
+// 		vsum = *((__m128d*)&xa[2]) + *((__m128d*)xa);
+// #else
+// 		vsum = _mm_add_pd( *((__m128d*)&xa[2]), *((__m128d*)xa) );
+// #endif
+// 		sum += *((double*)&vsum) + ((double*)&vsum)[1];
+// 	}
+// 	for( ; i < n ; i++ ){
+// 		sum += *xa++;
+// 	}
+// 	return sum;
+// }
+static inline double CumSum(double *xa, int N)
+{ double sum;
+	if( xa && N > 0 ){
+	  v2df *va = (v2df*) xa, vsum = _MM_SETZERO_PD();
+	  int i, N_4 = N-4+1;
+		for( i = 0 ; i < N_4 ; va+=2 ){
+			vsum = _mm_add_pd( vsum, _mm_add_pd( va[0], va[1] ) );
+			i += 4;
+		}
+		sum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+		for( ; i < N; i++ ){
+			sum += xa[i];
+		}
 	}
-	for( ; i < n ; i++ ){
-		sum += *xa++;
+	else{
+		sum = 0.0;
 	}
 	return sum;
 }
@@ -1182,6 +1201,29 @@ static inline double scalCumSumSumSq( double *xa, int n, double *sumSQ )
 	}
 	*sumSQ = sumsq;
 	return sum;
+}
+
+/*!
+	computes the cumulative product of the double array xa[n] using SSE2 intrinsics
+ */
+static inline double CumMul(double *xa, int N)
+{ double cum;
+	if( xa && N > 0 ){
+	  v2df *va = (v2df*) xa, vcum = _MM_SET1_PD(1.0);
+	  int i, N_4 = N-4+1;
+		for( i = 0 ; i < N_4 ; va+=2 ){
+			vcum = _mm_mul_pd( vcum, _mm_mul_pd( va[0], va[1] ) );
+			i += 4;
+		}
+		cum = VELEM(double,vcum,0) * VELEM(double,vcum,1);
+		for( ; i < N; i++ ){
+			cum *= xa[i];
+		}
+	}
+	else{
+		cum = 0.0;
+	}
+	return cum;
 }
 
 #else
