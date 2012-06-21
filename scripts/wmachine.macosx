@@ -59,7 +59,7 @@ setautovec() {
 			fi
 			OPTIMOPT="$OOPTIMOPT"
 			;;
-		*gcc-4*|*g++-4*)
+		*gcc*-4*|*g++*-4*)
 			if [ "${CPU}" = "core2" ] ;then
 				CPU="${ALT_CPU}"
 			fi
@@ -195,11 +195,11 @@ setopts() {
 			# OOPTIMOPT="$OOPTIMOPT  -fgcse-lm -fsched-interblock -freorder-blocks -freorder-blocks-and-partition -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops"
 			OOPTIMOPT="$OOPTIMOPT -funroll-loops"
 # The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
-			NODEBUGOPT="" #"-fomit-frame-pointer"
-			OPTIMOPT="$OOPTIMOPT"
+			NODEBUGOPT="-flax-vector-conversions" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT -flax-vector-conversions"
 			DEBUGOPT="$NODEBUGOPT"
 # Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
-			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem -flax-vector-conversions"
 
 			MARCH=""
 			MARCHUNI=""
