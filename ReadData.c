@@ -4026,6 +4026,8 @@ int ReadData(FILE *stream, char *the_file, int filenr)
 				  /* Mach-O object; see if it dlopens... */
 				|| mask== 0xfeedface
 				|| rawmask== 0xfeedface
+				|| mask== 0xfeedfacf
+				|| rawmask== 0xfeedfacf
 				  /* Mach-O universal binary OR Java bytecode; see if it dlopens... */
 				|| mask== 0xcafebabe
 				|| rawmask== 0xcafebabe
@@ -4052,6 +4054,7 @@ int ReadData(FILE *stream, char *the_file, int filenr)
 						   // shared or OpenBSD ELF object:
 						( (*( (short*) &lbuf[16])== 3 || lbuf[7]== 0x12)
 							|| mask==0xfeedface || rawmask==0xfeedface
+							|| mask==0xfeedfacf || rawmask==0xfeedfacf
 							|| mask==0xcafebabe || rawmask==0xcafebabe
 #ifdef __CYGWIN__
 							|| ( lbuf[128]=='P' && lbuf[129]=='E' && lbuf[130]=='\0' && lbuf[131]=='\0'
