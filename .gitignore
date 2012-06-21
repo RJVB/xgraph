@@ -24,3 +24,9 @@ tim-asc-parm*
 tmp/*
 *_m
 xgraph
+Python/CritSectEx/CritSectEx_wrap.cxx
+Python/CritSectEx/MSEmul.py
+Python/CritSectEx/msemul.py
+Python/CritSectEx/msemul_wrap.cxx
+Python/CritSectEx/CritSectEx.py
+Python/CritSectEx/CritSectEx_wrap.c
