@@ -640,7 +640,7 @@ struct d2l_eqptr{
 	}
 };
 
-#if (__GNUC__ > 3) && (__GNUC_MINOR__ < 3)
+#if (__GNUC__ > 3) && (__GNUC_MINOR__ < 3) && 0
 // a method for hashing doubles. Do very simple: cast to a float (which takes care of losing some precision)
 // and then interpret that float as a size_t. We'll have to hope that sizeof(size_t)==sizeof(float) (== 4).
 // Alternatively, put an unsigned long xxl in the union, and cast that to the size_t return value.
