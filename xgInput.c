@@ -704,17 +704,17 @@ int realloc_sets( LocalWin *wi, int offset, int new, char *caller )
 	}
 }
 
-double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int cur_ncols, char *caller )
+double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int cur_ncols, int cur_nlines, char *caller )
 { double **columns= NULL;
   int i;
 	if( !cur_columns ){
-		if( (columns= (double**) XGrealloc( (char*) columns, ncols* sizeof(double*) )) ){
+		if( (columns= (double**) XGreallocShared( columns, ncols* sizeof(double*), 0 )) ){
 			if( debugFlag ){
 				fprintf( StdErr, "%s: allocating %d columns X %d entries\n", caller, ncols, nlines );
 			}
 			for( i= 0; i< ncols; i++ ){
 				columns[i]= NULL;
-				if( !(columns[i]= (double*) XGrealloc( (char*) columns[i], nlines* sizeof(double) )) ){
+				if( !(columns[i]= (double*) XGreallocShared( columns[i], nlines* sizeof(double), 0 )) ){
 					if( debugFlag ){
 						fprintf( StdErr, "%s,n=%d: can't allocate %d entries for column %d (%s)\n",
 							caller, ncols, nlines, i, serror()
@@ -726,17 +726,22 @@ double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int 
 		}
 	}
 	else{
-		if( (columns= (double**) XGrealloc( (char*) cur_columns, ncols* sizeof(double*) )) ){
+		if( (columns= (double**) XGreallocShared( cur_columns, ncols* sizeof(double*), cur_ncols * sizeof(double*) )) ){
 			if( debugFlag ){
 				fprintf( StdErr, "%s: re-allocate from %d to %d columns X %d entries\n",
 					caller, cur_ncols, ncols, nlines
 				);
 			}
 			for( i= 0; i< ncols; i++ ){
+			  size_t cl;
 				if( i>= cur_ncols ){
 					columns[i]= NULL;
+					cl = 0;
 				}
-				if( !(columns[i]= (double*) XGrealloc( (char*) columns[i], nlines* sizeof(double) )) ){
+				else{
+					cl = cur_nlines;
+				}
+				if( !(columns[i]= (double*) XGreallocShared( columns[i], nlines* sizeof(double), cl * sizeof(double) )) ){
 					if( debugFlag ){
 						fprintf( StdErr, "%s,n=%d: can't re-allocate %d entries for column %d (%s)\n",
 							caller, ncols, nlines, i, serror()
@@ -748,6 +753,19 @@ double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int 
 		}
 	}
 	return( columns );
+}
+
+void XGfree_2d_doubles( double ***Columns, int ncols, int nlines )
+{ int c;
+  double **columns;
+  	if( Columns && *Columns ){
+		columns = *Columns;
+		for( c = 0 ; c < ncols ; c++ ){
+			XGfreeShared(columns[c], nlines * sizeof(double) );
+		}
+		XGfreeShared(columns, ncols * sizeof(double*) );
+		*Columns = NULL;
+	}
 }
 
 /* Allocate or re-allocate a set's columns, that is, the 2D array where the datapoints are stored.
@@ -770,9 +788,10 @@ double **realloc_columns( DataSet *this_set, int ncols )
 	}
 	{ char us[128];
 		sprintf( us, "realloc_columns(#%d)", this_set->set_nr );
-		this_set->columns= XGrealloc_2d_doubles( this_set->columns, ncols, this_set->allocSize, this_set->ncols, us );
+		this_set->columns= XGrealloc_2d_doubles( this_set->columns, ncols, this_set->allocSize, this_set->ncols, this_set->allocatedSize, us );
 	}
 	this_set->ncols= ncols;
+	this_set->allocatedSize = this_set->allocSize;
 	if( this_set->links ){
 	  DataSet *that_set;
 		for( i= 0; i< setNumber; i++ ){
@@ -795,49 +814,30 @@ void realloc_points( DataSet *this_set, int allocSize, int force )
 	   */
 		this_set->allocSize = allocSize;
 		this_set->discardpoint= NULL;
-#ifdef OLD_REALLOC_POINTS
-		this_set->xvec = (double *)
-		  XGcalloc( (unsigned) this_set->allocSize , sizeof(double));
-		this_set->yvec = (double *)
-		  XGcalloc( (unsigned) this_set->allocSize , sizeof(double));
-		this_set->lvec = (double *)
-		  XGcalloc( (unsigned) this_set->allocSize , sizeof(double));
-		this_set->ldxvec = (double *)
-		  XGcalloc( (unsigned) this_set->allocSize , sizeof(double));
-		this_set->hdxvec = (double *)
-		  XGcalloc( (unsigned) this_set->allocSize , sizeof(double));
-		this_set->ldyvec = (double *)
-		  XGcalloc( (unsigned) this_set->allocSize , sizeof(double));
-		this_set->hdyvec = (double *)
-		  XGcalloc( (unsigned) this_set->allocSize , sizeof(double));
-		this_set->errvec = (double *)
-		  XGcalloc( (unsigned) this_set->allocSize , sizeof(double));
-#else
 		this_set->xvec= NULL;
-		this_set->xvec = (double *) XGrealloc((char *) this_set->xvec,
+		this_set->xvec = (double *) XGrealloc( this_set->xvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
 		this_set->yvec= NULL;
-		this_set->yvec = (double *) XGrealloc((char *) this_set->yvec,
+		this_set->yvec = (double *) XGrealloc( this_set->yvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
 		this_set->lvec= NULL;
-		this_set->lvec = (double *) XGrealloc((char *) this_set->lvec,
+		this_set->lvec = (double *) XGrealloc( this_set->lvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
 		this_set->ldxvec= NULL;
-		this_set->ldxvec = (double *) XGrealloc((char *) this_set->ldxvec,
+		this_set->ldxvec = (double *) XGrealloc( this_set->ldxvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
 		this_set->hdxvec= NULL;
-		this_set->hdxvec = (double *) XGrealloc((char *) this_set->hdxvec,
+		this_set->hdxvec = (double *) XGrealloc( this_set->hdxvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
 		this_set->ldyvec= NULL;
-		this_set->ldyvec = (double *) XGrealloc((char *) this_set->ldyvec,
+		this_set->ldyvec = (double *) XGrealloc( this_set->ldyvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
 		this_set->hdyvec= NULL;
-		this_set->hdyvec = (double *) XGrealloc((char *) this_set->hdyvec,
+		this_set->hdyvec = (double *) XGrealloc( this_set->hdyvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
 		this_set->errvec= NULL;
-		this_set->errvec = (double *) XGrealloc((char *) this_set->errvec,
+		this_set->errvec = (double *) XGrealloc( this_set->errvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
-#endif
 		this_set->columns= realloc_columns( this_set, (this_set->ncols> 2)? this_set->ncols : NCols);
 		this_set->mem_alloced= this_set->ncols* ( sizeof(double**) + this_set->allocSize* sizeof(double)) +
 			this_set->allocSize* ( 7* sizeof(double)+ 1* sizeof(int));
@@ -891,7 +891,7 @@ void realloc_points( DataSet *this_set, int allocSize, int force )
 		this_set->allocSize = allocSize;
 		if( this_set->discardpoint ){
 			this_set->discardpoint = (signed char *)
-			  XGrealloc((char *) this_set->discardpoint,
+			  XGrealloc( this_set->discardpoint,
 				  (unsigned) (this_set->allocSize *
 					  sizeof(signed char)));
 			if( allocSize> oas ){
@@ -899,21 +899,21 @@ void realloc_points( DataSet *this_set, int allocSize, int force )
 			}
 			mem_alloced+= this_set->allocSize* ( sizeof(signed char)+ 1* sizeof(int));
 		}
-		this_set->xvec = (double *) XGrealloc((char *) this_set->xvec,
+		this_set->xvec = (double *) XGrealloc( this_set->xvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
-		this_set->yvec = (double *) XGrealloc((char *) this_set->yvec,
+		this_set->yvec = (double *) XGrealloc( this_set->yvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
-		this_set->lvec = (double *) XGrealloc((char *) this_set->lvec,
+		this_set->lvec = (double *) XGrealloc( this_set->lvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
-		this_set->ldxvec = (double *) XGrealloc((char *) this_set->ldxvec,
+		this_set->ldxvec = (double *) XGrealloc( this_set->ldxvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
-		this_set->hdxvec = (double *) XGrealloc((char *) this_set->hdxvec,
+		this_set->hdxvec = (double *) XGrealloc( this_set->hdxvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
-		this_set->ldyvec = (double *) XGrealloc((char *) this_set->ldyvec,
+		this_set->ldyvec = (double *) XGrealloc( this_set->ldyvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
-		this_set->hdyvec = (double *) XGrealloc((char *) this_set->hdyvec,
+		this_set->hdyvec = (double *) XGrealloc( this_set->hdyvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
-		this_set->errvec = (double *) XGrealloc((char *) this_set->errvec,
+		this_set->errvec = (double *) XGrealloc( this_set->errvec,
 			  (unsigned) (this_set->allocSize * sizeof(double)));
 		if( this_set->set_link< 0 ){
 			this_set->columns= realloc_columns( this_set, (this_set->ncols> 2)? this_set->ncols : 3 );
@@ -930,7 +930,7 @@ void realloc_points( DataSet *this_set, int allocSize, int force )
 #endif
 #ifdef RUNSPLIT
 		if( this_set->splithere ){
-			this_set->splithere = (signed char *) XGrealloc((char *) this_set->splithere,
+			this_set->splithere = (signed char *) XGrealloc( this_set->splithere,
 				  (unsigned) (this_set->allocSize * sizeof(signed char)));
 			if( allocSize> oas ){
 				memset( &this_set->splithere[oas], 0, (allocSize- oas)* sizeof(signed char) );
@@ -992,11 +992,11 @@ void realloc_Xsegments()
 { int mi= (maxitems)? maxitems : 1;
 	allocerr= 0;
 
-	Xsegs = (XSegment *) XGrealloc( (char*) Xsegs, (unsigned)mi * sizeof(XSegment));
-	XXsegs = (XXSegment *) XGrealloc( (char*) XXsegs, (unsigned)mi * sizeof(XXSegment));
-	lowYsegs = (XSegment *) XGrealloc( (char*) lowYsegs, (unsigned)(mi+ 8) * sizeof(XSegment));
-	highYsegs = (XSegment *) XGrealloc( (char*) highYsegs, (unsigned)(mi+ 8) * sizeof(XSegment));
-	XsegsE = (XSegment_error *) XGrealloc( (char*) XsegsE, (unsigned)mi * sizeof(XSegment_error));
+	Xsegs = (XSegment *) XGrealloc( Xsegs, (unsigned)mi * sizeof(XSegment));
+	XXsegs = (XXSegment *) XGrealloc( XXsegs, (unsigned)mi * sizeof(XXSegment));
+	lowYsegs = (XSegment *) XGrealloc( lowYsegs, (unsigned)(mi+ 8) * sizeof(XSegment));
+	highYsegs = (XSegment *) XGrealloc( highYsegs, (unsigned)(mi+ 8) * sizeof(XSegment));
+	XsegsE = (XSegment_error *) XGrealloc( XsegsE, (unsigned)mi * sizeof(XSegment_error));
 
 	XsegsSize= (long) mi * sizeof(XSegment);
 	XXsegsSize= (long) mi * sizeof(XXSegment);
@@ -1033,12 +1033,7 @@ void Destroy_Set( DataSet *this_set, int relinking )
 		xfree( this_set->hdyvec );
 		xfree( this_set->errvec );
 		if( this_set->set_link< 0 ){
-			if( this_set->columns ){
-				for( i= 0; i< this_set->ncols; i++ ){
-					xfree( this_set->columns[i] );
-				}
-			}
-			xfree( this_set->columns );
+			XGfree_2d_doubles( &this_set->columns, this_set->ncols, this_set->allocatedSize );
 			if( this_set->links ){
 			  DataSet *that_set;
 				for( i= 0; i< setNumber && this_set->links>= 0; i++ ){

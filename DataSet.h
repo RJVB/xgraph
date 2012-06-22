@@ -92,7 +92,7 @@ typedef struct DataSet {
 	struct LabelsList *ColumnLabels;
 	char *fileName;
 	char *average_set;
-	int allocSize;		/* Allocated size  */
+	int allocSize, allocatedSize;		/* Allocation and currently-allocated sizes (allocatedSize set by realloc_columns)  */
 	signed char *discardpoint;
 	int ncols, xcol, ycol, ecol, lcol;
 	double **columns, av_error_r;	/* original values        */

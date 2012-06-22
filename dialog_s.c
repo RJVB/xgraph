@@ -3654,7 +3654,7 @@ xtb_hret SD_set_info(Window win, int bval, xtb_data info)
 					_Dump_Arg0_Info( theWin_Info, NULL, &pinfo, False );
 					  /* We must prepend a newline to it: */
 					l= strlen(pinfo)* sizeof(char);
-					if( (pinfo= _XGrealloc( pinfo, (strlen(pinfo)+2)* sizeof(char), NULL, NULL)) ){
+					if( (pinfo= _XGrealloc( &pinfo, (strlen(pinfo)+2)* sizeof(char), NULL, NULL)) ){
 						memmove( &pinfo[1], pinfo, l );
 						pinfo[0]= '\n';
 					}

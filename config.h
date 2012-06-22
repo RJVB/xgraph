@@ -254,8 +254,11 @@ static const char *xg_id_string_stub(){ _IDENTIFY(s,i);\
 #endif
 
 #include <sys/types.h>
-extern void *_XGrealloc( void* ptr, size_t n, char *name, char *size);
-#define XGrealloc(ptr,n)	_XGrealloc( (ptr), (n), STRING(ptr), STRING(n) )
+extern void *_XGrealloc( void** ptr, size_t n, char *name, char *size);
+#define XGrealloc(ptr,n)	_XGrealloc( (void**)&(ptr), (n), STRING(ptr), STRING(n) )
+extern void *_XGreallocShared( void* ptr, size_t N, size_t oldN, char *name, char *size);
+#define XGreallocShared(ptr,N,oldN)	_XGreallocShared( (void*)(ptr), (N), (oldN), STRING(ptr), STRING(n) )
+extern void XGfreeShared(void **ptr, size_t N);
 
 #ifdef __cplusplus
 }

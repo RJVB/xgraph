@@ -38,7 +38,9 @@ setautovec() {
 				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize"
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86} ${VU}"
 				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86} ${VU}"
-				echo "# Enabling auto vectorisation" 1>&2
+				if [ "${GCCOPT_SIMPLE}" != "1" ] ;then
+					echo "# Enabling auto vectorisation" 1>&2
+				fi
 			else
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI}"
 				MARCHUNI64="${ARCHS64} ${MARCHUNI64}"
@@ -51,7 +53,9 @@ setautovec() {
 				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -ftracer"
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
 				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
-				echo "# Enabling auto vectorisation" 1>&2
+				if [ "${GCCOPT_SIMPLE}" != "1" ] ;then
+					echo "# Enabling auto vectorisation" 1>&2
+				fi
 			else
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftracer"
 				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftracer"
@@ -70,7 +74,9 @@ setautovec() {
 				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -ftracer"
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
 				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
-				echo "# Enabling auto vectorisation" 1>&2
+				if [ "${GCCOPT_SIMPLE}" != "1" ] ;then
+					echo "# Enabling auto vectorisation" 1>&2
+				fi
 			else
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftracer"
 				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftracer"

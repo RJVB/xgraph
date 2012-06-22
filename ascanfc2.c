@@ -2210,13 +2210,14 @@ int ascanf_QSortSet ( ASCB_ARGLIST )
 		if( !ascanf_SyntaxCheck && N ){
 		  int i, col, ns= 0;
 		  QS_Compar_Set_Val *valtab;
-		  extern double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int cur_ncols, char *caller );
+		  extern double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int cur_ncols, int cur_nlines, char *caller );
+		  extern void XGfree_2d_doubles( double ***columns, int ncols, int nlines );
 		  double **columns= NULL;
 			if( qs_compar_val->procedure->parent && __ascb_frame->compiled && __ascb_frame->compiled->parent ){
 				qparpar= qs_compar_val->procedure->parent->parent;
 				qs_compar_val->procedure->parent->parent= __ascb_frame->compiled->parent->parent;
 			}
-			columns= XGrealloc_2d_doubles( columns, this_set->ncols, N, 0, "ascanf_QSortSet" );
+			columns= XGrealloc_2d_doubles( columns, this_set->ncols, N, 0, 0, "ascanf_QSortSet" );
 			valtab = (QS_Compar_Set_Val*) malloc( N * sizeof(QS_Compar_Set_Val) );
 			if( valtab && columns ){
 				  /* First, initialise an array associating point number with the value to sort on.
@@ -2255,11 +2256,8 @@ int ascanf_QSortSet ( ASCB_ARGLIST )
 						ns+= 1;
 					}
 				}
-				for( i= 0; i< this_set->ncols; i++ ){
-					xfree( columns[i] );
-				}
+				XGfree_2d_doubles( &columns, this_set->ncols, N );
 				xfree(valtab);
-				xfree( columns );
 				if( pragma_unlikely(ascanf_verbose) ){
 					fprintf( StdErr, " (%d points exchanged) ", ns );
 				}
@@ -2333,7 +2331,8 @@ int ascanf_QSortSet2 ( ASCB_ARGLIST )
 		if( !ascanf_SyntaxCheck && N ){
 		  int i, col, ns= 0;
 		  int *valtab;
-		  extern double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int cur_ncols, char *caller );
+		  extern double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int cur_ncols, int cur_nlines, char *caller );
+		  extern void XGfree_2d_doubles( double ***columns, int ncols, int nlines );
 		  double **columns= NULL;
 			if( (qsc_form= ASCB_COMPILED) ){
 				if( qs_compar_val->procedure->parent && __ascb_frame->compiled && __ascb_frame->compiled->parent ){
@@ -2341,7 +2340,7 @@ int ascanf_QSortSet2 ( ASCB_ARGLIST )
 					qs_compar_val->procedure->parent->parent= __ascb_frame->compiled->parent->parent;
 				}
 			}
-			columns= XGrealloc_2d_doubles( columns, this_set->ncols, N, 0, "ascanf_QSortSet" );
+			columns= XGrealloc_2d_doubles( columns, this_set->ncols, N, 0, 0, "ascanf_QSortSet" );
 			valtab = (int*) malloc( N * sizeof(int) );
 			if( valtab && columns ){
 				  /* First, initialise an array associating point number with the index value to sort on.
@@ -2379,11 +2378,8 @@ int ascanf_QSortSet2 ( ASCB_ARGLIST )
 						ns+= 1;
 					}
 				}
-				for( i= 0; i< this_set->ncols; i++ ){
-					xfree( columns[i] );
-				}
+				XGfree_2d_doubles( &columns, this_set->ncols, N );
 				xfree( valtab );
-				xfree( columns );
 				if( pragma_unlikely(ascanf_verbose) ){
 					fprintf( StdErr, " (%d points exchanged) ", ns );
 				}

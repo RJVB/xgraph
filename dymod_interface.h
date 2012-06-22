@@ -74,7 +74,7 @@ typedef struct DyMod_Interface{
 	int (*p_IncludeFile)( struct LocalWin *rwi, FILE *strm, char *Fname, int event, char *skip_to );
 	void (*p__xfree)(void *x, char *file, int lineno );
 	char* (*p__callback_expr)( struct ascanf_Callback_Frame *__ascb_frame, char *fn, int lnr, char **stub );
-	void* (*p__XGrealloc)( void* ptr, size_t n, char *name, char *size);
+	void* (*p__XGrealloc)( void** ptr, size_t n, char *name, char *size);
 	void* (*p_xgalloca)(unsigned int n, char *file, int linenr);
 	char* (*p_GetEnv)( char *n);
 	char* (*p_SetEnv)( char *n, char *v);

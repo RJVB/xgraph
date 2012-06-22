@@ -772,7 +772,7 @@ char *concat(char *first, VA_DCL)
 /* calls tempnam(), and appends "@" to prevent inclusion in the process_history */
 char *XGtempnam( const char *dir, const char *prefix )
 {
-#if defined(linux) || defined(__APPLE__)
+#if defined(linux) || defined(__APPLE__) || defined(__CYGWIN__)
  char *template = (dir)? concat( dir, "/", prefix, "-XXXXXX", NULL ) : concat( prefix, "-XXXXXX", NULL );
  char *name = NULL, *tnam = (template)? mktemp(template) : NULL;
 	if( tnam ){
@@ -2289,17 +2289,73 @@ extern char *cleanup(char *);
 
 int allocerr= 0;
 
-void *_XGrealloc( void* ptr, size_t n, char *name, char *size )
+void *_XGrealloc( void** ptr, size_t n, char *name, char *size )
 { void *mem;
-	if( !(mem= ((ptr)? realloc( ptr, n) : calloc( n, 1))) ){
+	if( !(mem= ((ptr && *ptr)? realloc( *ptr, n) : calloc( n, 1))) ){
 		if( name && size ){
 			fprintf( StdErr, "xgraph::XGrealloc(): Error (re)allocating %s=0x%lx, size %s=%lu -> 0x%lx (%s)\n",
 				name, ptr, size, (unsigned long) n, mem, serror()
 			);
 		}
+		// 20120622: 
+		if( ptr ){
+			free(*ptr);
+			*ptr = NULL;
+		}
 		allocerr+= 1;
 	}
 	return( mem );
+}
+
+#include <sys/mman.h>
+int xgShFD = -1;
+#define XGSHAREDMEMNAME	"/dev/zero"; //"XGShMem-XXXXXX"
+char XgSharedMemName[64] = "";
+
+void *_XGreallocShared( void* ptr, size_t N, size_t oldN, char *name, char *size )
+{ void *mem;
+  int flags = MAP_SHARED;
+#ifndef MAP_ANON
+	if( xgShFD < 0 ){
+		if( !XgSharedMemName[0] ){
+			strcpy( XgSharedMemName, XGSHAREDMEMNAME );
+// 			mktemp(XgSharedMemName);
+		}
+ 		if( (xgShFD = open( XgSharedMemName, O_RDWR )) < 0 ){
+			fprintf( StdErr, "xgraph::XGreallocShared(): can't open/create descriptor for allocating %s=0x%lx, size %s=%lu -> 0x%lx (%s)\n",
+				(name)? name : "<unknown>", ptr, size, (unsigned long) N, mem, serror()
+			);
+			return NULL;
+		}
+	}
+#else
+	flags |= MAP_ANON;
+#endif
+	mem = mmap( NULL, N, (PROT_READ|PROT_WRITE), flags, xgShFD, 0 );
+	if( !mem ){
+		if( name && size ){
+			fprintf( StdErr, "xgraph::XGreallocShared(): Error (re)allocating %s=0x%lx, size %s=%lu -> 0x%lx (%s)\n",
+				name, ptr, size, (unsigned long) N, mem, serror()
+			);
+		}
+		allocerr+= 1;
+	}
+	else{
+		memset( mem, 0, N );
+		if( ptr ){
+			memmove( mem, ptr, N );
+			munmap( ptr, oldN );
+		}
+	}
+	return( mem );
+}
+
+void XGfreeShared(void **ptr, size_t N)
+{
+	if( ptr && *ptr && N ){
+		munmap( *ptr, N );
+		*ptr = NULL;
+	}
 }
 
 double *param_scratch= NULL;
@@ -7838,6 +7894,11 @@ void CleanUp()
 				SS_sprint_full( NULL, "%g", parse_codes(pc), 0, &SS_AscanfCompileTime )
 			);
 		}
+	}
+
+	if( xgShFD >= 0 ){
+		close(xgShFD);
+		shm_unlink(XgSharedMemName);
 	}
 
 	  /* 20010719: closing the display should be the very last thing that we do!! */

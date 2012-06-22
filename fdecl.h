@@ -337,7 +337,7 @@ extern XGStringList *XGStringList_Pop( XGStringList *list );
 extern XGStringList *XGStringList_PopLast( XGStringList *list );
 extern XGStringList *XGStringList_Delete( XGStringList *list );
 extern void *XGcalloc( size_t n, size_t s);
-extern double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int cur_ncols, char *caller );
+extern double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int cur_ncols, int cur_nlines, char *caller );
 extern char *add_option_hist( char *expression );
 extern int argerror( char *err, char *val);
 extern int change_stdfile( char *newfile, FILE *stdfile );
@@ -739,7 +739,7 @@ extern void Sprint_LabelsList( Sinc *sink, LabelsList *llist, char *header );
 extern void Sprint_SetLabelsList( Sinc *sink, LabelsList *llist, char *header, char *trailer );
 
 /* Declared in config.h:
-extern void *_XGrealloc( void* ptr, size_t n, char *name, char *size);
+extern void *_XGrealloc( void** ptr, size_t n, char *name, char *size);
  */
 
 extern char *XGrindex( const char *s, char c);
