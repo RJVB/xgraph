@@ -1647,6 +1647,12 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"-I.",
+					"-Iux11",
+					"-Ixtb",
+					"-I/usr/local/include",
+				);
 				INSTALL_PATH = "$(HOME)/bin";
 				PRODUCT_NAME = XGraph;
 				ZERO_LINK = YES;
@@ -1662,6 +1668,12 @@
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					"-I.",
+					"-Iux11",
+					"-Ixtb",
+					"-I/usr/local/include",
+				);
 				INSTALL_PATH = "$(HOME)/bin";
 				PRODUCT_NAME = XGraph;
 			};

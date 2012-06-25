@@ -7898,7 +7898,9 @@ void CleanUp()
 
 	if( xgShFD >= 0 ){
 		close(xgShFD);
-		shm_unlink(XgSharedMemName);
+		if( strcmp( XgSharedMemName, "/dev/zero" ) ){
+			shm_unlink(XgSharedMemName);
+		}
 	}
 
 	  /* 20010719: closing the display should be the very last thing that we do!! */
