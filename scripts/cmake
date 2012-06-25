@@ -10,6 +10,16 @@
 # echo "$0 $@"
 # printenv 2>&1 | sort
 
+if [ "${XCODE_VERSION_MAJOR}" != "" ] ;then
+	GIDE="Xcode"
+elif [ "${MONO_GAC_PREFIX}" != "" ] ;then
+	GIDE="MonoDevelop"
+elif [ "${!APP_ICON_*}" != "" ] ;then
+	GIDE="Eclipse"
+else
+	GIDE=""
+fi
+
 if [ "$MAKEDIR" = "" ] ;then
 	echo "MAKEDIR not set - assuming Make/"
 	MAKEDIR="Make/"
@@ -138,7 +148,7 @@ elif [ "${CC}" != "" ] ;then
 	echo "Setting compiler=${compiler} from CC"
 fi
 
-if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" -a "${!APP_ICON_@}" = "" ] ;then
+if [ "${GIDE}" = "" ] ;then
 # 	if [ -r .$ERRFILE ]
 # 	then
 # 		DONTREMOVE=1
@@ -284,7 +294,7 @@ DoMake () {
 	cxsetenv RET $?
 }
 
-if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" -a "${!APP_ICON_@}" = "" ] ;then
+if [ "${GIDE}" = "" ] ;then
 	if [ "$DEBUG" != "" ] ;then
 		if [ $SILENT = 1 ] ;then
 			echo "doing SILENT with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE

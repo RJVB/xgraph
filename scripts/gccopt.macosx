@@ -9,9 +9,15 @@
 #	with installed headerfiles when compiling updates (e.g. of libraries).
 # Mon May 16 11:36:07 CEST 2005
 
-if [ "${!APP_ICON_@}" != "" ] ;then
-	# called by Eclipse
+if [ "${XCODE_VERSION_MAJOR}" != "" ] ;then
+	GIDE="Xcode"
+elif [ "${MONO_GAC_PREFIX}" != "" ] ;then
+	GIDE="MonoDevelop"
+elif [ "${!APP_ICON_*}" != "" ] ;then
+	GIDE="Eclipse"
 	GCCOPT_SIMPLE=1
+else
+	GIDE=""
 fi
 
 if [ "${DEVPREFSDIR}" = "" ] ;then
@@ -908,7 +914,7 @@ fi
 EMSGb=""
 EMSG="/dev/null"
 
-if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" -a "${!APP_ICON_@}" = "" ] ;then
+if [ "${GIDE}" = "" ] ;then
 	if [ ! -d ./emsg -a "$EMSGMAKE" !=  "" ] ;then
 		${ECHO} "$0: creating `pwd`/emsg"
 		mkdir ./emsg
@@ -966,7 +972,7 @@ DoCompile () {
 # ( $TIME $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS 2>&1 ; cxsetenv RET $? )\
 # 					| ${TEE} $EMSG
 
-if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" -a "${!APP_ICON_@}" = "" ] ;then
+if [ "${GIDE}" = "" ] ;then
 	DoCompile 2>&1 | ${TEE} $EMSG
 else
 	DoCompile
@@ -977,7 +983,7 @@ if [ $DEBUG != 1 ] ;then
 	set +x
 fi
 
-if [ "${XCODE_VERSION_MAJOR}" = "" -a "${MONO_GAC_PREFIX}" = "" -a "${!APP_ICON_@}" = "" ] ;then
+if [ "${GIDE}" = "" ] ;then
 	${ECHO} "$Compile $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS" >> $EMSG
 	${ECHO} -e "\t$COMMANDLINE" >> $EMSG
 	${ECHO} -e "\tArguments passed to source: SWITCHES=\"${SWITCHES}\"" >> $EMSG
