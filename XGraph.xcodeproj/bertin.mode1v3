@@ -233,10 +233,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D670508C15962C70009F069B</string>
+						<string>D64758731599DAE300B87D21</string>
 						<key>history</key>
 						<array>
-							<string>D67050811596155A009F069B</string>
+							<string>D670508C15962C70009F069B</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -273,10 +273,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D670508D15962C70009F069B</string>
+						<string>D64758741599DAE300B87D21</string>
 						<key>history</key>
 						<array>
-							<string>D6705076159611A5009F069B</string>
+							<string>D670508D15962C70009F069B</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -313,10 +313,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D670508E15962C70009F069B</string>
+						<string>D64758751599DAE300B87D21</string>
 						<key>history</key>
 						<array>
-							<string>D670507A159611A5009F069B</string>
+							<string>D670508E15962C70009F069B</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -423,7 +423,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 1026}, {231, 504}}</string>
+							<string>{{0, 0}, {231, 504}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -523,9 +523,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D6705072159611A5009F069B</string>
+				<string>D64758711599DAE300B87D21</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D6705073159611A5009F069B</string>
+				<string>D64758721599DAE300B87D21</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -644,7 +644,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>362163312.37625599</real>
+	<real>362404579.87982702</real>
 	<key>ToolbarConfigUserDefaultsMinorVersion</key>
 	<string>2</string>
 	<key>ToolbarDisplayMode</key>
@@ -666,7 +666,6 @@
 		<string>D6705074159611A5009F069B</string>
 		<string>/Volumes/Debian/Users/bertin/work/src/xgraph/XGraph.xcodeproj</string>
 		<string>D670508A15962C70009F069B</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
 	</array>
 	<key>WindowString</key>
 	<string>-763 209 721 563 -1280 100 1280 800 </string>
@@ -707,8 +706,6 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -748,7 +745,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D6AD58F8126345AC006C49C8</string>
-				<string>D670507E159611A5009F069B</string>
+				<string>D64758771599DAE300B87D21</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

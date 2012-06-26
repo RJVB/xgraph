@@ -111,13 +111,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 362154009;
-			PBXWorkspaceStateSaveDate = 362154009;
+			PBXPerProjectTemplateStateSaveDate = 362404563;
+			PBXWorkspaceStateSaveDate = 362404563;
 		};
 		perUserProjectItems = {
-			D6705076159611A5009F069B /* PBXTextBookmark */ = D6705076159611A5009F069B /* PBXTextBookmark */;
-			D670507A159611A5009F069B /* PBXTextBookmark */ = D670507A159611A5009F069B /* PBXTextBookmark */;
-			D67050811596155A009F069B /* PBXBookmark */ = D67050811596155A009F069B /* PBXBookmark */;
+			D64758731599DAE300B87D21 /* PBXTextBookmark */ = D64758731599DAE300B87D21 /* PBXTextBookmark */;
+			D64758741599DAE300B87D21 /* PBXTextBookmark */ = D64758741599DAE300B87D21 /* PBXTextBookmark */;
+			D64758751599DAE300B87D21 /* PBXTextBookmark */ = D64758751599DAE300B87D21 /* PBXTextBookmark */;
 			D670508C15962C70009F069B /* PBXTextBookmark */ = D670508C15962C70009F069B /* PBXTextBookmark */;
 			D670508D15962C70009F069B /* PBXTextBookmark */ = D670508D15962C70009F069B /* PBXTextBookmark */;
 			D670508E15962C70009F069B /* PBXTextBookmark */ = D670508E15962C70009F069B /* PBXTextBookmark */;
@@ -356,6 +356,42 @@
 			sepNavWindowFrame = "{{15, 209}, {736, 788}}";
 		};
 	};
+	D64758731599DAE300B87D21 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D679626E0E0BA23800E282EF /* ascanfcMap.cpp */;
+		name = "ascanfcMap.cpp: 76";
+		rLen = 0;
+		rLoc = 1800;
+		rType = 0;
+		vrLen = 1476;
+		vrLoc = 963;
+	};
+	D64758741599DAE300B87D21 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D67962590E0BA23800E282EF /* xgsupport.c */;
+		name = "xgsupport.c: 7895";
+		rLen = 124;
+		rLoc = 228402;
+		rType = 0;
+		vrLen = 1508;
+		vrLoc = 227523;
+	};
+	D64758751599DAE300B87D21 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D64758761599DAE300B87D21 /* SimuMotoPilotage.h */;
+		name = "SimuMotoPilotage.h: 180";
+		rLen = 0;
+		rLoc = 4848;
+		rType = 0;
+		vrLen = 1733;
+		vrLoc = 3875;
+	};
+	D64758761599DAE300B87D21 /* SimuMotoPilotage.h */ = {
+		isa = PBXFileReference;
+		name = SimuMotoPilotage.h;
+		path = /Volumes/Debian/Users/bertin/work/src/MSWin/matlab/SimuMoto/SMPilotage/SimuMotoPilotage.h;
+		sourceTree = "<absolute>";
+	};
 	D64869F712841B2D00C350CB /* xfree.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {696, 760}}";
@@ -397,34 +433,6 @@
 		originalNumberOfMultipleMatches = 0;
 		state = 1;
 	};
-	D6705076159611A5009F069B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D67962590E0BA23800E282EF /* xgsupport.c */;
-		name = "xgsupport.c: 7899";
-		rLen = 124;
-		rLoc = 228402;
-		rType = 0;
-		vrLen = 1463;
-		vrLoc = 227559;
-	};
-	D670507A159611A5009F069B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D670507B159611A5009F069B /* SimuMotoPilotage.h */;
-		rLen = 0;
-		rLoc = 9223372036854775807;
-		rType = 0;
-	};
-	D670507B159611A5009F069B /* SimuMotoPilotage.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = SimuMotoPilotage.h;
-		path = /Volumes/Debian/Users/bertin/work/src/MSWin/matlab/SimuMoto/SMPilotage/SimuMotoPilotage.h;
-		sourceTree = "<absolute>";
-	};
-	D67050811596155A009F069B /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = D679626E0E0BA23800E282EF /* ascanfcMap.cpp */;
-	};
 	D670508C15962C70009F069B /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D679626E0E0BA23800E282EF /* ascanfcMap.cpp */;
@@ -457,11 +465,12 @@
 	};
 	D670508F15962C70009F069B /* SimuMotoPilotage.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = SimuMotoPilotage.h;
 		path = /Volumes/Debian/Users/bertin/work/src/MSWin/matlab/SimuMoto/SMPilotage/SimuMotoPilotage.h;
 		sourceTree = "<absolute>";
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {780, 5894}}";
+			sepNavIntBoundsRect = "{{0, 0}, {736, 5572}}";
 			sepNavSelRange = "{4848, 0}";
 			sepNavVisRange = "{3875, 1733}";
 			sepNavWindowFrame = "{{-1087, 100}, {795, 800}}";
@@ -568,9 +577,9 @@
 	};
 	D67962590E0BA23800E282EF /* xgsupport.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {756, 261814}}";
+			sepNavIntBoundsRect = "{{0, 0}, {756, 261548}}";
 			sepNavSelRange = "{228402, 124}";
-			sepNavVisRange = "{227559, 1463}";
+			sepNavVisRange = "{227523, 1508}";
 			sepNavVisRect = "{{0, 64491}, {769, 785}}";
 			sepNavWindowFrame = "{{621, 0}, {814, 878}}";
 		};
@@ -697,7 +706,7 @@
 	};
 	D679626E0E0BA23800E282EF /* ascanfcMap.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {882, 11130}}";
+			sepNavIntBoundsRect = "{{0, 0}, {792, 11060}}";
 			sepNavSelRange = "{1800, 0}";
 			sepNavVisRange = "{963, 1476}";
 			sepNavVisRect = "{{0, 5215}, {769, 785}}";
