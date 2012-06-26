@@ -27,7 +27,7 @@ extern void ArrayCumMulScalarSSE(double *rsum, double *xa, double xb, double *su
 extern void _convolve( double *Data, size_t NN, double *Mask, double *Output, int Start, int End, int Nm );
 
 #define USE_SSE_AUTO
-#include "sse_mathfun.h"
+#include "sse_mathfun/sse_mathfun.h"
 
 // moved to sse_mathfun.h
 //#ifdef USE_SSE4

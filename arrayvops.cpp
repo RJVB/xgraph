@@ -28,7 +28,7 @@ IDENTIFY("macstl based array operations");
 
 #include <valarray>
 #include <macstl/valarray.h>
-#include "sse_mathfun.h"
+#include "sse_mathfun/sse_mathfun.h"
 
 #include "arrayvops.h"
 

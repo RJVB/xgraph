@@ -161,7 +161,7 @@ cpu_cycles_per_second.h: cpu_cycles_per_second
 SYSHEADERS = /usr/include/X11/*.h /usr/local/include/*.h
 
 #tags: $(SRC) $(DSRC) $(PYTHONSRC) Python/DM_Python.h Python/PyObjects.h $(SYSHEADERS) xgraph.h DataSet.h xgout.h new_ps.h ascanf.h Macros.h Sinc.h ux11/*.[ch] xtb/*.[ch] Elapsed.h lowlevel_timer.h xgALLOCA.h SS.h XXseg.h XGPen.h dymod.[ch] compiled_ascanf.h NaN.h fdecl.h config.h matherr.[ch] ReadData.h ascanfcMap.cpp arrayvops.[ch]
-tags: $(SRC) $(DYMOD_SOURCES) $(SYSHEADERS) xgraph.h DataSet.h xgout.h new_ps.h ascanf.h Macros.h Sinc.h ux11/*.[ch] xtb/*.[ch] Elapsed.h lowlevel_timer.h xgALLOCA.h SS.h XXseg.h XGPen.h dymod.[ch] compiled_ascanf.h NaN.h fdecl.h config.h matherr.[ch] ReadData.h ascanfcMap.cpp arrayvops.[ch] $(DYMOD_DEPHEADERS) sse_mathfun.h
+tags: $(SRC) $(DYMOD_SOURCES) $(SYSHEADERS) xgraph.h DataSet.h xgout.h new_ps.h ascanf.h Macros.h Sinc.h ux11/*.[ch] xtb/*.[ch] Elapsed.h lowlevel_timer.h xgALLOCA.h SS.h XXseg.h XGPen.h dymod.[ch] compiled_ascanf.h NaN.h fdecl.h config.h matherr.[ch] ReadData.h ascanfcMap.cpp arrayvops.[ch] $(DYMOD_DEPHEADERS) sse_mathfun/sse_mathfun.h
 	-xgctags $?
 	-touch tags
 
@@ -252,7 +252,7 @@ matherr.o: matherr.c arrayvops.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
 # 	ar rv libxgraph.a $@; zero $@
 
-SS.o: SS.c xgraph.h sse_mathfun.h
+SS.o: SS.c xgraph.h sse_mathfun/sse_mathfun.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
 # 	ar rv libxgraph.a $@; zero $@
 
@@ -262,7 +262,7 @@ dymod.o: dymod.c dymod.h compiled_ascanf.h ascanf.h dymod_interface.h DataSet.h 
 
 ascanfcMap.o: ascanfcMap.cpp ascanf.h xfree.h
 
-arrayvops.o: arrayvops.cpp arrayvops.h sse_mathfun.h
+arrayvops.o: arrayvops.cpp arrayvops.h sse_mathfun/sse_mathfun.h
 
 vscanf/asscanf.o: vscanf/asscanf.c vscanf/vfscanf.c
 
@@ -275,7 +275,7 @@ ascanfc-table.o: ascanfc-table.c ascanfc-table.h ascanf.h compiled_ascanf.h Elap
 	$(ACC) $(STRIP) -BSD $(COPTS) $(XG_FLAGS) $(CFLAGS) -O0 -fno-builtin $(CHECK) $<
 # 	ar rv libxgraph.a $@; zero $@
 
-ascanfc.o: ascanfc.c ascanf.h compiled_ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h Sinc.h DataSet.h Python/PythonInterface.h sse_mathfun.h arrayvops.h  # xgraph.h ascanfc-table.o 
+ascanfc.o: ascanfc.c ascanf.h compiled_ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h Sinc.h DataSet.h Python/PythonInterface.h sse_mathfun/sse_mathfun.h arrayvops.h  # xgraph.h ascanfc-table.o 
 	$(ACC) -BSD $(COPTS) $(XG_FLAGS) $(CFLAGS) $(CHECK) $<
 # 	ar rv libxgraph.a $@; zero $@
 

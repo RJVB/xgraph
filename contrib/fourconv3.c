@@ -24,7 +24,7 @@ IDENTIFY( "Fourier/Convolution ascanf library module using FFTW 3" );
 #	include <macstl/valarray.h>
 #endif
 #define USE_SSE_AUTO
-#include "sse_mathfun.h"
+#include "sse_mathfun/sse_mathfun.h"
 #include "arrayvops.h"
 
   /* Get the dynamic module definitions:	*/

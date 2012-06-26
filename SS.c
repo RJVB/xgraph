@@ -38,7 +38,7 @@ IDENTIFY( "Simple Statistics routines" );
 #if defined(__SSE4_1__) || defined(__SSE4_2__)
 #	define USE_SSE4
 #	define SSE_MATHFUN_WITH_CODE
-#	include "sse_mathfun.h"
+#	include "sse_mathfun/sse_mathfun.h"
 #endif
 
 extern char *index();
