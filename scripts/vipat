@@ -86,7 +86,7 @@ if [ $COMPRESSED = 1 ] ;then
 	FIND="z${FIND}"
 fi
 
-hotfiles="`$FIND -l $NONPAT $FOPTS $FLIST \"$PAT\" $RECURS $FILES`"
+hotfiles="`$FIND -l $NONPAT $FOPTS $FLIST \"$PAT\" $RECURS $INCL $FILES`"
 if [ "$NONPAT" = "-v" ] ;then
 	HOTFILES=""
 	for file in $hotfiles ;do

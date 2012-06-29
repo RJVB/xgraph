@@ -111,16 +111,16 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 362404563;
-			PBXWorkspaceStateSaveDate = 362404563;
+			PBXPerProjectTemplateStateSaveDate = 362409260;
+			PBXWorkspaceStateSaveDate = 362409260;
 		};
 		perUserProjectItems = {
 			D64758731599DAE300B87D21 /* PBXTextBookmark */ = D64758731599DAE300B87D21 /* PBXTextBookmark */;
 			D64758741599DAE300B87D21 /* PBXTextBookmark */ = D64758741599DAE300B87D21 /* PBXTextBookmark */;
 			D64758751599DAE300B87D21 /* PBXTextBookmark */ = D64758751599DAE300B87D21 /* PBXTextBookmark */;
-			D670508C15962C70009F069B /* PBXTextBookmark */ = D670508C15962C70009F069B /* PBXTextBookmark */;
-			D670508D15962C70009F069B /* PBXTextBookmark */ = D670508D15962C70009F069B /* PBXTextBookmark */;
-			D670508E15962C70009F069B /* PBXTextBookmark */ = D670508E15962C70009F069B /* PBXTextBookmark */;
+			D647591E1599ED6D00B87D21 /* PBXTextBookmark */ = D647591E1599ED6D00B87D21 /* PBXTextBookmark */;
+			D647591F1599ED6D00B87D21 /* PBXTextBookmark */ = D647591F1599ED6D00B87D21 /* PBXTextBookmark */;
+			D64759201599ED6D00B87D21 /* PBXTextBookmark */ = D64759201599ED6D00B87D21 /* PBXTextBookmark */;
 		};
 		sourceControlManager = D679624E0E0BA03900E282EF /* Source Control */;
 		userBuildSettings = {
@@ -388,9 +388,52 @@
 	};
 	D64758761599DAE300B87D21 /* SimuMotoPilotage.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = SimuMotoPilotage.h;
 		path = /Volumes/Debian/Users/bertin/work/src/MSWin/matlab/SimuMoto/SMPilotage/SimuMotoPilotage.h;
 		sourceTree = "<absolute>";
+	};
+	D647591E1599ED6D00B87D21 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D679626E0E0BA23800E282EF /* ascanfcMap.cpp */;
+		name = "ascanfcMap.cpp: 76";
+		rLen = 0;
+		rLoc = 1800;
+		rType = 0;
+		vrLen = 1476;
+		vrLoc = 963;
+	};
+	D647591F1599ED6D00B87D21 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D67962590E0BA23800E282EF /* xgsupport.c */;
+		name = "xgsupport.c: 7895";
+		rLen = 124;
+		rLoc = 228402;
+		rType = 0;
+		vrLen = 1508;
+		vrLoc = 227523;
+	};
+	D64759201599ED6D00B87D21 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D64759211599ED6D00B87D21 /* SimuMotoPilotage.h */;
+		name = "SimuMotoPilotage.h: 180";
+		rLen = 0;
+		rLoc = 4848;
+		rType = 0;
+		vrLen = 1653;
+		vrLoc = 3872;
+	};
+	D64759211599ED6D00B87D21 /* SimuMotoPilotage.h */ = {
+		isa = PBXFileReference;
+		name = SimuMotoPilotage.h;
+		path = /Volumes/Debian/Users/bertin/work/src/MSWin/matlab/SimuMoto/SMPilotage/SimuMotoPilotage.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {736, 5586}}";
+			sepNavSelRange = "{4848, 0}";
+			sepNavVisRange = "{3872, 1653}";
+			sepNavWindowFrame = "{{-1087, 100}, {795, 800}}";
+		};
 	};
 	D64869F712841B2D00C350CB /* xfree.h */ = {
 		uiCtxt = {
@@ -432,49 +475,6 @@
 		modificationTime = 362156452.573503;
 		originalNumberOfMultipleMatches = 0;
 		state = 1;
-	};
-	D670508C15962C70009F069B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D679626E0E0BA23800E282EF /* ascanfcMap.cpp */;
-		name = "ascanfcMap.cpp: 76";
-		rLen = 0;
-		rLoc = 1800;
-		rType = 0;
-		vrLen = 1476;
-		vrLoc = 963;
-	};
-	D670508D15962C70009F069B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D67962590E0BA23800E282EF /* xgsupport.c */;
-		name = "xgsupport.c: 7899";
-		rLen = 124;
-		rLoc = 228402;
-		rType = 0;
-		vrLen = 1463;
-		vrLoc = 227559;
-	};
-	D670508E15962C70009F069B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D670508F15962C70009F069B /* SimuMotoPilotage.h */;
-		name = "SimuMotoPilotage.h: 180";
-		rLen = 0;
-		rLoc = 4848;
-		rType = 0;
-		vrLen = 1733;
-		vrLoc = 3875;
-	};
-	D670508F15962C70009F069B /* SimuMotoPilotage.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = SimuMotoPilotage.h;
-		path = /Volumes/Debian/Users/bertin/work/src/MSWin/matlab/SimuMoto/SMPilotage/SimuMotoPilotage.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {736, 5572}}";
-			sepNavSelRange = "{4848, 0}";
-			sepNavVisRange = "{3875, 1733}";
-			sepNavWindowFrame = "{{-1087, 100}, {795, 800}}";
-		};
 	};
 	D67260481579311800FE8669 /* valarray_valarray.h */ = {
 		uiCtxt = {
