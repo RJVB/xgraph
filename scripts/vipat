@@ -5,6 +5,7 @@ FIND="fgrep"
 FOPTS=""
 NONPAT=""
 RECURS=""
+INDIR=""
 INCL=""
 
 SELF="`basename $0`"
@@ -22,6 +23,7 @@ help(){
 	echo "$SELF [-r] [-i] [-v] [-z] [--list] [-- grep_opt] [-R] [--include fpattern] [pattern] files"
 	echo "\t-r\t: use egrep instead of fgrep"
 	echo "\t-i\t: case-insenstive search"
+	echo "\t-SL\t: use SpotLight instead of fgrep/egrep"
 }
 
 if [ $# -lt 2 ] ;then
@@ -32,25 +34,29 @@ fi
 COMPRESSED=0
 
 while [ $PARSE = 1 ] ;do
-	case "$1" in
-		"-help")
+	case $1 in
+		-help)
 			help
 			exit 0
 			;;
-		"-v")
+		-v)
 			NONPAT="-v"
 			;;
-		"-z")
+		-z)
 			COMPRESSED=1
 			;;
-		"-r")
+		-r)
 			FIND="egrep"
 			;;
-		"--list")
+		-SL)
+			FIND="mdfind"
+			set -x
+			;;
+		--list)
 			FILES="`cat $2`"
 			shift 1
 			;;
-		"-i")
+		-i)
 			FOPTS="$FOPTS -i"
 #			EXINIT="`echo $EXINIT|sed -e 's/noignorecase//g'` ignorecase"
 #			export EXINIT
@@ -59,16 +65,18 @@ while [ $PARSE = 1 ] ;do
 # 		"--")
 # 			FOPTS="$FOPTS --"
 # 			;;
-		"--")
+		--)
 			FOPTS="$FOPTS -- $2"
 			shift
 			;;
-		"--include")
+		--include)
 			INCL="--include=$2"
 			shift
 			;;
-		"-R")
-			RECURS="-R"
+		-R)
+			RECURS="-R $2"
+			INDIR="$2"
+			shift 1
 			;;
 		*)
 			PAT="$1"
@@ -86,7 +94,15 @@ if [ $COMPRESSED = 1 ] ;then
 	FIND="z${FIND}"
 fi
 
-hotfiles="`$FIND -l $NONPAT $FOPTS $FLIST \"$PAT\" $RECURS $INCL $FILES`"
+if [ "${FIND}" = "mdfind" ] ;then
+	if [ "${INDIR}" = "" ] ;then
+		hotfiles="`mdfind \"$PAT\"`"
+	else
+		hotfiles="`mdfind -onlyin "${INDIR}" \"$PAT\"`"
+	fi
+else
+	hotfiles="`$FIND -l $NONPAT $FOPTS $FLIST \"$PAT\" $RECURS $INCL $FILES`"
+fi
 if [ "$NONPAT" = "-v" ] ;then
 	HOTFILES=""
 	for file in $hotfiles ;do
