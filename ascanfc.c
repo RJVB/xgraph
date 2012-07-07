@@ -68,6 +68,9 @@ extern DM_Python_Interface *dm_python;
 #	include "sse_mathfun/sse_mathfun.h"
 #	include "arrayvops.h"
 #elif defined(__SSE2__) || defined(__SSE3__)
+#	define USE_SSE_AUTO
+#	define SSE_MATHFUN_WITH_CODE
+#	include "sse_mathfun/sse_mathfun.h"
 #	include "arrayvops.h"
 #endif
 
@@ -15086,6 +15089,17 @@ int Create_AutoVariable( char *s, double *A, int idx, int *N, Compiled_Form **fo
  \ not used.
  */
 
+void lSET_CHANGED_FLAG(char *ch, int i, double a, double b, int scanf_ret){
+	if(ch){
+		if( scanf_ret== EOF)
+			ch[i]= VAR_UNCHANGED;
+		else if( a== b)
+			ch[i]= VAR_REASSIGN;
+		else if( a!= b)
+			ch[i]= VAR_CHANGED;
+	}
+}
+
 int _fascanf_parser( double *a, char **s, char *ch, Compiled_Form **form, int *level, int r, int i, int *j, int is_last )
 { char *cs= *s, *ss= *s, *ns= *s, *name= NULL, *s_end;
   int sign= 1, negate= False;
@@ -15279,7 +15293,7 @@ read_flpoint:;
 	if( cs ){
 		*s+= strlen(*s);
 	}
-	SET_CHANGED_FLAG( ch, i, A, *a, *j);
+	lSET_CHANGED_FLAG( ch, i, A, *a, *j);
 	*a= A;
 	if( type== _ascanf_value ){
 		Add_Form( form, type, NULL, A, name, NULL, NULL );

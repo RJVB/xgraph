@@ -115,6 +115,10 @@ case $MACH in
 				PDIR=$3
 				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.1"
 				;;
+			Python32Module)
+				PDIR=$3
+				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.2mu"
+				;;
 		esac
 		;;
 	Darwin)

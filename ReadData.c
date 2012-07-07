@@ -8094,6 +8094,7 @@ init_begin:;
 			if( param_ok && optbuf ){
 			  char *TBh= TBARprogress_header;
 
+				memset( change, VAR_UNCHANGED, sizeof(change) );
 				TBARprogress_header= "*PARAM_FUNCTIONS*";
 				ReadData_proc.param_functions= cleanup(&optbuf[17]);
 				strncpy( label, ReadData_proc.param_functions, 15 );
@@ -8170,30 +8171,29 @@ init_begin:;
 							legend_setNumber= setNumber;
 						}
 						else{
-							sprintf( legend, "\n%s:\n", this_set->setName);
-							sprintf( legend, "%s *PARAM_RANGE*%s,%s,%s\n",
-								legend,
+						  int n;
+							n = snprintf( legend, legend_len, "\n%s:\n", this_set->setName);
+							n += snprintf( &legend[n], legend_len - n, " *PARAM_RANGE*%s,%s,%s\n",
 								d2str( ReadData_proc.param_range[0], "%g", NULL),
 								d2str( ReadData_proc.param_range[1], "%g", NULL),
 								d2str( ReadData_proc.param_range[2], "%g", NULL)
 							);
 							if( !ReadData_proc.param_before_printed ){
-								sprintf( legend, "%s%s%s", 
-									legend,
+								n += snprintf( &legend[n], legend_len - n, "%s%s", 
 									(ReadData_proc.param_before_len)? " *PARAM_BEFORE*" : "",
 									(ReadData_proc.param_before_len)? ReadData_proc.param_before : ""
 								);
 								ReadData_proc.param_before_printed= 1;
 							}
 							if( !ReadData_proc.param_after_printed ){
-								sprintf( legend, "%s%s%s",
-									legend,
+								n += snprintf( &legend[n], legend_len - n, "%s%s",
 									(ReadData_proc.param_after_len)? " *PARAM_AFTER*" : "",
 									(ReadData_proc.param_after_len)? ReadData_proc.param_after : ""
 								);
 								ReadData_proc.param_after_printed= 1;
 							}
-							sprintf( legend, "%s *PARAM_FUNCTIONS*%s", legend, ReadData_proc.param_functions );
+							n += snprintf( &legend[n], legend_len - n,
+								" *PARAM_FUNCTIONS*%s", legend, ReadData_proc.param_functions );
 							StringCheck( legend, legend_len, __FILE__, __LINE__);
 					  /* subsitute all ',' for newlines to put the different
 					   \ expressions on different lines

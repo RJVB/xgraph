@@ -2056,7 +2056,8 @@ void Show_Stats(FILE *fp, char *label, SimpleStats *SSx, SimpleStats *SSy, Simpl
 #else
 		  char buf[MAXBUFSIZE];
 #endif
-			sprintf( buf, " %s: X<%ld>= [%s:%s] %s +- %s   Y<%ld>= [%s:%s] %s +- %s   E<%ld>= [%s:%s] %s +- %s\n",
+		  size_t n, blen = sizeof(buf);
+			n = snprintf( buf, blen, " %s: X<%ld>= [%s:%s] %s +- %s   Y<%ld>= [%s:%s] %s +- %s   E<%ld>= [%s:%s] %s +- %s\n",
 				label,
 				SSx->count,
 				d2str( SSx->min, "%g", NULL),
@@ -2077,8 +2078,7 @@ void Show_Stats(FILE *fp, char *label, SimpleStats *SSx, SimpleStats *SSy, Simpl
 				d2str( SS_St_Dev( SSe), "%g", NULL)
 			);
 			if( SS_sy ){
-				sprintf( buf, "%s%s: Set-Y<%ld>= [%s:%s] %s +- %s\n",
-					buf,
+				n += snprintf( &buf[n], blen-n, "%s: Set-Y<%ld>= [%s:%s] %s +- %s\n",
 					lbuf,
 					SS_sy->count,
 					d2str( SS_sy->min, "%g", NULL),
@@ -2088,8 +2088,7 @@ void Show_Stats(FILE *fp, char *label, SimpleStats *SSx, SimpleStats *SSy, Simpl
 				);
 			}
 			if( SS_SY ){
-				sprintf( buf, "%s%s: All Y<%ld>= [%s:%s] %s +- %s\n",
-					buf,
+				n += snprintf( &buf[n], blen-n, "%s: All Y<%ld>= [%s:%s] %s +- %s\n",
 					lbuf,
 					SS_SY->count,
 					d2str( SS_SY->min, "%g", NULL),
@@ -15165,7 +15164,7 @@ HARDCOPY_POPEN:;
 				   \ lower level routines.
 				   \ 980316 - I have to admit I don't remember why I want this.. - to obtain a lock?
 				   */
-				if( (fd= open( tilde, O_WRONLY|O_CREAT))!= -1 ){
+				if( (fd= open( tilde, O_WRONLY|O_CREAT, 0755))!= -1 ){
 					  /* 20010107: should do more checks before attempting a chmod...	*/
 					if( strcmp( tilde, "/dev/null") && fchmod( fd, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH) ){
 						sprintf(err, "Unable to chmod(755) file `%s'\n", tilde );

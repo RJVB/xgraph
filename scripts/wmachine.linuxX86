@@ -22,15 +22,15 @@ setautovec() {
 	ARCH="${1}"
 	VU="${2}"
 	case $compil in
-		*gcc-3.3*|*g++-3.3*)
-			MARCH="${MARCH} ${VU}"
-			;;
 		*gcc-3.5*)
 			OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -fdump-tree-vect-stats"
 			MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86}"
 			MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86}"
 			OPTIMOPT="$OOPTIMOPT"
 			echo "# Enabling auto vectorisation" 1>&2
+			;;
+		*gcc-3*|*g++-3*)
+			MARCH="${MARCH} ${VU}"
 			;;
 		clang*|*llvm*gcc-4.2*|*llvm*g++-4.2*)
 			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
@@ -62,7 +62,8 @@ setautovec() {
 			fi
 			OPTIMOPT="$OOPTIMOPT"
 			;;
-		*gcc-4*|*g++-4*)
+		##*gcc-4*|*g++-4*)
+		*gcc*|*g++*)
 			if [ "${CPU}" = "core2" ] ;then
 				CPU="${ALT_CPU}"
 			fi
@@ -143,9 +144,9 @@ setopts() {
 			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse"
 			;;
 
-		*Athlon*)
-			DEFAULT_CC="gcc-4.4"
-			DEFAULT_CXX="g++-4.4"
+		*Athlon*|*AMD*)
+			DEFAULT_CC="gcc"
+			DEFAULT_CXX="g++"
 			CPU="native"
 			ALT_CPU="" ##pentium-m"
 			mcpu="-march"

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #cmake <file> (&) : run make -f make<file> (in background): redirect 
 #stderr (compile errors) to  <file>$CMAKE
 #stdout redirected to <file>$CMAKE.l (make actions, link errors)

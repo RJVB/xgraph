@@ -2239,3 +2239,6 @@ Don't allow too small steps in DrawAxis; min. 1/100 of range (when step==1)?
 20120622
 	Some work on the MorBur99P2.xg example, using 2 worker threads *or processes*. This is possible because DataSet->columns
 	memory is now allocated as anonymous mmap (cf. XGrealloc_2d_doubles).
+
+20120706
+	Implement a protection against failure to find a greek font so that there cannot be NULL XFontStruct pointers ... !
