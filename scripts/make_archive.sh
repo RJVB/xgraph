@@ -9,19 +9,27 @@ case $THISHOST in
 		;;
 esac
 
+DOTP=""
 case $THISHOST in 
-	Darwin|"Power Macintosh"|Linux)
+	Darwin|"Power Macintosh")
 		  # this is similar to tcsh's 'symlink chase' option: always use the physical path, not the path as given
 		  # by any symlinks in it.
 		set -P
 		;;
+	Linux)
+		DOTP="-P"
+		;;
 esac
 
-cd $HOME/cworks
+cd $DOTP $HOME/cworks
 
 mkdir -p $HOME/work/Archive
 
-ECHO="/usr/local/bin/echo"
+if [ -x /usr/local/bin/echo ] ;then
+	ECHO="/usr/local/bin/echo"
+elif [ -x /bin/echo ] ;then
+	ECHO="/bin/echo"
+fi
 
 CleanUp(){
 	${ECHO} "Removing temp copy of xgraph directory"
@@ -48,20 +56,20 @@ if [ $? = 0 -o "$OS" = "Linux" -o "$OS" = "linux" -o "$OS" = "LINUX" ] ;then
 	${ECHO} -n "Making temp copy of xgraph directory..."
 	${CP} -prd xgraph ../Archive/
 	${ECHO} " done."
-	cd ../Archive/
+	cd $DOTP ../Archive/
 else
 	${ECHO} -n "Making temp copy of xgraph directory (tar to preserve symb. links).."
 # 	cp -pr xgraph ../Archive
 	gnutar -cf ../Archive/XG.tar xgraph
 	sleep 1
 	${ECHO} "(untar).."
-	cd ../Archive/
+	cd $DOTP ../Archive/
 	gnutar -xf XG.tar
 fi
 
 sleep 1
 ${ECHO} "Cleaning out the backup copy"
-cd xgraph
+cd $DOTP xgraph
 pwd
 gunzip -vf *.gz
 gunzip -v examples/*.gz
@@ -72,7 +80,7 @@ rm -rf old_examples snapshots wis.dat* wisdom.* XGraph-1.moved-aside build *.doc
 mv tim-asc-parm.c Tim-asc-parm.c
 rm tim-asc-parm*
 mv Tim-asc-parm.c tim-asc-parm.c
-cd ..
+cd $DOTP ..
 # mkdir XG_examples
 # mv xgraph/*.xg* XG_examples
 
