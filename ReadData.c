@@ -9015,7 +9015,7 @@ init_begin:;
 						   \ lower level routines.
 						   \ 980316 - I have to admit I don't remember why I want this.. - to obtain a lock?
 						   */
-						if( (fd= open( sFname, O_WRONLY|O_CREAT))!= -1 ){
+						if( (fd= open( sFname, O_WRONLY|O_CREAT, 0755))!= -1 ){
 							if( fchmod( fd, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH) ){
 								fprintf( StdErr, "ReadData(%s): Unable to chmod(755) file `%s' (%s)\n", optbuf, sFname, serror() );
 							}

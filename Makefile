@@ -149,6 +149,7 @@ refresh: $(OBJS) $(TARGET)
 	rm $(TARGET)
 
 config.h: cpu_cycles_per_second.h
+	mkdir -p emsg
 	touch -r $< $@
 
 lowlevel_timer.h: cpu_cycles_per_second.h
