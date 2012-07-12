@@ -23,7 +23,8 @@ esac
 
 cd $DOTP $HOME/cworks
 
-mkdir -p $HOME/work/Archive
+ARCHDIR="$HOME/work/Archive"
+mkdir -p "$ARCHDIR"
 
 if [ -x /usr/local/bin/echo ] ;then
 	ECHO="/usr/local/bin/echo"
@@ -33,7 +34,7 @@ fi
 
 CleanUp(){
 	${ECHO} "Removing temp copy of xgraph directory"
-	rm -rf $HOME/work/Archive/xgraph $HOME/work/Archive/xgraph.tar $HOME/work/Archive/XG_exmp.tar $HOME/work/Archive/XG_examples $HOME/work/Archive/XG.tar &
+	rm -rf ${ARCHDIR}/xgraph ${ARCHDIR}/xgraph.tar ${ARCHDIR}/XG_exmp.tar ${ARCHDIR}/XG_examples ${ARCHDIR}/XG.tar &
 	exit 2
 }
 
@@ -52,18 +53,18 @@ if [ $? = 0 ] ;then
 fi
 
 cp --help 2>&1 | fgrep -- --no-dereference > /dev/null
-if [ $? = 0 -o "$OS" = "Linux" -o "$OS" = "linux" -o "$OS" = "LINUX" ] ;then
+if [ $? = 0 -o "$OS" = "Linux" -o "$OS" = "linux" -o "$OS" = "LINUX" -o "`uname -o`" = "Cygwin" ] ;then
 	${ECHO} -n "Making temp copy of xgraph directory..."
-	${CP} -prd xgraph ../Archive/
+	${CP} -prd xgraph ${ARCHDIR}
 	${ECHO} " done."
-	cd $DOTP ../Archive/
+	cd $DOTP ${ARCHDIR}
 else
 	${ECHO} -n "Making temp copy of xgraph directory (tar to preserve symb. links).."
-# 	cp -pr xgraph ../Archive
-	gnutar -cf ../Archive/XG.tar xgraph
+# 	cp -pr xgraph ${ARCHDIR}
+	gnutar -cf ${ARCHDIR}/XG.tar xgraph
 	sleep 1
 	${ECHO} "(untar).."
-	cd $DOTP ../Archive/
+	cd $DOTP ${ARCHDIR}
 	gnutar -xf XG.tar
 fi
 

@@ -56,11 +56,21 @@ else
 	STRIP=""
 fi
 
+if [ "${DEFAULTARCH}" = "" ] ;then
+	DEFAULTARCH=""
+fi
 if [ "${MARCH}" = ""  ] ;then
 	MARCH="-march=${CPU}"
 fi
+
 vanilla=""
-ALWAYS_FLAGS="-fno-float-store -fomit-frame-pointer -mieee-fp"
+
+_MARCH_="${MARCH}"
+
+ALWAYS_FLAGS="-fno-float-store -fomit-frame-pointer"
+# ALWAYS_FLAGS="-fomit-frame-pointer"
+
+NOTSHARED=""
 
 if [ "$RWSTRINGS" = "" ] ;then
 	RWSTRINGS="-fwritable-strings"
@@ -213,13 +223,17 @@ select_debug_mode () {
 	OTHEROPTIMS="${OTHEROPTIMS} ${INLINE}"
 	STRIP=""
 	if [ "$1" = "-gi" ] ;then
-		DEBUGOPT="-g3 ${DDEBUG} -finline-functions -fkeep-inline-functions -fno-omit-frame-pointer"
+		DEBUGOPT="-g ${DDEBUG} -finline-functions -fkeep-inline-functions -fno-omit-frame-pointer"
 	elif [ "$1" = "-g" -o "$1" = "-gOpt" -o "$1" = "-gsimOpt" ] ;then
-		DEBUGOPT="-g3 ${DDEBUG} -fno-inline-functions -fno-omit-frame-pointer"
+		DEBUGOPT="-g ${DDEBUG} -fno-inline-functions -fno-omit-frame-pointer"
 	elif [ "$1" = "-gOpt3" ] ;then
-		DEBUGOPT="-g3 ${DDEBUG} -fno-omit-frame-pointer"
+		DEBUGOPT="-g ${DDEBUG} -fno-omit-frame-pointer"
+	elif [ "$1" = "-symbolsOnly" ] ;then
+		DEBUGOPT="-g"
+	elif [ "$1" = "-symbols" ] ;then
+		DEBUGOPT="-g -fno-omit-frame-pointer"
 	else
-		DEBUGOPT="-g3 $1 ${DDEBUG} -fno-inline-functions -fno-omit-frame-pointer"
+		DEBUGOPT="-g ${DDEBUG} -fno-inline-functions -fno-omit-frame-pointer"
 	fi
 	 # debugging: hardcode full sourcefile path.
 	 # supposes we're compiling where the file stands...
@@ -244,7 +258,7 @@ StoreSwitch() {
 
 DefaultArgHandler() {
 	if [ "$1" != -fPIC ] ;then
-		ARGS="$ARGS $1"
+	ARGS="$ARGS $1"
 	fi
 	StoreSwitch $1
 	case $1 in
@@ -462,6 +476,10 @@ while [ $# != 0 ] ; do
 					${ECHO} -e "\"$1 $2\" was preceded by \"${CHECK} $file.${EXT}\": reverse for correct handling of compressed object-files!\n\
 	\telse you run the risk of favouring the old object-file"
 					${ECHO} "         You may want to set env.var GCCOPT_SIMPLE to disable smart handling of ${CHECK} and -o"
+					# 20101116: incredible I never noticed this was absent:
+					if [ $COMPRESSING != 0 ] ;then
+						COMPRESS="$COMPRESS ${OUTPUT}"
+					fi
 				fi
 				shift
 			fi
@@ -484,7 +502,7 @@ while [ $# != 0 ] ; do
 			select_debug_mode $*
 			${ECHO} "\"simple\" optimisation and DEBUG"
 			;;
-		"-gOpt"|"-gOpt3")
+		"-gOpt"|"-gOpt3"|-symbols*)
 			OPTIMOPT=""
 			select_debug_mode $*
 			${ECHO} "\"full\" optimisation and DEBUG"
@@ -608,6 +626,22 @@ while [ $# != 0 ] ; do
 		-float)
 			;;
 		-Wf,*)
+			;;
+		-unibin)
+			if [ "${MARCHUNI}" != "" ] ;then
+				MARCH="${MARCHUNI}"
+				DEFAULTARCH=""
+			fi
+			;;
+		-unibin64)
+			if [ "${MARCHUNI64}" != "" ] ;then
+				MARCH="${MARCHUNI64}"
+				DEFAULTARCH=""
+			fi
+			;;
+		-defArch)
+			echo "-defArch $2 ignored on linux"
+			shift
 			;;
 		-non_PP_compat)
 			MARCH=""
@@ -734,7 +768,7 @@ fi
 
 #kludge:
 case $compiler in
-	*gcc400*|*gcc-4.0.0*)
+	clang*|*gcc400*|*gcc-4.0.0*)
 		${ECHO} "${MARCH}" | fgrep -- -mstring >& /dev/null
 		if [ $? = 0 -a "${file}.${EXT}" = "xgraph.c" ] ;then
 			${ECHO} "Removing -mstring from gcc options to prevent problems..." 1>&2
@@ -749,7 +783,7 @@ case $compiler in
 esac
 
 case $compiler in
-	*gcc[34]*|*gcc-[34]*|*g++[34]*|*g++-[34]*|*c++[34]*|*c++-[34]*)
+	clang*|*gcc[34]*|*gcc-[34]*|*g++[34]*|*g++-[34]*|*c++[34]*|*c++-[34]*)
 		 # -Wsequence-point warns for undefined constructs/expressions:
 		WARNINGS="${WARNINGS} -Wsequence-point"
 # 		echo ">${MARCH}< >-march=${CPU}<"
@@ -780,22 +814,27 @@ if [ "$Compile" = "" ] ;then
 	if [ "$vanilla" = "" ] ;then
 		case `basename ${compiler}` in
 			pgcc*)
-				Compile="${compiler} ${RWSTRINGS} ${CPU} ${MARCH} -fno-fast-math -malign-double -mstack-align-double -mpreferred-stack-boundary=4 ${ALWAYS_FLAGS} -fno-strict-aliasing -mfancy-math-387 -m80387"
+				Compile="${compiler} ${DEFAULTARCH} ${RWSTRINGS} ${CPU} ${MARCH} -fno-fast-math ${ALWAYS_FLAGS}"
 				;;
 			*)
-				Compile="${compiler} ${RWSTRINGS} ${CPU} ${MARCH} -fno-fast-math -malign-double -mpreferred-stack-boundary=4 ${ALWAYS_FLAGS} -fno-strict-aliasing -mfancy-math-387 -m80387"
+				Compile="${compiler} ${DEFAULTARCH} ${RWSTRINGS} ${CPU} ${MARCH} -fno-fast-math ${ALWAYS_FLAGS}"
 				;;
 		esac
 	else
-		Compile="${compiler} ${RWSTRINGS} ${CPU} ${MARCH} ${ALWAYS_FLAGS}"
+		Compile="${compiler} ${DEFAULTARCH} ${RWSTRINGS} ${CPU} ${MARCH} ${ALWAYS_FLAGS}"
 		compiler="${Compile}"
 	fi
 # 	Compile="${compiler} -fverbose-asm -m486 -mcpu=${CPU}"
 fi
 
 if [ "${EXT}" = "cpp" -o "${isCXX}" = "1" ] ;then
-	Compile="`echo ${Compile} | sed -e 's/gcc/g++/g'`"
-	compiler="`echo ${compiler} | sed -e 's/gcc/g++/g'`"
+	if [ $USINGCLANG = 0 ] ;then
+		Compile="`echo ${Compile} | sed -e 's/gcc/g++/g'`"
+		compiler="`echo ${compiler} | sed -e 's/gcc/g++/g'`"
+	else
+		Compile="`echo ${Compile} | sed -e 's/clang/clang++/g'`"
+		compiler="`echo ${compiler} | sed -e 's/clang/clang++/g'`"
+	fi
 # 20051116: remove incompatible option(s):
 	OPTIMOPT="`echo ${OPTIMOPT} | sed -e 's/-freorder-blocks-and-partition//g'`"
 fi
@@ -910,7 +949,7 @@ if [ $DEBUG != 1 ] ;then
 	set +x
 fi
 
-${ECHO} "$Compile $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LIBS" >> $EMSG
+${ECHO} "$Compile $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS" >> $EMSG
 ${ECHO} -e "\t$COMMANDLINE" >> $EMSG
 ${ECHO} -e "\tArguments passed to source: SWITCHES=\"${SWITCHES}\"" >> $EMSG
 
@@ -987,118 +1026,3 @@ else
 	exit $RET
 fi
 
-# Below follow some useful & used scripts:
-
-# #!/bin/sh
-# # _obj_compress $background $compress $VERBOSE $Z $TARGET $COMPRESS
-# 
-# background=$1 ; export background ; shift
-# compress=$1 ; export compress ; shift
-# VERBOSE=$1 ; export VERBOSE ; shift
-# Z=$1 ; export Z ; shift
-# TARGET=$1 ; export TARGET ; shift
-# COMPRESS=$* ; export COMPRESS
-# 
-# do_compress(){
-# 	for J in $COMPRESS ;do
-# 		if [ -r $J ] ;then 
-# 			rm -f $J.$Z
-# 			nice $compress $VERBOSE $J
-# 			echo "\c" > $J
-# 			touch -r $J.$Z $J
-# 		fi
-# 	done
-# 
-# 	if [ "$TARGET" != "" ] ;then
-# 		sleep 1
-# 		touch $TARGET 
-# 		echo "$0: $TARGET touched and done"
-# 	fi
-# }
-# 
-# if [ $background != 0 ] ;then	
-# 	( do_compress < /dev/null > /dev/null 2>&1 & ) &
-# 	echo "$0: background"
-# else
-# 	do_compress
-# fi
-# exit 0
-
-# #!/bin/sh
-# # cxgetenv <varname>
-# 
-# if [ $# = 0 ] ;then
-# 	exec Env
-# else
-# 	if [ $# -gt 1 ] ;then
-# 		echo "usage: `basename $0` <variablename> <value>" 1>&2
-# 		echo "The variable is recorded in \$ENVDIR , ./.env or $HOME/.env" 1>&2
-# 		exit 1
-# 	fi
-# fi
-# if [ "$ENVDIR" = "" ] ;then
-# 	if [ -d ./.env ] ;then
-# 		ENVDIR="./.env"
-# 	else	
-# 		if [ -d $HOME/.env ] ;then
-# 			ENVDIR="$HOME/.env"
-# 		else
-# 			echo "No ENVDIR specified - creating ./.env" 1>&2
-# 			mkdir ./.env
-# 			ENVDIR="./.env"
-# 		fi
-# 	fi
-# fi
-# 
-# if [ ! -d "$ENVDIR" ] ;then
-# 	echo "ENVDIR=$ENVDIR : not a directory" 1>&2
-# 	exit 10
-# fi
-# 
-# PREF="_"
-# if [ -r "$ENVDIR/$PREF$1" ] ;then
-# 	cat "$ENVDIR/$PREF$1"
-# else
-# 	if [ -r $ENVDIR/$1 ] ;then
-# 		cat $ENVDIR/$1
-# 	fi
-# fi
-
-# #!/bin/sh
-# # cxsetenv <varname> <value>
-# 
-# if [ $# = 0 ] ;then
-# 	exec Env
-# else
-# # 	if [ $# = 1 -o $# -gt 2 ] ;then
-# 	if [ $# = 1 ] ;then
-# 		echo "usage: `basename $0` <variablename> <value>"
-# 		echo "The variable is recorded in \$ENVDIR , ./.env or $HOME/.env"
-# 		exit 1
-# 	fi
-# fi
-# if [ "$ENVDIR" = "" ] ;then
-# 	if [ -d ./.env ] ;then
-# 		ENVDIR="./.env"
-# 	else	
-# 		if [ -d $HOME/.env ] ;then
-# 			ENVDIR="$HOME/.env"
-# 		else
-# 			echo "No ENVDIR specified - creating ./.env"
-# 			mkdir ./.env
-# 			ENVDIR="./.env"
-# 		fi
-# 	fi
-# fi
-# 
-# if [ ! -d "$ENVDIR" ] ;then
-# 	echo "ENVDIR=$ENVDIR : not a directory"
-# 	exit 10
-# fi
-# 
-# # VAR=$ENVDIR/$1
-# # shift
-# while [ $# -gt 1 ] ;do
-# 	/bin/echo >$ENVDIR/$1 "$2\c"
-# 	shift 2
-# done

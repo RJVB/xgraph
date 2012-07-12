@@ -8,9 +8,10 @@ mcpu="-mcpu"
 
 # for universal binary builds:
 AUTOVECx86="-msse3 -mssse3"
-DEFAULTARCH="-m64"
+DEFAULTARCH=""
 ARCHS32="-m32"
-ARCHS64="-m64"
+# ARCHS64="-m64"
+ARCHS64=""
 SDK=""
 
 MARCHUNI=""
@@ -123,7 +124,8 @@ setopts() {
 			MARCHUNI=""
 			MARCHUNI64=""
 			ARCHS32="-m32"
-			ARCHS64="-m64"
+			# ARCHS64="-m64"
+			ARCHS64=""
 			SDK=""
 
 
@@ -137,9 +139,9 @@ setopts() {
 			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse"
 			;;
 
-		*Athlon*)
-			DEFAULT_CC="gcc-4.4"
-			DEFAULT_CXX="g++-4.4"
+		*Athlon*|*AMD*)
+			DEFAULT_CC="gcc"
+			DEFAULT_CXX="g++"
 			CPU="native"
 			ALT_CPU="" ##pentium-m"
 			mcpu="-march"
@@ -172,7 +174,8 @@ setopts() {
 			MARCHUNI=""
 			MARCHUNI64=""
 			ARCHS32="-m32"
-			ARCHS64="-m64"
+			#ARCHS64="-m64"
+			ARCHS64=""
 			SDK=""
 
 
@@ -183,7 +186,7 @@ setopts() {
 			if [ "$compil" = "" ] ;then
 				compil="${DEFAULT_CC}"
 			fi
-			setautovec "`uname -m`" "-msse4 -mssse3 -mfpmath=sse"
+			setautovec "`uname -m`" "-mssse3 -mfpmath=sse"
 			;;
 
 		x86)

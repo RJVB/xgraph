@@ -82,9 +82,15 @@ char* XG_dlopen_findlib(char *name)
 		  char *aname= concat( PrefsDir, "/", name, NULL );
 			if( stat( name, &Stat) ){
 				if( stat( aname, &Stat )== 0 ){
-					  /* There is a library with the requested name in the preferences directory. */
-					xfree(name);
-					name= aname;
+					  /* There is a file with the requested name in the preferences directory. */
+					if( !S_ISREG(Stat.st_mode) ){
+						//fprintf( StdErr, "Library %s st_mode=%p not a regular file\n", aname, Stat.st_mode );
+						name = NULL;
+					}
+					else{
+						xfree(name);
+						name= aname;
+					}
 				}
 				else{
 					if( debugFlag || scriptVerbose ){
@@ -95,6 +101,10 @@ char* XG_dlopen_findlib(char *name)
 					}
 					xfree(aname);
 				}
+			}
+			else if( !S_ISREG(Stat.st_mode) ){
+				//fprintf( StdErr, "Library %s st_mode=%p not a regular file\n", name, Stat.st_mode );
+				name = NULL;
 			}
 			else{
 			  /* We need to put a './' in front of name in order to be sure dlopen() will find it. This
@@ -177,7 +187,7 @@ void *XG_dlopen_now_ext( char **Name, int flags, char **error_mesg )
 	}
 	while( name && !handle ){
 		name= XG_dlopen_findlib(name);
-		if( !(handle= XG_dlopen_now( name, flags, error_mesg)) ){
+		if( !name || !(handle= XG_dlopen_now( name, flags, error_mesg)) ){
 			if( ext[i] ){
 				xfree(name);
 				name= concat( bname, ext[i], NULL );
