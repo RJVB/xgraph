@@ -59,11 +59,12 @@ setautovec() {
 			fi
 			OPTIMOPT="$OOPTIMOPT"
 			;;
-		*gcc-4*|*g++-4*)
+		##*gcc-4*|*g++-4*)
+		*gcc*|*g++*)
 			if [ "${CPU}" = "core2" ] ;then
 				CPU="${ALT_CPU}"
 			fi
-			if [ "${ARCH}" = "x86" ] ;then
+			if [ "${ARCH}" = "x86" -o "${ARCH}" = "i686" ] ;then
 				VU="-msse3 -mssse3 -mfpmath=sse"
 			fi
 			MARCH="${MARCH} ${VU}"
@@ -174,7 +175,7 @@ setopts() {
 			MARCHUNI=""
 			MARCHUNI64=""
 			ARCHS32="-m32"
-			#ARCHS64="-m64"
+			##ARCHS64="-m64"
 			ARCHS64=""
 			SDK=""
 

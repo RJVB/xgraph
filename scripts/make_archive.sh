@@ -53,7 +53,7 @@ if [ $? = 0 ] ;then
 fi
 
 cp --help 2>&1 | fgrep -- --no-dereference > /dev/null
-if [ $? = 0 -o "$OS" = "Linux" -o "$OS" = "linux" -o "$OS" = "LINUX" -o "`uname -o`" = "Cygwin" ] ;then
+if [ $? = 0 -o "$OS" = "Linux" -o "$OS" = "linux" -o "$OS" = "LINUX" -o "`uname -o 2>/dev/null`" = "Cygwin" ] ;then
 	${ECHO} -n "Making temp copy of xgraph directory..."
 	${CP} -prd xgraph ${ARCHDIR}
 	${ECHO} " done."
