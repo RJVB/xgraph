@@ -6012,9 +6012,12 @@ DyModTypes initDyMod( INIT_DYMOD_ARGUMENTS )
 		pythonActive= True;
 #ifdef IS_PY3K
 		PyRun_SimpleString( "import locale\n"
-			"locale.setlocale(locale.LC_ALL, locale.locale_alias['c.iso88591'])\n"
-			//"locale.setlocale(1, locale.locale_alias['c.iso88591'])\n"
-			//"locale.setlocale(2, locale.locale_alias['c.iso88591'])\n"
+			"try:\n"
+			"\tlocale.setlocale(locale.LC_ALL, locale.locale_alias['c.iso88591'])\n"
+			//"\tlocale.setlocale(1, locale.locale_alias['c.iso88591'])\n"
+			//"\tlocale.setlocale(2, locale.locale_alias['c.iso88591'])\n"
+			"except:\n"
+			"\tpass\n"
 		);
 #endif
 		PyRun_SimpleString( "from __future__ import division" );
