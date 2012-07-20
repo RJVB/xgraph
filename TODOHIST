@@ -2242,3 +2242,7 @@ Don't allow too small steps in DrawAxis; min. 1/100 of range (when step==1)?
 
 20120706
 	Implement a protection against failure to find a greek font so that there cannot be NULL XFontStruct pointers ... !
+
+20120720
+	Also review the default font selection algorithm/patterns to make it appropriate for at least 1 standard distribution
+	(Linux Mint)
