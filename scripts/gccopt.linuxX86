@@ -756,7 +756,7 @@ case $compiler in
 esac
 
 case $compiler in
-	clang*|*gcc[34]*|*gcc-[34]*|*g++[34]*|*g++-[34]*|*c++[34]*|*c++-[34]*)
+	clang*|*gcc[34]*|*gcc-[34]*|*g++[34]*|*g++-[34]*|*c++[34]*|*c++-[34]*|*gcc*|*g++*)
 		 # -Wsequence-point warns for undefined constructs/expressions:
 		WARNINGS="${WARNINGS} -Wsequence-point"
 # 		echo ">${MARCH}< >-march=${CPU}<"

@@ -67,7 +67,7 @@ setautovec() {
 			if [ "${CPU}" = "core2" ] ;then
 				CPU="${ALT_CPU}"
 			fi
-			if [ "${ARCH}" = "x86" ] ;then
+			if [ "${ARCH}" = "x86" -o "${ARCH}" = "x86_64" ] ;then
 				VU="-msse3 -mssse3 -mfpmath=sse"
 			fi
 			MARCH="${MARCH} ${VU}"
@@ -149,6 +149,14 @@ setopts() {
 			DEFAULT_CXX="g++"
 			CPU="native"
 			ALT_CPU="" ##pentium-m"
+			case $1 in
+				*AMD\ C*)
+					CPU="amdfam10"
+					;;
+				*)
+					CPU="k8-sse3"
+					;;
+			esac
 			mcpu="-march"
 
 			case $compil in
