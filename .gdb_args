@@ -1,2 +1,2 @@
-set arg -progname xgraph  -nodetach  "/Volumes/Debian/Users/bertin/work/src/xgraph/examples/AntSearch4" -nodetach -progname xgraph
+set arg -progname xgraph  -nodetach  "/home/RJVB/work/src/xgraph/examples/benching.xg" -progname xgraph
 show arg
