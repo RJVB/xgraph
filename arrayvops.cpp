@@ -13,6 +13,7 @@ IDENTIFY("macstl based array operations");
 #include "stddef.h"
 #include "stdint.h"
 #include "stdlib.h"
+#include <string.h>
 
 #ifdef __SSE2__
 #	define USE_SSE2
@@ -31,6 +32,8 @@ IDENTIFY("macstl based array operations");
 #include "sse_mathfun/sse_mathfun.h"
 
 #include "arrayvops.h"
+
+#define NOT16BITALIGNED(x)	(((size_t)x) % 16)
 
 double ArrayCumAddScalar(double *xa, double b, double *sums, int N)
 { double sum;
@@ -59,18 +62,27 @@ double ArrayCumAddArray(double *xa, double *xb, double *sums, int N)
 void ArrayCumAddIArraySSE(double *rsum, int *xa, int *xb, int *sums, int N)
 {
 	if( xa && xb && sums && N > 0 ){
-	  v4si *va = (v4si*) xa, *vb = (v4si*) xb, *vs = (v4si*) sums, vsum = _MM_SETZERO_SI128();
-	  int i, N_4;
-		N_4 = N-4 + 1;
-		for( i = 0 ; i < N_4 ; va++, vb++, vs++ ){
-			*vs = _mm_add_epi32( *va, *vb );
-			vsum = _mm_add_epi32( vsum, *vs );
-			i += 4;
+#if !defined(__MACH__) && !defined(__APPLE_CC__)
+		if( NOT16BITALIGNED(xa) || NOT16BITALIGNED(xb) || NOT16BITALIGNED(sums) ){
+		  stdext::valarray<int> vxa(xa,N), vxb(xb,N), vsums(sums,N);
+			*rsum = (vsums = vxa + vxb).sum();
+			return;
 		}
-		_mm_empty();
-		*rsum = (double)VELEM(int,vsum,0) + (double)VELEM(int,vsum,1) + (double)VELEM(int,vsum,2) + (double)VELEM(int,vsum,3);
-		for( ; i < N; i++ ){
-			*rsum += (sums[i] = xa[i] + xb[i]);
+		else
+#endif
+		{ v4si *va = (v4si*) xa, *vb = (v4si*) xb, *vs = (v4si*) sums, vsum = _MM_SETZERO_SI128();
+		  int i, N_4;
+			N_4 = N-4 + 1;
+			for( i = 0 ; i < N_4 ; va++, vb++, vs++ ){
+				*vs = _mm_add_epi32( *va, *vb );
+				vsum = _mm_add_epi32( vsum, *vs );
+				i += 4;
+			}
+			_mm_empty();
+			*rsum = (double)VELEM(int,vsum,0) + (double)VELEM(int,vsum,1) + (double)VELEM(int,vsum,2) + (double)VELEM(int,vsum,3);
+			for( ; i < N; i++ ){
+				*rsum += (sums[i] = xa[i] + xb[i]);
+			}
 		}
 	}
 	else{
@@ -81,17 +93,26 @@ void ArrayCumAddIArraySSE(double *rsum, int *xa, int *xb, int *sums, int N)
 void ArrayCumAddArraySSE(double *rsum, double *xa, double *xb, double *sums, int N)
 {
 	if( xa && xb && sums && N > 0 ){
-	  v2df *va = (v2df*) xa, *vb = (v2df*) xb, *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
-	  int i, N_1;
-		N_1 = N-1;
-		for( i = 0 ; i < N_1 ; va++, vb++, vs++ ){
-			*vs = _mm_add_pd( *va, *vb );
-			vsum = _mm_add_pd( vsum, *vs );
-			i += 2;
+#if !defined(__MACH__) && !defined(__APPLE_CC__)
+		if( NOT16BITALIGNED(xa) || NOT16BITALIGNED(xb) || NOT16BITALIGNED(sums) ){
+		  stdext::valarray<double> vxa(xa,N), vxb(xb,N), vsums(sums,N);
+			*rsum = (vsums = vxa + vxb).sum();
+			return;
 		}
-		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
-		if( i == N_1 ){
-			*rsum += (sums[i] = xa[i] + xb[i]);
+		else
+#endif
+		{ v2df *va = (v2df*) xa, *vb = (v2df*) xb, *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+		  int i, N_1;
+			N_1 = N-1;
+			for( i = 0 ; i < N_1 ; va++, vb++, vs++ ){
+				*vs = _mm_add_pd( *va, *vb );
+				vsum = _mm_add_pd( vsum, *vs );
+				i += 2;
+			}
+			*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+			if( i == N_1 ){
+				*rsum += (sums[i] = xa[i] + xb[i]);
+			}
 		}
 	}
 	else{
@@ -102,17 +123,26 @@ void ArrayCumAddArraySSE(double *rsum, double *xa, double *xb, double *sums, int
 void ArrayCumAddScalarSSE(double *rsum, double *xa, double xb, double *sums, int N)
 {
 	if( xa && xb && sums && N > 0 ){
-	  v2df *va = (v2df*) xa, vb = _MM_SET1_PD(xb), *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
-	  int i, N_1;
-		N_1 = N-1;
-		for( i = 0 ; i < N_1 ; va++, vs++ ){
-			*vs = _mm_add_pd( *va, vb );
-			vsum = _mm_add_pd( vsum, *vs );
-			i += 2;
+#if !defined(__MACH__) && !defined(__APPLE_CC__)
+		if( NOT16BITALIGNED(xa) || NOT16BITALIGNED(sums) ){
+		  stdext::valarray<double> vxa(xa,N), vsums(sums,N);
+			*rsum = (vsums = vxa + xb).sum();
+			return;
 		}
-		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
-		if( i == N_1 ){
-			*rsum += (sums[i] = xa[i] + xb);
+		else
+#endif
+		{ v2df *va = (v2df*) xa, vb = _MM_SET1_PD(xb), *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+		  int i, N_1;
+			N_1 = N-1;
+			for( i = 0 ; i < N_1 ; va++, vs++ ){
+				*vs = _mm_add_pd( *va, vb );
+				vsum = _mm_add_pd( vsum, *vs );
+				i += 2;
+			}
+			*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+			if( i == N_1 ){
+				*rsum += (sums[i] = xa[i] + xb);
+			}
 		}
 	}
 	else{
@@ -123,18 +153,27 @@ void ArrayCumAddScalarSSE(double *rsum, double *xa, double xb, double *sums, int
 void ArrayCumSubIArraySSE(double *rsum, int *xa, int *xb, int *sums, int N)
 {
 	if( xa && xb && sums && N > 0 ){
-	  v4si *va = (v4si*) xa, *vb = (v4si*) xb, *vs = (v4si*) sums, vsum = _MM_SETZERO_SI128();
-	  int i, N_4;
-		N_4 = N-4+1;
-		for( i = 0 ; i < N_4 ; va++, vb++, vs++ ){
-			*vs = _mm_sub_epi32( *va, *vb );
-			vsum = _mm_add_epi32( vsum, *vs );
-			i += 4;
+#if !defined(__MACH__) && !defined(__APPLE_CC__)
+		if( NOT16BITALIGNED(xa) || NOT16BITALIGNED(xb) || NOT16BITALIGNED(sums) ){
+		  stdext::valarray<int> vxa(xa,N), vxb(xb,N), vsums(sums,N);
+			*rsum = (vsums = vxa - vxb).sum();
+			return;
 		}
-		_mm_empty();
-		*rsum = (double)VELEM(int,vsum,0) + (double)VELEM(int,vsum,1) + (double)VELEM(int,vsum,2) + (double)VELEM(int,vsum,3);
-		for( ; i < N; i++ ){
-			*rsum += (sums[i] = xa[i] - xb[i]);
+		else
+#endif
+		{ v4si *va = (v4si*) xa, *vb = (v4si*) xb, *vs = (v4si*) sums, vsum = _MM_SETZERO_SI128();
+		  int i, N_4;
+			N_4 = N-4+1;
+			for( i = 0 ; i < N_4 ; va++, vb++, vs++ ){
+				*vs = _mm_sub_epi32( *va, *vb );
+				vsum = _mm_add_epi32( vsum, *vs );
+				i += 4;
+			}
+			_mm_empty();
+			*rsum = (double)VELEM(int,vsum,0) + (double)VELEM(int,vsum,1) + (double)VELEM(int,vsum,2) + (double)VELEM(int,vsum,3);
+			for( ; i < N; i++ ){
+				*rsum += (sums[i] = xa[i] - xb[i]);
+			}
 		}
 	}
 	else{
@@ -145,17 +184,26 @@ void ArrayCumSubIArraySSE(double *rsum, int *xa, int *xb, int *sums, int N)
 void ArrayCumSubArraySSE(double *rsum, double *xa, double *xb, double *sums, int N)
 {
 	if( xa && xb && sums && N > 0 ){
-	  v2df *va = (v2df*) xa, *vb = (v2df*) xb, *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
-	  int i, N_1;
-		N_1 = N-1;
-		for( i = 0 ; i < N_1 ; va++, vb++, vs++ ){
-			*vs = _mm_sub_pd( *va, *vb );
-			vsum = _mm_add_pd( vsum, *vs );
-			i += 2;
+#if !defined(__MACH__) && !defined(__APPLE_CC__)
+		if( NOT16BITALIGNED(xa) || NOT16BITALIGNED(xb) || NOT16BITALIGNED(sums) ){
+		  stdext::valarray<double> vxa(xa,N), vxb(xb,N), vsums(sums,N);
+			*rsum = (vsums = vxa - vxb).sum();
+			return;
 		}
-		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
-		if( i == N_1 ){
-			*rsum += (sums[i] = xa[i] - xb[i]);
+		else
+#endif
+		{ v2df *va = (v2df*) xa, *vb = (v2df*) xb, *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+		  int i, N_1;
+			N_1 = N-1;
+			for( i = 0 ; i < N_1 ; va++, vb++, vs++ ){
+				*vs = _mm_sub_pd( *va, *vb );
+				vsum = _mm_add_pd( vsum, *vs );
+				i += 2;
+			}
+			*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+			if( i == N_1 ){
+				*rsum += (sums[i] = xa[i] - xb[i]);
+			}
 		}
 	}
 	else{
@@ -166,17 +214,26 @@ void ArrayCumSubArraySSE(double *rsum, double *xa, double *xb, double *sums, int
 void ArrayCumMulArraySSE(double *rsum, double *xa, double *xb, double *sums, int N)
 {
 	if( xa && xb && sums && N > 0 ){
-	  v2df *va = (v2df*) xa, *vb = (v2df*) xb, *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
-	  int i, N_1;
-		N_1 = N-1;
-		for( i = 0 ; i < N_1 ; va++, vb++, vs++ ){
-			*vs = _mm_mul_pd( *va, *vb );
-			vsum = _mm_add_pd( vsum, *vs );
-			i += 2;
+#if !defined(__MACH__) && !defined(__APPLE_CC__)
+		if( NOT16BITALIGNED(xa) || NOT16BITALIGNED(xb) || NOT16BITALIGNED(sums) ){
+		  stdext::valarray<double> vxa(xa,N), vxb(xb,N), vsums(sums,N);
+			*rsum = (vsums = vxa * vxb).sum();
+			return;
 		}
-		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
-		if( i == N_1 ){
-			*rsum += (sums[i] = xa[i] * xb[i]);
+		else
+#endif
+		{ v2df *va = (v2df*) xa, *vb = (v2df*) xb, *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+		  int i, N_1;
+			N_1 = N-1;
+			for( i = 0 ; i < N_1 ; va++, vb++, vs++ ){
+				*vs = _mm_mul_pd( *va, *vb );
+				vsum = _mm_add_pd( vsum, *vs );
+				i += 2;
+			}
+			*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+			if( i == N_1 ){
+				*rsum += (sums[i] = xa[i] * xb[i]);
+			}
 		}
 	}
 	else{
@@ -187,17 +244,26 @@ void ArrayCumMulArraySSE(double *rsum, double *xa, double *xb, double *sums, int
 void ArrayCumMulScalarSSE(double *rsum, double *xa, double xb, double *sums, int N)
 {
 	if( xa && xb && sums && N > 0 ){
-	  v2df *va = (v2df*) xa, vb = _MM_SET1_PD(xb), *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
-	  int i, N_1;
-		N_1 = N-1;
-		for( i = 0 ; i < N_1 ; va++, vs++ ){
-			*vs = _mm_mul_pd( *va, vb );
-			vsum = _mm_add_pd( vsum, *vs );
-			i += 2;
+#if !defined(__MACH__) && !defined(__APPLE_CC__)
+		if( NOT16BITALIGNED(xa) || NOT16BITALIGNED(sums) ){
+		  stdext::valarray<double> vxa(xa,N), vsums(sums,N);
+			*rsum = (vsums = vxa + xb).sum();
+			return;
 		}
-		*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
-		if( i == N_1 ){
-			*rsum += (sums[i] = xa[i] * xb);
+		else
+#endif
+		{ v2df *va = (v2df*) xa, vb = _MM_SET1_PD(xb), *vs = (v2df*) sums, vsum = _MM_SETZERO_PD();
+		  int i, N_1;
+			N_1 = N-1;
+			for( i = 0 ; i < N_1 ; va++, vs++ ){
+				*vs = _mm_mul_pd( *va, vb );
+				vsum = _mm_add_pd( vsum, *vs );
+				i += 2;
+			}
+			*rsum = VELEM(double,vsum,0) + VELEM(double,vsum,1);
+			if( i == N_1 ){
+				*rsum += (sums[i] = xa[i] * xb);
+			}
 		}
 	}
 	else{
@@ -208,8 +274,27 @@ void ArrayCumMulScalarSSE(double *rsum, double *xa, double xb, double *sums, int
 void _convolve( double *Data, size_t NN, double *Mask, double *Output, int Start, int End, int Nm )
 { int nm= Nm/ 2, i, j;
   size_t end = NN - nm;
+  double *vData = NULL, *vMask = NULL;
+	if( NOT16BITALIGNED(Data) ){
+		if( (vData = (double*) _mm_malloc( NN * sizeof(double), 16 )) ){
+			memmove( vData, Data, NN * sizeof(double) );
+			Data = vData;
+		}
+		else{
+			return;
+		}
+	}
+	if( NOT16BITALIGNED(Mask) ){
+		if( (vMask = (double*) _mm_malloc( Nm * sizeof(double), 16 )) ){
+			memmove( vMask, Mask, Nm * sizeof(double) );
+			Mask = vMask;
+		}
+		else{
+			return;
+		}
+	}
   // a refarray is like a valarray except that it uses the memory we already have:
-  stdext::refarray<double> vmask(Mask,Nm), vdata(Data, NN);
+	stdext::refarray<double> vmask(Mask,Nm), vdata(Data, NN);
 	for( i= Start; i< End; i++ ){
 		if( i < nm ){
 		  int k;
@@ -254,5 +339,11 @@ void _convolve( double *Data, size_t NN, double *Mask, double *Output, int Start
 			Output[i]= (vmask * vd).sum();
 		}
 #endif
+	}
+	if( vData ){
+		_mm_free(vData);
+	}
+	if( vMask ){
+		_mm_free(vMask);
 	}
 }
