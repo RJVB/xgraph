@@ -34,3 +34,7 @@ sse_mathfun/sse_mathfun_test.c
 sse_mathfun/README
 cpu_cycles_per_second.h
 Python/*_numpy.h
+
+*.stackdump
+*.exe
+ctags

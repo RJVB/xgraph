@@ -103,7 +103,7 @@ VARARGS(ux11_fill_gcvals, unsigned long, ( XGCValues *gcvals, VA_DCL))
 	    gcvals->dash_offset = va_arg(ap, int);
 	    value_mask |= GCDashOffset;
 	} else if (field == GCDashList) {
-#ifdef __MACH__
+#ifdef __GNUC__
 	    gcvals->dashes = va_arg(ap, int);
 #else
 	    gcvals->dashes = va_arg(ap, char);

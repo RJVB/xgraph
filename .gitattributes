@@ -1,0 +1,8 @@
+Make/* text
+Makefile text
+scripts/* text
+*.h text
+Make/* -binary
+Makefile -binary
+scripts/* -binary
+*.h -binary
