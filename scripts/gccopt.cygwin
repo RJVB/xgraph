@@ -112,7 +112,7 @@ SYS=""
 A=""
 PIPE="-pipe"
 
-WARNINGS="-Wcomment -Wunused -Winline -Wchar-subscripts -Wparentheses -Wcast-align" #-Wsurprising"
+WARNINGS="-Wcomment -Wunused -Winline -Wchar-subscripts -Wparentheses -Wcast-align -Wno-format -Wdisabled-optimization -Wnonnull -Wimplicit-int -Wreturn-type" #-Wsurprising"
 EXTRA_WARNINGS="-W -Wuninitialized -Wconversion -Wredundant-decls -Wpointer-arith -Wformat -Wshadow"
 ALL_WARNINGS="-Wall -Wtraditional -Wshadow -Wpointer-arith -Wcast-qual  -Wcast-align -Wconversion -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wnested-externs -Wenum-clash -Woverloaded-virtual -Winline"
 
@@ -783,7 +783,7 @@ case $compiler in
 esac
 
 case $compiler in
-	clang*|*gcc[34]*|*gcc-[34]*|*g++[34]*|*g++-[34]*|*c++[34]*|*c++-[34]*)
+	clang*|*gcc[34]*|*gcc-[34]*|*g++[34]*|*g++-[34]*|*c++[34]*|*c++-[34]*|*gcc*|*g++*)
 		 # -Wsequence-point warns for undefined constructs/expressions:
 		WARNINGS="${WARNINGS} -Wsequence-point"
 # 		echo ">${MARCH}< >-march=${CPU}<"
@@ -807,7 +807,7 @@ if [ "$MARCH" = "" -a "${CPU}" != "" ] ;then
 fi
 
 if [ "${CPU}" != "" ] ;then
-	CPU="-march=${CPU}"
+	CPU="${mcpu}=${CPU}"
 fi
 
 if [ "$Compile" = "" ] ;then
