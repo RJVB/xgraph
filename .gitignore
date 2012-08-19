@@ -38,3 +38,4 @@ Python/*_numpy.h
 *.exe
 ctags
 .gdb_args
+tags
