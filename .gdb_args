@@ -1,2 +1,2 @@
-set arg -progname xgraph  -nodetach  "/home/RJVB/work/src/xgraph/examples/benching.xg" -progname xgraph
+set arg -progname xgraph  -nodetach  "/home/RJVB/work/src/xgraph/Python.32.so" -nodetach -PN 'DCL[nDots,25]' -PN 'DCL[Threading,1]' "/home/RJVB/work/src/xgraph/examples/MorBurr99P2.xg" -raw_display -progname xgraph
 show arg

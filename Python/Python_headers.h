@@ -78,8 +78,13 @@
 #		include <python3.1/bytesobject.h>
 #		include "python31_numpy.h"
 #	elif PYTHON32
-#		include <python3.2/Python.h>
-#		include <python3.2/bytesobject.h>
+#		if defined(__CYGWIN__)
+#			include <python3.2m/Python.h>
+#			include <python3.2m/bytesobject.h>
+#		else
+#			include <python3.2/Python.h>
+#			include <python3.2/bytesobject.h>
+#		endif
 #		include "python32_numpy.h"
 #	endif
 #else

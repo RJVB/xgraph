@@ -30,6 +30,10 @@ while [ $# != 0 ] ;do
 			ARGS="$ARGS $1 $2"
 			shift
 			;;
+		-PN)
+			ARGS="$ARGS $1 '""$2""'"
+			shift
+			;;
 		-*|[0-9]*|\.*|/*)
 			ARGS="$ARGS $1"
 			;;

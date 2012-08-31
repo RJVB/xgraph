@@ -74,7 +74,7 @@ case $MACH in
 			xgraph)
 				;;
 			dynload)
-				case `uname -s` in
+				case ${OS} in
 					CYGWIN*|cygwin*)
 						echo "-Wl,--export-all-symbols"
 						;;
@@ -87,7 +87,7 @@ case $MACH in
 				echo "-shared -fno-common -fPIC"
 				;;
 			shlib)
-				case `uname -s` in
+				case ${OS} in
 					CYGWIN*|cygwin*)
 						echo "-Wl,--export-all-symbols -fno-common -shared -Wl,-soname,$2 "
 						;;
@@ -117,7 +117,14 @@ case $MACH in
 				;;
 			Python32Module)
 				PDIR=$3
-				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.2mu"
+				case ${OS} in
+					CYGWIN*|cygwin*)
+						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.2m"
+						;;
+					*)
+						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.2mu"
+						;;
+				esac
 				;;
 		esac
 		;;
