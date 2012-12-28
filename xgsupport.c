@@ -2340,9 +2340,22 @@ void *_XGreallocShared( void* ptr, size_t N, size_t oldN, char *name, char *size
 		allocerr+= 1;
 	}
 	else{
+		// 20121228:
+		madvise( mem, N, MADV_SEQUENTIAL );
+		register_AllocatedMemorySize( mem, N );
 		memset( mem, 0, N );
 		if( ptr ){
-			memmove( mem, ptr, N );
+		  size_t oN;
+			// 20121228: ptr points to a block of size oldN, not N !!!
+			if( get_AllocatedMemorySize( ptr, &oN ) ){
+				if( oN != oldN ){
+					fprintf( StdErr, "xgraph::XGreallocShared(): buffer 0x%p has size %lu but is claimed to have size %lu\n",
+						   ptr, oN, oldN );
+				}
+			}
+			// 20121228: and evidently one should not attempt to copy more into mem than it can contain...
+			// we're not only handling cases where memory is reallocated LARGER than it was...!
+ 			memmove( mem, ptr, MIN(N,oldN) );
 			munmap( ptr, oldN );
 		}
 	}

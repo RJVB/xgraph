@@ -702,11 +702,8 @@ int xtb_ProcessStyle(char *style, char *buf, int maxbuf)
 //20101018: strncpy() shouldn't be called with overlapping buffers?!
 // 	strncpy(buf, style, maxbuf-1);
 	if( buf && style && maxbuf ){
-	  int n = strlen(style)+1;
-	  	if( maxbuf-1 < n ){
-			n = maxbuf-1;
-		}
-		memmove(buf, style, sizeof(char) * (maxbuf-1) );
+	  int n = strlen(style);
+		memmove(buf, style, sizeof(char) * MIN( (maxbuf-1), n ) );
 		buf[maxbuf-1] = '\0';
 	}
 	else{

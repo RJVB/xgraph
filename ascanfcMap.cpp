@@ -792,3 +792,67 @@ void delete_FILEsDescriptor( FILE *fp )
 	}
 }
 
+struct ptr_eqptr{
+	bool operator()(void* s1, void* s2) const
+	{  
+		return( s1==s2 );
+	}
+};
+
+xghash_map2<void*, size_t, xghash2<void*>, ptr_eqptr > mem2sizeHTable;
+
+#ifdef _DENSE_HASH_MAP_H_
+
+static int M2S_initialised= 0;
+
+static void init_M2S()
+{
+	if( !M2S_initialised ){
+		// these two keys should never occur as valid file descriptors:
+		mem2sizeHTable.set_empty_key(NULL);
+		mem2sizeHTable.set_deleted_key((void*)-1);
+		M2S_initialised = 1;
+	}
+}
+#else
+#	define init_M2S()	/**/
+#endif
+
+void *register_AllocatedMemorySize( void *mem, size_t N )
+{
+	if( mem ){
+		init_M2S();
+		mem2sizeHTable[mem] = N;
+	}
+	return mem;
+}
+
+
+int get_AllocatedMemorySize( void *mem, size_t *N )
+{
+	init_M2S();
+	if( mem2sizeHTable.count(mem) ){
+		*N = mem2sizeHTable[mem];
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+
+void delete_AllocatedMemorySize( void *mem )
+{ static unsigned short N=0;
+	if( mem ){
+		init_M2S();
+		if( mem2sizeHTable.count(mem) ){
+			mem2sizeHTable.erase(mem);
+			N += 1;
+		}
+#ifdef _DENSE_HASH_MAP_H_
+		if( N >= 32 ){
+			mem2sizeHTable.resize(0);
+		}
+#endif
+	}
+}
+

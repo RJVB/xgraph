@@ -101,6 +101,7 @@ if [ "${FIND}" = "mdfind" ] ;then
 		hotfiles="`mdfind -onlyin "${INDIR}" \"$PAT\"`"
 	fi
 else
+	echo "$FIND -l $NONPAT $FOPTS $FLIST \"$PAT\" $RECURS $INCL $FILES"
 	hotfiles="`$FIND -l $NONPAT $FOPTS $FLIST \"$PAT\" $RECURS $INCL $FILES`"
 fi
 if [ "$NONPAT" = "-v" ] ;then

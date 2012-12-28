@@ -363,6 +363,9 @@ extern ascanf_Function *walk_LinkedArray_List( void **lst, void **iterator );
 extern FILE *register_FILEsDescriptor( FILE *fp );
 extern FILE *get_FILEForDescriptor( int fd );
 extern void delete_FILEsDescriptor( FILE *fp );
+extern void *register_AllocatedMemorySize( void *mem, size_t N );
+extern int get_AllocatedMemorySize( void *mem, size_t *N );
+extern void delete_AllocatedMemorySize( void *mem );
 
 extern double take_ascanf_address( ascanf_Function *af );
 extern pragma_malloc ascanf_Function *parse_ascanf_address( double a, int this_type, char *caller, int verbose, int *take_usage );

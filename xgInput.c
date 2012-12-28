@@ -726,7 +726,13 @@ double **XGrealloc_2d_doubles( double **cur_columns, int ncols, int nlines, int 
 		}
 	}
 	else{
-		if( (columns= (double**) XGreallocShared( cur_columns, ncols* sizeof(double*), cur_ncols * sizeof(double*) )) ){
+		if( cur_columns && (ncols == cur_ncols) ){
+			columns = cur_columns;
+		}
+		else{
+			columns= (double**) XGreallocShared( cur_columns, ncols* sizeof(double*), cur_ncols * sizeof(double*) );
+		}
+		if( columns ){
 			if( debugFlag ){
 				fprintf( StdErr, "%s: re-allocate from %d to %d columns X %d entries\n",
 					caller, cur_ncols, ncols, nlines
