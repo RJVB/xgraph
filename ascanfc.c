@@ -6478,7 +6478,7 @@ int ascanf_data ( ASCB_ARGLIST )
   DoubleOrInt doi;
 	doi.p.d= ascanf_data_buf;
 	doi.type= _double;
-	return( ascanf_array_manip( args, result, &doi, 4 ) );
+	return( ascanf_array_manip( args, result, &doi, ASCANF_DATA_COLUMNS ) );
 }
 
 int ascanf_column ( ASCB_ARGLIST )
@@ -6486,7 +6486,7 @@ int ascanf_column ( ASCB_ARGLIST )
   DoubleOrInt doi;
 	doi.p.i= ascanf_column_buf;
 	doi.type= _int;
-	return( ascanf_array_manip( args, result, &doi, 4 ) );
+	return( ascanf_array_manip( args, result, &doi, ASCANF_DATA_COLUMNS ) );
 }
 
 double **ascanf_mxy_buf;

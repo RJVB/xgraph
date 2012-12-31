@@ -2576,7 +2576,7 @@ int Intensity_Colours( char *exp )
 		exp= IntensityColourFunction.expression;
 	}
 	if( exp && !IntensityColourFunction.use_table ){
-	  int n= 4, i;
+	  long long n= 4, i;
 		active= 1;
 		clean_param_scratch();
 		if( fascanf( &n, exp, param_scratch, NULL, NULL, NULL, &C_exp ) && n== 4 ){
@@ -2598,9 +2598,9 @@ int Intensity_Colours( char *exp )
 					ascanf_window= ActiveWin->window;
 				}
 				n= (int) param_scratch[0];
-				if( n> (1 << depth) ){
+				if( n> (1LL << depth) ){
 				  char emsg[128];
-					n= 1 << depth;
+					n= 1LL << depth;
 					sprintf( emsg, "Intensity_Colours(): N=%g >= %d maxcolours on this screen: corrected.\n",
 						param_scratch[0], n
 					);
@@ -2728,12 +2728,12 @@ int Intensity_Colours( char *exp )
 	}
 	else if( IntensityColourFunction.name_table && IntensityColourFunction.use_table ){
 	  XGStringList *tab= IntensityColourFunction.name_table;
-	  int i, NC= 0;
+	  long long i, NC= 0;
 		while( tab ){
 			NC+= 1;
 			tab= tab->next;
 		}
-		if( NC> (1 << depth) ){
+		if( NC> (1LL << depth) ){
 		  char emsg[128];
 			NC= 1 << depth;
 			sprintf( emsg, "Intensity_Colours(): N=%g >= %d maxcolours on this screen: corrected.\n",
