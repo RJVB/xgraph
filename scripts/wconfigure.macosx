@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/bash -x
 
 RWSTRINGS=0 ; export RWSTRINGS
 if [ "$CONFIGURE" = "" ] ;then
@@ -32,6 +32,7 @@ cliFCFLAGS="${FCFLAGS}"
 cliPYTHON="${PYTHON}"
 cliPYTHONPATH="${PYTHONPATH}"
 cliMACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
+cliPOSTCONFIGEDIT="${POSTCONFIGEDIT}"
 set -x
 
 if [ -r wconfigure.env ] ;then
@@ -84,6 +85,9 @@ fi
 if [ "${cliMACOSX_DEPLOYMENT_TARGET}" != "" ] ;then
 	MACOSX_DEPLOYMENT_TARGET="${cliMACOSX_DEPLOYMENT_TARGET}" ; export MACOSX_DEPLOYMENT_TARGET
 fi
+if [ "${cliPOSTCONFIGEDIT}" != "" ] ;then
+	POSTCONFIGEDIT="${cliPOSTCONFIGEDIT}" ; export POSTCONFIGEDIT
+fi
 set -x
 
 # set NOWCC to the desired compiler script in order to attempt to retrieve its CC and CFLAGS settings
@@ -110,6 +114,7 @@ if [ "$NOWCC" != "" ] ;then
 			PYTHON="${PYTHON}" ; export PYTHON
 			PYTHONPATH="${PYTHONPATH}" ; export PYTHONPATH
 			macosx_deployment_target="`fgrep 'MACOSX_DEPLOYMENT_TARGET=' ${KK} | sed -e 's/MACOSX_DEPLOYMENT_TARGET=\([^ ]*\).*/\1/'`"
+			POSTCONFIGEDIT="${POSTCONFIGEDIT}" ; export POSTCONFIGEDIT
 			rm -f ${KK}
 			;;
 	esac
@@ -161,6 +166,9 @@ else
 			MACOSX_DEPLOYMENT_TARGET="${macosx_deployment_target}" ; export MACOSX_DEPLOYMENT_TARGET
 		fi
 	fi
+	if [ "$POSTCONFIGEDIT" = "" ] ;then
+		POSTCONFIGEDIT="" ; export POSTCONFIGEDIT
+	fi
 fi
 
 # For those configure scripts that do not support CPPFLAGS: if requested, merge
@@ -199,6 +207,9 @@ if [ "$PYTHON" != "" ] ;then
 fi
 if [ "$PYTHONPATH" != "" ] ;then
 	${ECHO} -n " PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> wconfigure.call
+fi
+if [ "$POSTCONFIGEDIT" != "" ] ;then
+	${ECHO} -n " POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\"" >> wconfigure.call
 fi
 ${ECHO} " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@" >> wconfigure.call
 
@@ -256,6 +267,21 @@ fi
 if [ "$PYTHONPATH" != "" ] ;then
 	${ECHO} "PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> wconfigure.env
 fi
+if [ "$POSTCONFIGEDIT" != "" ] ;then
+	${ECHO} "POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\" ; export POSTCONFIGEDIT" >> wconfigure.env
+fi
 ${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> wconfigure.env
 
-exec "${CONFIGURE}" "$@"
+${CONFIGURE} "$@"
+RET="$?"
+
+if [ "${POSTCONFIGEDIT}" != "" ] ;then
+	if [ "${EDIT}" != "" ] ;then
+		"${EDIT}" "${POSTCONFIGEDIT}"
+	elif [ "${edit}" != "" ] ;then
+		"${edit}" "${POSTCONFIGEDIT}"
+	else
+		vi "${POSTCONFIGEDIT}"
+	fi
+fi
+exit $RET
