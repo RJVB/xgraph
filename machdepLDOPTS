@@ -136,13 +136,13 @@ case $MACH in
 			dynload)
 				;;
 			shobj)
-				echo "-dynamic -fno-common -fPIC"
+				echo "-dynamic -fno-common -fPIC -mdynamic-no-pic"
 				;;
 			shlib)
 # 				echo "-dynamic -fno-common -dynamiclib -install_name $2 -fPIC "
 # 				echo "`$0 shobj $2` -dynamiclib -twolevel_namespace -undefined define_a_way -fPIC "
 # 				echo "`$0 shobj $2` -dynamiclib -twolevel_namespace -fPIC "
-				echo "`$0 shobj $2` -bundle -twolevel_namespace -fPIC "
+				echo "`$0 shobj $2` -bundle -twolevel_namespace -fPIC -read_only_relocs suppress "
 				 # we could use twolevel_namespace, but then the accessing of undefined symbols (... environ! ...)
 				 # would could us to coredump. With flat_namespace, we can accept such symbols with a warning,
 				 # and have things resolved when linking an application: this works OK.
