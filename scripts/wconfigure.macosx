@@ -35,8 +35,12 @@ cliMACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 cliPOSTCONFIGEDIT="${POSTCONFIGEDIT}"
 set -x
 
-if [ -r wconfigure.env ] ;then
-	. wconfigure.env
+if [ "${WCONFIGURE}" = "" ] ;then
+	WCONFIGURE="wconfigure.env"
+fi
+
+if [ -r "${WCONFIGURE}" ] ;then
+	. "${WCONFIGURE}"
 fi
 
 set +x
@@ -190,6 +194,9 @@ pwd
 # ${ECHO} "USE_GNOME_DIR=${USE_GNOME_DIR} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
 
 ${ECHO} -n "env HOST=\"${HOST}\"" > wconfigure.call
+if [ "$WCONFIGURE" != "" ] ;then
+	${ECHO} -n " WCONFIGURE=\"${WCONFIGURE}\"" >> wconfigure.call
+fi
 if [ "$LD_LIBRARY_PATH" != "" ] ;then
 	${ECHO} -n " LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\"" >> wconfigure.call
 fi
@@ -213,64 +220,64 @@ if [ "$POSTCONFIGEDIT" != "" ] ;then
 fi
 ${ECHO} " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@" >> wconfigure.call
 
-rm wconfigure.env
+rm "${WCONFIGURE}"
 if [ "${compiler}" != "" ] ;then
-	${ECHO} "compiler=\"${compiler}\" ; export compiler" >> wconfigure.env
+	${ECHO} "compiler=\"${compiler}\" ; export compiler" >> "${WCONFIGURE}"
 fi
 if [ "${CPP}" != "" ] ;then
-	${ECHO} "CPP=\"${CPP}\" ; export CPP" >> wconfigure.env
+	${ECHO} "CPP=\"${CPP}\" ; export CPP" >> "${WCONFIGURE}"
 fi
-${ECHO} "CC=\"${CC}\"" >> wconfigure.env
-${ECHO} "CPPFLAGS=\"${CPPFLAGS}\"" >> wconfigure.env
-${ECHO} "CFLAGS=\"${CFLAGS}\"" >> wconfigure.env
-${ECHO} "CXX=\"${CXX}\"" >> wconfigure.env
+${ECHO} "CC=\"${CC}\"" >> "${WCONFIGURE}"
+${ECHO} "CPPFLAGS=\"${CPPFLAGS}\"" >> "${WCONFIGURE}"
+${ECHO} "CFLAGS=\"${CFLAGS}\"" >> "${WCONFIGURE}"
+${ECHO} "CXX=\"${CXX}\"" >> "${WCONFIGURE}"
 if [ "${CXXFLAGS}" = "${CFLAGS}" ] ;then
-	${ECHO} 'CXXFLAGS="${CFLAGS}"' >> wconfigure.env
+	${ECHO} 'CXXFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
 else
-	${ECHO} "CXXFLAGS=\"${CXXFLAGS}\"" >> wconfigure.env
+	${ECHO} "CXXFLAGS=\"${CXXFLAGS}\"" >> "${WCONFIGURE}"
 fi
 if [ "${OBJC}" = "${CC}" ] ;then
-	${ECHO} 'OBJC="${CC}"' >> wconfigure.env
+	${ECHO} 'OBJC="${CC}"' >> "${WCONFIGURE}"
 else
-	${ECHO} "OBJC=\"${OBJC}\"" >> wconfigure.env
+	${ECHO} "OBJC=\"${OBJC}\"" >> "${WCONFIGURE}"
 fi
 if [ "${OBJCFLAGS}" = "${CFLAGS}" ] ;then
-	${ECHO} 'OBJCFLAGS="${CFLAGS}"' >> wconfigure.env
+	${ECHO} 'OBJCFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
 else
-	${ECHO} "OBJCFLAGS=\"${OBJCFLAGS}\"" >> wconfigure.env
+	${ECHO} "OBJCFLAGS=\"${OBJCFLAGS}\"" >> "${WCONFIGURE}"
 fi
-${ECHO} "F77=\"${F77}\"" >> wconfigure.env
+${ECHO} "F77=\"${F77}\"" >> "${WCONFIGURE}"
 if [ "${FFLAGS}" = "${CFLAGS}" ] ;then
-	${ECHO} 'FFLAGS="${CFLAGS}"' >> wconfigure.env
+	${ECHO} 'FFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
 else
-	${ECHO} "FFLAGS=\"${FFLAGS}\"" >> wconfigure.env
+	${ECHO} "FFLAGS=\"${FFLAGS}\"" >> "${WCONFIGURE}"
 fi
 if [ "${FC}" = "${F77}" ] ;then
-	${ECHO} 'FC="${F77}"' >> wconfigure.env
+	${ECHO} 'FC="${F77}"' >> "${WCONFIGURE}"
 else
-	${ECHO} "FC=\"${FC}\"" >> wconfigure.env
+	${ECHO} "FC=\"${FC}\"" >> "${WCONFIGURE}"
 fi
 if [ "${FCFLAGS}" = "${CFLAGS}" ] ;then
-	${ECHO} 'FCFLAGS="${CFLAGS}"' >> wconfigure.env
+	${ECHO} 'FCFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
 elif [ "${FCFLAGS}" = "${FFLAGS}" ] ;then
-	${ECHO} 'FCFLAGS="${FFLAGS}"' >> wconfigure.env
+	${ECHO} 'FCFLAGS="${FFLAGS}"' >> "${WCONFIGURE}"
 else
-	${ECHO} "FCFLAGS=\"${FCFLAGS}\"" >> wconfigure.env
+	${ECHO} "FCFLAGS=\"${FCFLAGS}\"" >> "${WCONFIGURE}"
 fi
-${ECHO} "LDFLAGS=\"${LDFLAGS}\"" >> wconfigure.env
+${ECHO} "LDFLAGS=\"${LDFLAGS}\"" >> "${WCONFIGURE}"
 if [ "$MACOSX_DEPLOYMENT_TARGET" != "" ] ;then
-	${ECHO} "MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\" ; export MACOSX_DEPLOYMENT_TARGET" >> wconfigure.env
+	${ECHO} "MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\" ; export MACOSX_DEPLOYMENT_TARGET" >> "${WCONFIGURE}"
 fi
 if [ "$PYTHON" != "" ] ;then
-	${ECHO} "PYTHON=\"${PYTHON}\" ; export PYTHON" >> wconfigure.env
+	${ECHO} "PYTHON=\"${PYTHON}\" ; export PYTHON" >> "${WCONFIGURE}"
 fi
 if [ "$PYTHONPATH" != "" ] ;then
-	${ECHO} "PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> wconfigure.env
+	${ECHO} "PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> "${WCONFIGURE}"
 fi
 if [ "$POSTCONFIGEDIT" != "" ] ;then
-	${ECHO} "POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\" ; export POSTCONFIGEDIT" >> wconfigure.env
+	${ECHO} "POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\" ; export POSTCONFIGEDIT" >> "${WCONFIGURE}"
 fi
-${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> wconfigure.env
+${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 
 ${CONFIGURE} "$@"
 RET="$?"

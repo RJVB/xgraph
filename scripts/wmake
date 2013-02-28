@@ -1,11 +1,11 @@
 #!/bin/sh
 
 echo
-if [ "${WCONFIGUREENV}" = "" ] ;then
-	WCONFIGUREENV="wconfigure.env"
+if [ "${WCONFIGURE}" = "" ] ;then
+	WCONFIGURE="wconfigure.env"
 	echo "# $0 $@" 1>&2
 else
-	echo "# env WCONFIGUREENV=\"${WCONFIGUREENV}\" $0 $@" 1>&2
+	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
 fi
 echo "# `date`" 1>&2
 
@@ -46,13 +46,13 @@ if [ "$NOWCC" != "" ] ;then
 	fi
 	rm -f ${KK}
 	echo "make "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" $@"
-	make "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" "$@"
+	time make "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" "$@"
 	RET=$?
 else
-	if [ -r "${WCONFIGUREENV}" ] ;then
-		. "${WCONFIGUREENV}"
+	if [ -r "${WCONFIGURE}" ] ;then
+		. "${WCONFIGURE}"
 	fi
-	make "$@"
+	time make "$@"
 	RET=$?
 fi
 times
