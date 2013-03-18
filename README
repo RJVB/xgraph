@@ -1,7 +1,32 @@
-This is xgraph, the X11 plotting programme. Originally by David Harrison, further
+This is XGraph, an X11 plotting programme. Originally by David Harrison, further
 development by R.J.V. Bertin (RJVB) into a data exploration/processing tool.
-Currently known to work on Mac OS X 10.6, Linux 2.6 and Cygwin - which probably means
+Currently known to work on Mac OS X 10.6, Linux and Cygwin - which probably means
 it'll run on anything "*n*xy" with an X11 server.
+
+Here's what my resumé says about XGraph:
+After acquiring data, one typically wants to visualise/explore, often process and usually
+analyse them. In the early nineties, during my PhD work, I found a Unix/X11 application
+that allowed to do this to a rather basic extent, and that came with its own GUI toolkit.
+Over the years, I expanded this tool according to my needs, rather than starting from
+scratch or resort to using (expensive) commercial solutions. Today it is a tool that
+allows the rapid import and visualisation of large bodies of data and to explore them
+interactively and programatically, using multiple windows if necessary. It allows to
+generate figures (plots) that can be exported for printing, PDF conversion or editing in
+applications like Adobe Illustrator. Data can be cross-associated or tagged with meta-data
+and there is an API to write import plugins for novel file formats. It has its own
+embedded language (complete with "JIT" byte compiler) that evolved from one of my
+Patchworks modules and that can be extended via plugins. It can also interface to Python
+via a plugin, adding support for embedded execution of Python code and extending the
+internal functions to Python. Data processing, filtering and generation are possible at
+several levels (offline or at various phases of the rendering chain) using the own
+embedded language or Python. The integration with Python also gives access to a vast
+quantity of extensions for scientific and statistic applications, for instance for data
+import/export (Matlab's .mat files) or for interfacing with the statistics and signal
+processing environment R (www.r-project.org). This is the tool that I used to process and
+analyse the data (including the neurophysiological data) from my studies on simulator
+sickness, but also to generate trajectories for driving simulator studies. XGraph still
+works under Unix/X11 but nowadays that includes Mac OS X, Linux and Cygwin on MS Windows.
+
 
 Please, have a look at the other README files, especially README.INSTALL that contains
 detailed (I hope) instructions on building and installing. Sorry for the old-fashioned
@@ -10,21 +35,15 @@ Alternatively, if you have Linux running on (probably) at least a Pentium class 
 try the xgraph binary that *may* be provided together with the source distribution.
 
 This distribution changes often, whenever I find a bug, or need some new functionality.
-I won't comment on which of the two occur more frequently :) The only trustworthy
-indication of the version, revision etc. is the date of the distribution archive itself,
-and of the files contained within. I don't have the habit of bothering with version
-numbers, major, minor, and non-roman alphabet designations. You can consider the whole 
-thing a beta release, if you wish. If you insist, I'd say this is version 2001, release
-07, patchlevel 23 :)
+The only trustworthy indication of the version, revision etc. is the date of the distribution
+archive itself, and of the files contained within.
 
-I do bother about backward compatibility, though, so you will generally not have to worry
-about your files no longer working, or having adverse side-effects like formatting your
-CD-ROM drive. This concerns xgraph files, of course. I won't make any commitments concerning
-the effects of reading files that were not meant to be read by XGraph!
+I attach a lot of importance to backward compatibility, so something that once worked should
+continue to work. If not, drop me a note!
 
 Above, before and during it all, have fun using it. It has been and still is my programme
-of choice for anything from quickly looking at data to complicated processing. I am not
-a professional programmer (just a nearly full-time one :)), nor a computer scientist. The
+of choice for anything from quickly looking at data to complicated processing. I am not trained
+as a professional programmer (just a nearly full-time one :)), nor a computer scientist. The
 original programme had many "hackery-kludgy" solutions for seemingly trivial problems like
 determining the correct printing width of a string. I am improving on many of these, but in
 many cases with a good solution of a similar nature (to stick with the example, those widths
@@ -38,6 +57,4 @@ as my own.
 If you find bugs, implement improvements or additional features (have a look at TODOHIST),
 PLEASE let me know about them!
 
-(C) R.J.V. Bertin, 1990 - then (Mon Jan  8 17:22:59 CET 2001)
-
-now (Tue May 22 13:20:10 CEST 2012).
+(C) R.J.V. Bertin, 1990, 2001, 2012, 2013 (this README)
