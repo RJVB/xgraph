@@ -23,6 +23,11 @@ setautovec() {
 	ARCH="${1}"
 	VU="${2}"
 	case $compil in
+		*gcc*-4.7*|*g++*-4.7*)
+			OOPTIMOPT="${OOPTIMOPT} -flto"
+			;;
+	esac
+	case $compil in
 		*gcc-3.3*|*g++-3.3*)
 			MARCH="${MARCH} ${VU}"
 			;;

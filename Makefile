@@ -16,7 +16,7 @@
 # or directly in a build line, as the first version (using :=) retrieves the setting once only instead of executing
 # the script each time one evaluates $(SOMESETTING) .
 
-UNIBIN=-unibin64
+UNIBIN=
 CLEVEL=
 CHECK=-c
 STRIP=

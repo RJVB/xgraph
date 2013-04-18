@@ -25,6 +25,8 @@ vim:ts=2:sw=2:
 #include <stdio.h>
 #if defined(linux) || defined(__APPLE__)
 #	include <stdint.h>
+#endif
+#if defined(linux)
 #	include <malloc.h>
 #endif
 #include <stdlib.h>
