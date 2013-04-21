@@ -9,15 +9,15 @@ fi
 
 # if [ -r $* ] ;then
 	while [ $# != 0 ] ;do
-		if [ -w $1 ] ;then
+		if [ -w "$1" ] ;then
 # 			ls -ailsF $1
-# 			mv $1 $1.$$
-			touch -r $1 $1.$$
-			cat </dev/null > $1
-			touch -r $1.$$ $1
-			rm -f $1.$$
+# 			mv "$1" "$1".$$
+			touch -r "$1" "$1".$$
+			cat </dev/null > "$1"
+			touch -r "$1".$$ "$1"
+			rm -f "$1".$$
 		else
-			echo "$0: $1: permission denied/not writeable"
+			echo "$0: ""$1"": permission denied/not writeable"
 		fi
 		shift 1
 	done
