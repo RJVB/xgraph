@@ -2246,3 +2246,6 @@ Don't allow too small steps in DrawAxis; min. 1/100 of range (when step==1)?
 20120720
 	Also review the default font selection algorithm/patterns to make it appropriate for at least 1 standard distribution
 	(Linux Mint)
+
+20130531
+	Corrected a Pen saving error that caused a partial PenColour command to be written.

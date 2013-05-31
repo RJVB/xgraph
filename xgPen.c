@@ -3760,12 +3760,11 @@ static int __Dump_XGPens( LocalWin *source, LocalWin *target, FILE *fp, char *bu
 					if( colchange || flcolchange ){
 						buf[0]= '\0', head = buf;
 						if( colchange && (pos[i].pixelCName || pos[i].colour.pixvalue>= 0) ){
-							strcat( buf, "PenColour[" );
 							if( pos[i].pixelCName ){
-								nc = sprintf( head, "\"%s\"]", pos[i].pixelCName );
+								nc = sprintf( head, "PenColour[\"%s\"]", pos[i].pixelCName );
 							}
 							else{
-								nc = sprintf( head, "%s]", ad2str( pos[i].colour.pixvalue, d3str_format,0) );
+								nc = sprintf( head, "PenColour[%s]", ad2str( pos[i].colour.pixvalue, d3str_format,0) );
 							}
 							ADVANCE(head,nc);
 						}

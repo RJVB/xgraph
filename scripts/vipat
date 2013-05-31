@@ -20,7 +20,7 @@ fi
 help(){
 	echo "$SELF: $FUNCTION files containing a (f)grep pattern"
 	echo "Usage:"
-	echo "$SELF [-r] [-i] [-v] [-z] [--list] [-- grep_opt] [-R] [--include fpattern] [pattern] files"
+	echo "$SELF [-r] [-i] [-v] [-z] [--list] [-- grep_opt] [-R dir] [--include=fpattern] [pattern] files"
 	echo "\t-r\t: use egrep instead of fgrep"
 	echo "\t-i\t: case-insenstive search"
 	echo "\t-SL\t: use SpotLight instead of fgrep/egrep"
