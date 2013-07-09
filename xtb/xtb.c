@@ -406,7 +406,7 @@ int xtb_XSync( Display *disp, Bool discard )
 double xtb_PsychoMetric_Gray( XColor *rgb )
 {
 /* 	return( 0.3 * rgb->red+ 0.59 * rgb->green+ 0.11 * rgb->blue );	*/
-	  /* According to the CIE-XYZ 1931 specification, from http://www1.tip.nl/~t876506/ColorDesign.html#gry : 	*/
+	  /* According to the CIE-XYZ 1931 specification, from http://home.telfort.nl/~t876506/ColorMath.html#gry : 	*/
 	return( 0.298954 * rgb->red+ 0.586434 * rgb->green+ 0.114612 * rgb->blue );
 }
 
