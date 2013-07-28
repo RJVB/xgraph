@@ -1,0 +1,133 @@
+executing: xgraph examples/benching.xg 2>examples/benching.sh.log
+Current file: examples/benching.xg: Tue Oct 19 16:54:44 2010
+A collection of timing benchmarks. Can take quite a while to complete, and doesn't generate
+overly nice output! Performance measured in bogoflops, <err> I mean seconds :)
+Current xgraph info:
+ xgraph examples/benching.xg 2>/home/RJVB/work/src/xgraph/examples/benching.sh.log >pipe:[436]  ## sh/bash notation; escape as necessary!
+ XGraph build (32 bit) version 20120508; gcc4.5.3[Aug 19 2012 18:37:46,"CYGWIN_NT-6.1-WOW64 patu 1.7.16(0.262/5/3) i686 ; CC='gccopt -DXGRAPH  ' ACC='gccopt -DXGRAPH  '"]
+ Executed d.d. Sun Aug 19 18:45:49 2012
+ Input files: 'examples/benching.xg: Tue Oct 19 16:54:44 2010' 
+ Working directory: /home/RJVB/work/src/xgraph
+ Last opened on display :0.0/-1/-1 (visual 0x21, 24 planes TrueColor) by RJVB
+
+
+1.00000e+06 times empty loop took 9.88554e-04(real)/0(user) (0 sys) sec [1.01158e+09R/InfU]l/s seconds
+1.00000e+06 times looping empty procedure took 0.284241(real)/0.250000(user) (0.0160000 sys) sec [3.51815e+06R/4.00000e+06U]l/s seconds
+1.00000e+06 times looping empty procedure took 0.270032(real)/0.249000(user) (0 sys) sec [3.70326e+06R/4.01606e+06U]l/s seconds
+Calibrating adapted loop size (should be 0.667000s)... 2.00000e+06 times looping empty procedure took 0.516094(real)/0.499000(user) (0 sys) sec [3.87526e+06R/4.00802e+06U]l/s seconds
+Calibrating adapted loop size (should be 0.667000s)... 4.00000e+06 times looping empty procedure took 1.06110(real)/0.999000(user) (0 sys) sec [3.76967e+06R/4.00400e+06U]l/s seconds
+Calibrating adapted loop size (should be 0.667000s)... 2.51437e+06 times looping empty procedure took 0.694858(real)/0.593000(user) (0 sys) sec [3.61854e+06R/4.24008e+06U]l/s seconds
+
+timing of addition of 2 arrays, either with a for-toMAX[] loop construct (scalar addition), or
+with (internal) array addition. The latter is done 10x to increase the reliability of the measured
+duration. Procedures are used to ensure that the code is executed from compiled representations
+(*EVAL* would not automatically compile the array-addition test procedure [test2]).
+On a PIII 450Mhz (linux), test1 completes in around 5.8s, test2 almost instantly (3.94959e-04s)
+
+Addition of 2 [2.51437e+06] arrays in a scalar-addition loop, without support for simple array arithmetic: 3.85874(real)/3.76000(user) (0 sys) sec [651603R/668716U]l/s
+	Result z==2 ± 0 [2.51437e+06]
+Addition of 2 [2.51437e+06] arrays in a scalar-addition loop, with support for simple array arithmetic: 4.16679(real)/4.02500(user) (0 sys) sec [603431R/624688U]l/s
+	Result z==2 ± 0 [2.51437e+06]
+Addition of 2 [2.51437e+06] arrays with scalar-addition and Apply2Array, without support for simple array arithmetic: 3.44906(real)/3.32300(user) (0 sys) sec [729002R/756657U]l/s
+	Result z==0 ± 0 [2.51437e+06]
+Addition of 2 [2.51437e+06] arrays with scalar-addition and Apply2Array, with support for simple array arithmetic: 3.84040(real)/3.77500(user) (0 sys) sec [654716R/666058U]l/s
+	Result z==0 ± 0 [2.51437e+06]
+Addition of a scalar to a [2.51437e+06] array with scalar-addition, without support for simple array arithmetic: 3.71287(real)/3.65000(user) (0 sys) sec [677203R/688869U]l/s
+	Result z==1.25719e+06 ± 725836 [2.51437e+06]
+Addition of a scalar to a [2.51437e+06] array with scalar-addition, with support for simple array arithmetic: 4.04310(real)/3.94700(user) (0.0150000 sys) sec [621892R/637033U]l/s
+	Result z==1.25719e+06 ± 725836 [2.51437e+06]
+Addition of a scalar to a [2.51437e+06] array with scalar-addition and Apply2Array, without support for simple array arithmetic: 0.217803(real)/0.203000(user) (0 sys) sec [1.15442e+07R/1.23861e+07U]l/s
+	Result z==0 ± 0 [2.51437e+06]
+Addition of a scalar to a [2.51437e+06] array with scalar-addition and Apply2Array, with support for simple array arithmetic: 0.485633(real)/0.468000(user) (0 sys) sec [5.17751e+06R/5.37259e+06U]l/s
+	Result z==0 ± 0 [2.51437e+06]
+10x array[2.51437e+06] addition without support for simple array arithmetic, array addition (add[&z,&x,&y]): 6.27213e-04(real)/0(user) (0 sys) sec [4.00879e+10R/InfU]l/s
+	Result z==0 ± 0 [2.51437e+06]
+10x array[2.51437e+06] addition with support for simple array arithmetic, array addition (add[&z,&x,&y]): 2.00851(real)/1.09200(user) (0.827000 sys) sec [1.25186e+07R/2.30254e+07U]l/s
+	Result z==0 ± 0 [2.51437e+06]
+2.51437e+06x array[10] addition with support for simple array arithmetic, array addition: 12.5617(real)/12.4170(user) (0.0160000 sys) sec [200162R/202494U]l/s
+	Result zz==0 ± 0 [10]
+10x array[2.51437e+06] multiplication with support for simple array arithmetic, array addition (mul[&z,&x,&y]): 1.94751(real)/0.936000(user) (0.952000 sys) sec [1.29107e+07R/2.68629e+07U]l/s
+	Result z==0 ± 0 [2.51437e+06]
+2.51437e+06x array[10] multiplication with support for simple array arithmetic, array addition: 6.76443(real)/6.64500(user) (0 sys) sec [3.71705e+06R/3.78385e+06U]l/s
+	Result zz==4.50000 ± 3.02765 [10]
+10x array[2.51437e+06] division with support for simple array arithmetic, array addition (div[&z,&x,&y]): 0.512538(real)/0.468000(user) (0 sys) sec [4.90572e+07R/5.37259e+07U]l/s
+	Result z==2.51437e+06 ± 1.45167e+06 [2.51437e+06]
+2.51437e+06x array[10] division with support for simple array arithmetic, array addition: 7.49589(real)/7.39500(user) (0 sys) sec [3.35433e+06R/3.40009e+06U]l/s
+	Result zz==4.50000 ± 3.02765 [10]
+2.51437e+06x sin(z),cos(z), using Apply2Array: 11.1855(real)/11.0290(user) (0 sys) sec [2.24788e+06R/2.27978e+06U]l/s
+	Result x==3.72815e-05 ± 0.707111 [2.51437e+06]
+2.51437e+06x sincos(z,x,y), using Apply2Array: 9.94456(real)/9.84300(user) (0 sys) sec [2.52839e+06R/2.55448e+06U]l/s
+	Result x==-3.16799e-308 ± 0 [2.51437e+06]
+2.51437e+06x sincos(z,x,y), using array arguments: 1.11252(real)/1.04600(user) (0 sys) sec [2.26007e+07R/2.40380e+07U]l/s
+	Result x==3.72815e-05 ± 0.707111 [2.51437e+06]
+procedure calling overhead compared to functions, $UseConstantsLists=1
+2.51437e+06 times v1,v2: 0.562053(real)/0.515000(user) (0 sys) sec [4.47355e+06R/4.88227e+06U]l/s
+2.51437e+06 times v1[v2],v2[v1]=120,120: 0.809128(real)/0.780000(user) (0 sys) sec [3.10751e+06R/3.22355e+06U]l/s
+2.51437e+06 times v[0],v[1]: 0.967472(real)/0.952000(user) (0 sys) sec [2.59891e+06R/2.64114e+06U]l/s
+2.51437e+06 times v[0,v1],v[1,v2]=100,120: 1.33133(real)/1.26400(user) (0 sys) sec [1.88861e+06R/1.98922e+06U]l/s
+2.51437e+06 times v[0,v1,v2]=100,120: 1.29276(real)/1.29500(user) (0 sys) sec [1.94496e+06R/1.94160e+06U]l/s
+2.51437e+06 times empty=0: 0.777893(real)/0.733000(user) (0 sys) sec [3.23228e+06R/3.43025e+06U]l/s
+2.51437e+06 times empty[v1,v2]=0: 1.30116(real)/1.27900(user) (0 sys) sec [1.93241e+06R/1.96589e+06U]l/s
+2.51437e+06 times add[v1,v2]=220: 1.74759(real)/1.68500(user) (0 sys) sec [1.43877e+06R/1.49221e+06U]l/s
+2.51437e+06 times add[v[0],v[1]]=220: 2.02755(real)/1.96600(user) (0 sys) sec [1.24010e+06R/1.27893e+06U]l/s
+2.51437e+06 times call[&add,v1,v2]=100: 2.61891(real)/2.52700(user) (0 sys) sec [960084R/995002U]l/s
+2.51437e+06 times sumvv=220: 3.63461(real)/3.58800(user) (0 sys) sec [691786R/700772U]l/s
+2.51437e+06 times sum[v1,v2]=220: 4.55377(real)/4.33700(user) (0 sys) sec [552152R/579749U]l/s
+2.51437e+06 times call[&sum,v1,v2]=220: 8.67211(real)/8.51800(user) (0 sys) sec [289938R/295183U]l/s
+2.51437e+06 times call[lambda[add[$[0],$[1]]],v1,v2]=220: 8.73835(real)/8.42400(user) (0 sys) sec [287740R/298477U]l/s
+2.51437e+06 times sum[v1,ran]=100.720: 6.29664(real)/6.16300(user) (0 sys) sec [399320R/407978U]l/s
+2.51437e+06 times call[&sum,v1,ran]=100.518->100.891: 11.0116(real)/10.5610(user) (0 sys) sec [228339R/238081U]l/s
+
+Comparing the special 2-D indexing function 2Dindex to nDindex
+
+2.51437e+06 times 2Dindex[1,2,3,4]: 2.46036(real)/2.37100(user) (0 sys) sec [1.02195e+06R/1.06047e+06U]l/s
+2.51437e+06 times nDindex[1,2,3,4]: 2.72040(real)/2.55900(user) (0 sys) sec [924265R/982560U]l/s
+2.51437e+06 times @[&zz,$loop]==-123.456: 3.01892(real)/2.80800(user) (0 sys) sec [832870R/895431U]l/s
+2.51437e+06 times @[`"1234567890"]==2.12044e+10 2.64188(real)/2.48100(user) (0 sys) sec [951737R/1.01345e+06U]l/s
+
+Some loops to time the effect of $UseConstantsLists (and the '?' last-value operator):
+
+2.51437e+06 times 'progn[2,add[2,kk]]' took 3.37780(real)/3.18200(user) (0 sys) sec [744380R/790186U]l/s seconds with $UseConstantsLists=0
+2.51437e+06 times 'progn[2,?add,?ran]' took 2.03591(real)/1.93500(user) (0 sys) sec [1.23501e+06R/1.29942e+06U]l/s seconds with $UseConstantsLists=0
+2.51437e+06 times 'progn[2,add[2,kk]]' took 3.04615(real)/2.93300(user) (0 sys) sec [825426R/857269U]l/s seconds with $UseConstantsLists=1
+2.51437e+06 times 'progn[2,?add,?ran]' took 1.82779(real)/1.71600(user) (0 sys) sec [1.37563e+06R/1.46525e+06U]l/s seconds with $UseConstantsLists=1
+2.51437e+06 times 'var[foo[?ran]]'=0.424966 took 2.90393(real)/2.82400(user) (0 sys) sec [865850R/890358U]l/s seconds with $UseConstantsLists=0
+2.51437e+06 times 'var[foo[?ran]]'=0.424966 took 0.912480(real)/0.905000(user) (0 sys) sec [2.75554e+06R/2.77831e+06U]l/s seconds with $UseConstantsLists=1
+2.51437e+06 times 'var'=0 took 0.671436(real)/0.624000(user) (0 sys) sec [3.74477e+06R/4.02944e+06U]l/s seconds with $UseConstantsLists=0
+2.51437e+06 times 'var'=0 took 0.512193(real)/0.499000(user) (0 sys) sec [4.90903e+06R/5.03882e+06U]l/s seconds with $UseConstantsLists=1
+2.51437e+06 times 'var[$loop]'=2.51437e+06 took 1.76940(real)/1.71600(user) (0 sys) sec [1.42103e+06R/1.46525e+06U]l/s seconds with $UseConstantsLists=0
+2.51437e+06 times 'var[$loop]'=2.51437e+06 took 0.640888(real)/0.609000(user) (0 sys) sec [3.92326e+06R/4.12869e+06U]l/s seconds with $UseConstantsLists=1
+2.51437e+06 times 'var[foo[$loop]]'=2.51437e+06 took 2.97065(real)/2.83900(user) (0 sys) sec [846403R/885653U]l/s seconds with $UseConstantsLists=0
+2.51437e+06 times 'var[foo[$loop]]'=2.51437e+06 took 0.890246(real)/0.827000(user) (0.0160000 sys) sec [2.82435e+06R/3.04035e+06U]l/s seconds with $UseConstantsLists=1
+2.51437e+06 times 'var[foo[bar[$loop]]]'=2.51437e+06 took 4.10156(real)/3.97800(user) (0 sys) sec [613029R/632069U]l/s seconds with $UseConstantsLists=0
+2.51437e+06 times 'var[foo[bar[$loop]]]'=2.51437e+06 took 2.01215(real)/1.91900(user) (0 sys) sec [1.24960e+06R/1.31025e+06U]l/s seconds with $UseConstantsLists=1
+838123 times stats-test1 (ss10=7.99180±5.77371 ; sas10=3.99629±5.77371): 
+	took 3.18452(real)/3.12000(user) (0 sys) sec [263187R/268629U]l/s seconds with $UseConstantsLists=0
+838123 times stats-test2 (ss11=19.9774±14.7162 ; sas11=9.99670±14.7162): 
+	took 4.69260(real)/4.38300(user) (0.0160000 sys) sec [178605R/191221U]l/s seconds with $UseConstantsLists=0
+Ratios (should be 2.5): ss11/ss10=2.49974±2.54883 ; sas11/sas10=2.50150±2.54883
+Now doing the same, using Apply2Array and array-passing:
+838123 times stats-test3 (ss10=8.00542±5.77664 ; sas10=4.00265±5.77664): 
+	took 2.21808(real)/2.15300(user) (0.0160000 sys) sec [377861R/389282U]l/s seconds with $UseConstantsLists=0
+838123 times stats-test4 (ss11=20.0004±14.7064 ; sas11=9.99566±14.7064): 
+	took 3.27369(real)/3.08900(user) (0 sys) sec [256018R/271325U]l/s seconds with $UseConstantsLists=0
+Ratios (should be 2.5): ss11/ss10=2.49835±2.54585 ; sas11/sas10=2.49726±2.54585
+838123 times stats-test1 (ss10=8.00588±5.77855 ; sas10=4.00318±5.77855): 
+	took 3.33435(real)/3.05800(user) (0 sys) sec [251360R/274076U]l/s seconds with $UseConstantsLists=1
+838123 times stats-test2 (ss11=20.0080±14.7080 ; sas11=9.99809±14.7080): 
+	took 4.83840(real)/4.46100(user) (0 sys) sec [173223R/187878U]l/s seconds with $UseConstantsLists=1
+Ratios (should be 2.5): ss11/ss10=2.49917±2.54527 ; sas11/sas10=2.49754±2.54527
+Now doing the same, using Apply2Array and array-passing:
+838123 times stats-test3 (ss10=8.00017±5.77171 ; sas10=4.00115±5.77171): 
+	took 2.19962(real)/2.13700(user) (0 sys) sec [381030R/392196U]l/s seconds with $UseConstantsLists=1
+838123 times stats-test4 (ss11=20.0303±14.7138 ; sas11=10.0040±14.7138): 
+	took 3.28443(real)/3.16700(user) (0 sys) sec [255181R/264643U]l/s seconds with $UseConstantsLists=1
+Ratios (should be 2.5): ss11/ss10=2.50373±2.54930 ; sas11/sas10=2.50028±2.54930
+30 times for-toMAX[0,22, fib[$loop] ]: 	took 14.1397(real)/13.6040(user) (0.0160000 sys) sec [4.09733R/4.25866U]l/s seconds with $UseConstantsLists=0
+30 times for-toMAX[0,22, fib[$loop] ]: 	took 12.0662(real)/11.4970(user) (0 sys) sec [4.80144R/5.03912U]l/s seconds with $UseConstantsLists=1
+expression-loops per second (68 samples):
+	2.51437e+06/3.35624=749164 (real time)
+	2.51437e+06/3.21460=782171 (user time)
+0m0.015s 0m0.062s
+3m43.938s 0m3.447s
+-rwx------+ 1 RJVB Aucun 271813 Aug 19 18:49 examples/benching.sh.log

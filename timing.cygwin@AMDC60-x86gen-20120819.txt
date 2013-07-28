@@ -1,0 +1,48 @@
+executing: /home/RJVB/bin/xgraph examples/benching.xg 2>examples/benching.sh.log
+Current file: examples/benching.xg: Tue Oct 19 16:54:44 2010
+A collection of timing benchmarks. Can take quite a while to complete, and doesn't generate
+overly nice output! Performance measured in bogoflops, <err> I mean seconds :)
+Current xgraph info:
+ xgraph examples/benching.xg 2>/home/RJVB/work/src/xgraph/examples/benching.sh.log >pipe:[428]  ## sh/bash notation; escape as necessary!
+ XGraph build (32 bit) version 20120508; gcc4.5.3[Aug 19 2012 15:10:13,"CYGWIN_NT-6.1-WOW64 patu 1.7.16(0.262/5/3) i686 ; CC='gccopt -DXGRAPH  ' ACC='gccopt -DXGRAPH  '"]
+ Executed d.d. Sun Aug 19 16:38:38 2012
+ Input files: 'examples/benching.xg: Tue Oct 19 16:54:44 2010' 
+ Working directory: /home/RJVB/work/src/xgraph
+ Last opened on display :0.0/-1/-1 (visual 0x21, 24 planes TrueColor) by RJVB
+
+
+1.00000e+06 times empty loop took 0.00136221(real)/0(user) (0 sys) sec [7.34099e+08R/InfU]l/s seconds
+1.00000e+06 times looping empty procedure took 0.353094(real)/0.234000(user) (0 sys) sec [2.83211e+06R/4.27350e+06U]l/s seconds
+1.00000e+06 times looping empty procedure took 0.351563(real)/0.218000(user) (0 sys) sec [2.84444e+06R/4.58716e+06U]l/s seconds
+Calibrating adapted loop size (should be 0.667000s)... 2.00000e+06 times looping empty procedure took 0.571459(real)/0.453000(user) (0 sys) sec [3.49981e+06R/4.41501e+06U]l/s seconds
+Calibrating adapted loop size (should be 0.667000s)... 4.00000e+06 times looping empty procedure took 1.03255(real)/0.936000(user) (0 sys) sec [3.87392e+06R/4.27350e+06U]l/s seconds
+Calibrating adapted loop size (should be 0.667000s)... 2.58391e+06 times looping empty procedure took 0.655920(real)/0.608000(user) (0 sys) sec [3.93936e+06R/4.24985e+06U]l/s seconds
+
+timing of addition of 2 arrays, either with a for-toMAX[] loop construct (scalar addition), or
+with (internal) array addition. The latter is done 10x to increase the reliability of the measured
+duration. Procedures are used to ensure that the code is executed from compiled representations
+(*EVAL* would not automatically compile the array-addition test procedure [test2]).
+On a PIII 450Mhz (linux), test1 completes in around 5.8s, test2 almost instantly (3.94959e-04s)
+
+Addition of 2 [2.58391e+06] arrays in a scalar-addition loop, without support for simple array arithmetic: 3.74793(real)/3.69700(user) (0 sys) sec [689423R/698920U]l/s
+	Result z==2 ± 0 [2.58391e+06]
+Addition of 2 [2.58391e+06] arrays in a scalar-addition loop, with support for simple array arithmetic: 4.08136(real)/3.97800(user) (0 sys) sec [633100R/649549U]l/s
+	Result z==2 ± 0 [2.58391e+06]
+Addition of 2 [2.58391e+06] arrays with scalar-addition and Apply2Array, without support for simple array arithmetic: 3.39377(real)/3.27600(user) (0 sys) sec [761367R/788738U]l/s
+	Result z==0 ± 0 [2.58391e+06]
+Addition of 2 [2.58391e+06] arrays with scalar-addition and Apply2Array, with support for simple array arithmetic: 3.62263(real)/3.57200(user) (0 sys) sec [713267R/723378U]l/s
+	Result z==0 ± 0 [2.58391e+06]
+Addition of a scalar to a [2.58391e+06] array with scalar-addition, without support for simple array arithmetic: 3.66171(real)/3.63400(user) (0 sys) sec [705656R/711036U]l/s
+	Result z==1.29196e+06 ± 745910 [2.58391e+06]
+Addition of a scalar to a [2.58391e+06] array with scalar-addition, with support for simple array arithmetic: 3.87996(real)/3.85300(user) (0 sys) sec [665962R/670622U]l/s
+	Result z==1.29196e+06 ± 745910 [2.58391e+06]
+Addition of a scalar to a [2.58391e+06] array with scalar-addition and Apply2Array, without support for simple array arithmetic: 0.231489(real)/0.234000(user) (0 sys) sec [1.11621e+07R/1.10423e+07U]l/s
+	Result z==0 ± 0 [2.58391e+06]
+Addition of a scalar to a [2.58391e+06] array with scalar-addition and Apply2Array, with support for simple array arithmetic: 0.492321(real)/0.468000(user) (0 sys) sec [5.24842e+06R/5.52117e+06U]l/s
+	Result z==0 ± 0 [2.58391e+06]
+10x array[2.58391e+06] addition without support for simple array arithmetic, array addition (add[&z,&x,&y]): 0.00120207(real)/0(user) (0 sys) sec [2.14954e+10R/InfU]l/s
+	Result z==0 ± 0 [2.58391e+06]
+examples/benching.sh: line 7:  6956 Segmentation fault      (core dumped) "$@" examples/benching.xg 2> "${0}.log"
+0m0.031s 0m0.062s
+0m27.970s 0m1.231s
+-rwx------+ 1 RJVB Aucun 64205 Aug 19 16:39 examples/benching.sh.log
