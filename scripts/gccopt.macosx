@@ -13,6 +13,8 @@ if [ "${XCODE_VERSION_MAJOR}" != "" ] ;then
 	GIDE="Xcode"
 elif [ "${MONO_GAC_PREFIX}" != "" ] ;then
 	GIDE="MonoDevelop"
+elif [ "${NBMAGIC}" != "" ] ;then
+	GIDE="NetBeans"
 elif [ "${!APP_ICON_*}" != "" ] ;then
 	GIDE="Eclipse"
 	GCCOPT_SIMPLE=1
@@ -137,12 +139,6 @@ compress="gzip -9"
 uncompress="gunzip"
 Z="gz"
 
-if [ "$COMMANDLINE" = "0" -o "$GCCOPT_SIMPLE" = "1" ] ;then
-	SWITCHES=""
-else
-	SWITCHES=" "
-fi
-
 if [ "$SLEEP" = "" ] ;then
 	SLEEP=0
 fi
@@ -201,6 +197,13 @@ qcoffee () {
 TEE="qtee"
 
 SYNTAX=0
+
+if [ "$COMMANDLINE" = "0" -o "$GCCOPT_SIMPLE" = "1" ] ;then
+	#lecho "COMMANDLINE=${COMMANDLINE} GCCOPT_SIMPLE=${GCCOPT_SIMPLE}: not communicating switches to code"
+	SWITCHES=""
+else
+	SWITCHES=" "
+fi
 
 SELF="$0 $*"
 TARGET=""
@@ -965,6 +968,7 @@ fi
 # ${ECHO} $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS 1>&2
 
 DoCompile () {
+	lecho $TIME $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS
 	$TIME $Compile -DSWITCHES="\"${SWITCHES}\"" $A $SYS $OTHEROPT $OPTIMOPT $DEBUGOPT $WARNINGS $PROTO $DEFINES $LIBDIR $SAFEOPT $ARGS  $ENDO $LNKOPTS $LIBS
 	cxsetenv RET $?
 }
