@@ -269,19 +269,19 @@ static double pearson_correl_formal( LocalWin *wi, DataSet *set1, DataSet *set2,
 				"\tmean=%g,%g: cx= sX12 / ( sqrt(sX1_2) * sqrt(sX2_2) ) =\n\t\t"
 				"%g, %g, %g = %s\n",
 				mX1, mX2,
-				sX12, sX1_2, sX2_2, ad2str( cx, d3str_format, 0)
+				sX12, sX1_2, sX2_2, ad2str( cx, d3str_format, NULL)
 			);
 			if( *pc_ycol) fprintf( StdErr,
 				"\tmean=%g,%g: cy= sY12 / ( sqrt(sY1_2) * sqrt(sY2_2) ) =\n\t\t"
 				"%g, %g, %g = %s\n",
 				mY1, mY2,
-				sY12, sY1_2, sY2_2, ad2str( cy, d3str_format, 0)
+				sY12, sY1_2, sY2_2, ad2str( cy, d3str_format, NULL)
 			);
 			if( *pc_ecol) fprintf( StdErr,
 				"\tmean=%g,%g: co= sO12 / ( sqrt(sO1_2) * sqrt(sO2_2) ) =\n\t\t"
 				"%g, %g, %g = %s\n",
 				mO1, mO2,
-				sO12, sO1_2, sO2_2, ad2str( co, d3str_format, 0)
+				sO12, sO1_2, sO2_2, ad2str( co, d3str_format, NULL)
 			);
 		}
 		else{
@@ -380,17 +380,17 @@ static double pearson_correl( LocalWin *wi, DataSet *set1, DataSet *set2,
 			if( *pc_xcol) fprintf( StdErr,
 				"\tcx= (sX12i- sX1i*sX2i/ *K) / ( sqrt(sX1_2i - sX1i**2/ *K) * sqrt(sX2_2i - sX2i**2/ *K) ) =\n\t\t"
 				"%g, %g, %g, %d, %g, %g, %d, %g, %g, %d = %s\n",
-				sX12i, sX1i, sX2i, *K, sX1_2i, sX1i, *K, sX2_2i, sX2i, *K, ad2str( cx, d3str_format, 0)
+				sX12i, sX1i, sX2i, *K, sX1_2i, sX1i, *K, sX2_2i, sX2i, *K, ad2str( cx, d3str_format, NULL)
 			);
 			if( *pc_ycol) fprintf( StdErr,
 				"\tcy= (sY12i- sY1i*sY2i/ *K) / ( sqrt(sY1_2i - sY1i**2/ *K) * sqrt(sY2_2i - sY2i**2/ *K) ) =\n\t\t"
 				"%g, %g, %g, %d, %g, %g, %d, %g, %g, %d = %s\n",
-				sY12i, sY1i, sY2i, *K, sY1_2i, sY1i, *K, sY2_2i, sY2i, *K, ad2str( cy, d3str_format, 0)
+				sY12i, sY1i, sY2i, *K, sY1_2i, sY1i, *K, sY2_2i, sY2i, *K, ad2str( cy, d3str_format, NULL)
 			);
 			if( *pc_ecol ) fprintf( StdErr,
 				"\tco= (sO12i- sO1i*sO2i/ *K) / ( sqrt(sO1_2i - sO1i**2/ *K) * sqrt(sO2_2i - sO2i**2/ *K) ) =\n\t\t"
 				"%g, %g, %g, %d, %g, %g, %d, %g, %g, %d = %s\n",
-				sO12i, sO1i, sO2i, *K, sO1_2i, sO1i, *K, sO2_2i, sO2i, *K, ad2str( co, d3str_format, 0)
+				sO12i, sO1i, sO2i, *K, sO1_2i, sO1i, *K, sO2_2i, sO2i, *K, ad2str( co, d3str_format, NULL)
 			);
 		}
 		else{

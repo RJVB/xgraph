@@ -200,11 +200,11 @@ setopts() {
 			# OOPTIMOPT="$OOPTIMOPT  -fgcse-lm -fsched-interblock -freorder-blocks -freorder-blocks-and-partition -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops"
 			OOPTIMOPT="$OOPTIMOPT -funroll-loops"
 # The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
-			NODEBUGOPT="-flax-vector-conversions" #"-fomit-frame-pointer"
-			OPTIMOPT="$OOPTIMOPT -flax-vector-conversions"
+			NODEBUGOPT="" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT"
 			DEBUGOPT="$NODEBUGOPT"
 # Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
-			SAFETYOPTS="-fno-caller-saves -fno-force-mem -flax-vector-conversions"
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
 
 			MARCH=""
 			MARCHUNI=""
@@ -222,7 +222,7 @@ setopts() {
 			if [ "$compil" = "" ] ;then
 				compil="${DEFAULT_CC}"
 			fi
-			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse"
+			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse -flax-vector-conversions"
 			;;
 
 		x86)

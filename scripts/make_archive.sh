@@ -77,7 +77,7 @@ gunzip -v examples/*.gz
 bunzip2 -vf *.bz2
 bunzip2 -v examples/*.bz2
 nice make clean
-rm -rf old_examples snapshots wis.dat* wisdom.* XGraph-1.moved-aside build *.docset xgraph.i386 .git Python/python*_numpy.h
+rm -rf old_examples snapshots wis.dat* wisdom.* XGraph-1.moved-aside build *.docset xgraph.i386 .git Python/python*_numpy.h sse_mathfun/.git
 mv tim-asc-parm.c Tim-asc-parm.c
 rm tim-asc-parm*
 mv Tim-asc-parm.c tim-asc-parm.c

@@ -40,3 +40,4 @@ ctags
 .gdb_args
 tags
 bertin.mode1v3
+*.dSYM

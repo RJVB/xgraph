@@ -1270,6 +1270,7 @@ struct DyMod_Interface *Init_DyMod_Interface( struct DyMod_Interface *base )
 			base->p_q_Permute= q_Permute;
 			base->p_Elapsed_Since= Elapsed_Since;
 			base->p_Elapsed_Since_HR= Elapsed_Since_HR;
+			base->p__DiscardedPoint = _DiscardedPoint;
 			base->p_SwapEndian_int16= SwapEndian_int16;
 			base->p_SwapEndian_int= SwapEndian_int;
 			base->p_SwapEndian_int32= SwapEndian_int32;

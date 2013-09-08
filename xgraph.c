@@ -2299,7 +2299,7 @@ int draw_set( LocalWin *wi, int idx)
 
 int _DiscardedPoint( LocalWin *wi, DataSet *set, int idx)
 { int dis_set= DiscardedPoint(NULL, set, idx), win_set;
-	if( wi && wi->discardpoint && wi->discardpoint[set->set_nr] ){
+	if( wi && set && wi->discardpoint && wi->discardpoint[set->set_nr] ){
 		win_set= (int) wi->discardpoint[set->set_nr][idx];
 		if( dis_set<= 0 && win_set< 0 ){
 			return( -1 );
