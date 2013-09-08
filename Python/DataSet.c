@@ -931,7 +931,7 @@ static int PyDataSetObject_new_assoc( PyDataSetObject *self, PyObject *newval )
 			if( (assoc= PySequence_AsDoubleArray( newval, &N )) ){
 				xfree(self->set->Associations);
 				self->set->Associations= assoc;
-				self->set->numAssociations= self->set->numAssociations= N;
+				self->set->numAssociations= N;
 			}
 			ret= 0;
 		}

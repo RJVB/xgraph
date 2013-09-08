@@ -47,10 +47,6 @@ IDENTIFY( "Fourier/Convolution ascanf library module using FFTW 3" );
 
 #include "fdecl.h"
 
-#undef SQR
-static double sqrval;
-#define SQR(v,type)	(type)(((sqrval=(v)))? sqrval*sqrval : 0)
-
   /* get the ascanf definitions:	*/
 #include "ascanf.h"
   /* If we want to be able to access the "expression" field in the callback argument, we need compiled_ascanf.h .
@@ -78,6 +74,17 @@ static DyMod_Interface DMBaseMem, *DMBase= NULL;
 #else
 	typedef double savgol_flp;
 #endif
+
+#undef SQR
+static inline savgol_flp SQR(savgol_flp v)
+{
+	if( v ){
+		return v * v;
+	}
+	else{
+		return 0.0;
+	}
+}
 
 /* savgol functions: */
 /* discr_fourtr():
@@ -279,7 +286,7 @@ int convlv(savgol_flp *data, unsigned long n, savgol_flp *respns, unsigned long 
 			ans[i]= (fft[i]*dum+fft[i-1]*ans[i])/no2;
 		}
 		else{
-			if( (mag2=SQR(ans[i-1],savgol_flp)+SQR(ans[i],savgol_flp)) == 0.0){
+			if( (mag2 = SQR(ans[i-1]) + SQR(ans[i])) == 0.0){
 				fprintf( StdErr, "Deconvolving at response zero in convlv");
 				errno= EINVAL;
 				GCA();

@@ -1275,12 +1275,16 @@ int matherr(struct exception *x)
 					else{
 					  int sp= special;
 						while( !(arg>= -M_2PI && arg<= M_2PI) ){
+						  double a;
 							special= 1;
-							if( (arg= fmod( arg, M_2PI))== arg ){
+							if( (a= fmod( arg, M_2PI))== arg ){
 							  /* arg too big for fmod: do it like this:	*/
 								_args= 1;
 								arg= M_2PI* modf( arg/ M_2PI, &dum);
 								its++;
+							}
+							else{
+								arg = a;
 							}
 							its++;
 						}
