@@ -41,3 +41,6 @@ ctags
 tags
 bertin.mode1v3
 *.dSYM
+sse_mathfun/defun.h
+sse_mathfun/Macros.h
+sse_mathfun/cpu.h
