@@ -162,6 +162,33 @@ ltdlopen:;
 	handle= dlopen( name, flags );
 	c= dlerror();
 #endif
+#if __CYGWIN__
+	// 20130908 Under cygwin, confusion can arise between shared libraries and executables, as the former are searched
+	// on the executable PATH (they are executables, in fact). This is especially the case when the proper extension was
+	// not specified (as in the autoload definitions in ascanfc-table.c). The dlopen call will succeed, but any attempt
+	// to obtain the address of a symbol from the "library" will give a specific error message:
+	if( handle
+		&& strncasecmp( &name[strlen(name)-4], ".dll", 4 )
+		&& strncasecmp( &name[strlen(name)-3], ".so", 3 )
+	){
+#	ifdef USE_LTDL
+		lt_dlsym( handle, "initDyMod" );
+		c = lt_dlerror();
+#	else
+		dlsym( handle, "initDyMod" );
+		c = dlerror();
+#	endif
+		if( c && (strncasecmp( c, "No such process", 15 ) == 0) ){
+			// apparently we loaded an executable (".exe"), so close the handle:
+#	ifdef USE_LTDL
+			lt_dlclose(handle);
+#	else
+			dlclose(handle);
+#	endif
+			handle = NULL;
+		}
+	}
+#endif
 	if( error_mesg ){
 		*error_mesg= (char*) c;
 	}
@@ -247,7 +274,7 @@ void *DM_dlsym( void *dmlib, char *name, char *dm_name, char **err_rtn )
 		}
 	}
 	if( err_rtn ){
-		*err_rtn= c;
+		*err_rtn = (char*) c;
 	}
 	return(ptr);
 }
@@ -310,8 +337,8 @@ DyModLists *LoadDyMod( char *Name, int flags, int no_dump, int auto_unload )
 					}
 					else{
 						if( c ){
-							fprintf( StdErr, "Warning: no closing routine %s::closeDyMod(): %s\n",
-								Name, c
+							fprintf( StdErr, "Warning: no closing routine %s::closeDyMod() in %s: %s\n",
+								Name, new->path, c
 							);
 						}
 					}
@@ -330,8 +357,8 @@ DyModLists *LoadDyMod( char *Name, int flags, int no_dump, int auto_unload )
 					}
 					else{
 						if( c ){
-							fprintf( StdErr, "Warning: no initialisation routine %s::initDyMod(): %s\n",
-								Name, c
+							fprintf( StdErr, "Warning: no initialisation routine %s::initDyMod() in %s: %s\n",
+								Name, new->path, c
 							);
 						}
 						new->type= DM_Unknown;
