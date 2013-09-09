@@ -330,7 +330,7 @@ DyModLists *LoadDyMod( char *Name, int flags, int no_dump, int auto_unload )
 	if( name && *name ){
 /* 		name= XG_dlopen_findlib(name);	*/
 		if( name && *name ){
-		  static DyModLists *current;
+		  DyModLists *current;
 			if( (current = LoadedDymodWithName( Name, "LoadDyMod" )) ){
 				xfree(name);
 				current->was_loaded += 1;
