@@ -225,6 +225,14 @@ trap "CleanUp `echo c_m_a_k_e_ aborting ... | ul 2>&1 `" 2
 # ls -l /dev/console | grep $LOGNAME >$HOME/.cons_mine
 # CMAKE_R="/usr/tmp/cmake_r$$" ; export CMAKE_R
 
+if [ -r .env ] ;then
+	cd .env
+	for f in * ;do
+		eval "$f=`cat $f` ; export $f"
+	done
+	cd ..
+fi
+
 # This is used by gccopt:
 cxsetenv INCREMENT_RETURN 0
 USE_INCREMENT_RETURN=1 ; export USE_INCREMENT_RETURN
