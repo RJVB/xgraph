@@ -45,3 +45,4 @@ sse_mathfun/defun.h
 sse_mathfun/Macros.h
 sse_mathfun/cpu.h
 Prefs
+.gdb_args
