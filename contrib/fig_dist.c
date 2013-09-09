@@ -1915,6 +1915,13 @@ DyModTypes initDyMod( INIT_DYMOD_ARGUMENTS )
 		}
 		  /* 20051214: load the simanneal.so library, and get the necessary symbols from it: */
 		Auto_LoadDyMod_LastPtr(NULL, -1, "sran-PM", &simanneal );
+		if( simanneal->size != sizeof(DyModLists) ){
+			fprintf( StdErr, "Error: received simanneal DyMod handle of unexpected size\n" );
+			fprintf( stderr, "DyMod API version mismatch: either this module or XGraph is newer than the other...\n" );
+			fprintf( stderr, "Now returning DM_Error to our caller!\n" );
+			return( DM_Error );
+		}
+
 		XGRAPH_VARIABLE( radix_ptr, "radix");
 		XGRAPH_VARIABLE( DrawAllSets_ptr, "DrawAllSets");
 		XGRAPH_FUNCTION( _ascanf_SAS_StatsBin_ptr, "_ascanf_SAS_StatsBin");

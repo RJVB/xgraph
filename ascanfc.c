@@ -15167,15 +15167,29 @@ int _fascanf_parser( double *a, char **s, char *ch, Compiled_Form **form, int *l
 	  int n;
 		(*s)+= 2;
 		  /* !!! It is very important here that the IEEEfp structure is correctly defined! */
-		if( (n= sscanf( ss, "%lx:%lx", &ie.l.high, &ie.l.low))== 2){
+		if( sizeof(long) == 4 ){
+			n = sscanf( ss, "%lx:%lx", &ie.l.high, &ie.l.low );
+		}
+		else{
+			n = sscanf( ss, "%x:%x", &ie.l.high, &ie.l.low );
+		}
+		if( n == 2){
 			*j= 1;
 			r+= 1;
 			A= (double) sign* ie.d;
 		}
-		else if( !(n= sscanf( ss, "%lx", &ie.l.low))!= EOF){
-			*j= 1;
-			r+= 1;
-			A= (double) sign* ie.l.low;
+		else{
+			if( sizeof(long) == 4 ){
+				n = sscanf( ss, "%lx", &ie.l.low );
+			}
+			else{
+				n = sscanf( ss, "%x", &ie.l.low );
+			}
+			if( n != EOF ){
+				*j= 1;
+				r+= 1;
+				A= (double) sign* ie.l.low;
+			}
 		}
 		if( negate ){
 			A= (A && !NaN(A))? 0 : 1;

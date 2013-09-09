@@ -645,6 +645,12 @@ while [ $# != 0 ] ; do
 			DEFAULTARCH="-arch $2"
 			shift
 			;;
+		-m64)
+			DEFAULTARCH="-arch x86_64"
+			;;
+		-m32)
+			DEFAULTARCH="-arch i386"
+			;;
 		-non_PP_compat)
 			MARCH=""
 			CPU=""

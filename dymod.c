@@ -279,6 +279,40 @@ void *DM_dlsym( void *dmlib, char *name, char *dm_name, char **err_rtn )
 	return(ptr);
 }
 
+DyModLists *LoadedDymodWithName( const char *Name, const char *caller )
+{  DyModLists *current= DyModList;
+	while( current ){
+		if( strcmp( Name, current->name)== 0 ){
+			  /* 20020519: We shouldn't of course allow DyMods to be loaded twice. Since this would change the
+			   \ registration (set to the DyModLists entry, unique for each loaded instance), and thus render
+			   \ the registry of the Compiled_Forms compiled with earlier instances useless.
+			   */
+			fprintf( StdErr, "%s(%s): request ignored because a module with this name has already been loaded.\n"
+				"\tUnload that module (%s from %s) first, and try again.\n",
+				caller, Name, current->name, current->path
+			);
+			return(current);
+		}
+		current= current->cdr;
+	}
+	return NULL;
+}
+
+DyModLists *LoadedDymodWithPath( const char *Path, const char *caller )
+{  DyModLists *current= DyModList;
+	while( current ){
+		if( strcmp( Path, current->path)== 0 ){
+			fprintf( StdErr, "%s(%s): request ignored because a module has already been loaded from this path.\n"
+				"\tUnload that module (%s from %s) first, and try again.\n",
+				caller, Path, current->name, current->path
+			);
+			return(current);
+		}
+		current= current->cdr;
+	}
+	return NULL;
+}
+
 DyModLists *LoadDyMod( char *Name, int flags, int no_dump, int auto_unload )
 {
 #ifdef XG_DYMOD_SUPPORT
@@ -296,26 +330,28 @@ DyModLists *LoadDyMod( char *Name, int flags, int no_dump, int auto_unload )
 	if( name && *name ){
 /* 		name= XG_dlopen_findlib(name);	*/
 		if( name && *name ){
-		  DyModLists *current= DyModList;
-			while( current ){
-				if( strcmp( Name, current->name)== 0 ){
-					  /* 20020519: We shouldn't of course allow DyMods to be loaded twice. Since this would change the
-					   \ registration (set to the DyModLists entry, unique for each loaded instance), and thus render
-					   \ the registry of the Compiled_Forms compiled with earlier instances useless.
-					   */
-					fprintf( StdErr, "LoadDyMod(%s): request ignored because a module with this name has already been loaded.\n"
-						"\tUnload that module (%s from %s) first, and try again.\n",
-						Name, current->name, current->path
-					);
-					xfree(name);
-					return(current);
-				}
-				current= current->cdr;
+		  static DyModLists *current;
+			if( (current = LoadedDymodWithName( Name, "LoadDyMod" )) ){
+				xfree(name);
+				current->was_loaded += 1;
+				return current;
 			}
 			if( (new= calloc( 1, sizeof(DyModLists))) ){
 			  char *c;
 				new->handle= XG_dlopen_now_ext( &name, flags, &c );
 				if( new->handle ){
+					if( (current = LoadedDymodWithPath( name, "LoadDyMod" )) ){
+						xfree(name);
+#ifdef USE_LTDL
+						lt_dlclose(new->handle);
+#else
+						dlclose(new->handle);
+#endif
+						xfree(new);
+						current->was_loaded += 1;
+						return current;
+					}
+					new->size = sizeof(DyModLists);
 					new->name= strdup(Name);
 					new->path= name;
 					new->flags= flags;
@@ -1006,16 +1042,18 @@ int Auto_LoadDyMod_LastPtr( DyModAutoLoadTables *Table, int N, char *fname, DyMo
 						if( !table->loaded ){
 						  DyModLists *new= LoadDyMod( table->DyModName, table->flags, 1, 1 );
 							if( new ){
-								new->auto_loaded= True;
-								new->loaded4= strdup(fname);
 								table->dymod= new;
 								table->loaded= True;
 								n+= 1;
-								if( debugFlag || scriptVerbose || table->warned ){
-									fprintf( StdErr, "Auto-loaded \"%s\" to resolve reference to \"%s\" (matches %s)\n",
-										table->DyModName, fname, table->functionName
-									);
-									table->warned= False;
+								if( !new->was_loaded ){
+									new->auto_loaded= True;
+									new->loaded4= strdup(fname);
+									if( debugFlag || scriptVerbose || table->warned ){
+										fprintf( StdErr, "Auto-loaded \"%s\" to resolve reference to \"%s\" (matches %s)\n",
+											table->DyModName, fname, table->functionName
+										);
+										table->warned= False;
+									}
 								}
 							}
 							else{

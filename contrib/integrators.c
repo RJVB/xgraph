@@ -889,6 +889,12 @@ DyModTypes initDyMod( INIT_DYMOD_ARGUMENTS )
 		   \ 20051214: this needs to be done on all platforms!
 		   */
 		Auto_LoadDyMod_LastPtr(NULL, -1, "SplineInit", &splines );
+		if( splines->size != sizeof(DyModLists) ){
+			fprintf( StdErr, "Error: received splines DyMod handle of unexpected size\n" );
+			fprintf( stderr, "DyMod API version mismatch: either this module or XGraph is newer than the other...\n" );
+			fprintf( stderr, "Now returning DM_Error to our caller!\n" );
+			return( DM_Error );
+		}
 
 		XGRAPH_FUNCTION(Polynom_Interpolate_ptr, "Polynom_Interpolate");
 		XGRAPH_FUNCTION( fascanf_ptr, "fascanf" );

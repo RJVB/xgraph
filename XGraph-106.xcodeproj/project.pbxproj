@@ -21,7 +21,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		8DD76FAC0486AB0100D96B5E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* main.c */; settings = {ATTRIBUTES = (); }; };
 		8DD76FB00486AB0100D96B5E /* XGraph.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6A0FF2C0290799A04C91782 /* XGraph.1 */; };
 		D61DFF4C0E2CAC62002F67AD /* VFR.cfg in CopyFiles */ = {isa = PBXBuildFile; fileRef = D61DFF4A0E2CAC62002F67AD /* VFR.cfg */; };
 		D61DFF4D0E2CAC62002F67AD /* CBF.cfg in CopyFiles */ = {isa = PBXBuildFile; fileRef = D61DFF4B0E2CAC62002F67AD /* CBF.cfg */; };
@@ -219,6 +218,7 @@
 		D6B36B7E0E1D37EC00556945 /* machdepPrefsDir in CopyFiles */ = {isa = PBXBuildFile; fileRef = D6B36B760E1D37EC00556945 /* machdepPrefsDir */; };
 		D6B36B970E1D3BAB00556945 /* GSRio.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B36B960E1D3BAB00556945 /* GSRio.c */; };
 		D6B36B9F0E1D3BD800556945 /* ief.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = D6B36B9E0E1D3BD800556945 /* ief.h */; };
+		D6D2338517DE074D00347969 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D2338417DE074D00347969 /* main.c */; };
 		D6EBFCCF11D0ADF0009F11C0 /* Python_headers.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = D6EBFCCE11D0ADF0009F11C0 /* Python_headers.h */; };
 		D6F1D3FD0F417F0F00719A29 /* CSVio.c in Sources */ = {isa = PBXBuildFile; fileRef = D6F1D3FC0F417F0F00719A29 /* CSVio.c */; };
 		D6F1D4CE0F41BD2300719A29 /* xgraph.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D6F1D4CD0F41BD2300719A29 /* xgraph.1 */; };
@@ -361,7 +361,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		08FB7796FE84155DC02AAC07 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		8DD76FB20486AB0100D96B5E /* XGraph */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XGraph; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6A0FF2C0290799A04C91782 /* XGraph.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = XGraph.1; sourceTree = "<group>"; };
 		D614B10F0E34E677009F0544 /* BinAsciiSumo-20080703.mod */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = text; name = "BinAsciiSumo-20080703.mod"; path = "../../../WinBertin/work/doc/Grants97/INRETS/SIMACOM/IEFBin2ASCII/BinAsciiSumo-20080703.mod"; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.modula2; };
@@ -591,6 +590,7 @@
 		D6B36B760E1D37EC00556945 /* machdepPrefsDir */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; path = machdepPrefsDir; sourceTree = "<group>"; };
 		D6B36B960E1D3BAB00556945 /* GSRio.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = GSRio.c; path = Import/GSRio.c; sourceTree = "<group>"; };
 		D6B36B9E0E1D3BD800556945 /* ief.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ief.h; path = Import/ief.h; sourceTree = "<group>"; };
+		D6D2338417DE074D00347969 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		D6EBFCCE11D0ADF0009F11C0 /* Python_headers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Python_headers.h; path = Python/Python_headers.h; sourceTree = "<group>"; };
 		D6F1D3FC0F417F0F00719A29 /* CSVio.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = CSVio.c; path = Import/CSVio.c; sourceTree = "<group>"; };
 		D6F1D4CD0F41BD2300719A29 /* xgraph.1 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.man; name = xgraph.1; path = man/xgraph.1; sourceTree = "<group>"; };
@@ -620,6 +620,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				D6D2338417DE074D00347969 /* main.c */,
 				D6B36B690E1D37BF00556945 /* XGraphrc */,
 				D6B36B6A0E1D37BF00556945 /* Xgraph.psMarkers */,
 				D6B36B670E1D37AB00556945 /* TODOHIST */,
@@ -662,12 +663,10 @@
 				D67962780E0BA23800E282EF /* chkalign.c */,
 				D67962790E0BA23800E282EF /* hard_devices.c */,
 				D679627A0E0BA23800E282EF /* dialog_s.c */,
-				08FB7796FE84155DC02AAC07 /* main.c */,
 				D67963070E0BA55800E282EF /* vscanf */,
 				D67962550E0BA06D00E282EF /* Python */,
 				D67962540E0BA06500E282EF /* contrib */,
 				D6B36B800E1D383500556945 /* Import */,
-				08FB7796FE84155DC02AAC07 /* main.c */,
 				D6B36B610E1D377C00556945 /* Make */,
 				D6B36AE50E1D371600556945 /* scripts */,
 			);
@@ -1083,7 +1082,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8DD76FAC0486AB0100D96B5E /* main.c in Sources */,
 				D679627B0E0BA23800E282EF /* new_ps.c in Sources */,
 				D679627C0E0BA23800E282EF /* dymod.c in Sources */,
 				D679627D0E0BA23800E282EF /* strings.c in Sources */,
@@ -1160,6 +1158,7 @@
 				D6B36B970E1D3BAB00556945 /* GSRio.c in Sources */,
 				D6F1D3FD0F417F0F00719A29 /* CSVio.c in Sources */,
 				D63864DA116C7D57002D1856 /* pyIEFimport.c in Sources */,
+				D6D2338517DE074D00347969 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1169,6 +1168,7 @@
 		1DEB928608733DD80010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1183,10 +1183,7 @@
 		1DEB928708733DD80010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = "$(HOME)/bin";
@@ -1197,9 +1194,11 @@
 		1DEB928A08733DD80010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_VERSION = org.macports.compilers.gcc.4.7;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
 			};
@@ -1208,9 +1207,11 @@
 		1DEB928B08733DD80010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_VERSION = org.macports.compilers.gcc.4.7;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
 			};

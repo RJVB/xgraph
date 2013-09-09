@@ -297,7 +297,12 @@ char *d2str( double d, const char *Format , char *buf )
 			sprintf( buf, "%g", d );
 		}
 		if( !*buf ){
-			sprintf( buf, "0x%lx:%lx", ie->l.high, ie->l.low );
+			if( sizeof(long) == 4 ){
+				sprintf( buf, "0x%lx:%lx", ie->l.high, ie->l.low );
+			}
+			else{
+				sprintf( buf, "0x%x:%x", ie->l.high, ie->l.low );
+			}
 		}
 		return(buf);
 	}

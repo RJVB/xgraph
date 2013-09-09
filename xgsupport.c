@@ -10876,6 +10876,10 @@ int _XGraphDump( LocalWin *wi, FILE *fp, char errmsg[ERRBUFSIZE] )
 						if( !list->auto_loaded && !list->no_dump){
 							fprintf( fp, "%s\n", list->name );
 						}
+						else if( debugFlag ){
+							fprintf( StdErr, "Skipping LOAD_MODULE %s because of auto_loaded=%d no_dump=%d\n",
+								   list->name, list->auto_loaded, list->no_dump );
+						}
 						list= list->car;
 					}
 					fputc( '\n', fp );

@@ -353,10 +353,12 @@ unsigned long linfit_nan_handling( double *xx, double *yy, double *ee, ascanf_Fu
 */
 			if( isnan(yVal) ){
 			  IEEEfp *IE= I3Ed(yVal);
+			  const char *format = (sizeof(long)==4)? "l:h=0x%lx:%lx s:e:f1:f2=0x%x:%x:%x:%x (%d)"
+								: "l:h=0x%x:%x s:e:f1:f2=0x%x:%x:%x:%x (%d)";
 				fprintf(StdErr, " %d=%d(%s,%s)", N, i,
 					d2str(xVal,0,0), d2str(yVal,0,0)
 				);
-				fprintf( StdErr, "l:h=0x%lx:%lx s:e:f1:f2=0x%lx:%lx:%lx:%lx (%d)",
+				fprintf( StdErr, format,
 					IE->l.high, IE->l.low,
 					IE->s.s, IE->s.e, IE->s.f1, IE->s.f2,
 					(IE->s.e==NAN_VAL)

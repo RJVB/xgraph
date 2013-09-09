@@ -2249,3 +2249,7 @@ Don't allow too small steps in DrawAxis; min. 1/100 of range (when step==1)?
 
 20130531
 	Corrected a Pen saving error that caused a partial PenColour command to be written.
+
+20130909
+	%dhex d2str format has to use 0x%x:%x (or 0x%lx:%lx if sizeof(long)==4) ...
+	Improved DyMod handling/reloading logic for more reliable dumping of the non-autoloaded modules to XGraph dumps.

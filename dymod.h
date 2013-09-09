@@ -58,10 +58,11 @@ typedef struct DyModDependency{
 struct DyMod_Interface;
 
 typedef struct DyModLists{
+	int size;
 	  /* the name as specified by the user, and the pathname (can be identical to name) */
 	char *name, *path;
 	  /* flags: the flags passed to dlopen(): */
-	int flags, auto_loaded, auto_unload, no_dump;
+	int flags, auto_loaded, auto_unload, no_dump, was_loaded;
 	  /* The handle returned by dlopen() */
 	void *handle;
 	  /* Dynamic (ELF) libraries can specify their own _init() and _fini() initialisation and

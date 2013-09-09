@@ -1,2 +1,2 @@
-set arg -progname xgraph  -nodetach  "/Volumes/Debian/Users/bertin/work/src/xgraph/examples/pearcoltest.xg" -progname xgraph
+set arg -progname xgraph  -nodetach  "/Volumes/Debian/Users/bertin/work/src/xgraph/examples/pearcoltest2.xg.xg" -nodetach -progname xgraph
 show arg
