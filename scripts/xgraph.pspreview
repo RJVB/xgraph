@@ -77,7 +77,7 @@ ISEPS="`grep '^%!PS.*EPSF' ${XPV}`"
 	fi
 
 	export DISPLAY
-	whereis gv > /dev/null 2>&1
+	sh -c "gv --version 2>&1"  > /dev/null
 	GV=$?
 
 	if [ $GV = 0 ] ;then
@@ -111,13 +111,15 @@ ISEPS="`grep '^%!PS.*EPSF' ${XPV}`"
 		if [ $GV = 0 ] ;then
 			(  $RCMD gv ${GVMAGMED} ${ORIENTATION} ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
 		else
-			(  $RCMD ghostview -magstep -2 -forcemedia ${ORIENTATION} -a4 ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
+#			(  $RCMD ghostview -magstep -2 -forcemedia ${ORIENTATION} -a4 ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
+			(  $RCMD ps2pdf.preview ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
 		fi
 	else
 # 		ORIENTATION="-portrait"
 		if [ $GV = 0 ] ;then
 			( $RCMD gv ${GVMAGMED} ${ORIENTATION} ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
 		else
-			( $RCMD ghostview -magstep -2 -forcemedia ${ORIENTATION} -a4 ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
+#			( $RCMD ghostview -magstep -2 -forcemedia ${ORIENTATION} -a4 ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
+			(  $RCMD ps2pdf.preview ${XPVb} ; rm -f "${XPV}" "${XPVb}" & ) &
 		fi
 	fi
