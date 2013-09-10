@@ -31,14 +31,18 @@ fi
 PREF="_"
 env="`printenv $PREF$1`"
 if [ $? = 0 ] ;then
+	# prefixed variable exists in the environment: return it
 	echo $env
 elif [ -r "$ENVDIR/$PREF$1" ] ;then
+	# prefixed variable exists in the environment directory:
 	cat "$ENVDIR/$PREF$1"
 else
 	env="`printenv $1`"
 	if [ $? = 0 ] ;then
+		# variable exists in the environment: return it
 		echo $env
 	elif [ -r $ENVDIR/$1 ] ;then
+		# variable exists in the environment directory:
 		cat $ENVDIR/$1
 	fi
 fi
