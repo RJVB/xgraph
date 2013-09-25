@@ -2498,14 +2498,13 @@ static void psClear(char *state, int x, int y, int w, int h, int use_colour, int
 	}
 	else if( wipe ){
 	  char fsemsg[256]= "", ftemsg[256]= "";
-		if( fseek( ui->psFile, ui->clear_all_pos, SEEK_SET ) ){
+		if( ui->clear_all_pos >= 0 && fseek( ui->psFile, ui->clear_all_pos, SEEK_SET ) ){
 			sprintf( fsemsg, "Error seeking on PS dump: %s", serror() );
 		}
 		Write_ps_comment( ui->psFile );
 		fflush( ui->psFile );
-		ui->clear_all_pos= ftell( ui->psFile );
-		if( ftell(ui->psFile)> 0 && ftruncate( fileno(ui->psFile), ui->clear_all_pos ) ){
-			sprintf( ftemsg, "Error truncating PS dump: %s", serror() );
+		if( (ui->clear_all_pos = ftell(ui->psFile)) > 0 && ftruncate( fileno(ui->psFile), ui->clear_all_pos ) ){
+			sprintf( ftemsg, "Error truncating PS dump to pos %ld: %s", ui->clear_all_pos, serror() );
 		}
 		if( *fsemsg || *ftemsg ){
 			fprintf( StdErr, "Warning: %s; %s\n", fsemsg, ftemsg );
