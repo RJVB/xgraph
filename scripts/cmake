@@ -228,7 +228,14 @@ trap "CleanUp `echo c_m_a_k_e_ aborting ... | ul 2>&1 `" 2
 if [ -r .env ] ;then
 	cd .env
 	for f in * ;do
-		eval "$f=`cat $f` ; export $f"
+		case $f in 
+			RET)
+				# we ignore .env variables with special meaning for the build process
+				;;
+			*)
+				eval "$f=`cd .. ; cxgetenv $f` ; export $f"
+				;;
+		esac
 	done
 	cd ..
 fi
