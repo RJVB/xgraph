@@ -1,7 +1,8 @@
 #!/bin/sh
 
-ACROREAD="/cygdrive/c/Program Files/Adobe/Acrobat 7.0/Reader/acrord32.exe"
-CYGWINPATH="d:/cygwin"
+ACROREAD="/cygdrive/c/Program Files (x86)/Adobe/Reader 10.0/Reader/AcroRd32.exe"
+CYGWINPATH="c:\\Developer\\cygwin"
+PWD="`pwd | sed -e 's,/,\\\\,g'`"
 
 ARGS=""
 while [ $# != 0 ] ;do
@@ -9,11 +10,15 @@ while [ $# != 0 ] ;do
 		-*)
 			ARGS="${ARGS} ${1}"
 			;;
+		/*)
+			ARGS="${ARGS} ${CYGWINPATH}`echo ${1} | sed -e 's,/,\\\\,g'`"
+			;;
 		*)
-			ARGS="${ARGS} ${CYGWINPATH}/${1}"
+			ARGS="${ARGS} ${CYGWINPATH}${PWD}\\`echo ${1} | sed -e 's,/,\\\\,g'`"
 			;;
 	esac
 	shift
 done
 
+echo "${ACROREAD}" ${ARGS} 1>&2
 exec "${ACROREAD}" ${ARGS}

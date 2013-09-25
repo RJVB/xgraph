@@ -126,6 +126,17 @@ case $MACH in
 						;;
 				esac
 				;;
+			Python33Module)
+				PDIR=$3
+				case ${OS} in
+					CYGWIN*|cygwin*)
+						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.3m"
+						;;
+					*)
+						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.3mu"
+						;;
+				esac
+				;;
 		esac
 		;;
 	Darwin)
@@ -170,7 +181,7 @@ case $MACH in
 				PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
 				echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
 				;;
-			Python26Module|Python27Module|Python31Module|Python32Module)
+			Python26Module|Python27Module|Python31Module|Python32Module|Python33Module)
 				 ## This is valid for RJVB's machines...:
 				#PDIR=`echo 'import sys;print sys.prefix' | python2.6`
 				PDIR=$3

@@ -29,6 +29,9 @@ numpy() {
 		32)
 			echo "#include <"`python3.2 -c "import numpy ; print(numpy.get_include())"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
 			;;
+		33)
+			echo "#include <"`python3.3 -c "import numpy ; print(numpy.get_include())"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
 		sys|default)
 #		PVERSION=`echo "import sys ; print str(sys.version_info[0])+str(sys.version_info[1])" | python`${PVERSION}
 			echo "#include <"`python -c "import numpy ; print numpy.get_include()"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
@@ -59,6 +62,9 @@ prefix() {
 			;;
 		32)
 			echo 'import sys;print(sys.prefix)' | python3.2
+			;;
+		33)
+			echo 'import sys;print(sys.prefix)' | python3.3
 			;;
 		sys|default)
 			echo 'import sys;print sys.prefix' | python
