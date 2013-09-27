@@ -923,7 +923,10 @@ static int init_ipshell()
 			PyRun_SimpleString( "try:\n"
 								// attempt to load with the newer API
 								"\timport IPython\n"
-								"\txgraph.ipshell=IPython.frontend.terminal.embed.InteractiveShellEmbed()\n"
+								"\ttry:\n"
+								"\t\txgraph.ipshell=IPython.terminal.embed.InteractiveShellEmbed()\n"
+								"\texcept:\n"
+								"\t\txgraph.ipshell=IPython.frontend.terminal.embed.InteractiveShellEmbed()\n"
 								"\txgraph.ipshell.banner='Entering xgraph.ipshell IPython shell'\n"
 								"\txgraph.ipshell.exit_msg='Leaving xgraph.ipshell IPython shell'\n"
 							"except:\n"
