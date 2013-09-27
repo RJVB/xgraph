@@ -4739,13 +4739,13 @@ int ParseArgs( int argc, char *argv[])
 						}
 					}
 					if( idx+1 >= argc ){
+						argerror( "missing Python file", argv[idx]);
+					}
+					else{
 						if( Init_Python() && dm_python->Import_Python_File ){
 							(*dm_python->Import_Python_File)( argv[idx+1], NULL, 0, False );
 						}
 						idx += 2;
-					}
-					else{
-						argerror( "missing Python file", argv[idx]);
 					}
 				}
 				else if( Check_Option( strncasecmp, argv[idx], "-IO_Import", 7)==0 ){
