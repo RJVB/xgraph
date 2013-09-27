@@ -5961,7 +5961,10 @@ DyModTypes initDyMod( INIT_DYMOD_ARGUMENTS )
 		XGRAPH_VARIABLE( DyModsLoaded_ptr, "DyModsLoaded" );
 		XGRAPH_VARIABLE( UsePythonVersion_ptr, "UsePythonVersion" );
 		if( UsePythonVersion_ptr && theDyMod->name ){
-			sscanf( theDyMod->name, "Python.%d", UsePythonVersion_ptr );
+		  int n;
+			if( (n = sscanf( theDyMod->name, "Python.%d", UsePythonVersion_ptr )) == 1 ){
+				*UsePythonVersion_ptr = n;
+			}
 		}
 	}
 
