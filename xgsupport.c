@@ -1554,6 +1554,12 @@ char *Collect_Arguments( LocalWin *wi, char *cbuf, int Len )
 	if( TrueGray ){
 		len= sprintf( &cbuf[strlen(cbuf)], "-TrueGray%d ", TrueGray );
 	}
+	{ extern void *dm_python;
+	  extern int UsePythonVersion;
+		if( dm_python && UsePythonVersion > 0 ){
+			len= sprintf( &cbuf[strlen(cbuf)], "-python%d ", UsePythonVersion );
+		}
+	}
 	if( len> Len ){
 		fprintf( StdErr, "Collect_Arguments(): wrote %d bytes in %d long buffer - prepare for crash!\n",
 			len, Len

@@ -253,6 +253,7 @@ class Console(Frame):
 		# Scan back for the identifier currently being typed.
 		line, pos = self.cursor()
 		command = self.getline()
+		# RJVB 20130926: as of Python 2.7.5 command is a unicode string...
 		preceding = command[:pos]
 		startchars = string.letters + "_"
 		identchars = string.letters + string.digits + "_"

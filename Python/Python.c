@@ -5880,6 +5880,7 @@ DyModTypes initDyMod( INIT_DYMOD_ARGUMENTS )
 
 	if( !DMBase ){
 	  DyModLists *current;
+	  int *UsePythonVersion_ptr;
 		  // 20080922: Python.so uses the other interface-initialisation method, which allows to load a DyMod
 		  // safely if the DyMod_Interface structure was expanded AT ITS TAIL.
 		if( !(DMBase= initialise(NULL)) ){
@@ -5958,6 +5959,10 @@ DyModTypes initDyMod( INIT_DYMOD_ARGUMENTS )
 		XGRAPH_VARIABLE( AutoLoadTable_ptr, "AutoLoadTable" );
 		XGRAPH_VARIABLE( AutoLoads_ptr, "AutoLoads" );
 		XGRAPH_VARIABLE( DyModsLoaded_ptr, "DyModsLoaded" );
+		XGRAPH_VARIABLE( UsePythonVersion_ptr, "UsePythonVersion" );
+		if( UsePythonVersion_ptr && theDyMod->name ){
+			sscanf( theDyMod->name, "Python.%d", UsePythonVersion_ptr );
+		}
 	}
 
 	  /* NB: XGRAPH_ATTACH() is the first thing we ought to do, but only when !intialised ! */

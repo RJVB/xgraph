@@ -1152,10 +1152,19 @@ DyModAutoLoadTables *Add_LoadDyMod( DyModAutoLoadTables *target, int *target_len
 	return( target );
 }
 
+int UsePythonVersion = -1;
+
 int Init_Python()
 { char *XG_PYTHON_DYMOD= getenv( "XG_PYTHON_DYMOD" );
 	if( !dm_pythonLib ){
-		dm_pythonLib= LoadDyMod( (XG_PYTHON_DYMOD)?XG_PYTHON_DYMOD:"Python", RTLD_LAZY|RTLD_GLOBAL, True,False );
+	  char pylib[64];
+		if( UsePythonVersion > 0 ){
+			snprintf( pylib, sizeof(pylib)/sizeof(char), "Python.%d", UsePythonVersion );
+		}
+		else{
+			strcpy( pylib, "Python" );
+		}
+		dm_pythonLib= LoadDyMod( (XG_PYTHON_DYMOD)? XG_PYTHON_DYMOD : pylib, RTLD_LAZY|RTLD_GLOBAL, True,False );
 	}
 	if( !dm_python && dm_pythonLib && dm_pythonLib->type== DM_Python ){
 		dm_python= dm_pythonLib->libHook;

@@ -1521,8 +1521,12 @@ y dot = y cpile {A above ~}
 .EN
 <A> and <B> default to 0.5 .
 .TP
-.B \-python <code.py>
-Import the Python file \fBcode.py\fP.
+.B \-python[Version] [<code.py>]
+Imports a Python file and/or specifies the Python version to use. Version specification follows the
+naming scheme used for the plugins, i.e. \fI27\fP for version 2.7 (dymod \fIPython.27.so\fP) or \fI32\fP
+for python 3.2 . If a filename is specified, the interpreter is of course loaded immediately, otherwise
+loading is delayed. Note that no checking is done if the specified version exists, other than against
+negative or zero numbers. Specifying an inexistant version will cause the plugin loading process to fail.
 .TP
 .B \-radix <radix>
 Specify the radix (base) for goniometric operations (see also \fB-polar\fP).

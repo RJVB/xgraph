@@ -4077,7 +4077,7 @@ int argerror( char *err, char *val)
 		fputs( "         [-PrintInfo] [-bias{X,Y} <val>] [-disconnect] [-{x,y}_ul <x>,<y>] [-progress] [-process_bounds] [-plot_only_set <list>]\n", fp);
 		fputs( "         [-print_as <type>] [-print_to <dev>] [-transform_axes] [-overwrite_marks] [-overwrite_legend] [-XGBounds] [-raw_display] [-error_region]\n", fp);
 		fputs( "         [-show_overlap] [-average_error] [-PN <expr>] [-DumpAverage] [-SameAttr] [-nosplit] [-preserve_aspect] [-separator <c>]\n", fp);
-		fputs( "         [-python <python file>] [-preserve_ftime] [-IO_Import <module> <file>] [-registry]\n", fp);
+		fputs( "         [-python[Version] [<python file>]] [-preserve_ftime] [-IO_Import <module> <file>] [-registry]\n", fp);
 	 
 		fprintf( fp, "-absy\ttake absolute value of Y values before any other transformation [%d]\n", absYFlag );
 		fprintf( fp, "-aspect\tchanges bounds to have the same range on both axes [%d]\n", Aspect );
@@ -4719,12 +4719,17 @@ int ParseArgs( int argc, char *argv[])
 					}
 				}
 				else if( Check_Option( strncasecmp, argv[idx], "-python", 3)==0 ){
+				  int pv = -1;
 				  extern DM_Python_Interface *dm_python;
-				  extern int Init_Python();
-					if (idx+1 >= argc){
-						argerror( "missing expression", argv[idx]);
+				  extern int Init_Python(), UsePythonVersion;
+				  	if( argv[idx][7] != '\0' ){
+						pv = atoi( &argv[idx][7] );
+						if( pv > 0 ){
+							UsePythonVersion = pv;
+						}
+						idx += 1;
 					}
-					else{
+					if( idx+1 >= argc ){
 						if( Init_Python() && dm_python->Import_Python_File ){
 							(*dm_python->Import_Python_File)( argv[idx+1], NULL, 0, False );
 						}

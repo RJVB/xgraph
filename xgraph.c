@@ -12385,6 +12385,8 @@ int DrawWindow( LocalWin *wi)
 	*ascanf_TotalSets= setNumber;
 
 	if( Startup_Exprs && !wait_evtimer && !settings_immediate ){
+		XSync( disp, False );
+		Handle_An_Events( 1, 1, "pre-Startup_Exprs", wi->window, 0 );
 		if( Evaluate_ExpressionList( wi, &Startup_Exprs, True, "startup expressions" )== -2 ){
 			ActiveWin= AW;
 			if( old_Wname ){
