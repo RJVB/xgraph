@@ -1,5 +1,7 @@
 #ifndef _PYTHON_HEADERS_H
 
+// #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+
 #ifdef __APPLE__
 #	ifdef RJVB
 #		ifdef PYTHON25
