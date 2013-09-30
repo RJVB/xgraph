@@ -828,6 +828,10 @@ PSAD_tuple:;
 					PyArrayBuf= (double*)PyArray_DATA(xd); /* size would be N*sizeof(double) */
 				}
 				else{
+// 					if( (it = (PyArrayIterObject*) NpyIter_New(var, NPY_ITER_READONLY, NPY_KEEPORDER, NPY_NO_CASTING, NULL ))
+// 					){
+// 						Py_DECREF(it);
+// 					}
 					it= (PyArrayIterObject*) PyArray_IterNew(var);
 				}
 			}
@@ -846,7 +850,7 @@ PSAD_tuple:;
 						else{
 						  PyArrayObject *parray= (PyArrayObject*) var;
 							if( it->index < it->size ){
-								value= PyFloat_AsDouble( parray->descr->f->getitem( it->dataptr, var) );
+								value= PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, var) );
 								PyArray_ITER_NEXT(it);
 							}
 							else{
@@ -900,14 +904,14 @@ static PyObject *PyDataSetObject_assoc( PyDataSetObject *self )
 	dims[0]= self->set->numAssociations;
 	if( dims[0] && self->set->Associations ){
 		if( (retr= PyArray_SimpleNewFromData( Ndim, &dims[0], PyArray_DOUBLE, (void*) self->set->Associations )) ){
-			((PyArrayObject*)retr)->flags&= ~NPY_OWNDATA;
+			PyArray_ENABLEFLAGS( (PyArrayObject*)retr, NPY_OWNDATA );
 		}
 		return(retr);
 	}
 	else{
 		dims[0]= 0;
 		if( (retr= PyArray_SimpleNewFromData( Ndim, &dims[0], PyArray_DOUBLE, (void*) NULL )) ){
-			((PyArrayObject*)retr)->flags|= NPY_OWNDATA;
+			PyArray_ENABLEFLAGS( (PyArrayObject*)retr, NPY_OWNDATA );
 			return( retr );
 		}
 		else{
@@ -981,7 +985,7 @@ static PyObject *PyDataSetObject_data( PyDataSetObject *self )
 		if( (retr= PyArray_SimpleNewFromData( 1, &dims[0], PyArray_OBJECT, (void*) columns )) ){
 		  // the 'toplevel' array "holding" columns is to be handled by python, so we label it as deallocatable:
 		  // (note that columns was allocated by PyMem_New() )
-			((PyArrayObject*)retr)->flags|= NPY_OWNDATA;
+			PyArray_ENABLEFLAGS( (PyArrayObject*)retr, NPY_OWNDATA );
 		}
 		 // 20101019: a return statement had been missing here for months?!
 		return( retr );
@@ -1011,7 +1015,7 @@ static PyObject *PyDataSetObject_trdata( PyDataSetObject *self )
 			PyErr_NoMemory();
 		}
 		if( (retr= PyArray_SimpleNewFromData( 1, &dims[0], PyArray_OBJECT, (void*) columns )) ){
-			((PyArrayObject*)retr)->flags|= NPY_OWNDATA;
+			PyArray_ENABLEFLAGS( (PyArrayObject*)retr, NPY_OWNDATA );
 		}
 		return retr;
 	}

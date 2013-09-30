@@ -482,7 +482,7 @@ static PyObject *AscanfCall( ascanf_Function *af, PyObject *arglist, long repeat
 								saf->array[j]= PyArrayBuf[j];
 							}
 							else{
-								saf->array[j]= PyFloat_AsDouble( parray->descr->f->getitem( it->dataptr, arg) );
+								saf->array[j]= PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, arg) );
 								PyArray_ITER_NEXT(it);
 							}
 						}
@@ -667,7 +667,7 @@ PAC_ESCAPE:;
 	if( asarray && aresult ){
 	  npy_intp dim[]= {repeats,0};
 		if( (ret= PyArray_SimpleNewFromData( 1, dim, PyArray_DOUBLE, (void*) aresult )) ){
-			((PyArrayObject*)ret)->flags|= NPY_OWNDATA;
+			PyArray_ENABLEFLAGS( (PyArrayObject*)ret, NPY_OWNDATA );
 		}
 	}
 	if( !ret && !PyErr_Occurred() ){
@@ -734,7 +734,7 @@ PAC_ESCAPE:;
 							memmove( array, laf[a].array, laf[a].N * sizeof(double) );
 						}
 						if( array && (val= PyArray_SimpleNewFromData( 1, dim, PyArray_DOUBLE, (void*) array )) ){
- 							((PyArrayObject*)val)->flags|= NPY_OWNDATA;
+ 							PyArray_ENABLEFLAGS( (PyArrayObject*)val, NPY_OWNDATA );
 						}
 						else{
 							val= Py_None;
@@ -1131,7 +1131,7 @@ static PyObject *PyAscanfObject_returnArgs( PyAscanfObject *self, PyObject *args
 								n+= 1;
 							}
 							else{
-							  PyObject *val= parray->descr->f->getitem( it->dataptr, ra);
+							  PyObject *val= PyArray_DESCR(parray)->f->getitem( it->dataptr, ra);
 								if( PyInt_Check(val) || PyLong_Check(val) ){
 									idx[n]= PyInt_AsLong(val);
 									if( idx[n]< 0 || idx[n]>= maxArgs ){

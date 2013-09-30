@@ -1017,10 +1017,27 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXLegacyTarget section */
+		D65E4A4917F9B38A00E851C5 /* XGraph */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "xgraph All contrib -j4 -now DEBUG=$DEBUGVAL";
+			buildConfigurationList = D65E4A4E17F9B3EB00E851C5 /* Build configuration list for PBXLegacyTarget "XGraph" */;
+			buildPhases = (
+			);
+			buildToolPath = ./cmake;
+			buildWorkingDirectory = "$(PROJECT_DIR)";
+			dependencies = (
+			);
+			name = XGraph;
+			passBuildSettingsInEnvironment = 1;
+			productName = XGraph;
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
-		8DD76FA90486AB0100D96B5E /* XGraph */ = {
+		8DD76FA90486AB0100D96B5E /* XGraph.don't */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "XGraph" */;
+			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "XGraph.don't" */;
 			buildPhases = (
 				8DD76FAB0486AB0100D96B5E /* Sources */,
 				8DD76FAD0486AB0100D96B5E /* Frameworks */,
@@ -1030,7 +1047,7 @@
 			);
 			dependencies = (
 			);
-			name = XGraph;
+			name = "XGraph.don't";
 			productInstallPath = "$(HOME)/bin";
 			productName = XGraph;
 			productReference = 8DD76FB20486AB0100D96B5E /* XGraph */;
@@ -1055,7 +1072,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8DD76FA90486AB0100D96B5E /* XGraph */,
+				D65E4A4917F9B38A00E851C5 /* XGraph */,
+				8DD76FA90486AB0100D96B5E /* XGraph.don't */,
 				D6961298131E49A30040C2AB /* doxydocs */,
 			);
 		};
@@ -1217,6 +1235,24 @@
 			};
 			name = Release;
 		};
+		D65E4A4A17F9B38A00E851C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGVAL = "-g";
+				PRODUCT_NAME = XGraph;
+				compiler = "gcc-mp-4.7";
+			};
+			name = Debug;
+		};
+		D65E4A4B17F9B38A00E851C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGVAL = "";
+				PRODUCT_NAME = XGraph;
+				compiler = "gcc-mp-4.7";
+			};
+			name = Release;
+		};
 		D6961299131E49A30040C2AB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1241,7 +1277,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "XGraph" */ = {
+		1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "XGraph.don't" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB928608733DD80010E9CD /* Debug */,
@@ -1255,6 +1291,15 @@
 			buildConfigurations = (
 				1DEB928A08733DD80010E9CD /* Debug */,
 				1DEB928B08733DD80010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D65E4A4E17F9B3EB00E851C5 /* Build configuration list for PBXLegacyTarget "XGraph" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D65E4A4A17F9B38A00E851C5 /* Debug */,
+				D65E4A4B17F9B38A00E851C5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

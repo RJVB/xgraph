@@ -1,5 +1,7 @@
 #ifndef _PYTHON_HEADERS_H
 
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+
 #ifdef __APPLE__
 #	ifdef RJVB
 #		ifdef PYTHON25
@@ -122,6 +124,16 @@
 					PyErr_SetString( XG_PythonError, "unexpected failure converting unicode object" );	\
 				}
 	extern PyObject *PyString_FromString(const char *str);
+#endif
+
+#ifndef NPY_1_7_API_VERSION
+#	define NPY_ARRAY_OWNDATA	NPY_OWNDATA
+#else
+#	define NPY_OWNDATA	NPY_ARRAY_OWNDATA
+#	define PyArray_DOUBLE	NPY_FLOAT64
+#	define PyArray_INT		NPY_INT
+#	define PyArray_LONG		NPY_LONG
+#	define PyArray_OBJECT	NPY_OBJECT
 #endif
 
 #define _PYTHON_HEADERS_H

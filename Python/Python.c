@@ -1918,7 +1918,7 @@ static PyObject* python_IdArray(PyObject *self, PyObject *args, PyObject *kw )
 			}
 /* 			parray= PyArray_FromDimsAndData( ndim, dim, PyArray_DOUBLE, (char*) array);	*/
 			parray= PyArray_SimpleNewFromData( ndim, dim, PyArray_DOUBLE, (void*) array);
-			((PyArrayObject*)parray)->flags|= NPY_OWNDATA;
+			PyArray_ENABLEFLAGS( (PyArrayObject*)parray, NPY_OWNDATA );
 			if( pname ){
 				Py_XINCREF(parray);
 				PyModule_AddObject( AscanfPythonModule, pname, parray );
@@ -2358,7 +2358,7 @@ force_string:;
 /* 							ret= PyArray_FromDimsAndData( Ndims, dim, PyArray_INT, (char*) array);	*/
 							ret= PyArray_SimpleNewFromData( Ndims, dim, PyArray_INT, (void*) array);
 							if( PIVC ){
-								((PyArrayObject*)ret)->flags|= NPY_OWNDATA;
+								PyArray_ENABLEFLAGS( (PyArrayObject*)ret, NPY_OWNDATA );
 							}
 						}
 						else{
@@ -2388,7 +2388,7 @@ force_string:;
 							}
 							if( strings ){
 								ret= PyArray_SimpleNewFromData( Ndims, dim, PyArray_OBJECT, (void*) strings);
-								((PyArrayObject*)ret)->flags|= NPY_OWNDATA;
+								PyArray_ENABLEFLAGS( (PyArrayObject*)ret, NPY_OWNDATA );
 							}
 						}
 						else{
@@ -2401,7 +2401,7 @@ force_string:;
 /* 								ret= PyArray_FromDimsAndData( Ndims, dim, PyArray_DOUBLE, (char*) array);	*/
 								ret= PyArray_SimpleNewFromData( Ndims, dim, PyArray_DOUBLE, (void*) array);
 								if( PIVC ){
-									((PyArrayObject*)ret)->flags|= NPY_OWNDATA;
+									PyArray_ENABLEFLAGS( (PyArrayObject*)ret, NPY_OWNDATA );
 								}
 							}
 							else{
@@ -3324,7 +3324,7 @@ PEV_tuple:;
 						else{
 						  PyArrayObject *parray= (PyArrayObject*) var;
 							if( it->index < it->size ){
-							  PyObject *elem= parray->descr->f->getitem( it->dataptr, var);
+							  PyObject *elem= PyArray_DESCR(parray)->f->getitem( it->dataptr, var);
 								if( PyInt_Check(elem) || PyLong_Check(elem) || PyFloat_Check(elem) ){
 									value= PyFloat_AsDouble(elem);
 								}
@@ -4293,7 +4293,7 @@ static PyObject *DataColumn2Array( PyObject *self, int argc, long idx, int cooke
 				it= (PyArrayIterObject*) PyArray_IterNew(visible);
 				for( i= 0; i< visN; i++ ){
 					if( it->index < it->size ){
-						if( ASCANF_TRUE( PyFloat_AsDouble( parray->descr->f->getitem( it->dataptr, visible) )) ){
+						if( ASCANF_TRUE( PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, visible) )) ){
 							vN+= 1;
 						}
 						PyArray_ITER_NEXT(it);
@@ -4400,10 +4400,10 @@ static PyObject *DataColumn2Array( PyObject *self, int argc, long idx, int cooke
 						else{
 							if( it->index < it->size ){
 								if( use_set_visible== 0 ){
-									vidx= PyInt_AsLong( parray->descr->f->getitem( it->dataptr, visible) );
+									vidx= PyInt_AsLong( PyArray_DESCR(parray)->f->getitem( it->dataptr, visible) );
 								}
 								else{
-								  double vx= PyFloat_AsDouble( parray->descr->f->getitem( it->dataptr, visible) );
+								  double vx= PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, visible) );
 									if( ASCANF_TRUE(vx) ){
 										vidx= i;
 									}
@@ -4528,14 +4528,14 @@ static PyObject *DataColumn2Array( PyObject *self, int argc, long idx, int cooke
 	{ npy_intp dim[1]= {targN};
 /* 		ret= PyArray_FromDimsAndData( 1, dim, PyArray_DOUBLE, (char*) targ );	*/
 		ret= PyArray_SimpleNewFromData( 1, dim, PyArray_DOUBLE, (void*) targ );
-		((PyArrayObject*)ret)->flags|= NPY_OWNDATA;
+		PyArray_ENABLEFLAGS( (PyArrayObject*)ret, NPY_OWNDATA);
 DC2A_ESCAPE:;
 		xfree(Ncolumn);
 		if( ret ){
 			if( visarray && use_set_visible>0 ){
 /* 			  PyObject *ret2= PyArray_FromDimsAndData( 1, dim, PyArray_LONG, (char*) visarray );	*/
 			  PyObject *ret2= PyArray_SimpleNewFromData( 1, dim, PyArray_LONG, (void*) visarray );
-				((PyArrayObject*)ret2)->flags|= NPY_OWNDATA;
+				PyArray_ENABLEFLAGS( (PyArrayObject*)ret2, NPY_OWNDATA );
 				return( Py_BuildValue( "(OO)", ret, ret2 ) );
 			}
 			else{
@@ -4576,8 +4576,8 @@ int ndArray_ShapeOK( PyArrayObject *parray, int check )
 			  // 20091125: check if this is in fact a 1-dimensional array. It *might* be necessary
 			  // to accept only a >1 size for the 1st dimension if we want to be sure to be able
 			  // to convert the arena to a contiguous vector with the dedicated routine.
-			if( parray->nd == 1
-				|| (parray->nd == 2 && (parray->dimensions[0] <= 1 || parray->dimensions[1] <= 1))
+			if( PyArray_NDIM(parray) == 1
+				|| (PyArray_NDIM(parray) == 2 && (PyArray_DIMS(parray)[0] <= 1 || PyArray_DIMS(parray)[1] <= 1))
 			){
 				ret = True;
 			}
@@ -4674,7 +4674,7 @@ static PyObject *Array2DataColumn( PyObject *self, int argc, long idx, long col,
 		else{
 			for( j= 0, i= start; i<= end; j++, i++ ){
 				if( it->index < it->size ){
-					column[offset+j]= PyFloat_AsDouble( parray->descr->f->getitem( it->dataptr, data) );
+					column[offset+j]= PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, data) );
 					PyArray_ITER_NEXT(it);
 				}
 			}
@@ -4786,7 +4786,7 @@ PyObject *python_Set2Arrays ( PyObject *self, PyObject *args, PyObject *kw )
 	  PyObject *array;
 		if( parray ){
 			array= DataColumn2Array( self, argc, idx, !raw,
-				PyInt_AsLong( parray->descr->f->getitem( it->dataptr, columns)),
+				PyInt_AsLong( PyArray_DESCR(parray)->f->getitem( it->dataptr, columns)),
 				startObj, end, offset, pad, pad_low, pad_high );
 			PyArray_ITER_NEXT(it);
 		}
@@ -4914,7 +4914,7 @@ PyObject *python_Arrays2Set ( PyObject *self, PyObject *args, PyObject *kw )
 			maxCol= this_set->ncols;
 			for( i= 0; i< N; i++ ){
 				if( parray ){
-					column= PyInt_AsLong( parray->descr->f->getitem( it->dataptr, columns));
+					column= PyInt_AsLong( PyArray_DESCR(parray)->f->getitem( it->dataptr, columns));
 					PyArray_ITER_NEXT(it);
 				}
 				else{
@@ -4946,7 +4946,7 @@ PyObject *python_Arrays2Set ( PyObject *self, PyObject *args, PyObject *kw )
 	  PyObject *array, *ret;
 	  long column;
 		if( parray ){
-			column= PyInt_AsLong( parray->descr->f->getitem( it->dataptr, columns));
+			column= PyInt_AsLong( PyArray_DESCR(parray)->f->getitem( it->dataptr, columns));
 			PyArray_ITER_NEXT(it);
 		}
 		else{
@@ -4954,7 +4954,7 @@ PyObject *python_Arrays2Set ( PyObject *self, PyObject *args, PyObject *kw )
 		}
 		if( pdarray ){
 		  /* would be logical to take 1D 'slices' of a 2D array, for instance... */
-			array= pdarray->descr->f->getitem( itd->dataptr, data);
+			array= PyArray_DESCR(pdarray)->f->getitem( itd->dataptr, data);
 			PyArray_ITER_NEXT(itd);
 		}
 		else{
@@ -5072,7 +5072,7 @@ PyObject *python_SetAssociation ( PyObject *self, PyObject *args, PyObject *kw )
 				}
 				else{
 					if( it->index < it->size ){
-						set->Associations[i]= PyFloat_AsDouble( parray->descr->f->getitem( it->dataptr, values) );
+						set->Associations[i]= PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, values) );
 						PyArray_ITER_NEXT(it);
 					}
 					else{
@@ -5109,7 +5109,7 @@ PyObject *python_SetAssociation ( PyObject *self, PyObject *args, PyObject *kw )
 			dim[0]= set->numAssociations;
 /* 			result= PyArray_FromDimsAndData( 1, dim, PyArray_DOUBLE, (char*) assoc);	*/
 			result= PyArray_SimpleNewFromData( 1, dim, PyArray_DOUBLE, (void*) assoc);
-			((PyArrayObject*)result)->flags|= NPY_OWNDATA;
+			PyArray_ENABLEFLAGS( (PyArrayObject*)result, NPY_OWNDATA );
 		}
 	}
 
