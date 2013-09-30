@@ -144,9 +144,9 @@
 
 /* =========================================== private section =========================================== */
 
-#define VERSION_MAJOR	2012
-#define VERSION_MINOR	05
-#define VERSION_PATCHL	08
+#define VERSION_MAJOR	2013
+#define VERSION_MINOR	09
+#define VERSION_PATCHL	30
 
 #define STR(name)	# name
 #define STRING(name)	STR(name)
