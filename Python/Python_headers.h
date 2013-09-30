@@ -128,6 +128,8 @@
 
 #ifndef NPY_1_7_API_VERSION
 #	define NPY_ARRAY_OWNDATA	NPY_OWNDATA
+#	define PyArray_ENABLEFLAGS(o,f)	(PyArray_FLAGS((o)) |= (f))
+#	define PyArray_CLEARFLAGS(o,f)	(PyArray_FLAGS((o)) &= ~(f))
 #else
 #	define NPY_OWNDATA	NPY_ARRAY_OWNDATA
 #	define PyArray_DOUBLE	NPY_FLOAT64
