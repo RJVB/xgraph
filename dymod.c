@@ -1040,7 +1040,19 @@ int Auto_LoadDyMod_LastPtr( DyModAutoLoadTables *Table, int N, char *fname, DyMo
 							current= current->cdr;
 						}
 						if( !table->loaded ){
-						  DyModLists *new= LoadDyMod( table->DyModName, table->flags, 1, 1 );
+						  DyModLists *new;
+
+							if( strcasecmp( table->DyModName, "Python" ) == 0
+								|| strcasecmp( table->DyModName, "Python.so" ) == 0
+								|| strcasecmp( table->DyModName, "Python.dll" ) == 0
+								|| strcasecmp( table->DyModName, "Python.dylib" ) == 0
+							){
+								Init_Python();
+								new = dm_pythonLib;
+							}
+							else{
+								new= LoadDyMod( table->DyModName, table->flags, 1, 1 );
+							}
 							if( new ){
 								table->dymod= new;
 								table->loaded= True;
@@ -1157,14 +1169,23 @@ int UsePythonVersion = -1;
 int Init_Python()
 { char *XG_PYTHON_DYMOD= getenv( "XG_PYTHON_DYMOD" );
 	if( !dm_pythonLib ){
-	  char pylib[64];
+	  char pylib[64], *libName;
+	  static char loadFailed = 0;
 		if( UsePythonVersion > 0 ){
 			snprintf( pylib, sizeof(pylib)/sizeof(char), "Python.%d", UsePythonVersion );
 		}
 		else{
 			strcpy( pylib, "Python" );
 		}
-		dm_pythonLib= LoadDyMod( (XG_PYTHON_DYMOD)? XG_PYTHON_DYMOD : pylib, RTLD_LAZY|RTLD_GLOBAL, True,False );
+		libName = (XG_PYTHON_DYMOD)? XG_PYTHON_DYMOD : pylib;
+		if( !loadFailed ){
+			dm_pythonLib= LoadDyMod( (XG_PYTHON_DYMOD)? XG_PYTHON_DYMOD : pylib, RTLD_LAZY|RTLD_GLOBAL, True,False );
+		}
+		if( !dm_pythonLib ){
+			fprintf( StdErr,
+				"Init_Python(): failure loading Python plugin, check the reason and restart XGraph before trying again!\n" );
+			loadFailed = 1;
+		}
 	}
 	if( !dm_python && dm_pythonLib && dm_pythonLib->type== DM_Python ){
 		dm_python= dm_pythonLib->libHook;
