@@ -3309,19 +3309,30 @@ PEV_tuple:;
 			if( af->N!= N ){
 				Resize_ascanf_Array( af, N, &value );
 			}
-			for( i= 0; i< N; i++ ){
-				switch( type ){
-					case 0:
-						value= PyFloat_AsDouble( PyTuple_GetItem(var,i) );
-						break;
-					case 1:
-						value= (i)? PyComplex_ImagAsDouble(var) : PyComplex_RealAsDouble(var);
-						break;
-					case 2:{
-						if( PyArrayBuf ){
-							value= PyArrayBuf[i];
-						}
-						else{
+			if( PyArrayBuf && type == 2 ){
+				// 20131004: removed this case to outside the big loop-with-tests to allow it
+				// to be optimised
+				if( af->array ){
+					if( af->array != PyArrayBuf ){
+						memcpy( af->array, PyArrayBuf, N * sizeof(double) );
+					}
+				}
+				else{
+					for( i= 0; i< N; i++ ){
+						af->iarray[i]= (int) PyArrayBuf[i];
+					}
+				}
+			}
+			else{
+				for( i= 0; i< N; i++ ){
+					switch( type ){
+						case 0:
+							value= PyFloat_AsDouble( PyTuple_GetItem(var,i) );
+							break;
+						case 1:
+							value= (i)? PyComplex_ImagAsDouble(var) : PyComplex_RealAsDouble(var);
+							break;
+						case 2:{
 						  PyArrayObject *parray= (PyArrayObject*) var;
 							if( it->index < it->size ){
 							  PyObject *elem= PyArray_DESCR(parray)->f->getitem( it->dataptr, var);
@@ -3379,17 +3390,17 @@ store_aarray_string_elem:;
 							else{
 								set_NaN(value);
 							}
+							break;
 						}
-						break;
+						default:
+							break;
 					}
-					default:
-						break;
-				}
-				if( af->iarray ){
-					af->iarray[i]= (int) value;
-				}
-				else{
-					af->array[i]= value;
+					if( af->iarray ){
+						af->iarray[i]= (int) value;
+					}
+					else{
+						af->array[i]= value;
+					}
 				}
 			}
 			if( type==2 ){
@@ -4381,23 +4392,30 @@ static PyObject *DataColumn2Array( PyObject *self, int argc, long idx, int cooke
 					else{
 						it= (PyArrayIterObject*) PyArray_IterNew(visible);
 					}
-					for( i= 0; i< visN; i++ ){
-					  long vidx;
-						if( xd ){
-							if( use_set_visible== 0 ){
-								vidx= PyArrayBufLong[i];
+					if( xd ){
+						if( use_set_visible== 0 ){
+// 							for( i= 0; i< visN; i++ ){
+// 								visarray[i] = PyArrayBufLong[i];
+// 							}
+							if( visarray != PyArrayBufLong ){
+								memcpy( visarray, PyArrayBufLong, visN * sizeof(long) );
 							}
-							else{
+						}
+						else{
+							for( i= 0; i< visN; i++ ){
 								if( ASCANF_TRUE(PyArrayBuf[i]) ){
-									vidx= i;
+									visarray[i] = i;
 								}
 								else{
-									vidx= -1;
+									visarray[i] = -1;
 									nons+= 1;
 								}
 							}
 						}
-						else{
+					}
+					else{
+					  long vidx;
+						for( i= 0; i< visN; i++ ){
 							if( it->index < it->size ){
 								if( use_set_visible== 0 ){
 									vidx= PyInt_AsLong( PyArray_DESCR(parray)->f->getitem( it->dataptr, visible) );
@@ -5065,12 +5083,14 @@ PyObject *python_SetAssociation ( PyObject *self, PyObject *args, PyObject *kw )
 				it= (PyArrayIterObject*) PyArray_IterNew(values);
 			}
 		}
-		for( i= 0; i< N; i++ ){
-			if( parray ){
-				if( PyArrayBuf ){
-					set->Associations[i]= PyArrayBuf[i];
-				}
-				else{
+		if( parray && PyArrayBuf ){
+			if( set->Associations != PyArrayBuf ){
+				memcpy( set->Associations, PyArrayBuf, N * sizeof(double) );
+			}
+		}
+		else{
+			for( i= 0; i< N; i++ ){
+				if( parray ){
 					if( it->index < it->size ){
 						set->Associations[i]= PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, values) );
 						PyArray_ITER_NEXT(it);
@@ -5079,9 +5099,9 @@ PyObject *python_SetAssociation ( PyObject *self, PyObject *args, PyObject *kw )
 						set_NaN( set->Associations[i] );
 					}
 				}
-			}
-			else{
-				set->Associations[i]= PyFloat_AsDouble( PyTuple_GetItem(values,i) );
+				else{
+					set->Associations[i]= PyFloat_AsDouble( PyTuple_GetItem(values,i) );
+				}
 			}
 		}
 		set->numAssociations= N;

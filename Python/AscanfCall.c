@@ -476,12 +476,17 @@ static PyObject *AscanfCall( ascanf_Function *af, PyObject *arglist, long repeat
 						else{
 							it= (PyArrayIterObject*) PyArray_IterNew(arg);
 						}
-						for( j= 0; j< saf->N; j++ ){
-							if( PyArrayBuf ){
-								  /* 20061016: indices used to be i?!?! */
-								saf->array[j]= PyArrayBuf[j];
+						if( PyArrayBuf ){
+// 							for( j= 0; j< saf->N; j++ ){
+// 								  /* 20061016: indices used to be i?!?! */
+// 								saf->array[j]= PyArrayBuf[j];
+// 							}
+							if( saf->array != PyArrayBuf ){
+								memcpy( saf->array, PyArrayBuf, saf->N * sizeof(double) );
 							}
-							else{
+						}
+						else{
+							for( j= 0; j< saf->N; j++ ){
 								saf->array[j]= PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, arg) );
 								PyArray_ITER_NEXT(it);
 							}
@@ -1122,15 +1127,17 @@ static PyObject *PyAscanfObject_returnArgs( PyAscanfObject *self, PyObject *args
 						else{
 							it= (PyArrayIterObject*) PyArray_IterNew(ra);
 						}
-						for( i= 0; i< N; i++ ){
-							if( PyArrayBuf ){
+						if( PyArrayBuf ){
+							for( i= 0; i< N; i++ ){
 								if( PyArrayBuf[i]< 0 || PyArrayBuf[i]>= maxArgs ){
 									err+= 1;
 								}
 								idx[n]= PyArrayBuf[i];
 								n+= 1;
 							}
-							else{
+						}
+						else{
+							for( i= 0; i< N; i++ ){
 							  PyObject *val= PyArray_DESCR(parray)->f->getitem( it->dataptr, ra);
 								if( PyInt_Check(val) || PyLong_Check(val) ){
 									idx[n]= PyInt_AsLong(val);

@@ -835,34 +835,43 @@ PSAD_tuple:;
 					it= (PyArrayIterObject*) PyArray_IterNew(var);
 				}
 			}
-			for( i= 0; i< N; i++ ){
-				switch( type ){
-					case 0:
-						value= PyFloat_AsDouble( PyTuple_GetItem(var,i) );
-						break;
-					case 1:
-						value= (i)? PyComplex_ImagAsDouble(var) : PyComplex_RealAsDouble(var);
-						break;
-					case 2:{
-						if( PyArrayBuf ){
-							value= PyArrayBuf[i];
+			switch( type ){
+				case 0:
+					for( i= 0; i< N; i++ ){
+						array[i] = PyFloat_AsDouble( PyTuple_GetItem(var,i) );
+					}
+					break;
+				case 1:
+					for( i= 0; i< N; i++ ){
+						array[i] = (i)? PyComplex_ImagAsDouble(var) : PyComplex_RealAsDouble(var);
+					}
+					break;
+				case 2:{
+					if( PyArrayBuf ){
+// 						for( i= 0; i< N; i++ ){
+// 							array[i] = PyArrayBuf[i];
+// 						}
+						if( array != PyArrayBuf ){
+							memcpy( array, PyArrayBuf, N * sizeof(double) );
 						}
-						else{
+					}
+					else{
+						for( i= 0; i< N; i++ ){
 						  PyArrayObject *parray= (PyArrayObject*) var;
 							if( it->index < it->size ){
-								value= PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, var) );
+								array[i] = PyFloat_AsDouble( PyArray_DESCR(parray)->f->getitem( it->dataptr, var) );
 								PyArray_ITER_NEXT(it);
 							}
 							else{
 								set_NaN(value);
+								array[i] = value;
 							}
 						}
-						break;
 					}
-					default:
-						break;
+					break;
 				}
-				array[i]= value;
+				default:
+					break;
 			}
 			if( type==2 ){
 				if( xd ){
