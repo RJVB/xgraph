@@ -1,0 +1,585 @@
+#!/usr/local/bin/XGraph
+# Generated: Mon Apr 10 14:51:41 2000
+
+*ECHO*
+A stimulus like the one used in Morone, Burr & al, Current Biology 1999
+A rectangle filled with dots, a combination of rotational and radial
+(expansion) motion, and a limited lifetime.
+Two sets, one with 500 and one with 500 points, and one with 5 red
+dots to anchor the moving dots.
+This is a version using a Python kernel, potentially with the optic flow
+calculations in 2 background threads, one per data set.
+
+# vim:ts=4:sw=4:nowrap:
+*ENDIAN*1
+*BUFLEN* 18192
+*AXVAL_MINDIGITS*2
+*EXTRATEXT* Some commandline options...
+
+*ARGUMENTS* -maxsets 205 -nodetach -noaxis -tk -notitle -nolegend -mindlegend0 -fn0 -biasX 0.005 -biasY -1 -process_bounds0 -transform_axes0 -overwrite_legend1 -Cauto -exact_X1 -exact_Y1 -ValCat_X0 -ValCat_X_levels 1 -ValCat_Y0 -all_ValCat_I0 -ValCat_I0 -aspect1  -fli0 -bb0
+*ARGUMENTS* -Cxye -legendtype 0 -radix 360 -radix_offset 0 -frac0 -splits_disconnect1 -PSm 0.75,0
+*ARGUMENTS* -bw 2 -aw 2 -lw 1 -ew 3 -bg gray50
+*ARGUMENTS* -gw 2 -gp 11 -lx -1.65,1.65 -ly -1.65,1.65 -XGBounds1 -hl_too1
+
+*ARGUMENTS* -XGDump_PrintPars1
+*ARGUMENTS* -geometry 448x512 -spax0 -spay0
+*ARGUMENTS* -maxWidth 27 -maxHeight 18.5
+*ARGUMENTS* -hl_mode 0 -hl_pars 0.75,1 -hl_too1
+*ARGUMENTS* -Landscape -ps_scale 100 -ps_xpos 1 -ps_ypos 1 -ps_offset 0,0 -ps_rgb0 -ps_transp0 -ps_fest 0.675 -gs_twidth1 -gs_twidth_auto1 -ps_eps0 -ps_dsc1 -ps_setpage0
+*ARGUMENTS* -ps_tf "Helvetica-Narrow" -ps_tf_size 10 -ps_lef "Palatino-Bold" -ps_lef_size 8
+*ARGUMENTS* -ps_laf "Palatino-Bold" -ps_laf_size 10 -ps_af "Helvetica" -ps_af_size 8
+*ARGUMENTS* -tf "-adobe-helvetica*-medium-r-normal--8-0-0-0-p-0-*-*" -lef "-adobe-helvetica*-medium-r-normal--8-0-0-0-p-0-*-*"
+*ARGUMENTS* -laf "-adobe-new century schoolbook-bold-r-normal--12-120-75-75-p-77-iso8859-1" -af "-*-helvetica-medium-r-*--10-*-*-*-*-*-*-*"
+*ARGUMENTS* -bar_legend_dimension 3,1.5,1
+*ARGUMENTS* -PSm 0.75,0
+
+
+*XLABEL*
+*YLABEL*
+
+# *PARAM_NOW* DCL[v,4],DCL[r], DCL[Phi,87], DCL[dT], DCL[pT,time], DCL[T,0], DCL[d\T\], DCL[dR]
+*PARAM_NOW*\n
+	DCL[v,-5.4, "speed of expansion/contraction"],
+# 	DCL[Phi,88.6, "speed of rotation"],
+	DCL[Phi,90, "speed of rotation"],
+	DCL[r],
+	DCL[dT], DCL[pT,time], DCL[T,0], DCL[d\T\], DCL[dR] @
+
+*EVAL* DCL?[LifeTime,4], DCL?[Fitted, 0], DCL?[nDots,500] @
+
+*EVAL* DCL?[Threading, 1] @
+*EVAL* DCL?[MaxCycles, 0] @
+
+
+*Set* 0,3 (#0 dumped)
+*TITLE*
+*LEGEND* N=350
+*FILE*MorBurr99P.xg
+
+*ERROR_TYPE* 0
+*COLUMNS* N=4 x=0 y=1 e=2
+*PROPERTIES* colour=-1 flags=0x837 linestyle=1 mS=8 lineWidth=1 elinestyle=0 marker=2 elineWidth=3 markSize=-0.0075 cname="black (rgbi:0/0/0)"
+*POINTS* 350
+*N* 1
+*PARAM_NOW*\n
+	for-toMAX[0,nDots,
+		AddDataPoints[$CurrentSet, ran[-1,1],ran[-1,1], ran[0,LifeTime], 0],
+	]
+
+*Set* 1,3 (#1 dumped)
+*TITLE*
+*LEGEND* N=250
+*FILE*MorBurr99P.xg
+
+*ERROR_TYPE* 0
+*COLUMNS* N=4 x=0 y=1 e=2
+*AUTOSCRIPT* colour=0 flags=0x837 linestyle=1 mS=8 lineWidth=1 elinestyle=0 marker=2 elineWidth=3 markSize=-0.0075 cname="white (rgbi:0/0/0)"
+*POINTS* 250
+*N* 1
+*PARAM_NOW*\n
+	for-toMAX[0,nDots,
+		AddDataPoints[$CurrentSet, ran[-1,1],ran[-1,1], ran[0,LifeTime], 0],
+	]
+
+
+*Set* 2,3 (#3 dumped)
+#no set-title..
+*TITLE*
+*LEGEND* markers
+*ERROR_TYPE* 0
+*COLUMNS* N=3 x=0 y=1 e=2
+*AUTOSCRIPT* colour=-1 flags=0x5f7 linestyle=1 mS=8 lineWidth=1 elinestyle=0 marker=2 elineWidth=3 cname="red (rgbi:1/0/0)"
+*POINTS* 5
+0	0	0
+-1.5	-1.5	0
+-1.5	1.5	0
+1.5	1.5	0
+1.5	-1.5	0
+
+*EVAL* $ReDo_DRAW_BEFORE[0], $Really_DRAW_AFTER[1] @
+
+*EVAL* $UseConstantsLists[1]
+
+*PARAM_NOW*\n
+	DCL[life,1,0],DCL[nX,1,0], DCL[nY,1,0], DCL[nnX], DCL[nnY], DCL[\f\], DCL[cos-d\T\], DCL[sin-d\T\], $SyncedAnimation[1],
+	DCL[sin-Phi], DCL[cos-Phi],
+	sincos[Phi, 360, &sin-Phi, &cos-Phi],
+	DCL[Tcol,1,0],DCL[adT,0],DCL[frames,0], DCL[aadT,0] @
+
+*LOAD_MODULE*
+utils.so
+
+**PYTHON2**
+from ascanf import *
+from xgraph import *
+from HRTime import *
+from sincos import *
+from fmadd import *
+from time import sleep
+
+try:
+	 # when using multiple processes instead of multiple threads, Set2Arrays does not
+	 # copy the new data into the 'source' DataSet belonging to the master process
+	 # that does the displaying. Probably logical, remains to be seen if a workaround exists
+	 # that does not require a complete internal rewrite. OTOH, if all data has to be copied
+	 # between Python processes and/or using multiprocessing.Array, any gain of using multiprocessing
+	 # instead of threading will probably be annihilated.
+	 # 20120622: the DataSet->columns memory is now allocated using anonymous mmap, and thus shareable
+	 # between parent and children processes. There remains an issue with X11 provoking a crash
+	 # of the parent thread: the more dots, the quicker this happens
+
+	import multiprocessing0 as threading
+	from multiprocessing import Process as Thread
+	from multiprocessing import Value as shValue
+	import multiprocessing.synchronize
+	threading._Condition=threading.synchronize.Condition
+	threading.currentThread=threading.current_process
+	print >>sys.stderr, 'Using multiprocessing instead of threading'
+except:
+	import threading
+	from threading import Thread
+	class shValue:
+		def __init__(self, vtype, val):
+			self.value=val
+		def __repr__(self):
+			return '<shValue(%s)>' %(self.value)
+
+import atexit
+
+adT= ImportVariable('adT')
+aadT= ImportVariable('aadT')
+frames= ImportVariable('frames')
+LifeTime= ImportVariable('LifeTime')
+MaxCycles = ImportVariable('MaxCycles')
+ascanf_len= ImportVariable('&len') #; ascanf_len.reentrant(0)
+ascanf_arg= ImportVariable('&arg') #; ascanf_arg.reentrant(0)
+ascanf_ran= ImportVariable('&ran') #; ascanf_ran.reentrant(0)
+ascanf_radians= ImportVariable('&radians') #; ascanf_radians.reentrant(0)
+CSp= ImportVariable('&$CurrentSet')
+Fitted = ImportVariable('&Fitted')
+boing = ImportVariable('&Boing')
+aprint = ImportVariable('&printf')
+raiseSignal = ImportVariable('&raise-signal')
+
+redraws = 0
+
+v= ImportVariable('v')
+Phi= ImportVariable('Phi')
+# (sinPhi, cosPhi)= sincos( call(ascanf_radians, (Phi,)) )
+(sinPhi, cosPhi)= sincos( ascanf_radians(Phi) )
+r= 1
+phi= 0
+(sindTau,cosdTau)= (0,1)
+
+def GT():
+	global T
+	T=HRTime()
+	return T
+
+def CS():
+	global CurrentSet
+	CurrentSet= int(CSp.value)
+	return CurrentSet
+
+# a single 'particle' :
+def MB(nX,nY,life,Tcol):
+	dT= T - Tcol
+	if life < LifeTime:
+		life+= 1
+		r,phi= ascanf_len(nX, nY), ascanf_arg(nX, nY)
+		dTau= (dT * v* sinPhi)/ r
+		r+= dT * v * cosPhi
+		(sindTau,cosdTau)= sincos( dTau, 360 )
+		(sinphi,cosphi)= sincos( phi )
+		nnX, nnY= r* cosphi, r* sinphi
+		nX, nY= nnY* sindTau + nnX* cosdTau, nnX* -sindTau + nnY* cosdTau
+	else:
+		life= 1
+		nX, nY= call(ascanf_ran, (-1,1), 2)
+		Tcol= T
+	return nX,nY,life,Tcol
+
+# a vectorised function that calls MB for all elements in its 4 numpy arrays:
+MBvect=vectorize(MB)
+
+aav=ImportVariable('&$verbose')
+
+# the actual function that calculates positions for all 'particles':
+def MorBur0():
+	global DataSet0, DataSet1
+	 # calculate the new positions:
+	DataSet0 = MBvect( DataSet0[0], DataSet0[1], DataSet0[2], DataSet0[3] )
+	 # store the new positions in $CurrentSet:
+	Arrays2Set(0, columns0, DataSet0 )
+
+def MorBur1():
+	global DataSet0, DataSet1
+	 # calculate the new positions:
+	DataSet1 = MBvect( DataSet1[0], DataSet1[1], DataSet1[2], DataSet1[3] )
+	 # store the new positions in $CurrentSet:
+	Arrays2Set(1, columns1, DataSet1 )
+
+# the actual function that calculates positions for all 'particles':
+def MorBur_t(h):
+	 # calculate the new positions:
+	h.DataSet = MBvect( h.DataSet[0], h.DataSet[1], h.DataSet[2], h.DataSet[3] )
+	 # store the new positions in $CurrentSet:
+	Arrays2Set(h.setNr, h.columns, h.DataSet )
+
+rawdisp_ptr=ImportVariable('&raw_display', dereference=1) #; rawdisp_ptr.reentrant(0)
+
+GoForIt = threading.Event()
+
+class BurMor(Thread):
+	def __init__(self, flow, setNr=None, columns=None, DataSet=None, synchro=None,initialLock=None):
+#		Thread.__init__(self)
+		super(BurMor,self).__init__()
+		self.daemon = shValue('b',True)
+		self.flow=flow
+		if synchro:
+			self.synchro=synchro
+		else:
+#			try:
+#				self.synchro=MSCondition()
+#				print >>sys.stderr, 'Using MSEmul events'
+#			except:
+			self.synchro=MBCondition()
+		if initialLock:
+			self.GoForIt = initialLock
+		else:
+			self.GoForIt = GoForIt
+		self.cycles=shValue('i',0)
+		self.startTime= shValue('d',HRTime())
+		self.inCalc= shValue('b',False)
+		self.ok= shValue('b',True)
+		self.setNr = setNr
+		self.columns = columns
+		self.DataSet = DataSet
+		print >>sys.stderr, 'Thread "%s" ready to start' %(self.ident)
+	
+	def __del__(self):
+		del self.synchro
+		try:
+			super(BurMor,self).__del__()
+		except:
+			pass
+
+	def cycleToBeDrawn(self):
+		self.synchro.newCycle.value = True
+		self.synchro.notify()
+		self.synchro.release()
+
+	def cycleDrawn(self):
+		self.synchro.newCycle.value = False
+		self.synchro.drawing.value = False
+		self.synchro.notify()
+		self.synchro.release()
+
+	def run(self):
+		# wait until we get the go-ahead
+		self.GoForIt.wait()
+		print >>sys.stderr, 'Thread "%s" running' %(self.ident)
+		while self.ok.value:
+			if not rawdisp_ptr():
+				self.synchro.acquire();
+				# once we have acquired our lock, wait until the newCycle flag has been cleared
+				while self.synchro.newCycle.value and self.ok.value:
+					self.synchro.wait()
+				if self.ok:
+					self.inCalc.value = True
+					GT()
+					self.flow(self)
+					self.inCalc.value = False
+				# voila, a newCycle has been prepared; set the flag and notify the drawing thread
+				self.cycleToBeDrawn()
+			self.cycles.value+=1
+		print >>sys.stderr, 'Thread "%s" will exit' %(self.ident)
+		sys.stderr.flush()
+
+	def stop(self):
+		self.ok.value = False
+		print >>sys.stderr, 'Thread "%s".stop()' %(self.ident)
+		sys.stderr.flush()
+		threading._shutdown()
+
+class MBCondition(threading._Condition):
+	def __init__(self,lock=None,verbose=None):
+		try:
+			threading._Condition.__init__(self,lock,verbose)
+		except:
+			threading._Condition.__init__(self,lock)
+		self.lockedBy = shValue('i',-1)
+		self.waitedBy = shValue('i',-1)
+		self.notifyBy = shValue('i',-1)
+		self.notifiedBy = shValue('i',-1)
+		self.newCycle = shValue('b',False)
+		self.drawing = shValue('b',False)
+		 # copy the trick _Condition uses to provide acquire and release methods:
+		if sys.version_info[0] <= 2:
+			self.__lock = self._Condition__lock
+		else:
+			self.__lock = self._lock
+		self.acquire = self.lock
+		self.release = self.unlock
+
+	def lock(self):
+		self.__lock.acquire()
+		self.lockedBy.value = threading.currentThread().ident
+
+	def unlock(self):
+		self.__lock.release()
+		self.lockedBy.value = -1
+
+	def notify(self):
+		self.notifyBy.value = threading.currentThread().ident
+		self.notifiedBy.value = -1
+		threading._Condition.notify(self)
+
+	def wait(self):
+		self.waitedBy.value = threading.currentThread().ident
+		threading._Condition.wait(self)
+		self.notifiedBy.value = self.notifyBy.value
+		self.notifyBy.value = -1
+		self.waitedBy.value = -1
+
+#try:
+#	import MSEmul
+#	def test(h):
+#		boing()
+#
+#	class MSCondition:
+#		def __init__(self, lock=None, verbose=None):
+#			if lock:
+#				self.lock = lock
+#			else:
+#				self.lock = MSEmul.CreateEvent(None, False, False, None)
+#			self.lockedBy = None
+#			self.waitedBy = None
+#			self.notifyBy = None
+#			self.notifiedBy = None
+#			#self.waitCount = 0
+#			self.newCycle = False
+#			self.drawing = False
+#
+#		def acquire(self):
+#			# MS style event objects do not need to be locked manually
+#			self.lockedBy = threading.currentThread().ident
+#
+#		def release(self):
+#			# MS style event objects do not need to be locked manually
+#			self.lockedBy = None
+#
+#		def notify(self):
+#			print >>sys.stderr, 'notify'
+#			self.notifyBy = threading.currentThread().ident
+#			self.notifiedBy = -1
+#			MSEmul.SetEvent(self.lock)
+#
+#		def wait(self):
+#			self.waitedBy = threading.currentThread().ident
+#			#self.waitCount += 1
+#			while MSEmul.WaitForSingleObject(self.lock, 500) == MSEmul.WAIT_TIMEOUT:
+#				MSEmul.YieldProcessor()
+#				print >>sys.stderr, 'timeout'
+#				pass
+#			self.notifiedBy = self.notifyBy
+#			self.notifyBy = -1
+#			self.waitedBy = None
+#			#self.waitCount -= 1
+#			#if self.waitCount <= 0:
+#			#	self.waitCount = 0
+#			#	MSEmul.ResetEvent(self.lock)
+#
+#	GoTest = threading.Event()
+#	ttS = MSCondition()
+#	TT = BurMor(test, ttS, GoTest)
+#except:
+#	print >>sys.stderr, sys.exc_info()
+#	pass
+
+# It is possible (but not a big success) to do the particle updating in a separate thread.
+# Set Threading to true (1) to achieve that (see above)
+# MBlock= (Mutex(),Mutex())
+# MBlock= (MBCondition(),MBCondition())
+#MBlock[0].newCycle = False
+#MBlock[1].newCycle = False
+#MBlock[0].drawing = False
+#MBlock[1].drawing = False
+
+(columns0, columns1) = ( (xcol(0), ycol(0), ecol(0), 3), (xcol(1), ycol(1), ecol(1), 3) )
+(DataSet0, DataSet1) = ( Set2Arrays( 0, 1, columns0 ), Set2Arrays( 1, 1, columns1 ) )
+
+MBt0= BurMor(MorBur_t, 0, columns0, DataSet0)
+MBt1= BurMor(MorBur_t, 1, columns1, DataSet1)
+MBt = (MBt0,MBt1)
+
+def xxx():
+	try:
+		global MBt0, MBt1, MBt, GoForIt, xxx
+		#global MBlock
+		if not globals().has_key('MBt0'):
+			return -1.0
+		rawdisp_ptr(0)
+		print 'Signalling background thread(s) to stop'
+		print >>sys.stderr, 'MBt[0] newCycle=%s calc=%s locked by %s, waited on by %s, notify/by=%s/%s' %(MBt0.synchro.newCycle.value, MBt0.inCalc.value, MBt0.synchro.lockedBy.value, MBt0.synchro.waitedBy.value, MBt0.synchro.notifyBy.value, MBt0.synchro.notifiedBy.value)
+		print >>sys.stderr, 'MBt[1] newCycle=%s calc=%s locked by %s, waited on by %s, notify/by=%s/%s' %(MBt0.synchro.newCycle.value, MBt1.inCalc.value, MBt1.synchro.lockedBy.value, MBt1.synchro.waitedBy.value, MBt0.synchro.notifyBy.value, MBt0.synchro.notifiedBy.value)
+		for i in xrange(2):
+			if MBt[i].synchro.newCycle.value:
+				MBt[i].ok.value=False
+				if MBt[i].synchro.lockedBy.value != threading.currentThread().ident:
+					MBt[i].synchro.acquire()
+				MBt[i].cycleDrawn()
+			else:
+				MBt[i].ok.value=False
+		RedrawNow()
+		usleep( int(0.5*1000) )
+		print '\n'
+		print 'Set0: cycles=%g, freq=%g' % (MBt0.cycles.value, MBt0.cycles.value/(HRTime() - MBt0.startTime.value) )
+		print 'Set1: cycles=%g, freq=%g\n' % (MBt1.cycles.value, MBt1.cycles.value/(HRTime() - MBt1.startTime.value) )
+		print 'Shutting down thread(s), ignore error messages that might follow...\n'
+		print >>sys.stderr, 'Joined MBt0: %s, alive=%s' %(MBt0.join(1.0), MBt0.is_alive())
+		print >>sys.stderr, 'Joined MBt1: %s, alive=%s' %(MBt1.join(1.0), MBt1.is_alive())
+		usleep( int(0.5*1000) )
+		del MBt0
+		del MBt1
+		del MBt
+		#del MBlock
+		del GoForIt
+	except:
+		print >>sys.stderr, sys.exc_info()
+		pass
+	return 0.0
+
+if ImportVariable('Threading'):
+	# DATA_INIT procedure
+	def PyDataInit():
+		CS()
+		# acquire the lock, and then wait until a newCycle has been prepared:
+		MBt[CurrentSet].synchro.acquire()
+		MBt[CurrentSet].synchro.drawing.value = True
+		while not MBt[CurrentSet].synchro.newCycle.value and MBt[CurrentSet].ok.value:
+			MBt[CurrentSet].synchro.wait()
+		return 0.0
+
+	# clear the newCycle flag (we just drew everything) and notify our optic flow thread
+	def PyDataFinish():
+		MBt[CurrentSet].cycleDrawn()
+		return 0.0
+
+	# the 2 optic flow threads should remain synchronised. Hence, we clear the newCycle flags
+	# and notify both threads only after both datasets have been drawn. 
+	def PyDrawAfter():
+		global redraws
+		if MBt0.synchro.drawing.value:
+			MBt0.cycleDrawn()
+		if MBt1.synchro.drawing.value:
+			MBt1.cycleDrawn()
+		if MaxCycles and redraws > MaxCycles:
+			xxx()
+			sleep(0.5)
+			raiseSignal(2)
+		redraws += 1
+		return 0.0
+
+	atexit.register(xxx)
+	ExportVariable('signalQuit', xxx, as_PObj=1)
+	ExportVariable('PyDataInit', PyDataInit, as_PObj=1)
+# use either
+	ExportVariable('PyDataFinish', PyDataFinish, as_PObj=1)
+# or else
+	ExportVariable('PyDrawAfter', PyDrawAfter, as_PObj=1)
+
+print 'end of 1st PYTHON2 block'
+
+*!PYTHON2*
+
+
+*PARAM_NOW* CheckEvent[0]
+
+*IF* Threading
+
+**DATA_INIT**
+	PyDataInit
+*!DATA_INIT*
+
+**DATA_FINISH**
+#	PyDataFinish
+*!DATA_FINISH*
+
+#*EVAL* $Really_DRAW_AFTER[1] @
+
+**DRAW_AFTER*
+	PyDrawAfter, redraw[1]
+
+*ELSE* # !Threading
+
+*DRAW_BEFORE* Python-Eval[ "GT()" ]@
+
+**DATA_INIT**
+Python-Eval[
+"if CS() == 0:
+	MorBur0()
+else:
+	MorBur1()"],
+*!DATA_INIT*
+
+**DRAW_AFTER*
+	redraw[1]
+
+*ENDIF* # Threading
+
+**EVAL**
+	DEPROC-noEval[v-update, Python-Eval["v= ImportVariable('v')"] ],
+
+	DEPROC-noEval[Phi-update, progn[
+		sincos[Phi, 360, &sin-Phi, &cos-Phi],
+# 		Python-Eval["Phi= ImportVariable('Phi'); (sinPhi, cosPhi)= sincos( call(ascanf_radians, (Phi,)) )"],
+		Python-Eval["Phi= ImportVariable('Phi'); (sinPhi, cosPhi)= sincos( ascanf_radians(Phi) )"],
+	] ] @
+*!EVAL*
+
+
+*EVAL* no-verbose[ AccessHandler[&v,&v-update] ] @
+*EVAL* no-verbose[ AccessHandler[&Phi,&Phi-update] ] @
+
+*KEY_PARAM_NOW*v::verbose[*add[v,0.1]] @
+*KEY_PARAM_NOW*V::*verbose[sub[v,0.1]] @
+*KEY_PARAM_NOW*y::verbose[*add[Phi,0.1]] @
+*KEY_PARAM_NOW*Y::verbose[*sub[Phi,0.1]] @
+*KEY_PARAM_NOW*.::verbose[div[frames,adT]] @
+*KEY_PARAM_NOW*Q::progn[signalQuit, sleep[0.5], raise-signal[2]] @
+
+*KEY_EVAL*
+
+	
+**PYTHON2**
+
+def time10000loops():
+	global T
+	t0 = HRTime()
+	for i in xrange(10000):
+		T=HRTime()
+		MorBur0()
+	return T - t0
+
+ExportVariable('time10000loops', time10000loops, as_PObj=1)
+*!PYTHON2*
+
+**EVAL**
+printf[2, "Timing 10000 \"frames\" without displaying:#xn"],
+$CurrentSet[0],
+system.time[time10000loops] @
+*!EVAL*
+
+*IF* Threading
+
+**PYTHON2**
+del columns0, columns1, DataSet0, DataSet1
+*!PYTHON2*
+
+*STARTUP_EXPR**EVAL* Python-Eval["MBt0.start(); MBt1.start();"] @
+*STARTUP_EXPR**EVAL* sleep[0.5] @
+*STARTUP_EXPR**EVAL* verbose[Python-Eval["GoForIt.set()"]] @
+*ENDIF*
+
+*SCRIPT_FILE*|echo "*EVAL* verbose[ redraw[1], FitOnce[1] ] @"|
