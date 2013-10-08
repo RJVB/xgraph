@@ -159,7 +159,7 @@ PyObject *python_GetULabels( PyObject *self, PyObject *args )
 		PyDict_SetItemString( retr, "count", PyInt_FromLong(wi->ulabels) );
 	}
 	else{
-		PyDict_SetItemString( retr, "count", 0 );
+		PyDict_SetItemString( retr, "count", PyInt_FromLong(0) );
 	}
 	PyDict_SetItemString( retr, "label", ULabel );
 	PyDict_SetItemString( retr, "index", Index );

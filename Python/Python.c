@@ -59,6 +59,11 @@ IDENTIFY( "ascanf library module for interfacing with Python" );
 #	define Py_LeaveRecursiveCall()	/**/
 #endif //PYTHON23
 
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION > 2
+#	define _PyUnicode_AsDefaultEncodedString(unistring,dum)	PyUnicode_AsUTF8String((unistring))
+#endif
+// PyUnicode_AsUTF8String
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -3505,7 +3510,7 @@ PyObject *Py_ExportVariableToAscanf( PyAscanfObject *pao, char* name, PyObject *
 			}
 			else if( PyUnicode_Check(retVar) ){
 				if( !(retVar= _PyUnicode_AsDefaultEncodedString( retVar, NULL )) ){
-					PyErr_SetString( XG_PythonError, "unexpected failure converting Unicode string from default encoding" );
+					PyErr_SetString( XG_PythonError, "unexpected failure converting Unicode string to default encoding" );
 				}
 			}
 			if( PyBytes_Check(retVar)
@@ -3597,7 +3602,7 @@ static PyObject* python_ExportVariable(PyObject *self, PyObject *args, PyObject 
 			PYUNIC_TOSTRING( plabel, lBytes, label );
 #else
 			if( !(plabel= _PyUnicode_AsDefaultEncodedString( plabel, NULL )) ){
-				PyErr_Warn( PyExc_Warning, "unexpected failure converting Unicode label string from default encoding" );
+				PyErr_Warn( PyExc_Warning, "unexpected failure converting Unicode label string to default encoding" );
 				plabel = NULL;
 			}
 #endif
@@ -3614,8 +3619,8 @@ static PyObject* python_ExportVariable(PyObject *self, PyObject *args, PyObject 
 		PYUNIC_TOSTRING( pname, nBytes, name );
 #else
 		if( !(pname= _PyUnicode_AsDefaultEncodedString( pname, NULL )) ){
- 			PyErr_SetString( XG_PythonError, "unexpected failure converting Unicode string from default encoding" );
-// 			PyErr_SetString(  PyExc_RuntimeError, "unexpected failure converting Unicode string from default encoding" );
+ 			PyErr_SetString( XG_PythonError, "unexpected failure converting Unicode string to default encoding" );
+// 			PyErr_SetString(  PyExc_RuntimeError, "unexpected failure converting Unicode string to default encoding" );
 			Py_RETURN_NONE;
 		}
 #endif

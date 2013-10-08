@@ -26,6 +26,9 @@
 #		elif PYTHON32
 #			include <Python3.2/Python.h>
 #			include "python32_numpy.h"
+#		elif PYTHON33
+#			include <Python3.3/Python.h>
+#			include "python33_numpy.h"
 #		elif PYTHONsys
 #			include <Python/Python.h>
 #			include <Python/bytesobject.h>
@@ -88,6 +91,15 @@
 #			include <python3.2/bytesobject.h>
 #		endif
 #		include "python32_numpy.h"
+#	elif PYTHON33
+#		if defined(__CYGWIN__)
+#			include <python3.3m/Python.h>
+#			include <python3.3m/bytesobject.h>
+#		else
+#			include <python3.3/Python.h>
+#			include <python3.3/bytesobject.h>
+#		endif
+#		include "python33_numpy.h"
 #	endif
 #else
 #	include <Python.h>
