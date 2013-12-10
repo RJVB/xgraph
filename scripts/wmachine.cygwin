@@ -34,7 +34,7 @@ setautovec() {
 			echo "# Enabling auto vectorisation" 1>&2
 			;;
 		clang*|*llvm*gcc-4.2*|*llvm*g++-4.2*)
-			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
+			MARCH="${MARCH} ${VU}"
 			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
 				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize"
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86} ${VU}"
@@ -143,7 +143,7 @@ setopts() {
 			if [ "$compil" = "" ] ;then
 				compil="${DEFAULT_CC}"
 			fi
-			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse"
+			setautovec "x86_64" "-msse4.1 -msse4.2 -mssse3 -mfpmath=sse"
 			;;
 
 		*Athlon*|*AMD*)
@@ -201,7 +201,7 @@ setopts() {
 			if [ "$compil" = "" ] ;then
 				compil="${DEFAULT_CC}"
 			fi
-			setautovec "`uname -m`" "-mssse3 -mfpmath=sse"
+			setautovec "`uname -m`" "-msse3 -mssse3 -msse4a -mfpmath=sse"
 			;;
 
 		x86)
