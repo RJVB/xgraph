@@ -93,11 +93,11 @@ setautovec() {
 setopts() {
 	case $1 in
 
-		core2|CORE2|*"Intel Core i"*)
+		core2|CORE2|*"Intel Core i"*|*" i7-"*)
 # 			DEFAULT_CC="/Developer/usr/bin/llvm-gcc-4.2"
 # 			DEFAULT_CXX="/Developer/usr/bin/llvm-g++-4.2"
-			DEFAULT_CC="gcc-4.4"
-			DEFAULT_CXX="g++-4.4"
+			DEFAULT_CC="gcc"
+			DEFAULT_CXX="g++"
 			CPU="core2"
 			ALT_CPU="" ##pentium-m"
 			mcpu="-march"
@@ -202,8 +202,8 @@ setopts() {
 			;;
 
 		x86)
-			DEFAULT_CC="gcc-4.4"
-			DEFAULT_CXX="g++-4.4"
+			DEFAULT_CC="gcc"
+			DEFAULT_CXX="g++"
 			CPU="pentium-m"
 			ALT_CPU="pentium"
 			mcpu="-march"

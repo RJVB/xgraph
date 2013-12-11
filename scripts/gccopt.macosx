@@ -860,8 +860,10 @@ if [ "${EXT}" = "cpp" -o "${isCXX}" = "1" ] ;then
 		Compile="`echo ${Compile} | sed -e 's/gcc/g++/g'`"
 		compiler="`echo ${compiler} | sed -e 's/gcc/g++/g'`"
 	else
-		Compile="$DEFAULT_CXX"
-		compiler="$DEFAULT_CXX"
+# 		Compile="$DEFAULT_CXX"
+# 		compiler="$DEFAULT_CXX"
+		Compile="`echo ${Compile} | sed -e 's/clang/clang++/g'`"
+		compiler="`echo ${compiler} | sed -e 's/clang/clang++/g'`"
 	fi
 # 20051116: remove incompatible option(s):
 	OPTIMOPT="`echo ${OPTIMOPT} | sed -e 's/-freorder-blocks-and-partition//g'`"
