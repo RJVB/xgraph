@@ -128,14 +128,14 @@ case $MACH in
 				;;
 			Python33Module)
 				PDIR=$3
-				case ${OS} in
-					CYGWIN*|cygwin*)
+# 				case ${OS} in
+# 					CYGWIN*|cygwin*)
 						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.3m"
-						;;
-					*)
-						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.3mu"
-						;;
-				esac
+# 						;;
+# 					*)
+# 						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.3mu"
+# 						;;
+# 				esac
 				;;
 		esac
 		;;
