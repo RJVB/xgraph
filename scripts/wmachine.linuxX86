@@ -149,14 +149,15 @@ setopts() {
 			DEFAULT_CXX="g++"
 			CPU="native"
 			ALT_CPU="" ##pentium-m"
-			case $1 in
-				*AMD\ C*)
-					CPU="amdfam10"
-					;;
-				*)
-					CPU="k8-sse3"
-					;;
-			esac
+#			case $1 in
+#				*AMD\ C*)
+#					CPU="amdfam10"
+#					;;
+#				*)
+#					CPU="k8-sse3"
+#					;;
+#			esac
+			CPU="native"
 			mcpu="-march"
 
 			case $compil in
