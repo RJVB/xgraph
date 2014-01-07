@@ -106,8 +106,8 @@ SYS=""
 A=""
 PIPE="-pipe"
 
-WARNINGS="-Wcomment -Wunused -Winline -Wchar-subscripts -Wparentheses -Wcast-align -Wno-format -Wdisabled-optimization -Wnonnull -Wimplicit-int -Wreturn-type" #-Wsurprising"
-EXTRA_WARNINGS="-W -Wuninitialized -Wconversion -Wredundant-decls -Wpointer-arith -Wformat -Wshadow"
+WARNINGS="-Wcomment -Wunused -Winline -Wchar-subscripts -Wparentheses -Wno-format -Wdisabled-optimization -Wnonnull -Wimplicit-int -Wreturn-type" #-Wsurprising"
+EXTRA_WARNINGS="-W -Wuninitialized -Wconversion -Wredundant-decls -Wpointer-arith -Wformat -Wcast-align -Wshadow"
 ALL_WARNINGS="-Wall -Wtraditional -Wshadow -Wpointer-arith -Wcast-qual  -Wcast-align -Wconversion -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wnested-externs -Wenum-clash -Woverloaded-virtual -Winline"
 
 PROTO="-D_PROTOTYPES"

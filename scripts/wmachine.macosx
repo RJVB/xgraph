@@ -173,12 +173,16 @@ setopts() {
 			setautovec "ppc" "-faltivec"
 			;;
 
-		core2|CORE2|"Unknown v10.0")
+		core2|CORE2|"Unknown v10.0"|"corei7"|"native")
 # 			DEFAULT_CC="/Developer/usr/bin/llvm-gcc-4.2"
 # 			DEFAULT_CXX="/Developer/usr/bin/llvm-g++-4.2"
 			DEFAULT_CC="gcc-4.2"
 			DEFAULT_CXX="g++-4.2"
-			CPU="core2"
+			if [ "$1" = "corei7" -o "$1" = "native" ] ;then
+				CPU="$1"
+			else
+				CPU="core2"
+			fi
 			ALT_CPU="" ##pentium-m"
 			mcpu="-march"
 
