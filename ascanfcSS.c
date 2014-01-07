@@ -676,7 +676,7 @@ int ascanf_SS_set2 ( ASCB_ARGLIST )
 
 int ascanf_SS_pop ( ASCB_ARGLIST )
 { ASCB_FRAME_SHORT
-	
+
 	return( ascanf_SS_set_item( args, result, 3 ) );
 }
 
@@ -1966,6 +1966,9 @@ extern unsigned long MAXIT;
 /* Return the incomplete gamma function P(a,x) determined by its series representation. When
  \ specified, return \Gamma(a) in gammaA
  */
+#ifdef __clang__
+static
+#endif
 #ifdef __GNUC__
 inline
 #endif
@@ -1998,6 +2001,9 @@ double gamma_series( double a, double x, double *gammaA )
 /* Return the incomplete gamma function P(a,x) determined by its continued-fraction representation. When
  \ specified, return \Gamma(a) in gammaA
  */
+#ifdef __clang__
+static
+#endif
 #ifdef __GNUC__
 inline
 #endif
@@ -2037,6 +2043,9 @@ double gamma_contfrac( double a, double x, double *gammaA )
 }
 
 /* Return the incomplete gamma function P(a,x): */
+#ifdef __clang__
+static
+#endif
 #ifdef __GNUC__
 inline
 #endif
@@ -2054,7 +2063,8 @@ double incomplete_gammaFunction( double a, double x )
 }
 
 /* The complement 1-P(a,x): */
-#ifdef __GNUC__
+double incomplete_gammaFunction_complement( double a, double x );
+#if defined(__GNUC__)
 inline
 #endif
 double incomplete_gammaFunction_complement( double a, double x )
@@ -2092,7 +2102,7 @@ double ChiSquare( double *observed, double *expected, int N, int constraints, in
 	return( sq );
 }
 
-/* "ChiSquare-Prob[&observed, &expected, constraints, &chsq-return[, df-return]]" */ 
+/* "ChiSquare-Prob[&observed, &expected, constraints, &chsq-return[, df-return]]" */
 int ascanf_ChiSquare ( ASCB_ARGLIST )
 { ASCB_FRAME
 	*result= -1;
@@ -2269,7 +2279,7 @@ double ChiSquare2( double *observed1, double *observed2, int N, int constraints,
 	return( sq );
 }
 
-/* "ChiSquare2-Prob[&observed1, &observed2, constraints, &chsq-return[, df-return]]" */ 
+/* "ChiSquare2-Prob[&observed1, &observed2, constraints, &chsq-return[, df-return]]" */
 int ascanf_ChiSquare2 ( ASCB_ARGLIST )
 { ASCB_FRAME
 	*result= -1;
@@ -2412,7 +2422,7 @@ int ascanf_ChiSquare2 ( ASCB_ARGLIST )
 	}
 }
 
-int ascanf_SS_setArray ( ASCB_ARGLIST ) 
+int ascanf_SS_setArray ( ASCB_ARGLIST )
 { ASCB_FRAME_SHORT
   int bin, start= 0, end;
   ascanf_Function *Data= NULL, *Weight= NULL;
@@ -2477,7 +2487,7 @@ int ascanf_SS_setArray ( ASCB_ARGLIST )
 			if( pragma_unlikely(ascanf_verbose) ){
 				fprintf( StdErr,
 					" (adding %s[%d] weight=%s, from %d upto %d) ",
-					Data->name, Data->N, 
+					Data->name, Data->N,
 					(Weight)? ad2str( take_ascanf_address(Weight), d3str_format, 0 ) : "<none>",
 					start, end
 				);
@@ -2538,7 +2548,7 @@ int ascanf_SS_setArray ( ASCB_ARGLIST )
 	return(1);
 }
 
-int ascanf_SAS_setArray ( ASCB_ARGLIST ) 
+int ascanf_SAS_setArray ( ASCB_ARGLIST )
 { ASCB_FRAME_SHORT
   int bin, start= 0, end;
   ascanf_Function *Data= NULL, *Weight= NULL;

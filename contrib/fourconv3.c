@@ -260,9 +260,9 @@ int convlv(savgol_flp *data, unsigned long n, savgol_flp *respns, unsigned long 
 	\ when using xgalloca() (through _XGALLOCA which always calls that function); xgalloca() uses calloc and malloc
 	\ internally.
 	*/
-  double *fft;
+  savgol_flp *fft;
 
-	if( !(fft = (double*) malloc( ((n<<1)+1) * sizeof(double) )) ){
+	if( !(fft = (savgol_flp*) malloc( ((n<<1)+1) * sizeof(savgol_flp) )) ){
 		return(0);
 	}
 	if( preproc_respns ){
@@ -278,7 +278,7 @@ int convlv(savgol_flp *data, unsigned long n, savgol_flp *respns, unsigned long 
 			respns[i]= 0.0;
 		}
 	}
-	twofft( (double*) data, respns, fft, ans, n);	/* FFT both at once.	*/
+	twofft( data, respns, fft, ans, n);	/* FFT both at once.	*/
 	no2= n>> 1;
 	for( i= 2; i<= n+2; i+= 2 ){
 		if( isign >= 0 ){
@@ -1771,12 +1771,12 @@ unsigned long fourconv3f_nan_handling( fftw_real *data, size_t NN, int nan_handl
 	   \ eR: NN or index of next, non-NaN element after this block.
 	   */
 		for( i= 0; i< NN; ){
-			if( isnanf(data[i]) ){
+			if( isnan(data[i]) ){
 			  /* retrieve previous, non-NaN element: */
 				sL= (i>0)? i-1 : 0;
 				  /* Find next, non-NaN element: */
 				j= i+1;
-				while( j< NN && isnanf(data[j]) ){
+				while( j< NN && isnan(data[j]) ){
 					j++;
 				}
 				eL= j;
@@ -1789,13 +1789,13 @@ unsigned long fourconv3f_nan_handling( fftw_real *data, size_t NN, int nan_handl
 /* 						j= i;	*/
 				j= eL+1;
 				  /* See if there is another NaN: */
-				while( j< NN && !isnanf(data[j]) ){
+				while( j< NN && !isnan(data[j]) ){
 					j++;
 				}
-				if( j< NN && isnanf(data[j]) ){
+				if( j< NN && isnan(data[j]) ){
 					sR= (j>0)? j-1 : 0; /* MAX(j-1,0); */
 					j+= 1;
-					while( j< NN && isnanf(data[j]) ){
+					while( j< NN && isnan(data[j]) ){
 						j++;
 					}
 					eR= j;
@@ -1810,7 +1810,7 @@ unsigned long fourconv3f_nan_handling( fftw_real *data, size_t NN, int nan_handl
 			}
 			else{
 				if( sL != eL ){
-					if( !isnanf(data[sL]) ){
+					if( !isnan(data[sL]) ){
 						switch( nan_handling ){
 							case 2:{
 							    double slope= (data[eL] - data[sL]) / (eL - sL);
@@ -1870,7 +1870,7 @@ unsigned long fourconv3f_nan_handling( fftw_real *data, size_t NN, int nan_handl
 					}
 				}
 				if( sR != eR ){
-					if( eR< NN && !isnanf(data[eR]) ){
+					if( eR< NN && !isnan(data[eR]) ){
 						switch( nan_handling ){
 							case 2:{
 							  double slope= (data[eR] - data[sR]) / (eR - sR);
@@ -2720,7 +2720,8 @@ int ascanf_inv_fftw ( ASCB_ARGLIST )
 /* convolve_fft[&Data,&Mask,&Output,direction[,&Data_spectrum[,&Mask_spectrum]]]	*/
 int ascanf_convolve_fft ( ASCB_ARGLIST )
 { ASCB_FRAME
-  unsigned long i, direction= 1;
+  unsigned long i;
+  int direction= 1;
   ascanf_Function *Data= NULL, *Mask= NULL, *Output= NULL;
   ascanf_Function *Data_sp= NULL, *Mask_sp= NULL;
 #ifdef DEBUG
@@ -2777,7 +2778,7 @@ int ascanf_convolve_fft ( ASCB_ARGLIST )
 		else{
 			Output= Data;
 		}
-		direction= (args[3])? 1 : 0;
+		direction= ASCANF_TRUE(args[3])? args[3] : 0;
 
 		if( ascanf_arguments> 4 ){
 			if( !(Data_sp= parse_ascanf_address(args[4], _ascanf_array, "ascanf_convolve", (int) ascanf_verbose, NULL )) || Data_sp->iarray ){
@@ -3062,7 +3063,8 @@ void _convolve( double *Data, double *Mask, double *Output, int Start, int End, 
 /* convolve[&Data,&Mask,&Output,direction,nan_handling]	*/
 int ascanf_convolve ( ASCB_ARGLIST )
 { ASCB_FRAME
-  size_t direction= 1, nan_handling, padding;
+  int direction= 1;
+  size_t nan_handling, padding;
   size_t NN;
   ascanf_Function *Data= NULL, *Mask= NULL, *Output= NULL;
 	*result= 0;
@@ -3072,7 +3074,7 @@ int ascanf_convolve ( ASCB_ARGLIST )
 	else{
 	  size_t i, N= 0, Nm= 0;
 	  double *output= NULL;
-		direction= (args[3])? 1 : 0;
+		direction= ASCANF_TRUE(args[3])? args[3] : 0;
 		if( !(Data= parse_ascanf_address(args[0], _ascanf_array, "ascanf_convolve", (int) ascanf_verbose, NULL )) || Data->iarray ){
 			ascanf_emsg= " (invalid Data array argument (1)) ";
 			ascanf_arg_error= 1;
@@ -3280,7 +3282,7 @@ static ascanf_Function fourconv_Function[] = {
 	{ "convolve_fft", ascanf_convolve_fft, 6, NOT_EOF_OR_RETURN,
 		"convolve_fft[&Data,&Mask,&Output,direction[,&data_spec[,&mask_spec]]]: (de)convolve the array pointed to by <&Data> by <&Mask>\n"
 		" storing the transform in <Output>.\n"
-		" <direction> is >=0 for convolution, <0 for deconvolution\n"
+		" <direction> is !0 for convolution, 0 for deconvolution\n"
 		" If specified, <data_spec> will receive FFT(<Data>), and <mask_spec> FFT(<Mask>)\n"
 		" <Mask> may be 0 if <mask_spec> contains a valid mask spectrum\n"
 		" All must be double arrays; <Output>, <data_spec> and/or <mask_spec> are resized to Data->N if necessary.\n"

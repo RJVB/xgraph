@@ -189,7 +189,7 @@ setopts() {
 			case $compil in
 				clang*)
 # clang accepts -O4 but activates an additional mode that is not supported by g++ ... which will be
-# called for c++ inputs...
+# called for c++ inputs... (20140107: check: ought no longer be the case!)
 					VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
 					OOPTIMOPT="-O3" #-fdelayed-branch"
 					DEFAULT_CXX="$compil -stdlib=libstdc++"

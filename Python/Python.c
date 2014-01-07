@@ -199,6 +199,7 @@ DM_Python_Interface _DM_Python_Interface_;
 // is -1 to signal that we're not actually in interactive Python code.
 int grl_HandlingEvents_ref = -1;
 
+int inInteractiveShell();
 #ifdef __GNUC__
 inline
 #endif
@@ -424,7 +425,7 @@ void Python_SysArgv0(char *argv0, char *argv1)
 		if( argc > 0 && (wargv = calloc(argc, sizeof(wchar_t*))) ){
 			for( i = 0 ; i < argc ; i++ ){
 				if( argv[i] ){
-					wargv[i] = _Py_char2wchar( argv[i], NULL ); 
+					wargv[i] = _Py_char2wchar( argv[i], NULL );
 				}
 			}
 			PySys_SetArgvEx( argc, wargv, False );

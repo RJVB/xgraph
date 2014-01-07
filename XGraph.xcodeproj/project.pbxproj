@@ -1486,9 +1486,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
+		D616D169187C68D4002AB1F4 /* cmake-All clang */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "xgraph All contrib -j4 -now DEBUG=$DEBUG";
+			buildConfigurationList = D616D16A187C68D4002AB1F4 /* Build configuration list for PBXLegacyTarget "cmake-All clang" */;
+			buildPhases = (
+			);
+			buildToolPath = scripts/cmake;
+			buildWorkingDirectory = $PROJECT_DIR;
+			dependencies = (
+			);
+			name = "cmake-All clang";
+			passBuildSettingsInEnvironment = 1;
+			productName = "cmake-All";
+		};
 		D6BCD8721451ABC900B3B804 /* cmake-All */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "xgraph All -j4 -now DEBUG=$DEBUG";
+			buildArgumentsString = "xgraph All contrib -j4 -now DEBUG=$DEBUG";
 			buildConfigurationList = D6BCD8821451ABE100B3B804 /* Build configuration list for PBXLegacyTarget "cmake-All" */;
 			buildPhases = (
 			);
@@ -1546,6 +1560,7 @@
 			targets = (
 				8DD76FA90486AB0100D96B5E /* XGraph */,
 				D6BCD8721451ABC900B3B804 /* cmake-All */,
+				D616D169187C68D4002AB1F4 /* cmake-All clang */,
 			);
 		};
 /* End PBXProject section */
@@ -1719,26 +1734,42 @@
 			};
 			name = Release;
 		};
+		D616D16B187C68D4002AB1F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = "-g";
+				PRODUCT_NAME = xgraph;
+				compiler = "clang-mp-3.3";
+			};
+			name = Debug;
+		};
+		D616D16C187C68D4002AB1F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				PRODUCT_NAME = "cmake-All";
+				ZERO_LINK = NO;
+				compiler = "clang-mp-3.3";
+			};
+			name = Release;
+		};
 		D6BCD8731451ABC900B3B804 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				DEBUG = "-g";
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = "cmake-All";
+				PRODUCT_NAME = xgraph;
+				compiler = "gcc-mp-4.7";
 			};
 			name = Debug;
 		};
 		D6BCD8741451ABC900B3B804 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = "";
 				DEBUG = "";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = "cmake-All";
-				ZERO_LINK = NO;
+				compiler = "gcc-mp-4.7";
 			};
 			name = Release;
 		};
@@ -1759,6 +1790,15 @@
 			buildConfigurations = (
 				1DEB928A08733DD80010E9CD /* Debug */,
 				1DEB928B08733DD80010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D616D16A187C68D4002AB1F4 /* Build configuration list for PBXLegacyTarget "cmake-All clang" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D616D16B187C68D4002AB1F4 /* Debug */,
+				D616D16C187C68D4002AB1F4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

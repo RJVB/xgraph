@@ -39,9 +39,6 @@ extern int debugFlag, scriptVerbose;
 
 char *DyModType[DM_Types]= { "Error", "Unloaded", "Forced-unloaded", "Ascanf library", "Support Library", "IO Library", "Python library", "Unknown library" };
 
-#ifdef __GNUC__
-inline
-#endif
 char *DyModTypeString( DyModTypes type )
 {
 	return( (type>=DM_Error && type< DM_Types)? DyModType[type] : "<unknown returncode>" );

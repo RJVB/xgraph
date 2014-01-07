@@ -9479,7 +9479,7 @@ int HandleMouse( char *progname, XButtonPressedEvent *evt, LocalWin *wi, LocalWi
 //							   theEvent.xmotion.x_root, theEvent.xmotion.y_root
 //						);
 //					}
-				
+
 				if( displacing && CheckMask(mask_rtn_pressed, ControlMask|Button1Mask|Mod1Mask) ){
 				  int dx= abs( newX- startX), dy= abs( newY- startY);
 					if( dx> dy ){
@@ -11929,6 +11929,9 @@ int Fit_After_Draw( LocalWin *wi, char *old_Wname )
 	return(0);
 }
 
+#ifdef __clang__
+static
+#endif
 #ifdef __GNUC__
 inline
 #endif

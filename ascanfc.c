@@ -692,6 +692,9 @@ char *strdup_unquote_string( char *string )
 	return(c);
 }
 
+#ifdef __clang__
+static
+#endif
 #if defined(__GNUC__)
 __inline__
 #endif
@@ -734,7 +737,8 @@ static int FASCANF_INTERNAL( int *n, char *s, double *a, char *ch, double data[A
 char *fascanf_unparsed_remaining= NULL;
 
 /* 20030330: an interface to _fascanf() that will cache fascanf_unparsed_remaining: */
-#ifdef __GNUC__
+int __fascanf( int *n, char *s, double *a, char *ch, double data[ASCANF_DATA_COLUMNS], int column[ASCANF_DATA_COLUMNS], Compiled_Form **form, int *level, int *nargs );
+#if defined(__GNUC__)
 __inline__
 #endif
 int __fascanf( int *n, char *s, double *a, char *ch, double data[ASCANF_DATA_COLUMNS], int column[ASCANF_DATA_COLUMNS], Compiled_Form **form, int *level, int *nargs )
@@ -12062,7 +12066,7 @@ int ascanf_printf ( ASCB_ARGLIST )
 			}
 		}
 		else if( targ->fp
-			   // 20120414: add an extra level of indirection to allow for printf[&fp, ...] where 
+			   // 20120414: add an extra level of indirection to allow for printf[&fp, ...] where
 			   // DCL[fp, fopen[name,mode]] OR (from python) ascanf.ExportVariable('fp', fileObject)
 			   || ((fptarg = parse_ascanf_address(targ->value, 0, "ascanf_printf", False, NULL)) && fptarg->fp)
 		){

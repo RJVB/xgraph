@@ -1,4 +1,4 @@
-/* 
+/*
 vi:ts=4:sw=4:
  * xgraph - A Simple Plotter for X
  *
@@ -1145,7 +1145,7 @@ void ExitProgramme(int ret)
 		   \ through a global Event pointer, which then will be inserted in the event queue by a "causally" called
 		   \ piece of code....
 		   */
-		  /* 
+		  /*
 			XSendEvent( disp, ActiveWin->window, False, KeyPressMask|KeyReleaseMask, (XEvent*) &xkey);
 			fprintf( StdErr, "ExitProgramme(%d): sent a ^C X11 keypress event; your request should be handled!\n", ret );
 		   */
@@ -1276,14 +1276,14 @@ char *Collect_Arguments( LocalWin *wi, char *cbuf, int Len )
 			wi->_legend_ulx, wi->_legend_uly );
 	}
 	if( wi->IntensityLegend.legend_placed ){
-		len= sprintf( &cbuf[strlen(cbuf)], "%s %g,%g ", 
+		len= sprintf( &cbuf[strlen(cbuf)], "%s %g,%g ",
 			(wi->IntensityLegend.legend_trans)? "-intensity_legend_ul1" : "-intensity_legend_ul",
 			wi->IntensityLegend._legend_ulx, wi->IntensityLegend._legend_uly );
 	}
 	if( wi->use_average_error ){
 		strcat( cbuf, "-average_error1 " );
 	}
-/* 
+/*
 	if( !wi->use_errors ){
 		strcat( cbuf, "-noerr " );
 	}
@@ -1442,7 +1442,7 @@ char *Collect_Arguments( LocalWin *wi, char *cbuf, int Len )
 	if( wi->lz_sym_y ){
 		len= sprintf( &cbuf[strlen(cbuf)], "-log_zero_sym_y %s ", strlen(wi->log_zero_sym_y)? wi->log_zero_sym_y : "\"\"" );
 	}
-/* 
+/*
 	if( wi->dump_average_values ){
 		strcat( cbuf, "-DumpAverage1 " );
 	}
@@ -2302,7 +2302,7 @@ void *_XGrealloc( void** ptr, size_t n, char *name, char *size )
 				name, ptr, size, (unsigned long) n, mem, serror()
 			);
 		}
-		// 20120622: 
+		// 20120622:
 		if( ptr ){
 			free(*ptr);
 			*ptr = NULL;
@@ -3710,7 +3710,7 @@ xtb_hret xtb_LocalWin_h( XEvent *evt, xtb_registry_info *info )
 }
 
 LocalWin *ConsWindow( LocalWin *wi)
-{  LocalWindows *new;  
+{  LocalWindows *new;
    xtb_registry_info *entry= NULL;
 	if( (new= (LocalWindows*)calloc( 1, sizeof(LocalWindows))) ){
 		new->wi= wi;
@@ -4353,7 +4353,7 @@ Window NewWindow( char *progname, LocalWin **New_Info, double _lowX, double _low
 				pad = (upY - lowY) / new_info->win_geo.padding;
 				lowY-= pad;
 				upY+= pad;
-				new_info->loY= Reform_Y( new_info, lowY, lowX ); 
+				new_info->loY= Reform_Y( new_info, lowY, lowX );
 				new_info->hiY= Reform_Y( new_info, upY, upX );
 			}
 		}
@@ -4650,7 +4650,7 @@ Window NewWindow( char *progname, LocalWin **New_Info, double _lowX, double _low
 			XMoveWindow(disp, new_info->YAv_Sort_frame.win,
 				(int) (sizehints->width- (5*BTNPAD+ new_info->YAv_Sort_frame.width+ new_info->cl_frame.width+
 											new_info->hd_frame.width+ new_info->settings_frame.width+
-											new_info->info_frame.width+ new_info->label_frame.width+ 
+											new_info->info_frame.width+ new_info->label_frame.width+
 											new_info->ssht_frame.width+ 7* BTNINTER)
 					),
 				(int) (BTNPAD)
@@ -4673,12 +4673,12 @@ Window NewWindow( char *progname, LocalWin **New_Info, double _lowX, double _low
 				(int) (BTNPAD)
 			);
 			XMoveWindow(disp, new_info->info,
-				(int) (sizehints->width- (BTNPAD+ new_info->info_frame.width+ new_info->label_frame.width+ 
+				(int) (sizehints->width- (BTNPAD+ new_info->info_frame.width+ new_info->label_frame.width+
 				new_info->ssht_frame.width+ 2* BTNINTER)),
 				(int) (BTNPAD)
 			);
 			XMoveWindow(disp, new_info->label,
-				(int) (sizehints->width- (BTNPAD+ new_info->label_frame.width+ 
+				(int) (sizehints->width- (BTNPAD+ new_info->label_frame.width+
 				new_info->ssht_frame.width+ 1* BTNINTER)),
 				(int) (BTNPAD)
 			);
@@ -5037,7 +5037,7 @@ int DelWindow( Window win, LocalWin *wi)
 	if( wi!= &StubWindow ){
 		close_X( wi->dev_info.user_state );
 		xfree( wi->dev_info.user_state );
-		  /* 20010720 Just put back the window id in order to completely remove <wi> from our linked WindowList *and* from 
+		  /* 20010720 Just put back the window id in order to completely remove <wi> from our linked WindowList *and* from
 		   \ the xtb registry! It is probably a good idea to call RemoveWindow as the last thing before destroying
 		   \ the window (but then again maybe not!), but RemoveWindow() needs to know the window id in order to be able
 		   \ to unregister <wi> from the xtb registry.
@@ -5723,7 +5723,7 @@ int Fit_XYBounds( LocalWin *wi, Boolean redraw )
 }
 
 LocalWin *StackWindows(int direction)
-{  LocalWindows *l; 
+{  LocalWindows *l;
    LocalWin *wi;
 	if( direction== 'd' ){
 	  /* Newest at bottom of "stack"	*/
@@ -5855,7 +5855,7 @@ LocalWin *ZoomWindow_PS_Size( LocalWin *wi, int set_aspect, double aspect, Boole
 				delta_x= delta_y= 0;
 			}
 			n+= 1;
-			if( Handle_An_Event( wi->event_level, 1, "ZoomWindow_PS_Size()", wi->window, 
+			if( Handle_An_Event( wi->event_level, 1, "ZoomWindow_PS_Size()", wi->window,
 					/* ExposureMask| */StructureNotifyMask|KeyPressMask|ButtonPressMask
 				)
 			){
@@ -6054,7 +6054,7 @@ LocalWin *TileWindows(int direction, int horvert )
 					hints.width = sx; hints.height = sy;
 					XSetNormalHints(disp, wi->window, &hints);
 					XGetNormalHints(disp, wi->window, &hints);
-/* 
+/*
 					wi->dev_info.area_w= hints.width;
 					wi->dev_info.area_h= hints.height;
  */
@@ -6068,7 +6068,7 @@ LocalWin *TileWindows(int direction, int horvert )
 					}
 					e= 0;
 					wi->redraw= 1;
-					while( Handle_An_Event( wi->event_level, 1, "TileWindows()", wi->window, 
+					while( Handle_An_Event( wi->event_level, 1, "TileWindows()", wi->window,
 							ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
 						)
 					){
@@ -6109,7 +6109,7 @@ LocalWin *TileWindows(int direction, int horvert )
 					hints.width = sx; hints.height = sy;
 					XSetNormalHints(disp, wi->window, &hints);
 					XGetNormalHints(disp, wi->window, &hints);
-/* 
+/*
 					wi->dev_info.area_w= hints.width;
 					wi->dev_info.area_h= hints.height;
  */
@@ -6123,7 +6123,7 @@ LocalWin *TileWindows(int direction, int horvert )
 					}
 					e= 0;
 					wi->redraw= 1;
-					while( Handle_An_Event( wi->event_level, 1, "TileWindows()", wi->window, 
+					while( Handle_An_Event( wi->event_level, 1, "TileWindows()", wi->window,
 							ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
 						)
 					){
@@ -6264,6 +6264,9 @@ LocalWin *Tile_Groups(LocalWin *wi, Boolean rescale)
 char *XLABEL_string= NULL, *YLABEL_string= NULL;
 int XLABEL_stringlen= 0, YLABEL_stringlen= 0;
 
+#ifdef __clang__
+static
+#endif
 #ifdef __GNUC__
 inline
 #endif
@@ -7989,7 +7992,7 @@ static XValues *Search_Xval_Back( XValues *XXval, long indeks, Values *Val)
 	return( XXval);
 }
 
-/* 
+/*
 static Values *Search_Val_Forward( _Values, indeks, set, N, Xval)
 Values **_Values;
 long indeks, set, N;
@@ -8038,8 +8041,8 @@ static int Print_Val( FILE *fp, long row, Values *Val, int *Xoutput, int *output
 	}
 	fputc( '\t', fp);
 	if( Val->has_error){
-		fprintf( fp, "%s\t%s", 
-			d2str( Val->y, d3str_format, NULL), 
+		fprintf( fp, "%s\t%s",
+			d2str( Val->y, d3str_format, NULL),
 			d2str( Val->err, d3str_format, NULL)
 		);
 		*output = 1;
@@ -8161,7 +8164,7 @@ static int _SpreadSheetDump( LocalWin *wi, FILE *fp, char errmsg[ERRBUFSIZE], in
 				  double x= XVAL( Set, _j), y= YVAL( Set, _j), err= ERROR( Set, _j), vv, ldy= y-err, hdy=y+err;
 
 					if( 1|| !PrintingWindow){
-						if( Handle_An_Event( wi->event_level, 1, "_SpreadSheetDump()", wi->window, 
+						if( Handle_An_Event( wi->event_level, 1, "_SpreadSheetDump()", wi->window,
 								/* ExposureMask| */StructureNotifyMask|KeyPressMask|ButtonPressMask
 							)
 						){
@@ -8251,7 +8254,7 @@ static int _SpreadSheetDump( LocalWin *wi, FILE *fp, char errmsg[ERRBUFSIZE], in
 		Val= _Values[indeks];
 		for( set= 0; set< _setNumber; set++, Val++ ){
 			if( 1|| !PrintingWindow){
-				if( Handle_An_Event( wi->event_level, 1, "_SpreadSheetDump()", wi->window, 
+				if( Handle_An_Event( wi->event_level, 1, "_SpreadSheetDump()", wi->window,
 						/* ExposureMask| */StructureNotifyMask|KeyPressMask|ButtonPressMask
 					)
 				){
@@ -8280,7 +8283,7 @@ static int _SpreadSheetDump( LocalWin *wi, FILE *fp, char errmsg[ERRBUFSIZE], in
 				else if( Val->x!= XXval->x ){
 				  /* need to check if not already present, e.g. because the previous
 				   * x (x[-1]) differed from x[-2] which equals x.
-				   * So we search backwards until we run into the same x,indeks (meaning x is present), or into a 
+				   * So we search backwards until we run into the same x,indeks (meaning x is present), or into a
 				   * different indeks, or the start of the list.
 				   */
 					XXval= Search_Xval_Back( XXval, indeks, Val);
@@ -10088,7 +10091,7 @@ static void _XGDump_UserLabels( FILE *fp, LocalWin *wi, Boolean ignore_draw_it, 
 	}
 }
 
-/* 20020901: VERSION_LISTs can contain empty line(s) when updated manually. The easiest way to 
+/* 20020901: VERSION_LISTs can contain empty line(s) when updated manually. The easiest way to
  \ handle this in a way that no problems arise reading back in the dump is to spread such a list
  \ over multiple VERSION_LIST statements, a new one for each (first) empty line encountered. This
  \ will remove the empty lines from the read-back-in result, but "tant pis".
@@ -11071,7 +11074,7 @@ int _XGraphDump( LocalWin *wi, FILE *fp, char errmsg[ERRBUFSIZE] )
 				}
 			}
 		}
-		
+
 		{ int f= 0;
 		  ascanf_Function *af= vars_ascanf_Functions[f].cdr;
 		  int rootvar= 0, header= 0, len= 0, l= 0, n= 0, tit= 0;
@@ -11898,7 +11901,7 @@ dump_var:;
 					   */
 						|| wi->DumpProcessed
 					))
-				){	
+				){
 					if( this_set->set_link ){
 						this_set->set_link*= -1;
 					}
@@ -13979,7 +13982,7 @@ int display_ascanf_variables( Window win, Boolean show_info, Boolean show_dollar
 		if( (af->type== _ascanf_variable || af->type== _ascanf_array || af->type== _ascanf_procedure ||
 				af->type== _ascanf_simplestats || af->type== _ascanf_simpleanglestats
 				|| af->type== _ascanf_python_object
-			) && 
+			) &&
 			(af->name[0]!= '$' || af->dollar_variable || show_dollars)
 		){
 			if( af->N> 0 && (af->array || af->iarray) ){
@@ -14087,7 +14090,7 @@ int display_ascanf_variables( Window win, Boolean show_info, Boolean show_dollar
 				l= sprintf( buf, "%s%s== ", space, af->name );
 				d= &buf[l];
 				while( c && *c ){
-/* 
+/*
 					if( *c== '\n' ){
 						A
 						*d++= '\\';
@@ -15057,7 +15060,7 @@ HARDCOPY_POPEN:;
 		errno= 0;
 		out_stream = popen(buf, "wb");
 		if( !out_stream || out_stream== NullDevice || PIPE_error ) {
-#ifdef TOOLBOX	    
+#ifdef TOOLBOX
 			sprintf(err, "Unable to issue command:\n  %s (%s)\n", buf, serror() );
 			xtb_error_box( curWin->window, err, "Failure" );
 #else
@@ -15074,7 +15077,7 @@ HARDCOPY_POPEN:;
 		isPIPE= True;
 #else
 		if( !(out_stream= fopen( (tempipeName= XGtempnam( getenv("TMPDIR"), "XGpipe")), "wb")) ){
-#ifdef TOOLBOX	    
+#ifdef TOOLBOX
 			sprintf(err, "Unable to open temporary pipe buffer file:\n  %s (%s)\n", tempipeName, serror() );
 			xtb_error_box( curWin->window, err, "Failure" );
 #else
@@ -15246,7 +15249,7 @@ HARDCOPY_POPEN:;
 			}
 		}
 		if (!out_stream) {
-#ifdef TOOLBOX	    
+#ifdef TOOLBOX
 			sprintf(err, "Unable to open file `%s'\n", tilde );
 			xtb_error_box( curWin->window, err, "Failure");
 #else
@@ -15457,7 +15460,7 @@ Preserve_Screen_Aspect:;
 #ifdef OLD_LANDSCAPE
 		  /* *maxheight and *maxwidth are the height and width of the
 		   \ hardopy on (standing=portrait) paper. Therefore the plot
-		   \ is rotated if height>width (although the PS printer may 
+		   \ is rotated if height>width (although the PS printer may
 		   \ change it again based on the real dimensions of the figure.
 		   */
 		if( plot_area_y* *maxheight > plot_area_x* *maxwidth ){
@@ -15861,7 +15864,7 @@ Preserve_Screen_Aspect:;
 		   */
 		HO_PreviousWin_ptr= &HO_PreviousWin;
 		HO_PreviousWin= thisWin;
-		  /* install a static, stub copy of the user_state, so that PS_STATE() will be able to show 
+		  /* install a static, stub copy of the user_state, so that PS_STATE() will be able to show
 		   \ the last used Printing setting.
 		   */
 		HO_PreviousWin_ptr->dev_info.user_state= (void*) &HO_Previous_psUI;
@@ -16523,7 +16526,7 @@ int FilterPoints_Box( LocalWin *wi, char *fname,
 	}
 	  /* 20031114: the do/while loop over the filters used to be inside the loop over the sets. The result was
 	   \ of course that first all INIT routines were executed, than all sets' BOX_FILTER commands, and then
-	   \ all sets' FINISH commands. This is counterintuitive and (esp.) different from how the corresponding 
+	   \ all sets' FINISH commands. This is counterintuitive and (esp.) different from how the corresponding
 	   \ DATA_PROCESS commands work. Thus, the loops were exchanged, necessitating _filter and _Filter which
 	   \ cache the info about the first filter to be applied.
 	   */
@@ -16599,7 +16602,7 @@ int FilterPoints_Box( LocalWin *wi, char *fname,
 			fputc( '\n', StdErr );
 #endif
 						}
-						if( filter< BOX_FILTER_FINISH && 
+						if( filter< BOX_FILTER_FINISH &&
 							(filter> BOX_FILTER_INIT || last_point< 0)
 						){
 							*ascanf_self_value= (double) i;
@@ -16763,7 +16766,7 @@ int DiscardPoint( LocalWin *wi, DataSet *this_set, int pnt_nr, int dval )
 				}
 			}
 			if( discard_change ){
-				if( wi->raw_display || 
+				if( wi->raw_display ||
 					(!*curvelen_with_discarded || (*curvelen_with_discarded && wi->init_pass))
 				){
 					set_init_pass= True;
@@ -16910,7 +16913,7 @@ int Find_Point( LocalWin *wi, double *x, double *y, DataSet **set_rtn, int do_la
 				}
 				if( !DiscardedPoint( wi, this_set, j) ){
 					if( this_set->numPoints> 10000 ){
-						if( Handle_An_Event( wi->event_level, 1, "Find_Point-" STRING(__LINE__), wi->window, 
+						if( Handle_An_Event( wi->event_level, 1, "Find_Point-" STRING(__LINE__), wi->window,
 								StructureNotifyMask|KeyPressMask|ButtonPressMask
 							)
 						){
@@ -17280,7 +17283,7 @@ int Show_Ridges( LocalWin *wi, DataSet *ridge_set )
 {  int N= 0, spot= 0, Spot= 0, ix, iy, x, y, X= wi->XOppX - wi->XOrgX + 1, Y= 3;
    int column[ASCANF_DATA_COLUMNS]= {0,1,2,3};
    double Data[ASCANF_DATA_COLUMNS], xprec, yprec;
-      /* 
+      /*
 	   \ 0 1 2
 	   \ 3 4 5
 	   \ 6 7 8
@@ -17473,7 +17476,7 @@ int Show_Ridges( LocalWin *wi, DataSet *ridge_set )
 			  /* Anyway, this was a (potential) bifurcation point	*/
 			N+= 1;
 			  /* Check for some event. This routine can take quite a while...	*/
-			if( Handle_An_Event( wi->event_level, 1, "Show_Ridges-" STRING(__LINE__), wi->window, 
+			if( Handle_An_Event( wi->event_level, 1, "Show_Ridges-" STRING(__LINE__), wi->window,
 					StructureNotifyMask|KeyPressMask|ButtonPressMask
 				) || ascanf_escape
 			){
@@ -17555,7 +17558,7 @@ int Show_Ridges2( LocalWin *wi, DataSet *ridge_set )
 {  int N= 0, spot= 0, Spot= 0, ix, iy, x, y, Y= wi->XOppY - wi->XOrgY + 1, X= 3;
    int column[ASCANF_DATA_COLUMNS]= {0,1,2,3};
    double Data[ASCANF_DATA_COLUMNS], xprec, yprec;
-      /* 
+      /*
 	   \ 0 1 2
 	   \ 3 4 5
 	   \ 6 7 8
@@ -17748,7 +17751,7 @@ int Show_Ridges2( LocalWin *wi, DataSet *ridge_set )
 			  /* Anyway, this was a (potential) bifurcation point	*/
 			N+= 1;
 			  /* Check for some event. This routine can take quite a while...	*/
-			if( Handle_An_Event( wi->event_level, 1, "Show_Ridges-" STRING(__LINE__), wi->window, 
+			if( Handle_An_Event( wi->event_level, 1, "Show_Ridges-" STRING(__LINE__), wi->window,
 					StructureNotifyMask|KeyPressMask|ButtonPressMask
 				) || ascanf_escape
 			){
@@ -18469,7 +18472,7 @@ int Average( LocalWin *wi, int *av_sets, char *filename, int sub_div, int line_c
 			);
 			SS_Add_Data_( SS_OBS, 1, (SS_X.count+ SS_Y.count)/2.0, 1);
 			ap= AddEllipse( &av_set, mx, my, sx, sy, 720, angle1,
-				&spot, &Spot, Data, column, filename, sub_div, line_count, NULL, buffer, 
+				&spot, &Spot, Data, column, filename, sub_div, line_count, NULL, buffer,
 				proc
 			);
 #if ADVANCED_STATS == 1

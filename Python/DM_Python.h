@@ -94,6 +94,9 @@
 	extern char *PyObject_Name( PyObject *var );
 	extern ascanf_Function *make_ascanf_python_object( ascanf_Function *af, PyObject *var, char *caller );
 
+	// 20140107: function declaration so that clang/C99 will allow the function to be accessible from outside Python.c even
+	// if it is defined inline.
+	extern int python_check_interrupted();
 #	define CHECK_INTERRUPTED()	if( python_check_interrupted() ){ return(NULL); }
 
 #else /* !__PYTHON_MODULE_SRC__ */
