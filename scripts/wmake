@@ -2,7 +2,7 @@
 
 echo
 if [ "${WCONFIGURE}" = "" ] ;then
-	WCONFIGURE="wconfigure.env"
+	WCONFIGURE="./wconfigure.env"
 	echo "# $0 $@" 1>&2
 else
 	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
