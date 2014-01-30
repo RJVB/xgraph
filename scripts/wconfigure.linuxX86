@@ -5,10 +5,10 @@ export ECHO
 
 RWSTRINGS=0 ; export RWSTRINGS
 if [ "$CONFIGURE" = "" ] ;then
-	if [ "`basename $0`" == "wfink" ] ;then
+	if [ "`basename $0`" = "wfink" ] ;then
 		CONFIGURE="fink"
 	else
-		CONFIGURE="configure"
+		CONFIGURE="./configure"
 	fi
 fi
 
@@ -31,8 +31,8 @@ cliPYTHONPATH="${PYTHONPATH}"
 cliMACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 set -x
 
-if [ -r wconfigure.env ] ;then
-	. wconfigure.env
+if [ -r ./wconfigure.env ] ;then
+	. ./wconfigure.env
 fi
 
 set +x

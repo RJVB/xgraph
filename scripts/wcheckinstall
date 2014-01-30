@@ -1,0 +1,56 @@
+#!/bin/sh
+# "W" interface to the Linux (Debian) checkinstall command
+
+
+if [ "${WCONFIGURE}" = "" ] ;then
+	WCONFIGURE="./wconfigure.env"
+	echo "# $0 $@" 1>&2
+else
+	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
+fi
+/bin/echo -n ']0;'"$0 $@"'' 1>&2
+echo "# `date`" 1>&2
+
+GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE
+GCCOPT_QUIET=1 ; export GCCOPT_QUIET
+
+if [ "$NOWCC" != "" ] ;then
+	KK="kk$$"
+	${NOWCC} -cli > ${KK} 2>/dev/null
+	compiler="`fgrep 'compiler=' ${KK} | sed -e 's/compiler=\([^ ]*\).*/\1/'`" ; export compiler
+	CPP="`fgrep 'CPP=' ${KK} | sed -e 's/CPP=\([^ ]*\).*/\1/'`" ; export CPP
+	CC="`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\).*/\1/'`" ; export CC
+	OPTS=`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\)\(.*\)/\2/'`
+	CPPFLAGS=`fgrep CPPFLAGS= ${KK} | sed -e 's/CPPFLAGS=//'` ; export CPPFLAGS
+	CFLAGS=`fgrep CFLAGS= ${KK} | sed -e 's/CFLAGS=//'`
+	CFLAGS="${OPTS}${CFLAGS}" ; export CFLAGS
+	CXX="$CC" ; export CXX
+	CXXFLAGS="$CFLAGS" ; export CXXFLAGS
+	OBJC="${CC}" ; export OBJC
+	OBJCFLAGS="${CFLAGS} ${OBJCFLAGS}" ; export OBJCFLAGS
+	if [ "$MACOSX_DEPLOYMENT_TARGET" = "" ] ;then
+		macosx_deployment_target="`fgrep 'MACOSX_DEPLOYMENT_TARGET=' ${KK} | sed -e 's/MACOSX_DEPLOYMENT_TARGET=\([^ ]*\).*/\1/'`"
+		if [ "$macosx_deployment_target" != "" ] ;then
+			MACOSX_DEPLOYMENT_TARGET="${macosx_deployment_target}" ; export MACOSX_DEPLOYMENT_TARGET
+		fi
+	fi
+	if [ "$GCC" = "" ] ;then
+		GCC="${CC}" ; export GCC
+	fi
+	if [ "$GXX" = "" ] ;then
+		GXX="${CXX}" ; export GXX
+	fi
+	rm -f ${KK}
+	echo "checkinstall $@"
+	time checkinstall "$@"
+	RET=$?
+else
+	if [ -r "${WCONFIGURE}" ] ;then
+		. "${WCONFIGURE}"
+	fi
+	time checkinstall "$@"
+	RET=$?
+fi
+times
+echo "# `date`" 1>&2
+exit $RET
