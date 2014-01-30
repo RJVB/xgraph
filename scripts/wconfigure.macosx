@@ -5,7 +5,7 @@ if [ "$CONFIGURE" = "" ] ;then
 	if [ "`basename $0`" == "wfink" ] ;then
 		CONFIGURE="fink"
 	else
-		CONFIGURE="configure"
+		CONFIGURE="./configure"
 	fi
 fi
 
@@ -36,7 +36,7 @@ cliPOSTCONFIGEDIT="${POSTCONFIGEDIT}"
 set -x
 
 if [ "${WCONFIGURE}" = "" ] ;then
-	WCONFIGURE="wconfigure.env"
+	WCONFIGURE="./wconfigure.env"
 fi
 
 if [ -r "${WCONFIGURE}" ] ;then
