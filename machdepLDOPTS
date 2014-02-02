@@ -105,37 +105,42 @@ case $MACH in
 				;;
 			Python26Module)
 				PDIR=$3
+				#echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython2.6"
 				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython2.6"
 				;;
 			Python27Module)
 				PDIR=$3
-				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython2.7"
+				#echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython2.7"
+				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -Wl,-rpath ${PDIR}/lib `python2.7-config --ldflags --libs`"
 				;;
 			Python31Module)
 				PDIR=$3
-				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.1"
+				#echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.1"
+				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -Wl,-rpath ${PDIR}/lib `python3.1-config --ldflags --libs`"
 				;;
 			Python32Module)
 				PDIR=$3
-				case ${OS} in
-					CYGWIN*|cygwin*)
-						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.2m"
-						;;
-					*)
-						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.2mu"
-						;;
-				esac
+#				case ${OS} in
+#					CYGWIN*|cygwin*)
+#						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.2m"
+#						;;
+#					*)
+#						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.2mu"
+#						;;
+#				esac
+				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -Wl,-rpath ${PDIR}/lib `python3.2-config --ldflags --libs`"
 				;;
 			Python33Module)
 				PDIR=$3
-# 				case ${OS} in
-# 					CYGWIN*|cygwin*)
-						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.3m"
-# 						;;
-# 					*)
-# 						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.3mu"
-# 						;;
-# 				esac
+## 				case ${OS} in
+## 					CYGWIN*|cygwin*)
+#						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.3m"
+## 						;;
+## 					*)
+## 						echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -lpython3.3mu"
+## 						;;
+## 				esac
+				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -Wl,-rpath ${PDIR}/lib `python3.3-config --ldflags --libs`"
 				;;
 		esac
 		;;
