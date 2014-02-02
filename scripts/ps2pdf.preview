@@ -43,13 +43,20 @@ if [ "$ACROREAD" = "" ] ;then
 	if [ "${DESKTOP_SESSION}" = "gnome" ] ;then
 		ACROREAD=evince
 		WAIT=""
+		${CAT} > "${TMP}"
 	elif [ "`uname`" = "Darwin" ] ;then
 		ACROREAD="open"
 # 		ACROREAD="open -a /Applications/Preview.app"
 		WAIT="sleep 10"
+		${CAT} | sed -e 's/\(^%%For.*\)\\303\\251/\1é/g'  -e 's/\(^%%For.*\)Ã©/\1é/g' > "${TMP}"
+	elif [ "${DESKTOP_SESSION}" = "kde-plasma" ] ;then
+		ACROREAD="okular"
+		WAIT="sleep 10"
+		${CAT} > "${TMP}"
 	else
 		ACROREAD=acroread
 		WAIT=""
+		${CAT} > "${TMP}"
 	fi
 fi
 export ACROREAD
@@ -61,8 +68,6 @@ if [ "$GS_FONTPATH" = "" ] ;then
 	fi
 fi
 
-# ${CAT} > "${TMP}"
-${CAT} | sed -e 's/\(^%%For.*\)\\303\\251/\1é/g'  -e 's/\(^%%For.*\)Ã©/\1é/g' > "${TMP}"
 
 ls -lsF "${TMP}" 2>&1 | tee "${LOG}"
 

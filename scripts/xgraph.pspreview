@@ -31,7 +31,7 @@ ISEPS="`grep '^%!PS.*EPSF' ${XPV}`"
 			# Assume unix:0.0
 			DISPLAY=${HOST-`hostname`}:0.0
 			;;
-		:0.0|localhost:*)
+		:0|:0.0|localhost:*)
 			;;
 		:*|unix:*|`hostname`:0.0)
 			DISPLAY=${HOST-`hostname`}`expr "$DISPLAY" : "[^:]*\(.*\)"`
