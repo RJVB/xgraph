@@ -4066,7 +4066,12 @@ int ReadData(FILE *stream, char *the_file, int filenr)
 				  int sv= scriptVerbose;
 					fprintf( StdErr, "You're loading a shared library: will load it as a dynamic module!\n" );
 					scriptVerbose= True;
-					LoadDyMod( the_file, RTLD_LAZY|RTLD_GLOBAL,  False, False );
+					if( strcasestr( the_file, "Python" ) ){
+						LoadDyMod( the_file, RTLD_NOW|RTLD_GLOBAL,  False, False );
+					}
+					else{
+						LoadDyMod( the_file, RTLD_LAZY|RTLD_GLOBAL,  False, False );
+					}
 					scriptVerbose= sv;
 					ReadData_RETURN(maxSize);
 				}

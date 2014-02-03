@@ -1176,7 +1176,7 @@ int Init_Python()
 		}
 		libName = (XG_PYTHON_DYMOD)? XG_PYTHON_DYMOD : pylib;
 		if( !loadFailed ){
-			dm_pythonLib= LoadDyMod( (XG_PYTHON_DYMOD)? XG_PYTHON_DYMOD : pylib, RTLD_LAZY|RTLD_GLOBAL, True,False );
+			dm_pythonLib= LoadDyMod( (XG_PYTHON_DYMOD)? XG_PYTHON_DYMOD : pylib, RTLD_NOW|RTLD_GLOBAL, True,False );
 		}
 		if( !dm_pythonLib ){
 			fprintf( StdErr,

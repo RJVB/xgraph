@@ -1975,16 +1975,16 @@ DyModAutoLoadTables _AutoLoadTable[]= {
 	{ "EulerSum",	"integrators", RTLD_LAZY|RTLD_GLOBAL },
 	{ "EulerSum-NaNResets",	"integrators", RTLD_LAZY|RTLD_GLOBAL },
 
-	{ "Python-Shell",	"Python", RTLD_LAZY|RTLD_GLOBAL },
-	{ "Python-Call",	"Python", RTLD_LAZY|RTLD_GLOBAL },
-	{ "Python-Eval",	"Python", RTLD_LAZY|RTLD_GLOBAL },
-	{ "Python-EvalValue",	"Python", RTLD_LAZY|RTLD_GLOBAL },
-	{ "Python-EvalFile",	"Python", RTLD_LAZY|RTLD_GLOBAL },
-	{ "Python-Compile",	"Python", RTLD_LAZY|RTLD_GLOBAL },
-	{ "Python-DelCompiled",	"Python", RTLD_LAZY|RTLD_GLOBAL },
-	{ "Python-PrintCompiled",	"Python", RTLD_LAZY|RTLD_GLOBAL },
-	{ "Python-EvalCompiled",	"Python", RTLD_LAZY|RTLD_GLOBAL },
-	{ "Python-EvalValueCompiled",	"Python", RTLD_LAZY|RTLD_GLOBAL },
+	{ "Python-Shell",	"Python", RTLD_NOW|RTLD_GLOBAL },
+	{ "Python-Call",	"Python", RTLD_NOW|RTLD_GLOBAL },
+	{ "Python-Eval",	"Python", RTLD_NOW|RTLD_GLOBAL },
+	{ "Python-EvalValue",	"Python", RTLD_NOW|RTLD_GLOBAL },
+	{ "Python-EvalFile",	"Python", RTLD_NOW|RTLD_GLOBAL },
+	{ "Python-Compile",	"Python", RTLD_NOW|RTLD_GLOBAL },
+	{ "Python-DelCompiled",	"Python", RTLD_NOW|RTLD_GLOBAL },
+	{ "Python-PrintCompiled",	"Python", RTLD_NOW|RTLD_GLOBAL },
+	{ "Python-EvalCompiled",	"Python", RTLD_NOW|RTLD_GLOBAL },
+	{ "Python-EvalValueCompiled",	"Python", RTLD_NOW|RTLD_GLOBAL },
 };
 
 int AutoLoads= sizeof(_AutoLoadTable)/sizeof(DyModAutoLoadTables);

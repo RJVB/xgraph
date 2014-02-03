@@ -14550,7 +14550,12 @@ int add_ascanf_functions_with_autoload( ascanf_Function *array, int n, char* lib
 			for( i= 0; i< n; i++ ){
 				new[i].functionName= array[i].name;
 				new[i].DyModName= libname;
-				new[i].flags= RTLD_LAZY|RTLD_GLOBAL;
+				if( strcasestr( libname, "Python" ) ){
+					new[i].flags= RTLD_NOW|RTLD_GLOBAL;
+				}
+				else{
+					new[i].flags= RTLD_LAZY|RTLD_GLOBAL;
+				}
 			}
 			if( !(AutoLoadTable= Add_LoadDyMod( AutoLoadTable, &AutoLoads, new, n )) ){
 				m= 0;
