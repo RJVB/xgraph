@@ -6,6 +6,10 @@ IDENTIFY( "ascanf library module for interfacing with Python" );
 #endif
 
 
+#ifdef linux
+#	define __USE_GNU
+#endif
+
 #include "Python/Python_headers.h"
 #include "Python/Py_InitModule.h"
 

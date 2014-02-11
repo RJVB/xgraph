@@ -21,6 +21,10 @@ extern FILE *StdErr;
 
 #include "xgerrno.h"
 
+#ifdef linux
+#	define __USE_GNU
+#endif
+
 #include <string.h>
 #include <strings.h>
 
