@@ -1,4 +1,4 @@
-/* 
+/*
 vim:ts=4:sw=4:
  * xgraph - A Simple Plotter for X
  *
@@ -33,7 +33,7 @@ IDENTIFY( "ReadData() c.s." );
 
 #	include <sys/types.h>
 #	include <sys/stat.h>
-#	ifdef __MACH__
+#	if defined(__MACH__) || defined(__APPLE_CC__)
 #		include <sys/file.h>
 #	endif
 #	include <fcntl.h>
@@ -1579,7 +1579,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 /* 				}	*/
 				ActiveWin= NULL;
 				ascanf_window= 0;
-				fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\"==%s: no window 0x%lx or 0x%lx belongs to xgraph\n", 
+				fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\"==%s: no window 0x%lx or 0x%lx belongs to xgraph\n",
 					filename, sub_div, line_count, buffer, d2str( ReadData_proc.param_range[0], NULL, NULL),
 					lwi1, lwi2
 				);
@@ -1590,7 +1590,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 			if( ActiveWin ){
 				ascanf_window= ActiveWin->window;
 			}
-			fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\": missing window id\n", 
+			fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\": missing window id\n",
 				filename, sub_div, line_count, buffer
 			);
 		}
@@ -1739,7 +1739,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 
 				AdaptWindowSize( wi, wi->window, win_attr.width, win_attr.height);
 				wi->halt= 0;
-				while( Handle_An_Event( wi->event_level, 1, "ReadData-GEOM", wi->window, 
+				while( Handle_An_Event( wi->event_level, 1, "ReadData-GEOM", wi->window,
 						ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
 					)
 				){
@@ -1834,7 +1834,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 						  NULL,
 						  wi, NULL, &curs
 			);
-			e+= Handle_An_Events( wi->event_level, 1, "ReadData-CLONE-parent", wi->window, 
+			e+= Handle_An_Events( wi->event_level, 1, "ReadData-CLONE-parent", wi->window,
 					ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
 			);
 			if( debugFlag || scriptVerbose ){
@@ -1869,7 +1869,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 			}
 			wi->halt= 0;
 			XG_sleep_once( 0.1, True );
-			while( Handle_An_Event( wi->event_level, 1, "ReadData-ICONIFY", 0*wi->window, 
+			while( Handle_An_Event( wi->event_level, 1, "ReadData-ICONIFY", 0*wi->window,
 					ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
 				)
 			){
@@ -1920,7 +1920,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 			debugFlag= 1, debugLevel= -2;
 #endif
 			XSync( disp, False );
-			while( Handle_An_Event( wi->event_level, 1, "ReadData-DEICONIFY", 0*wi->window, 
+			while( Handle_An_Event( wi->event_level, 1, "ReadData-DEICONIFY", 0*wi->window,
 					ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
 				)
 			){
@@ -1964,7 +1964,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 			XSync( disp, False );
 		}
 		if( wi ){
-			while( Handle_An_Event( wi->event_level, 1, "ReadData-FLUSH_EVENTS", 0, 
+			while( Handle_An_Event( wi->event_level, 1, "ReadData-FLUSH_EVENTS", 0,
 					ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
 				)
 			){
@@ -2243,7 +2243,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 				ActiveWin= lwi;
 				if( debugFlag || scriptVerbose ){
 					fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\"\t: %s in window 0x%lx %02d:%02d:%02d\n",
-						filename, sub_div, line_count, buffer, 
+						filename, sub_div, line_count, buffer,
 						(ActiveWin->raw_display)? "raw mode" : "processing mode",
 						ActiveWin,
 						ActiveWin->parent_number, ActiveWin->pwindow_number, ActiveWin->window_number
@@ -2340,7 +2340,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 					}
 					if( debugFlag || scriptVerbose ){
 						fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\"\t: %s in window 0x%lx %02d:%02d:%02d\n",
-							filename, sub_div, line_count, buffer, 
+							filename, sub_div, line_count, buffer,
 							(lwi->silenced)? "silent mode" : "display active",
 							lwi,
 							lwi->parent_number, lwi->pwindow_number, lwi->window_number
@@ -2769,7 +2769,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 					}
 				}
 				else{
-					fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\": missing or invalid argument(s) assoc[%d]={", 
+					fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\": missing or invalid argument(s) assoc[%d]={",
 						filename, sub_div, line_count, buffer, N
 					);
 					fprintf( StdErr, "%s", d2str( param_scratch[0], NULL, NULL) );
@@ -2808,7 +2808,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 					hit= 1;
 				}
 				else{
-					fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\": missing or invalid argument(s) or invalid specified set (%d)\n", 
+					fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\": missing or invalid argument(s) or invalid specified set (%d)\n",
 						filename, sub_div, line_count, buffer, set_nr
 					);
 				}
@@ -2844,7 +2844,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 				if( debugFlag || scriptVerbose ){
 					fprintf( StdErr,
 						"ReadData([Interactive_Commands()]%s,%d,%d) \"%s\"\t: %d sets matched&%s in window 0x%lx %02d:%02d:%02d\n",
-						filename, sub_div, line_count, buffer, 
+						filename, sub_div, line_count, buffer,
 						hit,
 						(setprop== lwi->draw_set)?
 							(proc)? "processed" : "drawn" :
@@ -2856,7 +2856,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 			}
 			else{
 				fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\"\t: not found in window 0x%lx %02d:%02d:%02d\n",
-					filename, sub_div, line_count, buffer, 
+					filename, sub_div, line_count, buffer,
 					ActiveWin,
 					ActiveWin->parent_number, ActiveWin->pwindow_number, ActiveWin->window_number
 				);
@@ -2867,7 +2867,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 			if( ActiveWin && ActiveWin!= &StubWindow ){
 				ascanf_window= ActiveWin->window;
 			}
-			fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\": missing argument(s)\n", 
+			fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\": missing argument(s)\n",
 				filename, sub_div, line_count, buffer
 			);
 		}
@@ -3155,7 +3155,7 @@ static int Interactive_Commands( DataSet *this_set, char *optbuf, char *buffer, 
 					if( ActiveWin ){
 						ascanf_window= ActiveWin->window;
 					}
-					fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\"==%s: no such window belongs to xgraph\n", 
+					fprintf( StdErr, "ReadData([Interactive_Commands()]%s,%d,%d) \"%s\"==%s: no such window belongs to xgraph\n",
 						filename, sub_div, line_count, buffer, d2str( ReadData_proc.param_range[0], NULL, NULL)
 					);
 				}
@@ -3455,7 +3455,7 @@ int UpdateLineCount( FILE *fp, FileLinePos *flpos, int line_count )
 	xfree(extremes);\
 	return(val)
 
-char *xgiReadString( char *buffer, int len, FILE *fp, int *line, 
+char *xgiReadString( char *buffer, int len, FILE *fp, int *line,
 	DEFMETHOD( StartJoining, (char *buf, char *first_nspace, int len, int instring), int ),
 	DEFMETHOD( EndJoining, (char *buf, char *first_nspace, int len, int instring), int )
 )
@@ -3527,7 +3527,7 @@ int doIO_Import( const char *libname, char *fname, ReadData_Pars *currentFile, R
   DyModLists *dm_ioLib;
   DM_IO_Handler *dm_io;
 
-	if( (dm_ioLib= LoadDyMod( (char*) libname, RTLD_LAZY|RTLD_GLOBAL, True, False )) 
+	if( (dm_ioLib= LoadDyMod( (char*) libname, RTLD_LAZY|RTLD_GLOBAL, True, False ))
 		&& dm_ioLib->type== DM_IO && (dm_io= dm_ioLib->libHook) && dm_io->type== DM_IO && dm_io->import
 	){
 		if( fname && *fname ){
@@ -4170,7 +4170,7 @@ int ReadData(FILE *stream, char *the_file, int filenr)
 			line_count= UpdateLineCount( stream, &flpos, line_count );
 			fprintf( StdErr,
 				"file: `%s', line: %d.%d: line %s after unknown label (%s)\n",
-					filename, sub_div, line_count, 
+					filename, sub_div, line_count,
 					(accept)? "accepted" : "rejected",
 					buffer
 			);
@@ -5762,7 +5762,7 @@ handle_endian_cmd:;
 								this_set->markFlag= 1;
 						}
 						else if( debugFlag){
-						  /* for the time being, polar plots can only be requested on the 
+						  /* for the time being, polar plots can only be requested on the
 						   * command-line
 						   */
 							fputs( "\tbarplot overridden by -polar\n", StdErr);
@@ -6055,7 +6055,7 @@ properties_colours:;
 				noLines= this_set->noLines;
 				pixelMarks= this_set->pixelMarks;
 				barFlag= this_set->barFlag;
-/* 
+/*
 				polarFlag= this_set->polarFlag;
 				radix= this_set->radix;
 				radix_offset= this_set->radix_offset;
@@ -6476,7 +6476,7 @@ EXTRATEXT:;
 									IF_Frame->alternative= True;
 									if( debugFlag || scriptVerbose ){
 										fprintf( StdErr, "%s: line %d.%d (%s): *ELSE*/*ELIF* command level %d (belongs to %s?!): turning back on evaluation.\n",
-											filename, sub_div, 
+											filename, sub_div,
 											(line_count= UpdateLineCount( stream, &flpos, line_count)), optbuf, IF_level, IF_Frame->expr
 										);
 									}
@@ -6488,7 +6488,7 @@ EXTRATEXT:;
 								}
 								else{
 									fprintf( StdErr, "%s: line %d.%d (%s): stray *ELSE*/*ELIF* command level %d (belongs to %s?!) ignored\n",
-										filename, sub_div, 
+										filename, sub_div,
 										(line_count= UpdateLineCount( stream, &flpos, line_count)), optbuf, IF_level, IF_Frame->expr
 									);
 								}
@@ -6498,7 +6498,7 @@ EXTRATEXT:;
 							if( IF_level== IF_Frame->level ){
 								if( debugFlag || scriptVerbose ){
 									fprintf( StdErr, "%s: line %d.%d (%s): *ENDIF* command level %d (belongs to %s?!): turning back on evaluation.\n",
-										filename, sub_div, 
+										filename, sub_div,
 										(line_count= UpdateLineCount( stream, &flpos, line_count)), optbuf, IF_level, IF_Frame->expr
 									);
 								}
@@ -6563,7 +6563,7 @@ EXTRATEXT:;
 					  int l= sprintf( buf, "Current file: " );
 					  char *fn= (ReadData_thisCurrentFileName)? ReadData_thisCurrentFileName : the_file;
 						time_stamp( (ReadData_thisCurrentFP)? ReadData_thisCurrentFP : stream,
-							(fn)? fn : "stdin", &buf[l], True, "\n" 
+							(fn)? fn : "stdin", &buf[l], True, "\n"
 						);
 						fputs( buf, fp );
 						if( popup ){
@@ -8137,7 +8137,7 @@ init_begin:;
 					   \ baptise it
 					   */
 					{
-/* 
+/*
 #ifdef __GNUC__
 					  char legend[ReadData_proc.param_before_len+ReadData_proc.param_after_len+ReadData_proc.param_functions_len+128];
 #else
@@ -8184,7 +8184,7 @@ init_begin:;
 								d2str( ReadData_proc.param_range[2], "%g", NULL)
 							);
 							if( !ReadData_proc.param_before_printed ){
-								n += snprintf( &legend[n], legend_len - n, "%s%s", 
+								n += snprintf( &legend[n], legend_len - n, "%s%s",
 									(ReadData_proc.param_before_len)? " *PARAM_BEFORE*" : "",
 									(ReadData_proc.param_before_len)? ReadData_proc.param_before : ""
 								);
@@ -8296,7 +8296,7 @@ init_begin:;
 						}
 					}
 					ok= !ascanf_arg_error;
-					
+
 					  /* if this is a virgin set, pre-allocate enough points for reasons
 					   \ of memory efficiency.
 					   */
@@ -10112,7 +10112,7 @@ init_begin:;
 					  /* 20040919: some check against the *EXTREMES* data. If not passed,
 					   \ chances are that the binary data has been copied manually from a file from a different platform,
 					   \ without taking care to set the correct endianness info. User could then be warned about that.
-					   \ Be careful to cast (back) to the proper datatype, as BinaryDump.data and extremes are double*, but 
+					   \ Be careful to cast (back) to the proper datatype, as BinaryDump.data and extremes are double*, but
 					   \ the data can have been promoted from floats (which could trip the test spuriously).
 					   \ (NB: this happened to me, so it is not so far-fetched a situation!)
 					   */
@@ -10980,7 +10980,7 @@ ascii_ReadData:;
 				}
 				_incr_width= 0;
 			}
-					
+
 
 /* now the real
 int ReadData(stream, filename)
@@ -11112,7 +11112,7 @@ next_line:;
 		   \ sets) file. It crashed trying to xfree a setName previously allocated with XGstrdup(), making me suspect
 		   \ writing out of stringbounds somewhere. So I set a debugger hack that allocated 8bytes more in XGstrdup, and then
 		   \ the crash was when xfreeing inFileNames[7] which should be NULL, but contained 0x1 ... I had the additional luck
-		   \ that for once a watchpoint worked, which broke at the line updating this_set->fileNumber below. 
+		   \ that for once a watchpoint worked, which broke at the line updating this_set->fileNumber below.
 		   \ I finally found that the 3rd statement was a *ARGUMENTS* containing
 		   \ -maxsets 1024, which prompted an expansion, and the result was that this_set==inFileNames (by some bizarre piece
 		   \ of luck this was perfectly always the case).

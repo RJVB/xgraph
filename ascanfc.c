@@ -40,6 +40,9 @@ IDENTIFY( "ascanf main module" );
 #include <float.h>
 #include <math.h>
 
+#include "ux11/ux11.h"
+#include "xtb/xtb.h"
+
 #if defined(__APPLE__) && (defined(i386) || defined(__i386__) || defined(x86_64) || defined(__x86_64__))
 #	define USE_SSE2
 #	include <xmmintrin.h>
@@ -103,9 +106,6 @@ int *local_Functions;
 extern int RemoteConnection, SetIconName;
 
 #include <signal.h>
-
-#include "ux11/ux11.h"
-#include "xtb/xtb.h"
 
 #undef _IDENTIFY
 #include "Macros.h"
