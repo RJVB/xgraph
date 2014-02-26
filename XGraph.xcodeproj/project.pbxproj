@@ -693,6 +693,7 @@
 		D67963460E0BA61700E282EF /* DataSet.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = DataSet.c; path = Python/DataSet.c; sourceTree = "<group>"; };
 		D67963470E0BA61700E282EF /* Python.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Python.c; path = Python/Python.c; sourceTree = "<group>"; };
 		D67963480E0BA61700E282EF /* AscanfCall.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = AscanfCall.c; path = Python/AscanfCall.c; sourceTree = "<group>"; };
+		D681F6F818B26B0000C8885D /* AppleVecLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleVecLib.h; sourceTree = "<group>"; };
 		D6B36AEB0E1D374100556945 /* wmachine.cygwin */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = wmachine.cygwin; path = scripts/wmachine.cygwin; sourceTree = "<group>"; };
 		D6B36AEC0E1D374100556945 /* touch.sgi */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = touch.sgi; path = scripts/touch.sgi; sourceTree = "<group>"; };
 		D6B36AED0E1D374100556945 /* ccopt.macII */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = ccopt.macII; path = scripts/ccopt.macII; sourceTree = "<group>"; };
@@ -769,7 +770,7 @@
 		D6B36B960E1D3BAB00556945 /* GSRio.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = GSRio.c; path = Import/GSRio.c; sourceTree = "<group>"; };
 		D6B36B9E0E1D3BD800556945 /* ief.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ief.h; path = Import/ief.h; sourceTree = "<group>"; };
 		D6BCD90F145465EA00B3B804 /* asscanf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = asscanf.c; path = vscanf/asscanf.c; sourceTree = "<group>"; };
-		D6BECA62146813DB009AF681 /* sse_mathfun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sse_mathfun.h; sourceTree = "<group>"; };
+		D6BECA62146813DB009AF681 /* sse_mathfun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sse_mathfun.h; path = sse_mathfun/sse_mathfun.h; sourceTree = "<group>"; };
 		D6BECAF314683219009AF681 /* arrayvops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arrayvops.h; sourceTree = "<group>"; };
 		D6BECAF414683219009AF681 /* arrayvops.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = arrayvops.cpp; sourceTree = "<group>"; };
 		D6EBFCCE11D0ADF0009F11C0 /* Python_headers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Python_headers.h; path = Python/Python_headers.h; sourceTree = "<group>"; };
@@ -1185,6 +1186,7 @@
 			isa = PBXGroup;
 			children = (
 				D67260251579311800FE8669 /* macstl */,
+				D681F6F818B26B0000C8885D /* AppleVecLib.h */,
 				D6BECA62146813DB009AF681 /* sse_mathfun.h */,
 				D651278A136ECFA400AF508B /* 64typedefs.h */,
 				D6614AA2128F1C8900ECF74A /* LocalWin.h */,
