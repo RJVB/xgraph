@@ -1102,6 +1102,16 @@ int XG_XSync( Display *disp, Bool discard )
 void CleanUp();
 unsigned int X11_c_KeyCode= 0;
 
+static void KillOurselves( int sig )
+{
+	if( sig == SIGALRM ){
+#ifdef DEBUG
+		fprintf( StdErr, "Timeout - raising SIGTERM\n");
+#endif
+		raise(SIGTERM);
+	}
+}
+
 void ExitProgramme(int ret)
 { LocalWindows *WL= WindowList;
 	if( !StartUp && !Exitting ){
@@ -1185,7 +1195,16 @@ void ExitProgramme(int ret)
 	Num_Windows= 0;
 	ActiveWin= NULL;
 	if( ret>= 0 ){
+	  static struct itimerval rtt, ortt;
 		CleanUp();
+		  /* restore the previous setting of the timer.	*/
+		setitimer( ITIMER_REAL, &ortt, &rtt );
+		rtt.it_value.tv_sec= (unsigned long) 15;
+		rtt.it_value.tv_usec= (unsigned long) 0;
+		rtt.it_interval.tv_sec= 0;
+		rtt.it_interval.tv_usec= 0;
+		signal( SIGALRM, KillOurselves );
+		setitimer( ITIMER_REAL, &rtt, &ortt );
 		exit( ret );
 	}
 	else{
