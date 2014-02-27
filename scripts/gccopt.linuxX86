@@ -952,7 +952,7 @@ if [ "$RET" != "0" ] ;then
 fi
 
 if [ "${OUTPUT}" != "" -a "${LINK}" = 1 -a $QUIET != 1 ] ;then
-	ll ${OUTPUT}*
+	ls -l ${OUTPUT}*
 fi
 
 if [ "$COMPRESS" != "" ] ;then

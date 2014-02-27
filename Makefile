@@ -139,7 +139,7 @@ $(TARGET):	config.h $(DEPLIBS) main.c xgsupport.o xgraph.o
 # it will replace ${TARGET} by a wrapper script that will cause the debugger to be invoked (exe. in ${TARGET}.bin).
 	./make_debug $(TARGET) CFLAGS= $(CFLAGS) XCFLAGS= $(XCFLAGS) XG_FLAGS= $(XG_FLAGS) DEBUGSUPPORT= $(DEBUGSUPPORT)
 	rm buildplatform.h
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/ln2 $(PWD)/scripts/noprocs.xg $(PREFSDIR) 2>&1
 	-scripts/ln2 $(PWD)/scripts/xg_init.xg $(PREFSDIR) 2>&1
 	touch -r $(TARGET) .make_success
@@ -330,40 +330,40 @@ xgtest:		xgtest.o
 
 constants.so: constants.c $(DYMOD_DEPHEADERS)
 	$(DCC) $(STRIP) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $< #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 stats.so: stats.c LineCircle.c $(DYMOD_DEPHEADERS) xgraph.h
 	$(DCC) $(STRIP) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $< #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 utils.so: utils.c LineCircle.c $(DYMOD_DEPHEADERS) xgraph.h
 	$(DCC) $(STRIP) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $< $(lX11) #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 strings.so: strings.c $(DYMOD_DEPHEADERS) xgraph.h
 	$(DCC) $(STRIP) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $< #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 CMaps.so: CMaps.c $(DYMOD_DEPHEADERS)
 	$(DCC) $(STRIP) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $< #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 	-cp -p scripts/CMaps.xg $(PREFSDIR)
 
 Python.so: $(PYTHON_DM_NAME)
 	-rm -f $@
 	ln -s $+ $@ 
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-rm -f $(PREFSDIR)/$@ 
 	-ln -s $+ $(PREFSDIR)/$@ 
 
 $(PYTHON_DM_NAME): $(PYTHONSRC:.c=.$(PYTHONVERSION).o)
 	$(DCC) $(STRIP) $(DEBUG) $(COPTS) $(CFLAGS) $(X11LIB) $(shell env ./machdepLDOPTS Python$(PYTHONVERSION)Module $@ $(PYTHONDIR)) -I./ -o $@ $+ #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 Python/Python_headers.h: Python/python$(PYTHONVERSION)_numpy.h
@@ -385,7 +385,7 @@ Python/ULabel.$(PYTHONVERSION).o: Python/ULabel.c Python/DM_Python.h Python/PyOb
 
 dm_example.so: dm_example.c dymod.h ascanf.h ascanfc.o dymod_interface.h
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $< #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 # 20010710: fig_dist.so depends on (the presence) of simanneal.so . It can however also include simanneal.o as an
@@ -398,13 +398,13 @@ FDSRC = contrib/fig_dist.c # contrib/simanneal.c
 
 fourconv.so: contrib/fourconv.c $(DYMOD_DEPHEADERS)
 	-$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $< #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 # 'float' version: fftw accelerated calls might be faster but of course less precise.
 fourconv3f.so: contrib/fourconv3.c $(DYMOD_DEPHEADERS) arrayvops.cpp
 	$(DCC) -DFFTW_SINGLE $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ arrayvops.cpp $< -lstdc++ #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 ## compile the 'double' variant with arrayvops.cpp to have access to the macstl accelerated stdext::valarray<double> type.
@@ -412,17 +412,17 @@ fourconv3f.so: contrib/fourconv3.c $(DYMOD_DEPHEADERS) arrayvops.cpp
 ##  to adapt all C and header code to support C linkage!)
 fourconv3.so: contrib/fourconv3.c $(DYMOD_DEPHEADERS) arrayvops.cpp
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ arrayvops.cpp $< -lstdc++ #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 splines.so: contrib/splines.c $(DYMOD_DEPHEADERS)
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $< #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
 simanneal.so: contrib/simanneal.c contrib/simanneal.h $(DYMOD_DEPHEADERS)
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ contrib/simanneal.c #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM simanneal.so $(PREFSDIR)
 
 contrib/simanneal.o: contrib/simanneal.c contrib/simanneal.h $(DYMOD_DEPHEADERS)
@@ -430,7 +430,7 @@ contrib/simanneal.o: contrib/simanneal.c contrib/simanneal.h $(DYMOD_DEPHEADERS)
 
 integrators.so: contrib/integrators.c $(DYMOD_DEPHEADERS)
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ contrib/integrators.c #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM integrators.so $(PREFSDIR)
 
 contrib/integrators.o: contrib/integrators.c $(DYMOD_DEPHEADERS)
@@ -438,7 +438,7 @@ contrib/integrators.o: contrib/integrators.c $(DYMOD_DEPHEADERS)
 
 ddeltaNEC.so: contrib/ddeltaNEC.c $(DYMOD_DEPHEADERS)
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ contrib/ddeltaNEC.c #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM ddeltaNEC.so $(PREFSDIR)
 
 # 20010710: link with simanneal.so. This hardly alters fig_dist.so, but it mentions to the loader that this shared
@@ -448,7 +448,7 @@ ddeltaNEC.so: contrib/ddeltaNEC.c $(DYMOD_DEPHEADERS)
 fig_dist.so: contrib/fig_dist.o # simanneal.so # contrib/simanneal.o
 # 	$(DCC) $(DEBUG) $(COPTS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $(FDSRC:.c=.o) $(PREFSDIR)/simanneal.so #$(OTHERLIBS)
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ $(FDSRC:.c=.o) #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM fig_dist.so $(PREFSDIR)
 
 contrib/fig_dist.o: contrib/fig_dist.c contrib/simanneal.h dymod.h xgraph.h ascanf.h dymod_interface.h
@@ -457,7 +457,7 @@ contrib/fig_dist.o: contrib/fig_dist.c contrib/simanneal.h dymod.h xgraph.h asca
 pearson_correlation.so: contrib/pearson_correl.o # simanneal.so
 # 	$(DCC) $(DEBUG) $(COPTS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ contrib/pearson_correl.o $(PREFSDIR)/simanneal.so #$(OTHERLIBS)
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ contrib/pearson_correl.o #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM pearson_correlation.so $(PREFSDIR)
 
 contrib/pearson_correl.o: contrib/pearson_correl.c contrib/simanneal.h dymod.h xgraph.h ascanf.h dymod_interface.h
@@ -467,12 +467,12 @@ import: GSRio.so IEFio.so CSVio.so
 
 GSRio.so: Import/GSRio.c Import/gsr.h $(DYMOD_DEPHEADERS)
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ Import/GSRio.c #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM GSRio.so $(PREFSDIR)
 
 IEFio.so: Import/IEFio.o
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ Import/IEFio.o #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM IEFio.so $(PREFSDIR)
 
 Import/IEFio.o: Import/IEFio.c Import/ief.h $(DYMOD_DEPHEADERS) NaN.h
@@ -480,7 +480,7 @@ Import/IEFio.o: Import/IEFio.c Import/ief.h $(DYMOD_DEPHEADERS) NaN.h
 
 CSVio.so: Import/CSVio.c $(DYMOD_DEPHEADERS)
 	$(DCC) $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shlib $@) -I./ -o $@ Import/CSVio.c #$(OTHERLIBS)
-	mkdirhier $(PREFSDIR)
+	mkdir -p $(PREFSDIR)
 	-scripts/lnDM CSVio.so $(PREFSDIR)
 
 clean:

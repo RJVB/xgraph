@@ -1,6 +1,10 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+#ifdef linux
+#	define _GNU_SOURCE
+#endif
+
 #ifdef __cplusplus
 	extern "C" {
 #endif
@@ -65,15 +69,16 @@
  \ On those systems, define XG_DYMOD_IMPORT_MAIN, and include dymod_interface.h in your module; you may need to extend
  \ this interface by adding your own required symbols.
  \ NB: the IMPORT_MAIN mechanism should work on all systems, but the automatic/system mechanism is likely to be
- \ somewhat faster (as it does not go through function pointers).
+ \ somewhat faster (as it does not go through function pointers explicitly).
  \ all systems.
  */
 #ifdef XG_DYMOD_SUPPORT
 #	if defined(__MACH__) || defined(__APPLE_CC__) || defined(__CYGWIN__)
 #		define XG_DYMOD_IMPORT_MAIN
 #	else
-		// 20111020: the "automatic/system mechanism" existing on Linux and Irix has not been maintained for too long, and
-		// the targeted import protocol of XG_DYMOD_IMPORT_MAIN is probabler more secure anyway. It is now the default on
+		// 20111020: the "automatic/system mechanism" existing on Linux and Irix has not been maintained for too long,
+		// and the targeted import protocol of XG_DYMOD_IMPORT_MAIN is probably more secure anyway.
+		// It is now the default on all systems.
 #		define XG_DYMOD_IMPORT_MAIN
 #	endif
 #endif

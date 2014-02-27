@@ -24,10 +24,6 @@ vim:ts=4:sw=4:
 
 #define _ASCANFC_C
 
-#ifdef linux
-#	define _GNU_SOURCE
-#endif
-
 #include "config.h"
 IDENTIFY( "ascanf main module" );
 
