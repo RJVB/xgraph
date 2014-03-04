@@ -67,8 +67,10 @@ setautovec() {
 			if [ "${CPU}" = "core2" ] ;then
 				CPU="${ALT_CPU}"
 			fi
-			if [ "${ARCH}" = "x86" -o "${ARCH}" = "x86_64" ] ;then
-				VU="-msse3 -mssse3 -mfpmath=sse"
+			if [ "${CPU}" != "native" ] ;then
+				if [ "${ARCH}" = "x86" -o "${ARCH}" = "x86_64" ] ;then
+					VU="-msse3 -mssse3 -mfpmath=sse"
+				fi
 			fi
 			MARCH="${MARCH} ${VU}"
 			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
@@ -199,7 +201,7 @@ setopts() {
 			if [ "$compil" = "" ] ;then
 				compil="${DEFAULT_CC}"
 			fi
-			setautovec "`uname -m`" "-mssse3 -mfpmath=sse"
+			setautovec "`uname -m`" "-mfpmath=sse"
 			;;
 
 		x86)
