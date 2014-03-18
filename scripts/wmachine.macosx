@@ -3,6 +3,8 @@
 # source with the command name doing the sourcing as its first argument
 ## NB: could use the hostinfo command!!
 
+#set -x
+
 compil="$compiler"
 mcpu="-mcpu"
 
@@ -24,7 +26,7 @@ setautovec() {
 	VU="${2}"
 	case $compil in
 		*gcc*-4.7*|*g++*-4.7*|*gcc*-4.8*|*g++*-4.8*)
-			OOPTIMOPT="${OOPTIMOPT} -flto"
+			OOPTIMOPT="${OOPTIMOPT}"
 			;;
 	esac
 	case $compil in
@@ -51,26 +53,8 @@ setautovec() {
 			fi
 			OPTIMOPT="$OOPTIMOPT"
 			;;
-		*gcc-4.2*|*g++-4.2*)
-			MARCH="${MARCH} ${VU}"
-			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
-				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -ftracer"
-				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
-				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
-				echo "# Enabling auto vectorisation" 1>&2
-			else
-				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftracer"
-				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftracer"
-			fi
-			OPTIMOPT="$OOPTIMOPT"
-			;;
+		#*gcc-4.2*|*g++-4.2*)
 		*gcc*-4*|*g++*-4*)
-			if [ "${CPU}" = "core2" ] ;then
-				CPU="${ALT_CPU}"
-			fi
-			if [ "${ARCH}" = "x86" ] ;then
-				VU="-msse3 -mssse3 -mfpmath=sse"
-			fi
 			MARCH="${MARCH} ${VU}"
 			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
 				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -ftracer"
@@ -81,11 +65,30 @@ setautovec() {
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftracer"
 				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftracer"
 			fi
-			if [ "${CPU}" = "core2" ] ;then
-				CPU="${ALT_CPU}"
-			fi
 			OPTIMOPT="$OOPTIMOPT"
 			;;
+#		*gcc*-4*|*g++*-4*)
+#			if [ "${CPU}" = "core2" ] ;then
+#				CPU="${ALT_CPU}"
+#			fi
+#			if [ "${ARCH}" = "x86" ] ;then
+#				VU="-msse3 -mssse3 -mfpmath=sse"
+#			fi
+#			MARCH="${MARCH} ${VU}"
+#			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
+#				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -ftracer"
+#				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+#				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+#				echo "# Enabling auto vectorisation" 1>&2
+#			else
+#				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftracer"
+#				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftracer"
+#			fi
+#			if [ "${CPU}" = "core2" ] ;then
+#				CPU="${ALT_CPU}"
+#			fi
+#			OPTIMOPT="$OOPTIMOPT"
+#			;;
 		*gcc*)
 			$compil --version | fgrep 'Apple Computer' >/dev/null 2>&1
 			if [ $? = 0 ] ;then
@@ -173,7 +176,7 @@ setopts() {
 			setautovec "ppc" "-faltivec"
 			;;
 
-		core2|CORE2|"Unknown v10.0"|"corei7"|"native")
+		core2|CORE2|"Unknown v10.0"|"corei7"|"native"|Intel*Core*)
 # 			DEFAULT_CC="/Developer/usr/bin/llvm-gcc-4.2"
 # 			DEFAULT_CXX="/Developer/usr/bin/llvm-g++-4.2"
 			DEFAULT_CC="gcc-4.2"
@@ -351,7 +354,7 @@ case $1 in
 				;;
 			*)
 #				echo "Using defaults 'setopts `hwprefs cpu_type`' for host $HOST" 1>&2
-				setopts "`hwprefs cpu_type`"
+				setopts "`sysctl -n machdep.cpu.brand_string`"
 				;;
 		esac
 		;;
