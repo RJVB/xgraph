@@ -3,7 +3,10 @@ BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x
 
 [MakeBuilder]
 Abort on First Error=false
+Default Make Environment Profile=gcc-4.7
 Default Target=All
+Make Binary=wmake
+Number Of Jobs=4
 
 [Project]
 VersionControlSupport=kdevgit

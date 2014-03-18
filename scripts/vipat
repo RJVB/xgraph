@@ -70,7 +70,7 @@ while [ $PARSE = 1 ] ;do
 			shift
 			;;
 		--include)
-			INCL="--include=$2"
+			INCL="${INCL} --include=$2"
 			shift
 			;;
 		-R)
