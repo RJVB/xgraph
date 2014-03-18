@@ -43,7 +43,16 @@ long XsegsSize, XXsegsSize, YsegsSize, XsegsESize;
 #	define XGraphBuildPlatform	STRING(CC)
 #endif
 
-#ifdef __GNUC__
+#ifdef __clang__
+	char XGraphBuildString[]=  "version " STRING(VERSION_MAJOR) STRING(VERSION_MINOR) STRING(VERSION_PATCHL) "; clang" STRING(__clang_major__)
+#	ifdef __clang_minor__
+		"." STRING(__clang_minor__)
+#	endif
+#	ifdef __clang_patchlevel__
+		"." STRING(__clang_patchlevel__)
+#	endif
+		"[" __DATE__" "__TIME__",\"" XGraphBuildPlatform "\"]";
+#elif defined(__GNUC__)
 	char XGraphBuildString[]=  "version " STRING(VERSION_MAJOR) STRING(VERSION_MINOR) STRING(VERSION_PATCHL) "; gcc" STRING(__GNUC__)
 #	ifdef __GNUC_MINOR__
 		"." STRING(__GNUC_MINOR__)

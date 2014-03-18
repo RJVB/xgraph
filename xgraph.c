@@ -43,7 +43,7 @@ IDENTIFY( "Main module: main event loop and drawing routines" );
 #	define USE_SSE2
 #	include <xmmintrin.h>
 #	include <emmintrin.h>
-#	include "AppleVecLib.h"
+// #	include "AppleVecLib.h"
 #endif
 
 #include <signal.h>

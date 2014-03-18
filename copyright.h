@@ -71,8 +71,12 @@ static const char *cident_stub(){ _IDENTIFY("",i); static char copyright= s;\
 #endif
 
 #ifdef __GNUC__
-// #	define C_IDENTIFY(s)	__attribute__((used)) C__IDENTIFY(s," (gcc)")
-#	define C_IDENTIFY(s)	__attribute__((used)) C__IDENTIFY(s," (gcc" STRING(__GNUC__) ")")
+// #	define C_IDENTIFY(s)	__attribute__((used)) C__IDENTIFY(s," (gcc" STRING(__GNUC__) ")")
+#	ifdef __clang__
+#		define C_IDENTIFY(s)	__attribute__((used)) C__IDENTIFY(s," (clang" STRING(__clang__) ")")
+#	else
+#		define C_IDENTIFY(s)	__attribute__((used)) C__IDENTIFY(s," (gcc" STRING(__GNUC__) ")")
+#	endif
 #else
 #	define C_IDENTIFY(s)	C__IDENTIFY(s," (cc)")
 #endif

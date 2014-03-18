@@ -200,7 +200,9 @@ char *XGraph_Compile_Options= "$Options: @(#)"
 #ifdef USE_AA_REGISTER
 	" USE_AA_REGISTER=" STRING(USE_AA_REGISTER)
 #endif
-#ifdef __GNUC__
+#ifdef __clang__
+	" compiler=clang-" STRING(__clang_major__) "." STRING(__clang_minor__)
+#elif defined(__GNUC__)
 	" compiler=gcc-" STRING(__GNUC__) "." STRING(__GNUC_MINOR__)
 #endif
 	" $"
@@ -246,7 +248,11 @@ static const char *xg_id_string_stub(){ _IDENTIFY(s,i);\
 	}}
 
 #ifdef __GNUC__
-#	define IDENTIFY(s)	__attribute__((used)) __IDENTIFY(s," (gcc" STRING(__GNUC__) ")")
+#	ifdef __clang__
+#		define IDENTIFY(s)	__attribute__((used)) __IDENTIFY(s," (clang" STRING(__clang__) ")")
+#	else
+#		define IDENTIFY(s)	__attribute__((used)) __IDENTIFY(s," (gcc" STRING(__GNUC__) ")")
+#	endif
 #else
 #	define IDENTIFY(s)	__IDENTIFY(s," (cc)")
 #endif

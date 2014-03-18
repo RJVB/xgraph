@@ -36,6 +36,13 @@
 #				include <Python/intobject.h>
 #			endif
 #			include "pythonsys_numpy.h"
+#		elif PYTHONdefault
+#			include <Python/Python.h>
+#			include <Python/bytesobject.h>
+#			if PY_MAJOR_VERSION < 3
+#				include <Python/intobject.h>
+#			endif
+#			include "pythondefault_numpy.h"
 #		else
 #			include <Python/Python.h>
 #			include <Python/bytesobject.h>

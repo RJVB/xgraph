@@ -160,23 +160,6 @@
 		(var)=(ttype)clip_expr_cast_lvalue;}}
 #endif
 
-#ifdef True
-#	undef True
-#endif
-#ifdef False
-#	undef False
-#endif
-#	ifdef Boolean
-#		undef Boolean
-#	endif
-
-#	ifndef _XtIntrinsic_h
-		typedef enum Boolean { False, True} Boolean;
-#	else
-#		define True 1
-#		define False 0
-#	endif
-
 #ifdef MCH_AMIGA
 #	define sleep(x)	Delay(60*x)
 #endif
@@ -427,6 +410,23 @@ DEFUN( *SetEnv, ( char *name, char *value), char);
 #define getenv(n) GetEnv(n)
 #define setenv(n,v) SetEnv(n,v)
 extern char *EnvDir;						/* ="tmp:"; variables here	*/
+
+#ifdef True
+#	undef True
+#endif
+#ifdef False
+#	undef False
+#endif
+#	ifdef Boolean
+#		undef Boolean
+#	endif
+
+#	if !(defined(_XtIntrinsic_h) || defined(__MACTYPES__))
+		typedef enum Boolean { False, True} Boolean;
+#	else
+#		define True 1
+#		define False 0
+#	endif
 
 #include "pragmas.h"
 

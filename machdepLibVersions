@@ -31,7 +31,8 @@ case $1 in
 					;;
 
 				*)
-					echo "import sys;print sys.version_info[0]*10 + sys.version_info[1]" | python
+					#echo "import sys;print sys.version_info[0]*10 + sys.version_info[1]" | python
+					echo "sys"
 					;;
 			esac
 		fi

@@ -21,13 +21,6 @@ IDENTIFY( "ascanf supplementary module" );
 #include "copyright.h"
 
 #include "math.h"
-#if defined(__APPLE__) && (defined(i386) || defined(__i386__) || defined(x86_64) || defined(__x86_64__))
-#	define USE_SSE2
-#	include <xmmintrin.h>
-#	include <emmintrin.h>
-#	include "AppleVecLib.h"
-#endif
-
 
 #include "xgout.h"
 #include "xgraph.h"
@@ -35,6 +28,13 @@ IDENTIFY( "ascanf supplementary module" );
 #include "xtb/xtb.h"
 
 #include "NaN.h"
+
+#if defined(__APPLE__) && (defined(i386) || defined(__i386__) || defined(x86_64) || defined(__x86_64__))
+#	define USE_SSE2
+#	include <xmmintrin.h>
+#	include <emmintrin.h>
+#	include "AppleVecLib.h"
+#endif
 
 #include "fdecl.h"
 

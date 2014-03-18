@@ -30,11 +30,11 @@ extern FILE *StdErr;
 
 #include "hard_devices.h"
 
-#if defined(__APPLE__) 
-#	if !defined(NATIVE_SINCOS)
-#		include "AppleVecLib.h"
-#	endif
-#endif
+// #if defined(__APPLE__) 
+// #	if !defined(NATIVE_SINCOS)
+// #		include "AppleVecLib.h"
+// #	endif
+// #endif
 
 // 20101105: the _xfree and _xfree_setitem prototypes were moved to xfree.h. Include that file if it hasn't yet been included,
 // but do not define the xfree and xfree_setitem macros as that never happened in fdecl.h
@@ -967,10 +967,10 @@ static int mi1,mi2;
 
 #elif defined(__APPLE__) 
 #	if !defined(NATIVE_SINCOS)
+ 		extern void vvsincos( double *, double *, const double *, const int *);
 		static inline void SinCos(double a, double *s, double *c)
 		{ const int nn = 1;
 		  const double aa = (a + Gonio_Base_Offset) / Units_per_Radian;
-// 		  extern void vvsincos( double *, double *, const double *, const int *);
 			vvsincos( s, c, &aa, &nn );
 		}
 

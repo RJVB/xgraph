@@ -34,6 +34,7 @@ fi
 
 case $MACH in
 	IP22*|IP32*|IRIX*)
+	# OBSOLETE
 		case $1 in
 			xgraph)
 				;;
@@ -51,6 +52,7 @@ case $MACH in
 		esac
 		;;
 	AIX)
+	# OBSOLETE
 		case $1 in
 			xgraph)
 				echo "-Wl,-bbigtoc -Wl,-brtl -Wl,-bexpall"
@@ -97,7 +99,7 @@ case $MACH in
 						;;
 				esac
 				;;
-			PythonModule|Python25Module)
+			Python25Module)
 				echo "`$0 shlib $2` -lX11 -lpython2.5"
 				;;
 			Python24Module)
@@ -142,6 +144,10 @@ case $MACH in
 ## 				esac
 				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -Wl,-rpath ${PDIR}/lib `python3.3-config --ldflags --libs`"
 				;;
+			PythonModule|PythonsysModule)
+				PDIR=$3
+				echo "`$0 shlib $2` -lX11 -L${PDIR}/lib -Wl,-rpath ${PDIR}/lib `python-config --ldflags --libs`"
+				;;
 		esac
 		;;
 	Darwin)
@@ -164,6 +170,12 @@ case $MACH in
 				 # and have things resolved when linking an application: this works OK.
 # 				echo "`$0 shobj $2` -dynamiclib -flat_namespace -undefined warning -fPIC "
 				;;
+			Python23Module)
+				 ## This is valid for all Mac OS X machines...:
+				PDIR=$3
+				PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
+				echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
+				;;
 			Python24Module)
 				 ## This is valid for RJVB's machines...:
 # 				echo "`$0 shlib $2` -lX11 -framework Python2.4"
@@ -172,12 +184,21 @@ case $MACH in
 				PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
 				echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
 				;;
-			Python23Module|PythonModule|PythonsysModule)
-				 ## This is valid for all Mac OS X machines...:
-# 				echo "`$0 shlib $2` -lX11 -framework Python"
-				PDIR=$3
-				PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
-				echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
+			PythonModule|PythonsysModule|PythondefaultModule)
+				 ## This should be valid for all Mac OS X machines...:
+				if [ "${PYTHON}" != "" ] ;then
+					PYCONFIG="${PYTHON}-config"
+				else
+					PYCONFIG="python-config"
+				fi
+				PFLAGS="`${PYCONFIG} --ldflags`"
+				if [ $? = 0 -a "${PFLAGS}" != "" ] ;then
+					echo "`$0 shlib $2` -lX11 ${PFLAGS}"
+				else
+					PDIR=$3
+					PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
+					echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
+				fi
 				;;
 			Python25Module)
 				 ## This is valid for RJVB's machines...:

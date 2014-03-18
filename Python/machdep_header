@@ -67,7 +67,10 @@ prefix() {
 			echo 'import sys;print(sys.prefix)' | python3.3
 			;;
 		sys|default)
-			echo 'import sys;print sys.prefix' | python
+			if [ "${PYTHON}" = "" ] ;then
+				PYTHON="python"
+			fi
+			echo 'import sys;print sys.prefix' | ${PYTHON}
 			;;
 	esac
 }

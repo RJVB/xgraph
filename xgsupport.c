@@ -35,13 +35,6 @@ IDENTIFY( "Main support module; contains XGraph saving routines" );
 #	include <sys/time.h>
 #endif
 
-#if defined(__APPLE__) && (defined(i386) || defined(__i386__) || defined(x86_64) || defined(__x86_64__))
-#	define USE_SSE2
-#	include <xmmintrin.h>
-#	include <emmintrin.h>
-#	include "AppleVecLib.h"
-#endif
-
 #ifdef XG_DYMOD_SUPPORT
 #	include "dymod.h"
 #endif
@@ -109,6 +102,13 @@ extern char ascanf_separator;
 #include "Elapsed.h"
 #include <errno.h>
 #include <sys/stat.h>
+
+#if defined(__APPLE__) && (defined(i386) || defined(__i386__) || defined(x86_64) || defined(__x86_64__))
+#	define USE_SSE2
+#	include <xmmintrin.h>
+#	include <emmintrin.h>
+#	include "AppleVecLib.h"
+#endif
 
 #include "fdecl.h"
 #include "copyright.h"
