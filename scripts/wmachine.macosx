@@ -3,7 +3,7 @@
 # source with the command name doing the sourcing as its first argument
 ## NB: could use the hostinfo command!!
 
-#set -x
+set -x
 
 compil="$compiler"
 mcpu="-mcpu"
@@ -180,8 +180,12 @@ setopts() {
 		core2|CORE2|"Unknown v10.0"|"corei7"|"native"|Intel*Core*)
 # 			DEFAULT_CC="/Developer/usr/bin/llvm-gcc-4.2"
 # 			DEFAULT_CXX="/Developer/usr/bin/llvm-g++-4.2"
-			DEFAULT_CC="gcc-4.2"
-			DEFAULT_CXX="g++-4.2"
+			if [ "${DEFAULT_CC}" = "" ] ;then
+				DEFAULT_CC="gcc-4.2"
+			fi
+			if [ "${DEFAULT_CXX}" = "" ] ;then
+				DEFAULT_CXX="g++-4.2"
+			fi
 			if [ "$1" = "corei7" -o "$1" = "native" ] ;then
 				CPU="$1"
 			else
@@ -190,13 +194,16 @@ setopts() {
 			ALT_CPU="" ##pentium-m"
 			mcpu="-march"
 
+			if [ "$compil" = "" ] ;then
+				compil="${DEFAULT_CC}"
+			fi
 			case $compil in
 				clang*)
 # clang accepts -O4 but activates an additional mode that is not supported by g++ ... which will be
 # called for c++ inputs... (20140107: check: ought no longer be the case!)
 					VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
 					OOPTIMOPT="-O3" #-fdelayed-branch"
-					DEFAULT_CXX="$compil -stdlib=libstdc++"
+#					DEFAULT_CXX="$compil -stdlib=libstdc++"
 					USINGCLANG=1
 					;;
 				*)
@@ -227,9 +234,6 @@ setopts() {
 
 			LNKOPTS=""
 
-			if [ "$compil" = "" ] ;then
-				compil="${DEFAULT_CC}"
-			fi
 			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse -flax-vector-conversions"
 			;;
 
@@ -327,6 +331,13 @@ case $1 in
 			portia.local)
 				DEFAULT_CC="gcc-4.2"
 				DEFAULT_CXX="g++-4.2"
+				setopts core2
+				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
+				;;
+
+			virtPortia.local)
+				DEFAULT_CC="clang"
+				DEFAULT_CXX="clang++"
 				setopts core2
 				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
 				;;

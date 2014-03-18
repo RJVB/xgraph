@@ -770,20 +770,20 @@ if [ "$compiler" = "" ] ;then
 fi
 
 #kludges:
-case $compiler in
-	clang*|*gcc400*|*gcc-4.0.0*)
-		${ECHO} "${MARCH}" | fgrep -- -mstring >& /dev/null
-		if [ $? = 0 -a "${file}.${EXT}" = "xgraph.c" ] ;then
-			${ECHO} "Removing -mstring from gcc options to prevent problems..." 1>&2
-			MARCH="`echo ${MARCH} | sed -e 's/-mstring//g'`"
-		fi
-		${ECHO} "${DEBUGOPT}" | fgrep -- -fno-omit-frame-pointer >& /dev/null
-		if [ $? = 0 -a "${file}.${EXT}" = "xgraph.c" ] ;then
-			${ECHO} "Removing -fno-omit-frame-pointer from gcc options to prevent problems..." 1>&2
-			DEBUGOPT="`echo ${DEBUGOPT} | sed -e 's/-fno-omit-frame-pointer//g'`"
-		fi
-		;;
-esac
+#case $compiler in
+#	clang*|*gcc400*|*gcc-4.0.0*)
+#		${ECHO} "${MARCH}" | fgrep -- -mstring >& /dev/null
+#		if [ $? = 0 -a "${file}.${EXT}" = "xgraph.c" ] ;then
+#			${ECHO} "Removing -mstring from gcc options to prevent problems..." 1>&2
+#			MARCH="`echo ${MARCH} | sed -e 's/-mstring//g'`"
+#		fi
+#		${ECHO} "${DEBUGOPT}" | fgrep -- -fno-omit-frame-pointer >& /dev/null
+#		if [ $? = 0 -a "${file}.${EXT}" = "xgraph.c" ] ;then
+#			${ECHO} "Removing -fno-omit-frame-pointer from gcc options to prevent problems..." 1>&2
+#			DEBUGOPT="`echo ${DEBUGOPT} | sed -e 's/-fno-omit-frame-pointer//g'`"
+#		fi
+#		;;
+#esac
 case $compiler in
 	clang*)
 		FNOINLINE=""
@@ -794,7 +794,7 @@ case $compiler in
 esac
 
 case $compiler in
-	clang*|*gcc[34]*|*gcc-[34]*|*g++[34]*|*g++-[34]*|*c++[34]*|*c++-[34]*|*gcc-mp-4*|*c++-mp-4*|*g++-mp-4*)
+	*clang*|*gcc[34]*|*gcc-[34]*|*g++[34]*|*g++-[34]*|*c++[34]*|*c++-[34]*|*gcc-mp-4*|*c++-mp-4*|*g++-mp-4*)
 		 # -Wsequence-point warns for undefined constructs/expressions:
 		WARNINGS="${WARNINGS} -Wsequence-point"
 # 		echo ">${MARCH}< >-march=${CPU}<"
