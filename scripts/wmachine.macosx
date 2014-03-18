@@ -7,6 +7,7 @@
 
 compil="$compiler"
 mcpu="-mcpu"
+MARCH=""
 
 # for universal binary builds:
 AUTOVECx86="-msse3 -mssse3"
@@ -296,6 +297,13 @@ setopts() {
 case $1 in
 	gccopt)
 
+		for a in "$@" ;do
+			case $a in
+				-march=*)
+					MARCH="${a##-march=}"
+					;;
+			esac
+		done
 		case $HOST in
 			obsolete|Gaspoesie.local)
 				setopts G3
@@ -354,7 +362,11 @@ case $1 in
 				;;
 			*)
 #				echo "Using defaults 'setopts `hwprefs cpu_type`' for host $HOST" 1>&2
-				setopts "`sysctl -n machdep.cpu.brand_string`"
+				if [ "${MARCH}" = "" ] ;then
+					setopts "`sysctl -n machdep.cpu.brand_string`"
+				else
+					setopts "${MARCH}"
+				fi
 				;;
 		esac
 		;;
