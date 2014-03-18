@@ -3,7 +3,7 @@
 # source with the command name doing the sourcing as its first argument
 ## NB: could use the hostinfo command!!
 
-set -x
+#set -x
 
 compil="$compiler"
 mcpu="-mcpu"
