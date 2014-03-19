@@ -1,0 +1,369 @@
+#!/bin/bash
+#xmake <file> (&) : run make -f make<file> (in background): redirect 
+#stderr (compile errors) to  <file>$CMAKE
+#stdout redirected to <file>$CMAKE.l (make actions, link errors)
+#   Requires environmental variable CMAKE to be set!!!
+#   Redirection file will be erased if empty!!
+#	Makefiles are read from directory $MAKEDIR
+#(C)(R) R. J. Bertin 7/11/'89
+
+# echo "$0 $@"
+# printenv 2>&1 | sort
+
+if [ "${XCODE_VERSION_MAJOR}" != "" ] ;then
+	GIDE="Xcode"
+elif [ "${MONO_GAC_PREFIX}" != "" ] ;then
+	GIDE="MonoDevelop"
+elif [ "${!APP_ICON_*}" != "" ] ;then
+	GIDE="Eclipse"
+else
+	GIDE=""
+fi
+
+if [ "$MAKEDIR" = "" ] ;then
+	echo "MAKEDIR not set - assuming Make/"
+	MAKEDIR="Make/"
+	export MAKEDIR
+fi
+if [ "$CMAKE" = "" ] ;then
+	echo "CMAKE not set - assuming .cer"
+	CMAKE=".cer"
+	export CMAKE
+fi
+
+CALLEDAS="# $0 $@"
+echo "# xmake called as:"
+echo "${CALLEDAS}"
+
+if [ $# -ge 1 ]
+then
+	MAKEFILE="$MAKEDIR"make$1
+	ERRFILE=$1$CMAKE
+	GCCERRFILE=$1.gcc$CMAKE
+	shift
+else
+	MAKEFILE="Makefile"
+	ERRFILE="Makefile"$CMAKE
+	GCCERRFILE="Makefile".gcc$CMAKE
+fi
+
+if [ "$MAKE" = "" ] ;then
+	MAKE="make"
+fi
+
+export MAKEFILE
+export ERRFILE
+
+OP=""
+nobuild=0
+exitcheck=0
+showwork=1
+SILENT=0
+TIMEX="timex"
+RET=0
+cxsetenv RET ${RET}
+COMMAND="`basename $0`"
+
+if [ "$TMPDIR" != "" ] ;then
+	FKILL="${TMPDIR}/xmake.fkill" ; export FKILL
+elif [ -d /usr/tmp ] ;then
+	FKILL="/usr/tmp/xmake.fkill" ; export FKILL
+else
+	FKILL="/tmp/xmake.fkill" ; export FKILL
+fi
+DO_FKILL=0 ; export DO_FKILL
+
+if [ "$1" = "-d" ]
+then
+	/bin/echo -n "Compiling in "
+	cd "$2"
+	pwd
+	shift 2
+fi
+if [ ! -r "$MAKEFILE" ]
+then
+	/bin/echo "$MAKEFILE doesn't exist - using Makefile" 
+	MAKEFILE="Makefile"
+fi
+
+while [ $# != 0 ]
+do
+	if [ "$1" = "-n" ] ;then
+		nobuild=1
+		echo "Just checking.."
+	else
+		if [ "$1" = "-q" ] ;then
+			TIMEX=""
+			exitcheck=1
+		elif [ "$1" = "-now" ] ;then
+			showwork=0
+		elif [ "$1" = "-silent" ] ;then
+			SILENT=1
+		else
+			OP="$OP $1"
+		fi
+	fi
+	shift 1
+done
+
+DEBUG=""
+
+if [ "${CLIB}" = "" ] ;then
+	CLIB="CLIB=$HOME/work/lib/"
+else
+	CLIB="CLIB=${CLIB}/"
+fi
+if [ "${DCLIB}" = "" ] ;then
+	DCLIB="DCLIB=$HOME/work/dlib/"
+else
+	DCLIB="DCLIB=${DCLIB}/"
+fi
+GLLIBS="GLLIBS=-laux -lGL -lGLU"
+
+if [ "$COMMAND" = "pdxmake" ] ;then
+	DEBUG="DEBUG=-gp"
+	CLIB="CLIB=$HOME/work/dlib/"
+fi
+if [ "$COMMAND" = "dxmake" ] ;then
+	DEBUG="DEBUG=-gDDEBUG"
+# 	DEBUG="DEBUG=-g -DDEBUG"
+	CLIB="CLIB=$HOME/work/dlib/"
+fi
+
+if [ "$OP" != "" ]
+then
+	echo "Make options:" '"'"$OP"'"'
+fi
+
+if [ -r .make_success ] ;then
+	USE_MAKE_SUCCESS=1
+else
+	USE_MAKE_SUCCESS=0
+fi
+
+if [ "${compiler}" != "" ] ;then
+	echo "Using compiler=${compiler}"
+elif [ "${CC}" != "" ] ;then
+	compiler="${CC}" ; export compiler
+	echo "Setting compiler=${compiler} from CC"
+fi
+
+if [ "${GIDE}" = "" ] ;then
+# 	if [ -r .$ERRFILE ]
+# 	then
+# 		DONTREMOVE=1
+# 		if [ ! -r $ERRFILE ]
+# 		then
+# 			ln -s .$ERRFILE $ERRFILE
+# 		fi
+# 		echo ".$ERRFILE already exists"
+# 	else
+		DONTREMOVE=0
+		rm -f $ERRFILE
+		ln -s .$ERRFILE $ERRFILE
+# 	fi
+else
+	DONTREMOVE=0
+fi
+
+TAILPID=0
+
+cleanup(){
+	echo "$* (`date`)"
+
+	if [ $TAILPID != 0 ] ;then
+		kill $TAILPID
+	fi
+	if [ ! -f .$ERRFILE ]
+	then
+		DONTREMOVE=1
+		if [ ! -r $ERRFILE ]
+		then
+			rm -f $ERRFILE
+		fi
+	fi
+	if [ $DONTREMOVE = 0 ]
+	then
+		if [ -r $ERRFILE ]
+		then
+			rm -f $ERRFILE.old
+			mv $ERRFILE $ERRFILE.old
+		fi
+		mv .$ERRFILE $ERRFILE
+		if [ -z $ERRFILE ]
+		then
+			rm $ERRFILE
+# 		else
+# 			filter $ERRFILE > "$ERRFILE"ror
+# 			gcc_filter $ERRFILE > "$GCCERRFILE"
+		fi
+	fi
+	if [ -f "${FKILL}" ] ;then
+		echo "Warning: killfile \"${FKILL}\" still exists:\n\tprocesses listed in this file may need SIGCONT"
+	fi
+	cxunsetenv INCREMENT_RETURN
+	sync
+	if [ "$2" = "aborting" ]
+	then
+		exit $RET
+	fi
+}
+
+CleanUp(){
+	if [ ${DO_FKILL} != 0 ] ;then
+		rm -f "${FKILL}"
+		fkill -CONT $HOME/cworks/lpatchworks/pipe* $HOME/cworks/lpatchworks/kk $HOME/cworks/lpatchworks/kk[0-9] $HOME/cworks/pipe* &
+		DO_FKILL=0 ; export DO_FKILL
+	fi
+	cleanup $*
+}
+
+trap "CleanUp `echo c_m_a_k_e_ aborting ... | ul 2>&1 `" 0
+trap "CleanUp `echo c_m_a_k_e_ aborting ... | ul 2>&1 `" 1
+trap "CleanUp `echo c_m_a_k_e_ aborting ... | ul 2>&1 `" 2
+
+# ls -l /dev/console | grep $LOGNAME >$HOME/.cons_mine
+# CMAKE_R="/usr/tmp/xmake_r$$" ; export CMAKE_R
+
+if [ -r .env ] ;then
+	cd .env
+	for f in * ;do
+		case $f in 
+			RET)
+				# we ignore .env variables with special meaning for the build process
+				;;
+			*)
+				eval "$f=`cd .. ; cxgetenv $f` ; export $f"
+				;;
+		esac
+	done
+	cd ..
+fi
+
+# This is used by gccopt:
+cxsetenv INCREMENT_RETURN 0
+USE_INCREMENT_RETURN=1 ; export USE_INCREMENT_RETURN
+
+if [ $exitcheck = 1 ] ;then
+	/bin/echo "Let's see.."
+#	make $OP -q -f $MAKEFILE
+	if [ "$DEBUG" != "" ] ;then
+		${MAKE} $OP -q -f $MAKEFILE "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
+		RET=$?
+	else
+# 		${MAKE} $OP -q -f $MAKEFILE "$GLLIBS"
+		${MAKE} $OP -q -f $MAKEFILE "$CLIB" "$DCLIB" "$GLLIBS"
+		RET=$?
+	fi
+	exit $RET
+elif [ $showwork = 1 ] ;then
+	/bin/echo "Hmmm... (`date`)"
+	echo "${MAKE} $OP -n -kf $MAKEFILE $DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
+	if [ "$DEBUG" != "" ] ;then
+		${MAKE} $OP -n -kf $MAKEFILE "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
+		${MAKE} $OP -q -f $MAKEFILE "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
+		RET=$?
+	else
+# 		${MAKE} $OP -n -kf $MAKEFILE "$GLLIBS"
+# 		${MAKE} $OP -q -f $MAKEFILE "$GLLIBS"
+		${MAKE} $OP -n -kf $MAKEFILE "$CLIB" "$DCLIB" "$GLLIBS"
+		${MAKE} $OP -q -f $MAKEFILE "$CLIB" "$DCLIB" "$GLLIBS"
+		RET=$?
+	fi
+	if [ $nobuild = 1 ] ;then
+		echo "that's all there is to $MAKEFILE.."
+		DONTREMOVE=1
+		cleanup
+		exit $RET
+	else if [ $RET != 0 ] ;then
+			rm -f .make_success
+		else	
+			cleanup "Finished"
+			exit 0
+		fi
+	fi
+	/bin/echo "that's $MAKEFILE alright; hold on now!!\n"
+fi
+
+TTY=`tty`
+
+echo "# xmake called as:" > .$ERRFILE
+echo "${CALLEDAS}" >> .$ERRFILE
+
+# /bin/echo "\r" >> .$ERRFILE
+# tail -f .$ERRFILE &
+# TAILPID=$! ; export TAILPID
+
+# if [ ! -r "${FKILL}" ] ;then
+# 	echo fkill -STOP $HOME/cworks/lpatchworks/pipe* $HOME/cworks/lpatchworks/kk $HOME/cworks/lpatchworks/kk[0-9] $HOME/cworks/pipe* 
+# 	fkill -STOP $HOME/cworks/lpatchworks/pipe* $HOME/cworks/lpatchworks/kk $HOME/cworks/lpatchworks/kk[0-9] $HOME/cworks/pipe* > "${FKILL}" ; cat "${FKILL}" &
+# 	DO_FKILL=1 ; export DO_FKILL
+# fi
+
+DoMake () {
+	if [ "$DEBUG" != "" ] ;then
+		${MAKE} $OP -kf $MAKEFILE "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
+	else
+		${MAKE} $OP -kf $MAKEFILE "$CLIB" "$DCLIB" "$GLLIBS"
+	fi
+	cxsetenv RET $?
+}
+
+if [ "${GIDE}" = "" ] ;then
+	if [ "$DEBUG" != "" ] ;then
+		if [ $SILENT = 1 ] ;then
+			echo "doing SILENT with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE
+			DoMake 2>&1 >> .$ERRFILE
+		else
+			echo "doing with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 | tee -a .$ERRFILE
+			DoMake 2>&1 | tee -a .$ERRFILE
+		fi
+	else
+		if [ $SILENT = 1 ] ;then
+			echo "doing SILENT ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 >> .$ERRFILE
+			DoMake 2>&1 >> .$ERRFILE
+		else
+			echo "doing ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS" 2>&1 | tee -a .$ERRFILE
+			DoMake 2>&1 | tee -a .$ERRFILE
+		fi
+	fi
+else
+	if [ "$DEBUG" != "" ] ;then
+		if [ $SILENT = 1 ] ;then
+			echo "doing SILENT with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
+			DoMake
+		else
+			echo "doing with DEBUG ${MAKE} $OP -kf $MAKEFILE" "$DEBUG" "$CLIB" "$DCLIB" "$GLLIBS"
+			DoMake
+		fi
+	else
+		if [ $SILENT = 1 ] ;then
+			echo "doing SILENT ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS"
+			DoMake
+		else
+			echo "doing ${MAKE} $OP -kf $MAKEFILE" "$CLIB" "$DCLIB" "$GLLIBS"
+			DoMake
+		fi
+	fi
+fi
+RET="`cxgetenv RET`" ; export RET
+
+if [ $USE_MAKE_SUCCESS = 1 ] ;then
+	if [ $RET = 0 -a ! -r .make_success ] ;then
+		RET=1
+	fi
+fi
+
+trap "" 0
+
+if [ "$RET" = "0" ] ; then
+	CleanUp "`echo \"	[D_i_d_ y_o_u_ f_i_n_i_s_h_ y_o_u_r_ c_o_f_f_e_e_?_]\" | ul 2>&1 `"
+else
+	CleanUp "`echo \"	[E_r_r_o_r_!_!_]\" | ul 2>&1 `"
+fi
+
+trap "" 2
+
+times
+echo 
+exit $RET

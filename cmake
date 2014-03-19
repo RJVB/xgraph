@@ -1,1 +1,1 @@
-scripts/cmake
+scripts/xmake

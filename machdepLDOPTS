@@ -186,10 +186,20 @@ case $MACH in
 				;;
 			PythonModule|PythonsysModule|PythondefaultModule)
 				 ## This should be valid for all Mac OS X machines...:
+				PYCONFIG=""
 				if [ "${PYTHON}" != "" ] ;then
 					PYCONFIG="${PYTHON}-config"
 				else
-					PYCONFIG="python-config"
+					if [ -d "$3" ] ;then
+						if [ -x "${3}/bin/python-config" ] ;then
+							PYCONFIG="${3}/bin/python-config"
+						else
+							PYCONFIG=`find "$3" -iname python-config`
+						fi
+					fi
+					if [ "${PYCONFIG}" = "" ] ;then
+						PYCONFIG="python-config"
+					fi
 				fi
 				PFLAGS="`${PYCONFIG} --ldflags`"
 				if [ $? = 0 -a "${PFLAGS}" != "" ] ;then
@@ -209,10 +219,19 @@ case $MACH in
 				;;
 			Python26Module|Python27Module|Python31Module|Python32Module|Python33Module)
 				 ## This is valid for RJVB's machines...:
-				#PDIR=`echo 'import sys;print sys.prefix' | python2.6`
 				PDIR=$3
-				PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
-				echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
+				case $PDIR in
+					*Python.framework*|*python.framework*)
+						# we got pointed to a Python framework without version information in its name
+						# so we have to hope that the generic PythonModule selector can determine
+						# the appropriate linker flags
+						exec $0 PythonModule $2 $3
+						;;
+					*)
+						PFRAME=`echo ${PDIR} | sed -e 's,.*/\([^/]*\)\.framework/Versions/.*,\1,g'`
+						echo "`$0 shlib $2` -lX11 -framework ${PFRAME}"
+						;;
+				esac
 				;;
 		esac
 		;;

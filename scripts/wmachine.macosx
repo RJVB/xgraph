@@ -331,14 +331,22 @@ case $1 in
 			portia.local)
 				DEFAULT_CC="gcc-4.2"
 				DEFAULT_CXX="g++-4.2"
-				setopts core2
+				if [ "${MARCH}" = "" ] ;then
+					setopts core2
+				else
+					setopts "${MARCH}"
+				fi
 				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
 				;;
 
 			virtPortia.local)
 				DEFAULT_CC="clang"
 				DEFAULT_CXX="clang++"
-				setopts core2
+				if [ "${MARCH}" = "" ] ;then
+					setopts core2
+				else
+					setopts "${MARCH}"
+				fi
 				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
 				;;
 
