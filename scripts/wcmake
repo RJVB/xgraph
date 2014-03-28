@@ -15,6 +15,15 @@ else
 	echo "# env WCMAKECALL=\"${WCMAKECALL}\" $0 $@" 1>&2
 fi
 
+if [ "${WCMAKEARGS}" = "" ] ;then
+	WCMAKEARGS="./wcmake.args"
+fi
+if [ -r "${WCMAKEARGS}" ] ;then
+	ARGS=`cat "${WCMAKEARGS}"`
+else
+	ARGS=""
+fi
+
 if [ "$CMAKEAPP" = "" ] ;then
 	CMAKEAPP="cmake"
 fi
@@ -261,4 +270,4 @@ if [ "$PYTHONPATH" != "" ] ;then
 fi
 ${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 
-exec "${CMAKEAPP}" "$@"
+exec "${CMAKEAPP}" ${ARGS} "$@"

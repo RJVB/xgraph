@@ -7,12 +7,21 @@ RWSTRINGS=0 ; export RWSTRINGS
 
 if [ "${WCONFIGURE}" = "" ] ;then
 	WCONFIGURE="./wconfigure.env"
-	WCONFICALL="./wconfigure.call"
+	WCONFCALL="./wconfigure.call"
 	echo "# $0 $@" 1>&2
 else
-	WCONFICALL=`basename "${WCONFIGURE}" .env`.call
+	WCONFCALL=`basename "${WCONFIGURE}" .env`.call
 	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
-	echo "# env WCONFICALL=\"${WCONFICALL}\" $0 $@" 1>&2
+	echo "# env WCONFCALL=\"${WCONFCALL}\" $0 $@" 1>&2
+fi
+
+if [ "${WCONFARGS}" = "" ] ;then
+	WCONFARGS="./wconfigure.args"
+fi
+if [ -r "${WCONFARGS}" ] ;then
+	ARGS=`cat "${WCONFARGS}"`
+else
+	ARGS=""
 fi
 
 if [ "$CONFIGURE" = "" ] ;then
@@ -40,6 +49,7 @@ cliFCFLAGS="${FCFLAGS}"
 cliPYTHON="${PYTHON}"
 cliPYTHONPATH="${PYTHONPATH}"
 cliMACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
+cliPOSTCONFIGEDIT="${POSTCONFIGEDIT}"
 set -x
 
 if [ -r "${WCONFIGURE}" ] ;then
@@ -92,6 +102,9 @@ fi
 if [ "${cliMACOSX_DEPLOYMENT_TARGET}" != "" ] ;then
 	MACOSX_DEPLOYMENT_TARGET="${cliMACOSX_DEPLOYMENT_TARGET}" ; export MACOSX_DEPLOYMENT_TARGET
 fi
+if [ "${cliPOSTCONFIGEDIT}" != "" ] ;then
+	POSTCONFIGEDIT="${cliPOSTCONFIGEDIT}" ; export POSTCONFIGEDIT
+fi
 set -x
 
 # set NOWCC to the desired compiler script in order to attempt to retrieve its CC and CFLAGS settings
@@ -118,6 +131,7 @@ if [ "$NOWCC" != "" ] ;then
 			PYTHON="${PYTHON}" ; export PYTHON
 			PYTHONPATH="${PYTHONPATH}" ; export PYTHONPATH
 			macosx_deployment_target="`fgrep 'MACOSX_DEPLOYMENT_TARGET=' ${KK} | sed -e 's/MACOSX_DEPLOYMENT_TARGET=\([^ ]*\).*/\1/'`"
+			POSTCONFIGEDIT="${POSTCONFIGEDIT}" ; export POSTCONFIGEDIT
 			rm -f ${KK}
 			;;
 	esac
@@ -169,6 +183,9 @@ else
 			MACOSX_DEPLOYMENT_TARGET="${macosx_deployment_target}" ; export MACOSX_DEPLOYMENT_TARGET
 		fi
 	fi
+	if [ "$POSTCONFIGEDIT" = "" ] ;then
+		POSTCONFIGEDIT="" ; export POSTCONFIGEDIT
+	fi
 fi
 
 # For those configure scripts that do not support CPPFLAGS: if requested, merge
@@ -189,26 +206,32 @@ pwd
 # ${ECHO} "env compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@"
 # ${ECHO} "USE_GNOME_DIR=${USE_GNOME_DIR} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
 
-${ECHO} -n "env HOST=\"${HOST}\"" > "${WCONFICALL}"
+${ECHO} -n "env HOST=\"${HOST}\"" > "${WCONFCALL}"
+if [ "$WCONFIGURE" != "" ] ;then
+	${ECHO} -n " WCONFIGURE=\"${WCONFIGURE}\"" >> wconfigure.call
+fi
 if [ "$LD_LIBRARY_PATH" != "" ] ;then
-	${ECHO} -n " LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\"" >> "${WCONFICALL}"
+	${ECHO} -n " LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\"" >> "${WCONFCALL}"
 fi
 if [ "$USE_GNOME_DIR" != "" ] ;then
-	${ECHO} -n " USE_GNOME_DIR=\"${USE_GNOME_DIR}\"" >> "${WCONFICALL}"
+	${ECHO} -n " USE_GNOME_DIR=\"${USE_GNOME_DIR}\"" >> "${WCONFCALL}"
 fi
 if [ "$DYLD_LIBRARY_PATH" != "" ] ;then
-	${ECHO} -n " DYLD_LIBRARY_PATH=\"${DYLD_LIBRARY_PATH}\"" >> "${WCONFICALL}"
+	${ECHO} -n " DYLD_LIBRARY_PATH=\"${DYLD_LIBRARY_PATH}\"" >> "${WCONFCALL}"
 fi
 if [ "$MACOSX_DEPLOYMENT_TARGET" != "" ] ;then
-	${ECHO} -n " MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\"" >> "${WCONFICALL}"
+	${ECHO} -n " MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\"" >> "${WCONFCALL}"
 fi
 if [ "$PYTHON" != "" ] ;then
-	${ECHO} -n " PYTHON=\"${PYTHON}\" ; export PYTHON" >> "${WCONFICALL}"
+	${ECHO} -n " PYTHON=\"${PYTHON}\" ; export PYTHON" >> "${WCONFCALL}"
 fi
 if [ "$PYTHONPATH" != "" ] ;then
-	${ECHO} -n " PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> "${WCONFICALL}"
+	${ECHO} -n " PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> "${WCONFCALL}"
 fi
-${ECHO} " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@" >> "${WCONFICALL}"
+if [ "$POSTCONFIGEDIT" != "" ] ;then
+	${ECHO} -n " POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\"" >> wconfigure.call
+fi
+${ECHO} " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@" >> wconfigure.call
 
 if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	rm "${WCONFIGURE}"
@@ -265,7 +288,27 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	if [ "$PYTHONPATH" != "" ] ;then
 		${ECHO} "PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> "${WCONFIGURE}"
 	fi
+	if [ "$POSTCONFIGEDIT" != "" ] ;then
+		${ECHO} "POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\" ; export POSTCONFIGEDIT" >> "${WCONFIGURE}"
+	fi
 	${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 fi
 
-exec "${CONFIGURE}" "$@"
+if [ "${CFLAGS}" != "" ] ;then
+	"${CONFIGURE}" "CFLAGS=${CFLAGS}" ${ARGS} "$@"
+	RET="$?"
+else
+	"${CONFIGURE}" ${ARGS} "$@"
+	RET="$?"
+fi
+
+if [ "${POSTCONFIGEDIT}" != "" ] ;then
+	if [ "${EDIT}" != "" ] ;then
+		"${EDIT}" "${POSTCONFIGEDIT}"
+	elif [ "${edit}" != "" ] ;then
+		"${edit}" "${POSTCONFIGEDIT}"
+	else
+		vi "${POSTCONFIGEDIT}"
+	fi
+fi
+exit $RET
