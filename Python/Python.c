@@ -6,7 +6,7 @@ IDENTIFY( "ascanf library module for interfacing with Python" );
 #endif
 
 
-#ifdef linux
+#if defined(linux) && !defined(__USE_GNU)
 #	define __USE_GNU
 #endif
 
@@ -49,8 +49,17 @@ IDENTIFY( "ascanf library module for interfacing with Python" );
 #		include <python2.5/eval.h>
 #		include <python2.5/ceval.h>
 #	elif PYTHON26
+#		include <python2.6/compile.h>
 #		include <python2.6/eval.h>
 #		include <python2.6/ceval.h>
+#	elif PYTHON27
+#		include <python2.7/compile.h>
+#		include <python2.7/eval.h>
+#		include <python2.7/ceval.h>
+#	elif PYTHON33
+#		include <python3.3m/compile.h>
+#		include <python3.3m/eval.h>
+#		include <python3.3m/ceval.h>
 #	endif
 #else
 #	include <eval.h>
@@ -558,6 +567,10 @@ int ascanf_PythonCompile ( ASCB_ARGLIST )
 						Compiled_ExpressionList[enr].start );
 #else
 					{ void *n;
+					  // PyNode_Free() is defined in Python/node.h but including that header can interfere
+					  // with other headers/definition:
+					  extern void PyNode_Free(void*);
+
 					  /* Inspired by _Evaluate_Python_Expr() and the code for PyRun_String(): parse the code string first.
 					   \ If this fails (n==NULL), try again with Py_file_input.
 					   \ This probably means that the runtime checks below are redundant...
@@ -6005,7 +6018,7 @@ DyModTypes initDyMod( INIT_DYMOD_ARGUMENTS )
 	fprintf( StdErr, "%s::initDyMod(): Initialising %s loaded from %s (build: %s), call %d\n", __FILE__, theDyMod->name, theDyMod->path, XG_IDENTIFY(), ++called );
 
 	if( !initialised ){
-	  extern int init_AscanfCall_module();
+	  extern int init_AscanfCall_module(), init_DataSet_module(), init_ULabel_module();
 
 		RVN= register_VariableNames(1);
 

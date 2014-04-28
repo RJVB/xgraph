@@ -6,17 +6,14 @@
 #	ifdef RJVB
 #		ifdef PYTHON25
 #			include <Python2.5/Python.h>
-// #			include <Python2.5/../../lib/python2.5/site-packages/numpy/core/include/numpy/arrayobject.h>
 #			include "python25_numpy.h"
 #		elif PYTHON24
 #			include <Python2.4/Python.h>
-// #			include <Python2.4/../../lib/python2.4/site-packages/numpy/core/include/numpy/arrayobject.h>
 #			include "python24_numpy.h"
 #		elif PYTHON26
 #			include <Python2.6/Python.h>
 #			include <Python2.6/bytesobject.h>
 #			include <Python2.6/intobject.h>
-// #			include <Python2.6/../../lib/python2.6/site-packages/numpy/core/include/numpy/arrayobject.h>
 #			include "python26_numpy.h"
 #		elif PYTHON27
 #			include <Python2.7/Python.h>
@@ -52,61 +49,62 @@
 #		include <Python/Python.h>
 #		include <Python/bytesobject.h>
 #		ifdef PYTHON25
-// #			include <Python/../../lib/python2.5/site-packages/numpy/core/include/numpy/arrayobject.h>
 #			include "python25_numpy.h"
 #		elif PYTHON24
-// #			include <Python/../../lib/python2.4/site-packages/numpy/core/include/numpy/arrayobject.h>
 #			include "python24_numpy.h"
 #		elif PYTHON26
-// #			include <Python/../../lib/python2.6/site-packages/numpy/core/include/numpy/arrayobject.h>
 #			include "python26_numpy.h"
 #		elif PYTHON27
 #			include "python27_numpy.h"
 #		else
-#			include <Python/../../lib/python2.3/site-packages/numpy/core/include/numpy/arrayobject.h>
-#			define Py_RETURN_NONE return Py_INCREF(Py_None), Py_None
+//#			include <Python/../../lib/python2.3/site-packages/numpy/core/include/numpy/arrayobject.h>
+#			include "pythonsys_numpy.h"
+#			ifndef Py_RETURN_NONE
+#				define Py_RETURN_NONE return Py_INCREF(Py_None), Py_None
+#			endif
 #		endif
 #	endif
 	  /* This module better not depend on the Accelerate framework...! */
 #	define __ACCELERATE__
 #elif defined(__CYGWIN__) || defined(linux)
 #	ifdef PYTHON25
-#		include <python2.5/Python.h>
-// #		include <python2.5/../../lib/python2.5/site-packages/numpy/core/include/numpy/arrayobject.h>
+#		include "python25_headers.h"
 #		include "python25_numpy.h"
 #	elif PYTHON26
-#		include <python2.6/Python.h>
-#		include <python2.6/bytesobject.h>
-#		include <python2.6/intobject.h>
-// #		include <python2.6/../../lib/python2.6/site-packages/numpy/core/include/numpy/arrayobject.h>
+#		include "python26_headers.h"
 #		include "python26_numpy.h"
 #	elif PYTHON27
-#		include <python2.7/Python.h>
-#		include <python2.7/bytesobject.h>
-#		include <python2.7/intobject.h>
+#		include "python27_headers.h"
 #		include "python27_numpy.h"
 #	elif PYTHON31
-#		include <python3.1/Python.h>
-#		include <python3.1/bytesobject.h>
+#		include "python31_headers.h"
 #		include "python31_numpy.h"
 #	elif PYTHON32
-#		if defined(__CYGWIN__)
-#			include <python3.2m/Python.h>
-#			include <python3.2m/bytesobject.h>
-#		else
-#			include <python3.2/Python.h>
-#			include <python3.2/bytesobject.h>
-#		endif
+//#		if defined(__CYGWIN__)
+//#			include <python3.2m/Python.h>
+//#			include <python3.2m/bytesobject.h>
+//#		else
+//#			include <python3.2/Python.h>
+//#			include <python3.2/bytesobject.h>
+//#		endif
+#		include "python32_headers.h"
 #		include "python32_numpy.h"
 #	elif PYTHON33
-#		if defined(__CYGWIN__)
-#			include <python3.3m/Python.h>
-#			include <python3.3m/bytesobject.h>
-#		else
-#			include <python3.3/Python.h>
-#			include <python3.3/bytesobject.h>
-#		endif
+//#		if defined(__CYGWIN__)
+//#			include <python3.3m/Python.h>
+//#			include <python3.3m/bytesobject.h>
+//#		else
+//#			include <python3.3/Python.h>
+//#			include <python3.3/bytesobject.h>
+//#		endif
+#		include "python33_headers.h"
 #		include "python33_numpy.h"
+#	elif PYTHONsys
+#		include "pythonsys_headers.h"
+#		include "pythonsys_numpy.h"
+#	elif PYTHONdefault
+#		include "pythondefault_headers.h"
+#		include "pythondefault_numpy.h"
 #	endif
 #else
 #	include <Python.h>

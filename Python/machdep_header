@@ -5,6 +5,52 @@ echo $CWD
 
 PVERSION=$1
 
+headers() {
+	case ${PVERSION} in
+		23)
+			INCLUDEPY="`python2.3 -c "from distutils import sysconfig ; print sysconfig.get_config_vars()['INCLUDEPY']"`"
+			;;
+		24)
+			INCLUDEPY="`python2.4 -c "from distutils import sysconfig ; print sysconfig.get_config_vars()['INCLUDEPY']"`"
+			;;
+		25)
+			INCLUDEPY="`python2.5 -c "from distutils import sysconfig ; print sysconfig.get_config_vars()['INCLUDEPY']"`"
+			;;
+		26)
+			INCLUDEPY="`python2.6 -c "from distutils import sysconfig ; print sysconfig.get_config_vars()['INCLUDEPY']"`"
+			;;
+		27)
+			INCLUDEPY="`python2.7 -c "import sysconfig ; print(sysconfig.get_config_vars()['INCLUDEPY'])"`"
+			;;
+		31)
+			INCLUDEPY="`python3.1 -c "import sysconfig ; print(sysconfig.get_config_vars()['INCLUDEPY'])"`"
+			;;
+		32)
+			INCLUDEPY="`python3.2 -c "import sysconfig ; print(sysconfig.get_config_vars()['INCLUDEPY'])"`"
+			;;
+		33)
+			INCLUDEPY="`python3.3 -c "import sysconfig ; print(sysconfig.get_config_vars()['INCLUDEPY'])"`"
+			;;
+		sys|default)
+			INCLUDEPY="`python -c "import sysconfig ; print(sysconfig.get_config_vars()['INCLUDEPY'])"`"
+			;;
+	esac
+
+	echo "#include <${INCLUDEPY}/Python.h>" > python${PVERSION}_headers.h
+	case ${PVERSION} in
+		26|27)
+			echo "#include <${INCLUDEPY}/bytesobject.h>" >> python${PVERSION}_headers.h
+			echo "#include <${INCLUDEPY}/intobject.h>" >> python${PVERSION}_headers.h
+			;;
+		sys|default)
+			echo "#include <${INCLUDEPY}/bytesobject.h>" >> python${PVERSION}_headers.h
+			echo "#if PY_MAJOR_VERSION < 3" >> python${PVERSION}_headers.h
+			echo "#	include <${INCLUDEPY}/intobject.h>" >> python${PVERSION}_headers.h
+			echo "#endif" >> python${PVERSION}_headers.h
+			;;
+	esac
+}
+
 # create a the python<version>_numpy.h headerfile that will include arrayobject.h :
 numpy() {
 	case ${PVERSION} in
@@ -76,6 +122,9 @@ prefix() {
 }
 
 case $2 in
+	headers)
+		headers
+		;;
 	numpy)
 		numpy
 		;;

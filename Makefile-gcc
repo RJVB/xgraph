@@ -331,7 +331,7 @@ $(PYTHON_DM_NAME): $(PYTHONSRC:.c=.$(PYTHONVERSION).o)
 Python/Python_headers.h: Python/python$(PYTHONVERSION)_numpy.h
 
 Python/python$(PYTHONVERSION)_numpy.h:
-	Python/machdep_header $(PYTHONVERSION)
+	Python/machdep_header $(PYTHONVERSION) numpy
 
 Python/Python.$(PYTHONVERSION).o: Python/Python.c Python/DM_Python.h Python/PythonInterface.h Python/cobject.h $(DYMOD_DEPHEADERS) xgraph.h Python/Python_headers.h
 	$(DCC) -DDEBUG $(DEBUG) $(COPTS) $(CFLAGS) $(shell ./machdepLDOPTS shobj) -I./ -o $@ $(CHECK) $< -DPYTHON$(PYTHONVERSION)

@@ -21,7 +21,7 @@ extern FILE *StdErr;
 
 #include "xgerrno.h"
 
-#ifdef linux
+#if defined(linux) && !defined(__USE_GNU)
 #	define __USE_GNU
 #endif
 
@@ -315,7 +315,9 @@ extern char *XGbasename( char *path );
 extern char *XGdirname( char *path );
 
 #if !defined(__APPLE__)
+#	undef basename
 #	define basename(p)	XGbasename(p)
+#	undef dirname
 #	define dirname(p)	XGdirname(p)
 #endif
 

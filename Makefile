@@ -366,7 +366,10 @@ $(PYTHON_DM_NAME): $(PYTHONSRC:.c=.$(PYTHONVERSION).o)
 	mkdir -p $(PREFSDIR)
 	-scripts/lnDM $@ $(PREFSDIR)
 
-Python/Python_headers.h: Python/python$(PYTHONVERSION)_numpy.h
+Python/Python_headers.h: Python/python$(PYTHONVERSION)_headers.h Python/python$(PYTHONVERSION)_numpy.h
+
+Python/python$(PYTHONVERSION)_headers.h:
+	Python/machdep_header $(PYTHONVERSION) headers
 
 Python/python$(PYTHONVERSION)_numpy.h:
 	Python/machdep_header $(PYTHONVERSION) numpy

@@ -20,11 +20,12 @@ typedef struct PyAscanfObject {
 	extern PyTypeObject PyAscanfObject_Type;
 #endif
 
-#ifdef IS_PY3K
-#	define PyAscanfObject_Check(op) (Py_TYPE(op) == &PyAscanfObject_Type)
-#else
-#	define PyAscanfObject_Check(op) ((op)->ob_type == &PyAscanfObject_Type)
-#endif
+// #ifdef IS_PY3K
+// #	define PyAscanfObject_Check(op) (Py_TYPE(op) == &PyAscanfObject_Type)
+// #else
+// #	define PyAscanfObject_Check(op) ((op)->ob_type == &PyAscanfObject_Type)
+#	define PyAscanfObject_Check(op) PyObject_TypeCheck(op, &PyAscanfObject_Type)
+// #endif
 
 PyAPI_FUNC(PyObject *) PyAscanfObject_FromAscanfFunction( ascanf_Function *af );
 

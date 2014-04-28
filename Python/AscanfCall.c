@@ -76,7 +76,7 @@ PyObject *PyAscanfObject_FromAscanfFunction( ascanf_Function *af )
 			self->opts->call_reentrant= 1;
 			if( af->usage && !af->is_usage ){
 				if( PyObject_HasAttrString( (PyObject*) self, "__doc__" ) ){
-				  int e = PyErr_Occurred();
+				  PyObject *e = PyErr_Occurred();
 					PyObject_SetAttrString( (PyObject*) self, "__doc__", PyString_FromString(af->usage) );
 					if( !e && PyErr_Occurred() ){
 						PyErr_Clear();
