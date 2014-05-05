@@ -33,7 +33,7 @@ setautovec() {
 			MARCH="${MARCH} ${VU}"
 			;;
 		*clang*)
-			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
+			MARCH="${MARCH} ${VU}"
 			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
 				OOPTIMOPT="${OOPTIMOPT} -fvectorize -fslp-vectorize-aggressive"
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -fvectorize -fslp-vectorize-aggressive ${AUTOVECppc} ${AUTOVECx86} ${VU}"
@@ -46,7 +46,7 @@ setautovec() {
 			OPTIMOPT="$OOPTIMOPT"
 			;;
 		*llvm*gcc*|*llvm*g++*)
-			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
+			MARCH="${MARCH} ${VU}"
 			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
 				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize"
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86} ${VU}"
