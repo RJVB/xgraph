@@ -208,7 +208,7 @@ pwd
 
 ${ECHO} -n "env HOST=\"${HOST}\"" > "${WCONFCALL}"
 if [ "$WCONFIGURE" != "" ] ;then
-	${ECHO} -n " WCONFIGURE=\"${WCONFIGURE}\"" >> wconfigure.call
+	${ECHO} -n " WCONFIGURE=\"${WCONFIGURE}\"" >> "${WCONFCALL}"
 fi
 if [ "$LD_LIBRARY_PATH" != "" ] ;then
 	${ECHO} -n " LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\"" >> "${WCONFCALL}"
