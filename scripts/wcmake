@@ -1,6 +1,6 @@
 #!/bin/sh -x
 
-ECHO=echo
+ECHO=/bin/echo
 export ECHO
 
 RWSTRINGS=0 ; export RWSTRINGS
@@ -221,14 +221,26 @@ fi
 if [ "${CPP}" != "" ] ;then
 	${ECHO} "CPP=\"${CPP}\" ; export CPP" >> "${WCONFIGURE}"
 fi
-${ECHO} "CC=\"${CC}\"" >> "${WCONFIGURE}"
+if [ "${CC}" != "" ] ;then
+	${ECHO} "CC=\"${CC}\"" >> "${WCONFIGURE}"
+	ARGS="${ARGS} -DCMAKE_C_COMPILER:FILEPATH=${CC}"
+fi
 ${ECHO} "CPPFLAGS=\"${CPPFLAGS}\"" >> "${WCONFIGURE}"
-${ECHO} "CFLAGS=\"${CFLAGS}\"" >> "${WCONFIGURE}"
-${ECHO} "CXX=\"${CXX}\"" >> "${WCONFIGURE}"
-if [ "${CXXFLAGS}" = "${CFLAGS}" ] ;then
-	${ECHO} 'CXXFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
-else
-	${ECHO} "CXXFLAGS=\"${CXXFLAGS}\"" >> "${WCONFIGURE}"
+if [ "${CFLAGS}" != "" ] ;then
+	${ECHO} "CFLAGS=\"${CFLAGS}\"" >> "${WCONFIGURE}"
+	ARGS="${ARGS} -DCMAKE_C_FLAGS:STRING=${CFLAGS}"
+fi
+if [ "${CXX}" != "" ] ;then
+	${ECHO} "CXX=\"${CXX}\"" >> "${WCONFIGURE}"
+	ARGS="${ARGS} -DCMAKE_CXX_COMPILER:FILEPATH=${CXX}"
+fi
+if [ "${CXXFLAGS}" != "" ] ;then
+	if [ "${CXXFLAGS}" = "${CFLAGS}" ] ;then
+		${ECHO} 'CXXFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
+	else
+		${ECHO} "CXXFLAGS=\"${CXXFLAGS}\"" >> "${WCONFIGURE}"
+	fi
+	ARGS="${ARGS} -DCMAKE_CXX_FLAGS:STRING=${CXXFLAGS}"
 fi
 if [ "${OBJC}" = "${CC}" ] ;then
 	${ECHO} 'OBJC="${CC}"' >> "${WCONFIGURE}"
@@ -258,7 +270,10 @@ elif [ "${FCFLAGS}" = "${FFLAGS}" ] ;then
 else
 	${ECHO} "FCFLAGS=\"${FCFLAGS}\"" >> "${WCONFIGURE}"
 fi
-${ECHO} "LDFLAGS=\"${LDFLAGS}\"" >> "${WCONFIGURE}"
+if [ "${LDFLAGS}" != "" ] ;then
+	${ECHO} "LDFLAGS=\"${LDFLAGS}\"" >> "${WCONFIGURE}"
+	ARGS="${ARGS} -DCMAKE_EXE_LINKER_FLAG:STRINGS=${LDFLAGS}"
+fi
 if [ "$MACOSX_DEPLOYMENT_TARGET" != "" ] ;then
 	${ECHO} "MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\" ; export MACOSX_DEPLOYMENT_TARGET" >> "${WCONFIGURE}"
 fi
