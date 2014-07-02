@@ -10,6 +10,7 @@ else
 fi
 /bin/echo -n ']0;'"$0 $@"'' 1>&2
 echo "# `date`" 1>&2
+echo "# running as `whoami`"
 
 GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE
 GCCOPT_QUIET=1 ; export GCCOPT_QUIET

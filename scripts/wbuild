@@ -57,6 +57,14 @@ else
 		. "${WCONFIGURE}"
 		cat "${WCONFIGURE}"
 	fi
+	export CPP
+	export CC
+	export CPPFLAGS
+	export CFLAGS
+	export CXX
+	export CXXFLAGS
+	export OBJC
+	export OBJCFLAGS
 	echo "${WBUILDCMD}" "$@"
 	time "${WBUILDCMD}" "$@"
 	RET=$?
