@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ "$1" = "--nice" ] ;then
+	renice $2 $$
+	shift 2
+fi
+
 echo
 if [ "${WCONFIGURE}" = "" ] ;then
 	WCONFIGURE="./wconfigure.env"
