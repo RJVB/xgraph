@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 ECHO=/bin/echo
 export ECHO
@@ -10,7 +10,7 @@ if [ "${WCONFIGURE}" = "" ] ;then
 	WCMAKECALL="./wcmake.call"
 	echo "# $0 $@" 1>&2
 else
-	WCMAKECALL=`dirname "${WCONFIGURE}"`wcmake.call
+	WCMAKECALL=`dirname "${WCONFIGURE}"`/wcmake.call
 	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
 	echo "# env WCMAKECALL=\"${WCMAKECALL}\" $0 $@" 1>&2
 fi
@@ -50,7 +50,6 @@ if [ -r "${WCONFIGURE}" ] ;then
 	. "${WCONFIGURE}"
 fi
 
-set +x
 if [ "${cliCPP}" != "" ] ;then
 	CPP="${cliCPP}" ; export CPP
 fi
