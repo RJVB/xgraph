@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ECHO=/bin/echo
 export ECHO
@@ -25,7 +25,12 @@ else
 fi
 
 if [ "$CMAKEAPP" = "" ] ;then
-	CMAKEAPP="cmake"
+	if [ "`basename $0`" = "cmake" ] ;then
+		# WE GUESS:
+		CMAKEAPP="/usr/bin/cmake"
+	else
+		CMAKEAPP="cmake"
+	fi
 fi
 
 # save vars passed on the commandline to override those in wconfigure.env:
@@ -102,13 +107,13 @@ set -x
 # libtool.
 if [ "$NOWCC" != "" ] ;then
 	case $NOWCC in
-		default|system|none)
+		default|system|none|1)
 			${ECHO} "Using (provided) defaults: CPP=${CPP} CC=${CC} CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} CXX=${CXX} CXXFLAGS=${CXXFLAGS} OBJC=${OBJC} OBJCFLAGS=${OBJCFLAGS} F77=${F77} FFLAGS=${FFLAGS} FC=${FC} FCFLAGS=${FCFLAGS} PYTHON=${PYTHON} PYTHONPATH=${PYTHONPATH}"
 			;;
 		*)
 			KK="kk$$"
 			${NOWCC} -cli > ${KK}
-			CC="`fgrep 'CPP=' ${KK} | sed -e 's/CPP=\([^ ]*\).*/\1/'`" ; export CPP
+			CPP="`fgrep 'CPP=' ${KK} | sed -e 's/CPP=\([^ ]*\).*/\1/'`" ; export CPP
 			CC="`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\).*/\1/'`" ; export CC
 			OPTS=`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\)\(.*\)/\2/'`
 			CPPFLAGS="`fgrep CPPFLAGS= ${KK} | sed -e 's/CPPFLAGS=//'` ${CPPFLAGS}" ; export CPPFLAGS
@@ -214,6 +219,7 @@ fi
 ${ECHO} " compiler=\"${compiler}\" CMAKEAPP=\"${CMAKEAPP}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@" >> "${WCMAKECALL}"
 
 rm "${WCONFIGURE}"
+rm ./cmake.init
 if [ "${compiler}" != "" ] ;then
 	${ECHO} "compiler=\"${compiler}\" ; export compiler" >> "${WCONFIGURE}"
 fi
@@ -222,16 +228,21 @@ if [ "${CPP}" != "" ] ;then
 fi
 if [ "${CC}" != "" ] ;then
 	${ECHO} "CC=\"${CC}\"" >> "${WCONFIGURE}"
-	ARGS="${ARGS} -DCMAKE_C_COMPILER:FILEPATH=${CC}"
+	#ARGS+=" \"-DCMAKE_C_COMPILER:FILEPATH=${CC}\""
+	${ECHO} "SET (CMAKE_C_COMPILER:FILEPATH \"${CC}\")" >> ./cmake.init
 fi
 ${ECHO} "CPPFLAGS=\"${CPPFLAGS}\"" >> "${WCONFIGURE}"
 if [ "${CFLAGS}" != "" ] ;then
 	${ECHO} "CFLAGS=\"${CFLAGS}\"" >> "${WCONFIGURE}"
-	ARGS="${ARGS} -DCMAKE_C_FLAGS:STRING=${CFLAGS}"
+	#ARGS+=" -DCMAKE_C_FLAGS:STRING=`echo ${CFLAGS} | sed -e 's/ /\\\\ /g'`"
+	${ECHO} "SET (CMAKE_C_FLAGS:STRING \"${CFLAGS}\")" >> ./cmake.init
+	${ECHO} "SET (CMAKE_C_FLAGS_RELEASE:STRING \"${CFLAGS}\")" >> ./cmake.init
+	${ECHO} "SET (CMAKE_C_FLAGS_RELWITHDEBINFO:STRING \"${CFLAGS} -g\")" >> ./cmake.init
 fi
 if [ "${CXX}" != "" ] ;then
 	${ECHO} "CXX=\"${CXX}\"" >> "${WCONFIGURE}"
-	ARGS="${ARGS} -DCMAKE_CXX_COMPILER:FILEPATH=${CXX}"
+ 	#ARGS+=" \"-DCMAKE_CXX_COMPILER:FILEPATH=${CXX}\""
+	${ECHO} "SET (CMAKE_CXX_COMPILER:FILEPATH \"${CXX}\")" >> ./cmake.init
 fi
 if [ "${CXXFLAGS}" != "" ] ;then
 	if [ "${CXXFLAGS}" = "${CFLAGS}" ] ;then
@@ -239,7 +250,10 @@ if [ "${CXXFLAGS}" != "" ] ;then
 	else
 		${ECHO} "CXXFLAGS=\"${CXXFLAGS}\"" >> "${WCONFIGURE}"
 	fi
-	ARGS="${ARGS} -DCMAKE_CXX_FLAGS:STRING=${CXXFLAGS}"
+ 	#ARGS+=" -DCMAKE_CXX_FLAGS:STRING=${CXXFLAGS}"
+ 	${ECHO} "SET (CMAKE_CXX_FLAGS:STRING \"${CXXFLAGS}\")" >> ./cmake.init
+ 	${ECHO} "SET (CMAKE_CXX_FLAGS_RELEASE:STRING \"${CXXFLAGS}\")" >> ./cmake.init
+ 	${ECHO} "SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING \"${CXXFLAGS} -g\")" >> ./cmake.init
 fi
 if [ "${OBJC}" = "${CC}" ] ;then
 	${ECHO} 'OBJC="${CC}"' >> "${WCONFIGURE}"
@@ -271,7 +285,8 @@ else
 fi
 if [ "${LDFLAGS}" != "" ] ;then
 	${ECHO} "LDFLAGS=\"${LDFLAGS}\"" >> "${WCONFIGURE}"
-	ARGS="${ARGS} -DCMAKE_EXE_LINKER_FLAG:STRINGS=${LDFLAGS}"
+	#ARGS+=" \"-DCMAKE_EXE_LINKER_FLAG:STRINGS=${LDFLAGS}\""
+	${ECHO} "SET (CMAKE_EXE_LINKER_FLAG:STRINGS \"${LDFLAGS}\")" >> ./cmake.init
 fi
 if [ "$MACOSX_DEPLOYMENT_TARGET" != "" ] ;then
 	${ECHO} "MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\" ; export MACOSX_DEPLOYMENT_TARGET" >> "${WCONFIGURE}"
@@ -284,4 +299,4 @@ if [ "$PYTHONPATH" != "" ] ;then
 fi
 ${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 
-exec "${CMAKEAPP}" ${ARGS} "$@"
+exec "${CMAKEAPP}" -C ./cmake.init ${ARGS} "$@"

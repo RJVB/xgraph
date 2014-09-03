@@ -118,7 +118,7 @@ if [ "$NOWCC" != "" ] ;then
 		*)
 			KK="kk$$"
 			${NOWCC} -cli > ${KK}
-			CC="`fgrep 'CPP=' ${KK} | sed -e 's/CPP=\([^ ]*\).*/\1/'`" ; export CPP
+			CPP="`fgrep 'CPP=' ${KK} | sed -e 's/CPP=\([^ ]*\).*/\1/'`" ; export CPP
 			CC="`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\).*/\1/'`" ; export CC
 			OPTS=`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\)\(.*\)/\2/'`
 			CPPFLAGS="`fgrep CPPFLAGS= ${KK} | sed -e 's/CPPFLAGS=//'` ${CPPFLAGS}" ; export CPPFLAGS
