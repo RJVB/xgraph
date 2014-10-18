@@ -229,7 +229,17 @@ fi
 if [ "$PYTHONPATH" != "" ] ;then
 	${ECHO} -n " PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> "${WCMAKECALL}"
 fi
-${ECHO} " compiler=\"${compiler}\" CMAKEAPP=\"${CMAKEAPP}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@" >> "${WCMAKECALL}"
+if [ "${compiler}" != "" ] ;then
+	${ECHO} -n " compiler=\"${compiler}\"" >> "${WCMAKECALL}"
+fi
+${ECHO} -n " CMAKEAPP=\"${CMAKEAPP}\"" >> "${WCMAKECALL}"
+if [ "$NOWCC" != "" ] ;then
+	${ECHO} -n " NOWCC=\"${NOWCC}\"" >> "${WCMAKECALL}"
+fi
+if [ $WCC_STUB != 1 ] ;then
+	${ECHO} -n " WCC_STUB=\"${WCC_STUB}\"" >> "${WCMAKECALL}"
+fi
+${ECHO} " `basename $0` $@" >> "${WCMAKECALL}"
 
 rm "${WCONFIGURE}"
 rm ./cmake.init
