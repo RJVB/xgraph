@@ -5,7 +5,7 @@
 # University of California,  Berkeley
 # 1987
 #
-# gccopt and cmake are nothing but scripts that basically 
+# gccopt and xmake are nothing but scripts that basically 
 # expand to 'gcc -O' and 'make -f'
 
 # a number of settings are determined via a series of 'machdepXXX' scripts, some that take arguments
@@ -77,7 +77,7 @@ DYNAMIC:=$(shell ./machdepLDOPTS dynload)
 PYTHONSRC = Python/Python.c Python/AscanfCall.c Python/DataSet.c Python/ULabel.c
 PYTHONVERSION:= $(shell ./machdepLibVersions Python)
 PYTHON_DM_NAME=Python.$(PYTHONVERSION).so
-PYTHONDIR:=$(shell Python/machdep_header $(PYTHONVERSION))
+PYTHONDIR:=$(shell Python/machdep $(PYTHONVERSION))
 PYTHONINC=$(PYTHONDIR)/include
 
 UX11	= libux11.a
@@ -314,15 +314,15 @@ xg11:		$(TOBJ) xtb_m ux11_m
 		$(CC) $(COPTS) $(CFLAGS) -o xg11 $(TOBJ) $(LIBS)		
 
 xtb_m:	xtb/xtb*.[ch]
-#		sh -c "cd $(MAKEBDIR)/xtb ; cmake Makefile CLEVEL=$(_CLEVEL) $(XTB)"
+#		sh -c "cd $(MAKEBDIR)/xtb ; xmake Makefile CLEVEL=$(_CLEVEL) $(XTB)"
 #		( cd $(MAKEBDIR)/xtb ; make "CLEVEL=$(_CLEVEL)" $(XTB) )
-		( cd xtb ; cmake xtb COMP=$(COMP) CXXCOMP=$(CXXCOMP) "ARCH=$(ARCH)" CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=$(DEBUG) UNIBIN=$(UNIBIN) $(XTB) )
-# 		( cd xtb ; cmake xtb COMP=$(COMP) CXXCOMP=$(CXXCOMP) "ARCH=$(ARCH)" CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=-gOpt $(XTB) )
+		( cd xtb ; xmake xtb COMP=$(COMP) CXXCOMP=$(CXXCOMP) "ARCH=$(ARCH)" CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=$(DEBUG) UNIBIN=$(UNIBIN) $(XTB) )
+# 		( cd xtb ; xmake xtb COMP=$(COMP) CXXCOMP=$(CXXCOMP) "ARCH=$(ARCH)" CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=-gOpt $(XTB) )
 
 ux11_m:	ux11/ux11*.[ch]
 #		sh -c "cd $(MAKEBDIR)/ux11 ; make CLEVEL=$(_CLEVEL) $(UX11)"
 #		( cd $(MAKEBDIR)/ux11 ; make "CLEVEL=$(_CLEVEL)" $(UX11) )
-		( cd ux11 ; cmake ux11 COMP=$(COMP) CXXCOMP=$(CXXCOMP) "ARCH=$(ARCH)" CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=$(DEBUG) UNIBIN=$(UNIBIN) $(UX11) )
+		( cd ux11 ; xmake ux11 COMP=$(COMP) CXXCOMP=$(CXXCOMP) "ARCH=$(ARCH)" CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=$(DEBUG) UNIBIN=$(UNIBIN) $(UX11) )
 		touch ux11_m
 
 xgtest:		xgtest.o
@@ -369,10 +369,10 @@ $(PYTHON_DM_NAME): $(PYTHONSRC:.c=.$(PYTHONVERSION).o)
 Python/Python_headers.h: Python/python$(PYTHONVERSION)_headers.h Python/python$(PYTHONVERSION)_numpy.h
 
 Python/python$(PYTHONVERSION)_headers.h:
-	Python/machdep_header $(PYTHONVERSION) headers
+	Python/machdep $(PYTHONVERSION) headers
 
 Python/python$(PYTHONVERSION)_numpy.h:
-	Python/machdep_header $(PYTHONVERSION) numpy
+	Python/machdep $(PYTHONVERSION) numpy
 
 Python/Python.$(PYTHONVERSION).o: Python/Python.c Python/DM_Python.h Python/PythonInterface.h Python/PyObjects.h $(DYMOD_DEPHEADERS) xgraph.h Python/Python_headers.h
 	$(DCC) -DDEBUG $(DEBUG) $(COPTS) $(CFLAGS) $(SHOBJ) -I./ -I${PYTHONINC} -o $@ $(CHECK) $< -DPYTHON$(PYTHONVERSION)

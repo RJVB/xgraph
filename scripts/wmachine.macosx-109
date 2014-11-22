@@ -1,0 +1,219 @@
+# file with machine specific definitions for gccopt, etc.
+# expected in ${DEVPREFSDIR}/wmachine or ${HOME}/.Preferences/.dev/wmachine
+# source with the command name doing the sourcing as its first argument
+## NB: could use the hostinfo command!!
+
+#set -x
+
+compil="$compiler"
+mcpu="-mcpu"
+MARCH=""
+
+# for universal binary builds:
+AUTOVECx86="-msse3 -mssse3"
+DEFAULTARCH="-arch x86_64"
+ARCHS32="-arch i386"
+ARCHS64="-arch i386 -arch x86_64"
+#SDK=""
+DEFAULT_CC="clang"
+DEFAULT_CXX="clang++"
+
+MARCHUNI="-malign-natural"
+MARCHUNI64="-malign-natural"
+
+USINGCLANG=0
+
+setautovec() {
+	ARCH="${1}"
+	VU="${2}"
+	case $compil in
+		*gcc*-4.7*|*g++*-4.7*|*gcc*-4.8*|*g++*-4.8*)
+			OOPTIMOPT="${OOPTIMOPT}"
+			;;
+	esac
+	case $compil in
+		*clang*)
+			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
+			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
+				OOPTIMOPT="${OOPTIMOPT} -fvectorize -fslp-vectorize-aggressive"
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -fvectorize -fslp-vectorize-aggressive ${AUTOVECx86} ${VU}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -fvectorize -fslp-vectorize-aggressive ${AUTOVECx86} ${VU}"
+				echo "# Enabling auto vectorisation" 1>&2
+			else
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64}"
+			fi
+			OPTIMOPT="$OOPTIMOPT"
+			;;
+		*llvm*gcc*|*llvm*g++*)
+			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
+			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
+				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize"
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize ${AUTOVECx86} ${VU}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize ${AUTOVECx86} ${VU}"
+				echo "# Enabling auto vectorisation" 1>&2
+			else
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64}"
+			fi
+			OPTIMOPT="$OOPTIMOPT"
+			;;
+		*gcc*-4*|*g++*-4*)
+			MARCH="${MARCH} ${VU}"
+			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
+				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -ftracer"
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize -ftracer ${AUTOVECx86} ${VU}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize -ftracer ${AUTOVECx86} ${VU}"
+				echo "# Enabling auto vectorisation" 1>&2
+			else
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftracer"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftracer"
+			fi
+			OPTIMOPT="$OOPTIMOPT"
+			;;
+		*gcc*)
+			$compil --version | fgrep 'Apple Computer' >/dev/null 2>&1
+			if [ $? = 0 ] ;then
+				MARCH="${MARCH} ${VU}"
+			fi
+			;;
+		*)
+			$DEFAULT_CC --version | fgrep 'Apple Computer' >/dev/null 2>&1
+			if [ $? = 0 ] ;then
+				MARCH="${MARCH} ${VU}"
+			fi
+			;;
+	esac
+}
+
+setopts() {
+	case $1 in
+		core2|CORE2|"Unknown v10.0"|"corei7"|"native"|Intel*Core*)
+			if [ "$1" = "corei7" -o "$1" = "native" ] ;then
+				CPU="$1"
+			else
+				CPU="core2"
+			fi
+			ALT_CPU=""
+			mcpu="-march"
+
+			if [ "$compil" = "" ] ;then
+				compil="${DEFAULT_CC}"
+			fi
+			case $compil in
+				clang*)
+# clang accepts -O4 but activates an additional mode that is not supported by g++ ... which will be
+# called for c++ inputs... (20140107: check: ought no longer be the case!)
+					VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+					OOPTIMOPT="-O3" #-fdelayed-branch"
+#					DEFAULT_CXX="$compil -stdlib=libstdc++"
+					USINGCLANG=1
+					;;
+				*)
+					VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+					OOPTIMOPT="-O3" #-fdelayed-branch"
+					;;
+			esac
+# The options that get turned on by maximal optimisation (default):
+			# OOPTIMOPT="$OOPTIMOPT  -fgcse-lm -fsched-interblock -freorder-blocks -freorder-blocks-and-partition -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops"
+			OOPTIMOPT="$OOPTIMOPT -funroll-loops"
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+			NODEBUGOPT="" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+			MARCH=""
+			MARCHUNI=""
+			MARCHUNI64=""
+			ARCHS32="-arch i386"
+			ARCHS64="-arch i386 -arch x86_64"
+			SDK="-isysroot /Developer/SDKs/MacOSX10.6.sdk -mmacosx-version-min=10.6"
+
+
+			RWSTRINGS=0
+
+			LNKOPTS=""
+
+			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse -flax-vector-conversions"
+			;;
+
+		*)
+			CPU="pentium-m"
+			ALT_CPU="pentium"
+			mcpu="-march"
+
+			VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+			OOPTIMOPT="-O3 -fstrength-reduce" #-fdelayed-branch"
+# The options that get turned on by maximal optimisation (default):
+			OOPTIMOPT="$OOPTIMOPT  -fgcse-lm -fsched-interblock -freorder-blocks -freorder-blocks-and-partition -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops" # -fprefetch-loop-arrays -ftracer -mmultiple -mstring" #
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+			NODEBUGOPT="" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+			MARCH="-msse3 -mssse3 -mfpmath=sse"
+			MARCHUNI=""
+			MARCHUNI64=""
+
+			RWSTRINGS=0
+
+			LNKOPTS=""
+
+			if [ "$compil" = "" ] ;then
+				compil="${DEFAULT_CC}"
+			fi
+			setautovec "x86" "-msse3 -mssse3 -mfpmath=sse"
+			;;
+
+	esac
+}
+
+############################################################
+
+case $1 in
+	gccopt)
+
+		for a in "$@" ;do
+			case $a in
+				-march=*)
+					MARCH="${a##-march=}"
+					;;
+			esac
+		done
+		case $HOST in
+			portia.local)
+				if [ "${MARCH}" = "" ] ;then
+					setopts core2
+				else
+					setopts "${MARCH}"
+				fi
+				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
+				;;
+
+			virtPortia.local)
+				if [ "${MARCH}" = "" ] ;then
+					setopts core2
+				else
+					setopts "${MARCH}"
+				fi
+				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
+				;;
+
+			*)
+#				echo "Using defaults 'setopts `hwprefs cpu_type`' for host $HOST" 1>&2
+				if [ "${MARCH}" = "" ] ;then
+					setopts "`sysctl -n machdep.cpu.brand_string`"
+				else
+					setopts "${MARCH}"
+				fi
+				;;
+		esac
+		;;
+	*)
+		echo "$0: PROBLEM: we should never be called with unknown argument >$1<"
+		;;
+esac

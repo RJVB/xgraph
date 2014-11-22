@@ -46,18 +46,33 @@
 #			include "python23_numpy.h"
 #		endif
 #	else
-#		include <Python/Python.h>
-#		include <Python/bytesobject.h>
 #		ifdef PYTHON25
+#			include "python25_headers.h"
 #			include "python25_numpy.h"
 #		elif PYTHON24
+#			include "python24_headers.h"
 #			include "python24_numpy.h"
 #		elif PYTHON26
+#			include "python26_headers.h"
 #			include "python26_numpy.h"
 #		elif PYTHON27
+#			include "python27_headers.h"
 #			include "python27_numpy.h"
+#		elif PYTHON31
+#			include "python31_headers.h"
+#			include "python31_numpy.h"
+#		elif PYTHON32
+#			include "python32_headers.h"
+#			include "python32_numpy.h"
+#		elif PYTHON33
+#			include "python33_headers.h"
+#			include "python33_numpy.h"
+#		elif PYTHON34
+#			include "python34_headers.h"
+#			include "python34_numpy.h"
 #		else
-//#			include <Python/../../lib/python2.3/site-packages/numpy/core/include/numpy/arrayobject.h>
+#			include <Python/Python.h>
+#			include <Python/bytesobject.h>
 #			include "pythonsys_numpy.h"
 #			ifndef Py_RETURN_NONE
 #				define Py_RETURN_NONE return Py_INCREF(Py_None), Py_None
@@ -80,23 +95,9 @@
 #		include "python31_headers.h"
 #		include "python31_numpy.h"
 #	elif PYTHON32
-//#		if defined(__CYGWIN__)
-//#			include <python3.2m/Python.h>
-//#			include <python3.2m/bytesobject.h>
-//#		else
-//#			include <python3.2/Python.h>
-//#			include <python3.2/bytesobject.h>
-//#		endif
 #		include "python32_headers.h"
 #		include "python32_numpy.h"
 #	elif PYTHON33
-//#		if defined(__CYGWIN__)
-//#			include <python3.3m/Python.h>
-//#			include <python3.3m/bytesobject.h>
-//#		else
-//#			include <python3.3/Python.h>
-//#			include <python3.3/bytesobject.h>
-//#		endif
 #		include "python33_headers.h"
 #		include "python33_numpy.h"
 #	elif PYTHONsys
