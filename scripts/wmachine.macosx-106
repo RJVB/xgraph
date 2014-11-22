@@ -3,6 +3,8 @@
 # source with the command name doing the sourcing as its first argument
 ## NB: could use the hostinfo command!!
 
+## This file for Mac OS X 10.6 and earlier
+
 #set -x
 
 compil="$compiler"
