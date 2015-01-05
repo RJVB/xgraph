@@ -192,6 +192,7 @@ fi
 # those flags into CFLAGS.
 if [ $MERGE_CPPFLAGS ] ;then
 	CFLAGS="${CPPFLAGS} ${CFLAGS}" ; export CFLAGS
+	OBJCFLAGS="${CPPFLAGS} ${OBJCFLAGS}" ; export OBJCFLAGS
 	CPPFLAGS="" ; export CPPFLAGS
 fi
 
@@ -244,6 +245,11 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	${ECHO} "CC=\"${CC}\"" >> "${WCONFIGURE}"
 	${ECHO} "CPPFLAGS=\"${CPPFLAGS}\"" >> "${WCONFIGURE}"
 	${ECHO} "CFLAGS=\"${CFLAGS}\"" >> "${WCONFIGURE}"
+	if [ "${OBJCFLAGS}" = "${CFLAGS}" ] ;then
+		${ECHO} 'OBJCFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
+	else
+		${ECHO} "OBJCFLAGS=\"${OBJCFLAGS}\"" >> "${WCONFIGURE}"
+	fi
 	${ECHO} "CXX=\"${CXX}\"" >> "${WCONFIGURE}"
 	if [ "${CXXFLAGS}" = "${CFLAGS}" ] ;then
 		${ECHO} 'CXXFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
@@ -254,11 +260,6 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 		${ECHO} 'OBJC="${CC}"' >> "${WCONFIGURE}"
 	else
 		${ECHO} "OBJC=\"${OBJC}\"" >> "${WCONFIGURE}"
-	fi
-	if [ "${OBJCFLAGS}" = "${CFLAGS}" ] ;then
-		${ECHO} 'OBJCFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
-	else
-		${ECHO} "OBJCFLAGS=\"${OBJCFLAGS}\"" >> "${WCONFIGURE}"
 	fi
 	${ECHO} "F77=\"${F77}\"" >> "${WCONFIGURE}"
 	if [ "${FFLAGS}" = "${CFLAGS}" ] ;then
@@ -294,8 +295,8 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 fi
 
-if [ "${CFLAGS}" != "" ] ;then
-	"${CONFIGURE}" "CFLAGS=${CFLAGS}" ${ARGS} "$@"
+if [ "${CFLAGS}" != "" -o "${OBJCFLAGS}" != "" -o "${CXXFLAGS}" != "" ] ;then
+	"${CONFIGURE}" "CFLAGS=${CFLAGS}" "OBJCFLAGS=${OBJCFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${ARGS} "$@"
 	RET="$?"
 else
 	"${CONFIGURE}" ${ARGS} "$@"
