@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cd `dirname $0`
-echo $CWD
+echo $CWD 1>&2
 
 PVERSION=$1
 
@@ -31,6 +31,9 @@ headers() {
 		33)
 			CONFINCLUDEPY="`python3.3 -c "import sysconfig ; print(sysconfig.get_config_vars()['CONFINCLUDEPY'])"`"
 			;;
+		34)
+			CONFINCLUDEPY="`python3.4 -c "import sysconfig ; print(sysconfig.get_config_vars()['CONFINCLUDEPY'])"`"
+			;;
 		sys|default)
 			CONFINCLUDEPY="`python -c "import sysconfig ; print(sysconfig.get_config_vars()['CONFINCLUDEPY'])"`"
 			;;
@@ -42,7 +45,7 @@ headers() {
 			echo "#include <${CONFINCLUDEPY}/bytesobject.h>" >> python${PVERSION}_headers.h
 			echo "#include <${CONFINCLUDEPY}/intobject.h>" >> python${PVERSION}_headers.h
 			;;
-		sys|default)
+		sys|default|*)
 			echo "#include <${CONFINCLUDEPY}/bytesobject.h>" >> python${PVERSION}_headers.h
 			echo "#if PY_MAJOR_VERSION < 3" >> python${PVERSION}_headers.h
 			echo "#	include <${CONFINCLUDEPY}/intobject.h>" >> python${PVERSION}_headers.h
@@ -78,6 +81,9 @@ numpy() {
 		33)
 			echo "#include <"`python3.3 -c "import numpy ; print(numpy.get_include())"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
 			;;
+		34)
+			echo "#include <"`python3.4 -c "import numpy ; print(numpy.get_include())"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
+			;;
 		sys|default)
 #		PVERSION=`echo "import sys ; print str(sys.version_info[0])+str(sys.version_info[1])" | python`${PVERSION}
 			echo "#include <"`python -c "import numpy ; print numpy.get_include()"`"/numpy/arrayobject.h>" > python${PVERSION}_numpy.h
@@ -110,7 +116,11 @@ prefix() {
 			echo 'import sys;print(sys.prefix)' | python3.2
 			;;
 		33)
-			echo 'import sys;print(sys.prefix)' | python3.3
+			#echo 'import sys;print(sys.prefix)' | python3.3
+			python3.3-config --prefix
+			;;
+		34)
+			echo 'import sys;print(sys.prefix)' | python3.4
 			;;
 		sys|default)
 			if [ "${PYTHON}" = "" ] ;then
@@ -121,12 +131,44 @@ prefix() {
 	esac
 }
 
+config() {
+	case ${PVERSION} in
+		25|Python25Module)
+			echo python2.5-config
+			;;
+		26|Python26Module)
+			echo python2.6-config
+			;;
+		27|Python27Module)
+			echo python2.7-config
+			;;
+		31|Python31Module)
+			echo python3.1-config
+			;;
+		32|Python32Module)
+			echo python3.2-config
+			;;
+		33|Python33Module)
+			echo python3.3-config
+			;;
+		34|Python34Module)
+			echo python3.4-config
+			;;
+		sys|default|PythondefaultModule|PythonsysModule)
+			echo python-config
+			;;
+	esac
+}
+
 case $2 in
 	headers)
 		headers
 		;;
 	numpy)
 		numpy
+		;;
+	config)
+		config
 		;;
 	*)
 		prefix

@@ -1,0 +1,410 @@
+# file with machine specific definitions for gccopt, etc.
+# expected in ${DEVPREFSDIR}/wmachine or ${HOME}/.Preferences/.dev/wmachine
+# source with the command name doing the sourcing as its first argument
+## NB: could use the hostinfo command!!
+
+## This file for Mac OS X 10.6 and earlier
+
+#set -x
+
+compil="$compiler"
+mcpu="-mcpu"
+MARCH=""
+
+# for universal binary builds:
+AUTOVECx86="-msse3 -mssse3"
+AUTOVECppc="-faltivec"
+DEFAULTARCH="-arch x86_64"
+ARCHS32="-arch ppc -arch i386"
+ARCHS64="-arch ppc -arch i386 -arch x86_64"
+SDK="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4"
+
+MARCHUNI="-malign-natural"
+MARCHUNI64="-malign-natural"
+
+USINGCLANG=0
+
+setautovec() {
+	ARCH="${1}"
+	VU="${2}"
+	case $compil in
+		*gcc*-4.7*|*g++*-4.7*|*gcc*-4.8*|*g++*-4.8*)
+			OOPTIMOPT="${OOPTIMOPT}"
+			;;
+	esac
+	case $compil in
+		*gcc-3.3*|*g++-3.3*)
+			MARCH="${MARCH} ${VU}"
+			;;
+		*gcc-3.5*)
+			OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -fdump-tree-vect-stats"
+			MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86}"
+			MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86}"
+			OPTIMOPT="$OOPTIMOPT"
+			echo "# Enabling auto vectorisation" 1>&2
+			;;
+		*clang*)
+			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
+			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
+				OOPTIMOPT="${OOPTIMOPT} -fvectorize -fslp-vectorize-aggressive"
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -fvectorize -fslp-vectorize-aggressive ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -fvectorize -fslp-vectorize-aggressive ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+				echo "# Enabling auto vectorisation" 1>&2
+			else
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64}"
+			fi
+			OPTIMOPT="$OOPTIMOPT"
+			;;
+		*llvm*gcc*|*llvm*g++*)
+			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
+			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
+				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize"
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+				echo "# Enabling auto vectorisation" 1>&2
+			else
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64}"
+			fi
+			OPTIMOPT="$OOPTIMOPT"
+			;;
+		#*gcc-4.2*|*g++-4.2*)
+		*gcc*-4*|*g++*-4*)
+			MARCH="${MARCH} ${VU}"
+			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
+				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -ftracer"
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+				echo "# Enabling auto vectorisation" 1>&2
+			else
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftracer"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftracer"
+			fi
+			OPTIMOPT="$OOPTIMOPT"
+			;;
+#		*gcc*-4*|*g++*-4*)
+#			if [ "${CPU}" = "core2" ] ;then
+#				CPU="${ALT_CPU}"
+#			fi
+#			if [ "${ARCH}" = "x86" ] ;then
+#				VU="-msse3 -mssse3 -mfpmath=sse"
+#			fi
+#			MARCH="${MARCH} ${VU}"
+#			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
+#				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize -ftracer"
+#				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+#				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftree-vectorize -ftracer ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+#				echo "# Enabling auto vectorisation" 1>&2
+#			else
+#				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftracer"
+#				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -ftracer"
+#			fi
+#			if [ "${CPU}" = "core2" ] ;then
+#				CPU="${ALT_CPU}"
+#			fi
+#			OPTIMOPT="$OOPTIMOPT"
+#			;;
+		*gcc*)
+			$compil --version | fgrep 'Apple Computer' >/dev/null 2>&1
+			if [ $? = 0 ] ;then
+				MARCH="${MARCH} ${VU}"
+			fi
+			;;
+		*)
+			$DEFAULT_CC --version | fgrep 'Apple Computer' >/dev/null 2>&1
+			if [ $? = 0 ] ;then
+				MARCH="${MARCH} ${VU}"
+			fi
+			;;
+	esac
+}
+
+setopts() {
+	case $1 in
+		G5|970*)
+			DEFAULT_CC="gcc-4.0"
+			DEFAULT_CXX="g++-4.0"
+			CPU="G5"
+			ALT_CPU="G5"
+			DEFAULTARCH="-arch ppc"
+
+			VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+			OOPTIMOPT="-O3 -fstrength-reduce -falign-loops=32 -falign-functions=32 -falign-jumps=32" #-fdelayed-branch"
+# 970113:
+# 				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-omit-frame-pointer -fno-schedule-insns -fschedule-insns2 -finline-functions"
+# The options that get turned on by maximal optimisation (default):
+			OOPTIMOPT="$OOPTIMOPT -fgcse-lm -fsched-interblock -freorder-blocks -freorder-blocks-and-partition -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops" # -fprefetch-loop-arrays -ftracer -mmultiple -mstring" #
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+			NODEBUGOPT="" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+			MARCH="-mtune=G5 -mpowerpc64 -mpowerpc-gpopt -mpowerpc-gfxopt -malign-natural -maltivec -mabi=altivec -mhard-float -mnew-mnemonics -mfused-madd -pipe -mstring -mmultiple -misel=yes"
+
+# These are the options turned on by gcc-3.3 -fastf (almost all?). They don't seem to have a lot of effect on my codes.
+# 				GCC3_CPU_OPTS="-falign-loops-max-skip=15 -falign-jumps-max-skip=15 -falign-loops=32 -falign-jumps=32 -falign-functions=32 -fstrict-aliasing -frelax-aliasing -fgcse-mem-alias -floop-transpose -floop-to-memset"
+
+			RWSTRINGS=0
+
+			if [ "$compil" = "" ] ;then
+				compil="${DEFAULT_CC}"
+			fi
+			setautovec "ppc" "-faltivec"
+			;;
+
+		G4|7450*|7447*|7448*)
+			DEFAULT_CC="gcc-4.0"
+			DEFAULT_CXX="g++-4.0"
+			CPU="7450"
+			ALT_CPU="7450"
+			DEFAULTARCH="-arch ppc"
+
+			VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+			OOPTIMOPT="-O3 -fstrength-reduce -falign-loops=16 -falign-functions=16 -falign-jumps=16" #-fdelayed-branch"
+# 970113:
+# 				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-omit-frame-pointer -fno-schedule-insns -fschedule-insns2 -finline-functions"
+# The options that get turned on by maximal optimisation (default):
+			OOPTIMOPT="$OOPTIMOPT  -fgcse-lm -fsched-interblock -freorder-blocks -freorder-blocks-and-partition -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops" # -fprefetch-loop-arrays -ftracer -mmultiple -mstring" #
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+			NODEBUGOPT="" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+# do not use -mpowerpc-gpopt without selecting the G4: runtime errors will result // 20051116: G4 doesn't support this option!
+# same for -mpowerpc-gfxopt?
+			MARCH="-mtune=7450 -mpowerpc-gfxopt -malign-natural -maltivec -mabi=altivec -mhard-float -mnew-mnemonics -mfused-madd -mstring -mmultiple -misel=yes"
+
+# These are the options turned on by gcc-3.3 -fastf (almost all?). They don't seem to have a lot of effect on my codes.
+# 				GCC3_CPU_OPTS="-falign-loops-max-skip=15 -falign-jumps-max-skip=15 -falign-loops=16 -falign-jumps=16 -falign-functions=16 -fstrict-aliasing -frelax-aliasing -fgcse-mem-alias -floop-transpose -floop-to-memset"
+
+			RWSTRINGS=0
+
+			LNKOPTS=""
+
+			if [ "$compil" = "" ] ;then
+				compil="${DEFAULT_CC}"
+			fi
+			setautovec "ppc" "-faltivec"
+			;;
+
+		core2|CORE2|"Unknown v10.0"|"corei7"|"native"|Intel*Core*)
+# 			DEFAULT_CC="/Developer/usr/bin/llvm-gcc-4.2"
+# 			DEFAULT_CXX="/Developer/usr/bin/llvm-g++-4.2"
+			if [ "${DEFAULT_CC}" = "" ] ;then
+				DEFAULT_CC="gcc-4.2"
+			fi
+			if [ "${DEFAULT_CXX}" = "" ] ;then
+				DEFAULT_CXX="g++-4.2"
+			fi
+			if [ "$1" = "corei7" -o "$1" = "native" ] ;then
+				CPU="$1"
+			else
+				CPU="core2"
+			fi
+			ALT_CPU="" ##pentium-m"
+			mcpu="-march"
+
+			if [ "$compil" = "" ] ;then
+				compil="${DEFAULT_CC}"
+			fi
+			case $compil in
+				clang*)
+# clang accepts -O4 but activates an additional mode that is not supported by g++ ... which will be
+# called for c++ inputs... (20140107: check: ought no longer be the case!)
+					VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+					OOPTIMOPT="-O3" #-fdelayed-branch"
+#					DEFAULT_CXX="$compil -stdlib=libstdc++"
+					USINGCLANG=1
+					;;
+				*)
+					VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+					OOPTIMOPT="-O3" #-fdelayed-branch"
+					;;
+			esac
+# The options that get turned on by maximal optimisation (default):
+			# OOPTIMOPT="$OOPTIMOPT  -fgcse-lm -fsched-interblock -freorder-blocks -freorder-blocks-and-partition -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops"
+			OOPTIMOPT="$OOPTIMOPT -funroll-loops"
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+			NODEBUGOPT="" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+			MARCH=""
+			MARCHUNI=""
+			MARCHUNI64=""
+			ARCHS32="-arch i386"
+			ARCHS64="-arch i386 -arch x86_64"
+			AUTOVECppc=""
+			SDK="-isysroot /Developer/SDKs/MacOSX10.6.sdk -mmacosx-version-min=10.6"
+
+
+			RWSTRINGS=0
+
+			LNKOPTS=""
+
+			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse -flax-vector-conversions"
+			;;
+
+		x86)
+			DEFAULT_CC="gcc-4.2"
+			DEFAULT_CXX="g++-4.2"
+			CPU="pentium-m"
+			ALT_CPU="pentium"
+			mcpu="-march"
+
+			VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+			OOPTIMOPT="-O3 -fstrength-reduce" #-fdelayed-branch"
+# The options that get turned on by maximal optimisation (default):
+			OOPTIMOPT="$OOPTIMOPT  -fgcse-lm -fsched-interblock -freorder-blocks -freorder-blocks-and-partition -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops" # -fprefetch-loop-arrays -ftracer -mmultiple -mstring" #
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+			NODEBUGOPT="" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+			MARCH="-msse3 -mssse3 -mfpmath=sse"
+			MARCHUNI=""
+			MARCHUNI64=""
+
+			RWSTRINGS=0
+
+			LNKOPTS=""
+
+			if [ "$compil" = "" ] ;then
+				compil="${DEFAULT_CC}"
+			fi
+			setautovec "x86" "-msse3 -mssse3 -mfpmath=sse"
+			;;
+
+		*)
+			DEFAULT_CC="gcc2"
+			DEFAULT_CXX="g++2"
+
+			CPU="powerpc"
+			ALT_CPU="powerpc"
+			DEFAULTARCH="-arch ppc"
+
+			VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+			OOPTIMOPT="-O3 -fstrength-reduce" #-fdelayed-branch"
+# 970113:
+# 				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-omit-frame-pointer -fno-schedule-insns -fschedule-insns2 -finline-functions"
+# The options that get turned on by maximal optimisation (default):
+			OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops"
+# The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+			NODEBUGOPT="" #"-fomit-frame-pointer"
+			OPTIMOPT="$OOPTIMOPT"
+			DEBUGOPT="$NODEBUGOPT"
+# Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+			SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+
+			MARCH="-mtune=powerpc -mpowerpc -mhard-float" # -malign-natural -mpowerpc-gfxopt -mpowerpc-gpopt" # -force_cpusubtype_ALL"
+			RWSTRINGS=0
+			;;
+	esac
+}
+
+############################################################
+
+case $1 in
+	gccopt)
+
+		for a in "$@" ;do
+			case $a in
+				-march=*)
+					MARCH="${a##-march=}"
+					;;
+			esac
+		done
+		case $HOST in
+			obsolete|Gaspoesie.local)
+				setopts G3
+				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
+				;;
+
+			Zygiella.local)
+				DEFAULT_CC="gcc-4.0"
+				DEFAULT_CXX="g++-4.0"
+				setopts G5
+				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
+				;;
+
+			oportia.local)
+				DEFAULT_CC="gcc-4.0"
+				DEFAULT_CXX="g++-4.0"
+				setopts G4
+				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
+				;;
+
+			portia.local)
+				DEFAULT_CC="gcc-4.2"
+				DEFAULT_CXX="g++-4.2"
+				if [ "${MARCH}" = "" ] ;then
+					setopts core2
+				else
+					setopts "${MARCH}"
+				fi
+				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
+				;;
+
+			virtPortia.local)
+				DEFAULT_CC="clang"
+				DEFAULT_CXX="clang++"
+				if [ "${MARCH}" = "" ] ;then
+					setopts core2
+				else
+					setopts "${MARCH}"
+				fi
+				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
+				;;
+
+			Cuneipower.local)
+				setopts G4
+				CONFIG_FLAVOUR="RJVB" ; export CONFIG_FLAVOUR
+# 				DEFAULT_CC="gcc"
+# 				DEFAULT_CXX="g++"
+# 				CPU="G4"
+# 				ALT_CPU="G4"
+# 
+# 				VOPTIMOPT="-O3 -f{s-r,nc-r,n-m,n-a,i-f,k-i-f,d-b}"
+# 				OOPTIMOPT="-O3 -fstrength-reduce" #-fdelayed-branch"
+# # 970113:
+# # 				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fno-omit-frame-pointer -fno-schedule-insns -fschedule-insns2 -finline-functions"
+# # The options that get turned on by maximal optimisation (default):
+# 				OOPTIMOPT="$OOPTIMOPT  -fexpensive-optimizations -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -finline-functions -funroll-loops" # -fprefetch-loop-arrays -ftracer -mmultiple -mstring" #
+# # The options that are standard on, but get turned off by debugging, regardless of whether optimisation is turned on again:
+# 				NODEBUGOPT="" #"-fomit-frame-pointer"
+# 				OPTIMOPT="$OOPTIMOPT"
+# 				DEBUGOPT="$NODEBUGOPT"
+# # Options to ensure that only "safe" optimisations are performed, e.g. not causing misalignement of variables, etc.
+# 				SAFETYOPTS="-fno-caller-saves -fno-force-mem"
+# 
+# # do not use -mpowerpc-gpopt without selecting the G4: runtime errors will result
+# # same for -mpowerpc-gfxopt?
+# # 				MARCH="-mcpu=G4 -mtune=G4 -mpowerpc -malign-natural -maltivec -mabi=altivec -faltivec -mhard-float -mpowerpc-gfxopt" # -mpowerpc-gpopt" # -force_cpusubtype_ALL"
+# 				MARCH="-mpowerpc -mcpu=7450 -mtune=7450 -malign-natural -maltivec -mabi=altivec -faltivec -mhard-float -mpowerpc-gfxopt -mnew-mnemonics -mfused-madd"
+# 
+# 				RWSTRINGS=0
+# 
+				;;
+			*)
+#				echo "Using defaults 'setopts `hwprefs cpu_type`' for host $HOST" 1>&2
+				if [ "${MARCH}" = "" ] ;then
+					setopts "`sysctl -n machdep.cpu.brand_string`"
+				else
+					setopts "${MARCH}"
+				fi
+				;;
+		esac
+		;;
+	*)
+		echo "$0: PROBLEM: we should never be called with unknown argument >$1<"
+		;;
+esac

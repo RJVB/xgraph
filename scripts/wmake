@@ -7,7 +7,7 @@ fi
 if [ "$1" = "--MP" ] ;then
 	CC_PRINT_OPTIONS=YES ; export CC_PRINT_OPTIONS
 	CPATH=/opt/local/include ; export CPATH
-	INSTALL=/usr/bin/install -c ; export INSTALL
+	INSTALL="/usr/bin/install -c" ; export INSTALL
 	LIBRARY_PATH=/opt/local/lib ; export LIBRARY_PATH
 	MOC=/opt/local/bin/moc ; export MOC
 	PATH=.:/Users/bertin/bin:/Users/bertin/script:./script:/opt/local/bin:/opt/local/sbin:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin

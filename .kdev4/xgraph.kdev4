@@ -109,6 +109,35 @@ inclusive=0
 pattern=*.a
 targets=1
 
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=xgraph
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=-progname xgraph -nodetach examples/AntSearch4
+Debugger Shell=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+Display Demangle Names=true
+Display Static Members=true
+EnvironmentGroup=X11
+Executable=file:///Users/bertin/cworks/xgraph/xgraph.bin
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+GDB Path=file:///opt/local/bin/ggdb
+Project Target=
+Remote GDB Config Script=
+Remote GDB Run Script=
+Remote GDB Shell Script=
+Start With=GdbConsole
+Use External Terminal=false
+Working Directory=file:///Users/bertin/cworks/xgraph
+isExecutable=true
+
 [MakeBuilder]
 Abort on First Error=false
 Default Make Environment Profile=gcc-4.7

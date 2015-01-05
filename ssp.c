@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 
 extern int errno;
 #if !defined(linux) && !defined(__MACH__) && !defined(__CYGWIN__)
@@ -90,7 +91,7 @@ int join( FILE *fp, int tabbed)
 main( int argc, char **argv )
 { FILE *fp;
   int i= 1;
-  extern char *rindex( const char *, char);
+//   extern char *rindex( const char *, char);
   char *progname= rindex( argv[0], '/');
 	if( progname ){
 		progname++;
