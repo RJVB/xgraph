@@ -26,7 +26,13 @@ LOG="${TMPDIR}/ps2pdf.preview.log"
 TMP=${FILE}.ps
 OUTPUT=${FILE}.pdf
 
-ECHO="/usr/local/bin/echo"
+if [ -x "/bin/echo" ] ;then
+	ECHO="/bin/echo"
+elif [ -x "/opt/local/bin/echo" ] ;then
+	ECHO="/opt/local/bin/echo"
+else
+	ECHO="/usr/local/bin/echo"
+fi
 export ECHO
 
 if [ $# != 0 ] ;then

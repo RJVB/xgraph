@@ -295,13 +295,29 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 fi
 
-if [ "${CFLAGS}" != "" -o "${OBJCFLAGS}" != "" -o "${CXXFLAGS}" != "" ] ;then
-	"${CONFIGURE}" "CFLAGS=${CFLAGS}" "OBJCFLAGS=${OBJCFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${ARGS} "$@"
-	RET="$?"
-else
-	"${CONFIGURE}" ${ARGS} "$@"
-	RET="$?"
+ENVARGS=""
+if [ "${CC}" != "" ] ;then
+	ENVARGS="${ENVARGS} CC=\"${CC}\""
 fi
+if [ "${CXX}" != "" ] ;then
+	ENVARGS="${ENVARGS} CXX=\"${CXX}\""
+fi
+if [ "${CFLAGS}" != "" ] ;then
+	ENVARGS="${ENVARGS} CFLAGS=\"${CFLAGS}\""
+fi
+if [ "${OBJCFLAGS}" != "" ] ;then
+	ENVARGS="${ENVARGS} OBJCFLAGS=\"${OBJCFLAGS}\""
+fi
+if [ "${CXXFLAGS}" != "" ] ;then
+	ENVARGS="${ENVARGS} CXXFLAGS=\"${CXXFLAGS}\""
+fi
+#if [ "${CFLAGS}" != "" -o "${OBJCFLAGS}" != "" -o "${CXXFLAGS}" != "" ] ;then
+#	"${CONFIGURE}" "CFLAGS=${CFLAGS}" "OBJCFLAGS=${OBJCFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${ARGS} "$@"
+#	RET="$?"
+#else
+	"${CONFIGURE}" ${ENVARGS} ${ARGS} "$@"
+	RET="$?"
+#fi
 
 if [ "${POSTCONFIGEDIT}" != "" ] ;then
 	if [ "${EDIT}" != "" ] ;then
