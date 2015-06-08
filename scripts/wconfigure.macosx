@@ -16,6 +16,7 @@ if [ "$1" = "--MP" ] ;then
 	export PATH
 	QMAKE=/opt/local/bin/qmake ; export QMAKE
 	QTDIR=/opt/local ; export QTDIR
+	MACPORTS=1
 	shift 1
 fi
 
@@ -251,7 +252,11 @@ fi
 if [ "$POSTCONFIGEDIT" != "" ] ;then
 	${ECHO} -n " POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\"" >> wconfigure.call
 fi
-${ECHO} " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0` $@" >> wconfigure.call
+${ECHO} -n " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0`" >> wconfigure.call
+if [ "${MACPORTS}" != "" ] ;then
+	${ECHO} -n " --MP" >> wconfigure.call
+fi
+${ECHO} " $@" >> wconfigure.call
 
 if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	rm "${WCONFIGURE}"
