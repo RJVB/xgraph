@@ -25,6 +25,7 @@ if [ "$1" == "--MP" ] ;then
 	export PATH
 	QMAKE=/opt/local/bin/qmake ; export QMAKE
 	QTDIR=/opt/local ; export QTDIR
+	MACPORTS=1
 	shift 1
 fi
 
@@ -238,7 +239,11 @@ fi
 if [ $WCC_STUB != 1 ] ;then
 	${ECHO} -n " WCC_STUB=\"${WCC_STUB}\"" >> "${WCMAKECALL}"
 fi
-${ECHO} " `basename $0` $@" >> "${WCMAKECALL}"
+${ECHO} " `basename $0`" >> "${WCMAKECALL}"
+if [ "${MACPORTS}" != "" ] ;then
+	${ECHO} -n " --MP" >> wconfigure.call
+fi
+${ECHO} " $@" >> "${WCMAKECALL}"
 
 rm "${WCONFIGURE}"
 rm -f ./wcmake.initcache
