@@ -10,7 +10,11 @@ if [ "${WCONFIGURE}" = "" ] ;then
 	WCMAKECALL="./wcmake.call"
 	echo "# $0 $@" 1>&2
 else
-	WCMAKECALL=`dirname "${WCONFIGURE}"`/wcmake.call
+	WDIR=`dirname "${WCONFIGURE}"`
+	if [ ! -w "${WDIR}" ] ;then
+		WDIR="."
+	fi
+	WCMAKECALL="${WDIR}"/wcmake.call
 	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
 	echo "# env WCMAKECALL=\"${WCMAKECALL}\" $0 $@" 1>&2
 fi
