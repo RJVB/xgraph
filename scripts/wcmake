@@ -15,8 +15,7 @@ else
 		WDIR="."
 	fi
 	WCMAKECALL="${WDIR}"/wcmake.call
-	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
-	echo "# env WCMAKECALL=\"${WCMAKECALL}\" $0 $@" 1>&2
+	echo "# env WCONFIGURE=\"${WCONFIGURE}\" WCMAKECALL=\"${WCMAKECALL}\" $0 $@" 1>&2
 fi
 
 if [ "$1" == "--MP" ] ;then
@@ -67,8 +66,12 @@ cliPYTHON="${PYTHON}"
 cliPYTHONPATH="${PYTHONPATH}"
 cliMACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 
-if [ -r "${WCONFIGURE}" ] ;then
-	. "${WCONFIGURE}"
+if [ "${WCONFIGURE}" = "/dev/null" -o "${WCONFIGURE}" = "none" ] ;then
+	NOWCC="none"
+else
+	if [ -r "${WCONFIGURE}" ] ;then
+		. "${WCONFIGURE}"
+	fi
 fi
 
 if [ "${cliCPP}" != "" ] ;then
