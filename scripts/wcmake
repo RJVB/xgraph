@@ -248,7 +248,7 @@ if [ $WCC_STUB != 1 ] ;then
 fi
 ${ECHO} " `basename $0`" >> "${WCMAKECALL}"
 if [ "${MACPORTS}" != "" ] ;then
-	${ECHO} -n " --MP" >> wconfigure.call
+	${ECHO} -n " --MP" >> "${WCMAKECALL}"
 fi
 ${ECHO} " $@" >> "${WCMAKECALL}"
 
