@@ -246,7 +246,7 @@ fi
 if [ $WCC_STUB != 1 ] ;then
 	${ECHO} -n " WCC_STUB=\"${WCC_STUB}\"" >> "${WCMAKECALL}"
 fi
-${ECHO} " `basename $0`" >> "${WCMAKECALL}"
+${ECHO} -n " `basename $0`" >> "${WCMAKECALL}"
 if [ "${MACPORTS}" != "" ] ;then
 	${ECHO} -n " --MP" >> "${WCMAKECALL}"
 fi
@@ -333,4 +333,8 @@ if [ "$PYTHONPATH" != "" ] ;then
 fi
 ${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 
-exec "${CMAKEAPP}" -C./wcmake.initcache ${ARGS} "$@"
+if [ -r ./wcmake.initcache ] ;then
+	exec "${CMAKEAPP}" -C./wcmake.initcache ${ARGS} "$@"
+else
+	exec "${CMAKEAPP}" ${ARGS} "$@"
+fi
