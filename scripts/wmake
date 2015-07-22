@@ -1,5 +1,13 @@
 #!/bin/sh
 
+echo
+if [ "${WCONFIGURE}" = "" ] ;then
+	WCONFIGURE="./wconfigure.env"
+	echo "# $0 $@" 1>&2
+else
+	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
+fi
+
 if [ "$1" = "--nice" ] ;then
 	renice $2 $$
 	shift 2
@@ -17,13 +25,6 @@ if [ "$1" = "--MP" ] ;then
 	shift 1
 fi
 
-echo
-if [ "${WCONFIGURE}" = "" ] ;then
-	WCONFIGURE="./wconfigure.env"
-	echo "# $0 $@" 1>&2
-else
-	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
-fi
 /bin/echo -n ']0;'"$0 $@"'' 1>&2
 echo "# `date`" 1>&2
 
