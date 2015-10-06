@@ -47,7 +47,7 @@ case $MACH in
 				MACHDEPCOMP="gccopt"
 				;;
 			ar)
-				MACHDEPCOMP="ar r"
+				MACHDEPCOMP="ar rv"
 				;;
 			*)
 				MACHDEPCOMP="gccopt"

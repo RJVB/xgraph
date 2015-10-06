@@ -17,13 +17,14 @@
 # the script each time one evaluates $(SOMESETTING) .
 
 UNIBIN=
+LTO=
 CLEVEL=
 CHECK=-c
 STRIP=
 XG_FLAGS=
 DEBUG=
 LASTOPTIONS=
-_CLEVEL=$(UNIBIN) $(CLEVEL) #-Ac
+_CLEVEL=$(UNIBIN) $(CLEVEL) $(LTO) #-Ac
 _CFLAGS=$(_CLEVEL) $(DEBUG) -I. -Ixtb -Iux11 #-Q -DHPGL_DUMP #-DIDRAW_DUMP
 CFLAGS=$(_CFLAGS) $(LASTOPTIONS)
 DEBUGSUPPORT= #-DDEBUGSUPPORT
@@ -86,7 +87,8 @@ LUX11 = -lux11
 X11LIB= -L/usr/X11R6/lib
 lX11 = $(X11LIB) -lXinerama -lXext -lX11
 XTB	= libxtb.a
-LXTB = -lxtb
+#LXTB = -lxtb
+LXTB = xtb/xtb.o
 SYSLIBS =
 LIBS	= -L. -lxgraph -Lxtb $(LXTB) -Lux11 $(LUX11) $(lX11) $(FFTW_LIBS) $(SYSLIBS) -lm $(OTHERLIBS) -lm
 XGLDOPTS:=$(shell ./machdepLDOPTS xgraph) 
@@ -120,21 +122,22 @@ All: all contrib import
 
 ascanf: $(ASCANFSRC:.c=.o)
 
-DEPLIBS= xtb_m ux11_m libxgraph.a $(OTHEROBS)
+#DEPLIBS= xtb_m ux11_m libxgraph.a $(OTHEROBS)
+DEPLIBS= xtb_m ux11_m $(OTHEROBS)
 Libs: $(DEPLIBS)
 
 #--------
 
-$(TARGET):	config.h $(DEPLIBS) main.c xgsupport.o xgraph.o
+$(TARGET):	config.h $(DEPLIBS) libxgraph.a main.c xgsupport.o xgraph.o
 # 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LIBS)
 	-(no | mv $(TARGET) $(TARGET).prev 2>&1 > /dev/null )
 	-(gzip -9vf $(TARGET).prev 2>&1 > /dev/null )
 # 	-rm -f $(TARGET).prev
 # we always compile main.c with DEBUG to have a maximum of debugging info available, at little or no cost:
 	echo "#define XGraphBuildPlatform \"`uname -nmrs` ; CC=\'$(CC)\' ACC=\'$(ACC)\'\"" > buildplatform.h
-	$(CC) -g $(COPTS) $(CFLAGS) $(CHECK) main.c
-	ranlib libxgraph.a
-	$(CXX) -g $(XGLDOPTS) $(COMPRESS) $(CFLAGS) $(XG_FLAGS) $(DYNAMIC) -o $(TARGET) main.o xgsupport.o xgraph.o $(OTHEROBS) $(LIBS)
+	$(CC) -gOpt3 $(COPTS) $(CFLAGS) $(CHECK) main.c
+#	ranlib libxgraph.a
+	$(CXX) -gOpt3 $(XGLDOPTS) $(COMPRESS) $(CFLAGS) $(XG_FLAGS) $(DYNAMIC) -o $(TARGET) main.o xgsupport.o xgraph.o $(OTHEROBS) $(LIBOBJ) $(LIBS)
 # make_debug will either make a stripped ${TARGET}, leaving a gzipped, nonstripped copy in ${TARGET}.bin.gz, or
 # it will replace ${TARGET} by a wrapper script that will cause the debugger to be invoked (exe. in ${TARGET}.bin).
 	./make_debug $(TARGET) CFLAGS= $(CFLAGS) XCFLAGS= $(XCFLAGS) XG_FLAGS= $(XG_FLAGS) DEBUGSUPPORT= $(DEBUGSUPPORT)
@@ -171,7 +174,7 @@ libxgraph.a: $(LIBOBJ)
 # 	ranlib libxgraph.a
 # 	zero $?
 	scripts/update_lib $@ $(LIBOBJ)
-	_obj_compress 1 "gzip -9" "" gz "" $(LIBOBJ) &
+#	_obj_compress 1 "gzip -9" "" gz "" $(LIBOBJ) &
 
 DataSet.h: SS.h compiled_ascanf.h
 	touch -r `ls -1t $? | head -1` DataSet.h
@@ -191,34 +194,28 @@ xgALLOCA.h: xfree.h
 dialog_s.o: dialog_s.c xgout.h xgraph.h hard_devices.h xtb/xtb.h ascanf.h
 # 	$(CC) -simOpt $(CFLAGS) $(CHECK) $<
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 dialog.o: dialog.c hard_devices.h xgout.h xgraph.h hard_devices.h xtb/xtb.h new_ps.h
 # 	$(CC) -simOpt $(COPTS) $(CFLAGS) $(CHECK) $<
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 hard_devices.o: hard_devices.c hard_devices.h xgraph.h xgout.h
 #	$(CC) $(COPTS) $(CFLAGS) -fno-writable-strings $(CHECK) $<
 	$(CC) $(COPTS) $(CFLAGS) -no-rwstrings $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 xgPen.o: xgPen.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XGPen.h dymod.h
 # pass XCFLAGS and XG_FLAGS because these routines used to be in xgraph.c and xgsupport.c until 20010718.
 # 	$(ACC) -gOpt $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
 	$(ACC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 xgInput.o: xgInput.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XXseg.h dymod.h Python/PythonInterface.h
 # 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
 # 20040519: compile with -gOpt; there is an issue with SubstituteOpcodes that causes intermittent crashes.
 	$(CC) -gOpt $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 ReadData.o: ReadData.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XXseg.h dymod.h Python/PyObjects.h Python/PythonInterface.h
 # 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
 	$(CC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 xgsupport.o: xgsupport.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XGPen.h dymod.h arrayvops.h
 # 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
@@ -227,7 +224,6 @@ xgsupport.o: xgsupport.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_tim
 LegendsNLabels.o: LegendsNLabels.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XXseg.h XGPen.h
 # 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(DEBUGSUPPORT) $(XG_FLAGS) $(CHECK) $<
 	$(CC) $(COPTS) $(XCFLAGS) $(DEBUGSUPPORT) $(XG_FLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; 
 
 xgraph.o: xgraph.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h XXseg.h XGPen.h Python/PythonInterface.h arrayvops.h
 # 	$(CC) -simOpt $(COPTS) $(XCFLAGS) $(DEBUGSUPPORT) $(XG_FLAGS) $(CHECK) $<
@@ -235,31 +231,24 @@ xgraph.o: xgraph.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h x
 
 alloca.o: alloca.c
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 xgX.o: xgX.c xgout.h xgraph.h ascanf.h XGPen.h xtb/xtb.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 hpgl.o: hpgl.c xgout.h xgraph.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 new_ps.o: new_ps.c xgout.h xgraph.h new_ps.h xtb/xtb.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 matherr.o: matherr.c arrayvops.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 SS.o: SS.c xgraph.h sse_mathfun/sse_mathfun.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 dymod.o: dymod.c dymod.h compiled_ascanf.h ascanf.h dymod_interface.h DataSet.h $(DYMOD_DEPHEADERS) Python/PythonInterface.h
 	$(CC) $(COPTS) $(CFLAGS) $(DYNAMIC) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 ascanfcMap.o: ascanfcMap.cpp ascanf.h xfree.h
 
@@ -274,41 +263,32 @@ ascanfc-table.h: ascanfc.c ascanfc2.c ascanfc3.c ascanfcSS.c xgX.c xgPen.c ascan
 
 ascanfc-table.o: ascanfc-table.c ascanfc-table.h ascanf.h compiled_ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h Sinc.h DataSet.h #
 	$(ACC) $(STRIP) -BSD $(COPTS) $(XG_FLAGS) $(CFLAGS) -O0 -fno-builtin $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 ascanfc.o: ascanfc.c ascanf.h compiled_ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h Sinc.h DataSet.h Python/PythonInterface.h sse_mathfun/sse_mathfun.h arrayvops.h  # xgraph.h ascanfc-table.o 
 	$(ACC) -BSD $(COPTS) $(XG_FLAGS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 ascanfc2.o: ascanfc2.c ascanf.h compiled_ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h DataSet.h arrayvops.h # xgraph.h
 	$(ACC) -BSD $(COPTS) $(XG_FLAGS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 ascanfc3.o: ascanfc3.c xgraph.h hard_devices.h ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h xgout.h xtb/xtb.h dymod.h arrayvops.h
 # pass XCFLAGS and XG_FLAGS because these routines used to be in xgraph.c and xgsupport.c until 20010718.
 	$(ACC) $(COPTS) $(XCFLAGS) $(XG_FLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 ascanfcSS.o: ascanfcSS.c ascanf.h compiled_ascanf.h Elapsed.h lowlevel_timer.h xgALLOCA.h DataSet.h arrayvops.h # xgraph.h
 	$(ACC) -BSD $(COPTS) $(XG_FLAGS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 fascanf.o: fascanf.c xgALLOCA.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 params.o: params.c params.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 idraw.o: idraw.c xgout.h xgraph.h
 	$(CC) $(COPTS) $(CFLAGS) $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 regex.o: regex.c
 #	$(CC) $(COPTS) $(CFLAGS) -fno-writable-strings $(CHECK) $<
 	$(CC) $(COPTS) $(CFLAGS) -no-rwstrings $(CHECK) $<
-# 	ar rv libxgraph.a $@; zero $@
 
 xg11:		$(TOBJ) xtb_m ux11_m
 		$(CC) $(COPTS) $(CFLAGS) -o xg11 $(TOBJ) $(LIBS)		
@@ -316,7 +296,7 @@ xg11:		$(TOBJ) xtb_m ux11_m
 xtb_m:	xtb/xtb*.[ch]
 #		sh -c "cd $(MAKEBDIR)/xtb ; xmake Makefile CLEVEL=$(_CLEVEL) $(XTB)"
 #		( cd $(MAKEBDIR)/xtb ; make "CLEVEL=$(_CLEVEL)" $(XTB) )
-		( cd xtb ; xmake xtb COMP=$(COMP) CXXCOMP=$(CXXCOMP) "ARCH=$(ARCH)" CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=$(DEBUG) UNIBIN=$(UNIBIN) $(XTB) )
+		( cd xtb ; xmake xtb COMP=$(COMP) CXXCOMP=$(CXXCOMP) "ARCH=$(ARCH)" CHECK=$(CHECK) CLEVEL=$(CLEVEL) LTO=$(LTO) DEBUG=$(DEBUG) UNIBIN=$(UNIBIN) $(XTB) )
 # 		( cd xtb ; xmake xtb COMP=$(COMP) CXXCOMP=$(CXXCOMP) "ARCH=$(ARCH)" CHECK=$(CHECK) CLEVEL=$(CLEVEL) DEBUG=-gOpt $(XTB) )
 
 ux11_m:	ux11/ux11*.[ch]

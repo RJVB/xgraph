@@ -7,7 +7,8 @@ DBG = -gOpt
 DEBUG =
 UNIBIN	=
 CLEVEL	= 
-CFLAGS	= $(DBG) $(DEBUG) $(UNIBIN) $(CLEVEL) -DXGRAPH
+LTO       =
+CFLAGS	= $(DBG) $(DEBUG) $(UNIBIN) $(CLEVEL) $(LTO) -DXGRAPH
 COMP=gccopt
 ARCH=
 CC	= $(COMP) $(ARCH) -simOpt
@@ -30,7 +31,6 @@ $(TARGET):	$(OBJECTS)
 #		ar r $(TARGET) $<
 #		ranlib $(TARGET)
 		../scripts/update_lib $(TARGET) $(OBJECTS)
-		zero $<
 		-ls -ailsF $(TARGET)
 		touch .make_success ../xtb_m
 

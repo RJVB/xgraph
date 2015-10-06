@@ -768,16 +768,23 @@ case $compiler in
 # 		fi
 		MARCH="${MARCH} ${GCC3_CPU_OPTS}"
 # 		CPU="${CPU}"
-		if [ "${USELTO}" = "yes" ] ;then
-			OPTIMOPT="${OPTIMOPT} -flto"
-			StoreSwitch -flto
-		fi
 		;;
 	*)
 		if [ "$MARCH" = "-march=${CPU}" ] ;then
 			MARCH=""
 		fi
 		CPU="${ALT_CPU}"
+		;;
+esac
+
+case $compiler in
+	*clang*)
+		if [ "${USELTO}" = "yes" ] ;then
+			OPTIMOPT="${OPTIMOPT} -flto"
+			StoreSwitch -flto
+		fi
+		;;
+	*gc*|*g+*)
 		# presume gcc ...
 		if [ "${USELTO}" = "yes" ] ;then
 			OPTIMOPT="${OPTIMOPT} -flto -fuse-linker-plugin"
@@ -785,7 +792,6 @@ case $compiler in
 		fi
 		;;
 esac
-
 
 if [ "$MARCH" = "" -a "${CPU}" != "" ] ;then
 	MARCH="-march=${CPU}"
