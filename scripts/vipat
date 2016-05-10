@@ -11,10 +11,14 @@ INCL=""
 SELF="`basename $0`"
 if [ "$SELF" = "lesspat" ] ;then
 	FUNCTION="view"
-	PROGRAM="less"
+	if [ "$APP" = "" ] ;then
+		APP="less"
+	fi
 else
 	FUNCTION="edit"
-	PROGRAM="vi"
+	if [ "$APP" = "" ] ;then
+		APP="vi"
+	fi
 fi
 
 help(){
@@ -24,6 +28,8 @@ help(){
 	echo "\t-r\t: use egrep instead of fgrep"
 	echo "\t-i\t: case-insenstive search"
 	echo "\t-SL\t: use SpotLight instead of fgrep/egrep"
+	echo "\tenv. var. FUNCTION=${FUNCTION}"
+	echo "\tenv. var. APP=${APP}"
 }
 
 if [ $# -lt 2 ] ;then
@@ -131,7 +137,13 @@ if [ "$HOTFILES" != "" ] ; then
 				less +vq $j
 			done
 		else
-			$PROGRAM "+/$PAT" $HOTFILES
+			case $APP in
+				vi*|less*)
+					$APP "+/$PAT" $HOTFILES
+					;;
+				*)
+					$APP $HOTFILES
+			esac
 		fi
 	#fi
 else

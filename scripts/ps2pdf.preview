@@ -105,7 +105,7 @@ if [ $? = 0 -a "$PS2PDF" != "." ] ;then
 	PS2PDF="Preview" ; export PS2PDF
 fi
 
-cp -p "${TMP}" ${TMPDIR}/ps2pdf.prv.ps
+# cp -p "${TMP}" ${TMPDIR}/ps2pdf.prv.ps
 
 cd ${TMPDIR}
 # 20030207 RJVB: bumped to using 1.4 format.

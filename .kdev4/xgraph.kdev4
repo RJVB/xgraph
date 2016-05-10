@@ -1,6 +1,15 @@
 [Buildset]
 BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 
+[CustomDefinesAndIncludes][ProjectPath0]
+Path=.
+parseAmbiguousAsCPP=false
+parserArguments=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -std=c++11
+parserArgumentsC=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -std=c99
+
+[CustomDefinesAndIncludes][ProjectPath0][Compiler]
+Name=Clang
+
 [Defines And Includes][Compiler]
 Name=GCC
 Path=gcc
@@ -140,7 +149,7 @@ isExecutable=true
 
 [MakeBuilder]
 Abort on First Error=false
-Default Make Environment Profile=gcc-4.7
+Default Make Environment Profile=KDE/MacPorts
 Default Target=All
 Make Binary=wmake
 Number Of Jobs=4
