@@ -157,19 +157,11 @@ setopts() {
 			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse"
 			;;
 
-		*Athlon*|*AMD*)
+		*Athlon*|*AMD*|*Celeron*)
 			DEFAULT_CC="gcc"
 			DEFAULT_CXX="g++"
 			CPU="native"
 			ALT_CPU="" ##pentium-m"
-#			case $1 in
-#				*AMD\ C*)
-#					CPU="amdfam10"
-#					;;
-#				*)
-#					CPU="k8-sse3"
-#					;;
-#			esac
 			CPU="native"
 			mcpu="-march"
 
