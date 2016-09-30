@@ -128,7 +128,7 @@ Name=xgraph
 Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
-Arguments=-progname xgraph -nodetach examples/PoidsYoda.xg
+Arguments=-progname xgraph -nodetach /Users/bertin/cworks/xgraph/examples/AntSearch4
 Break on Start=true
 Debugger Shell=
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
@@ -141,7 +141,7 @@ External Terminal=konsole --noclose --workdir %workdir -e %exe
 GDB Path=file:///opt/local/bin/ggdb
 LLDB Arguments=
 LLDB Config Script=
-LLDB Environment=KF5/MacPorts
+LLDB Environment=X11
 LLDB Executable=file:///opt/local/bin/lldb-mi-mp-3.9
 LLDB Inherit System Env=true
 LLDB Remote Debugging=false

@@ -1,0 +1,150 @@
+#!/usr/local/bin/XGraph
+*TITLE*Ant Searching according to Muller,M & Wehner,R 1994
+
+*VERSION*Mon Oct 18 12:36:21 1999
+*VERSION*
+
+# *ARGUMENTS* -detach -noerr -fn0 -progress -stats -bb -tk -PrintInfo -x_ul 179.807,-83.8645 -y_ul -93.687,370.97 -legend_ul -93.687,267.201
+*ARGUMENTS* -detach -stats -progress0 -PrintInfo -bb -tk -x_ul 184,-180 -y_ul -184,235 -legend_ul -195,-80 -noerr -fn0 -raw_display -overwrite_legend -lx -200,200
+*ARGUMENTS* -plot_only_set 0,1,2,3 -m0
+
+*EXTRATEXT*
+Explanation of variables:
+     \d\_r: deviation (degrees) of current heading from current\n
+	     (i.e. previous value of) home vector
+	\d\_r*: idem, in [0,360]
+     \q\: world direction of walking (radians)
+     \q\0, \q\0* idem, at start of search (direction resulting from homing) (radians)
+	\j\_r, MXY[3,t]: direction of home vector \j\_r (ant-relative) (degrees)
+	MXY[4,t]: idem, in world-angles (earthbound ref).
+     xA, yA: coordinates x,y of ant
+     xN, yN: coordinates X,Y of nest
+     \d\: value of search angle (mean of \d\_r)
+     MXY[0,t]: \S(d\_r)(t)
+     l_walk: MXY[2,t]: walked distance (l)
+     (l_walk*: value of l when reset occurs)
+     d_home: MXY[1,t]: (homing) distance from nest (d)
+     d_home_max: maximum homing distance
+     nsteps: number of steps
+     l_sign_ch: time between last change of sign of \d\ \n\n
+	progn functions can be replaced by Eprint for output
+
+*BUFLEN*1526
+
+# All variables:
+# *PARAM_NOW* DCL[\d\_r*],DCL[\d\_r],DCL[ranval],DCL[\j\_r],DCL[l_sign_ch],\n
+# 	DCL[d_home_max],DCL[\S(d\_r)],DCL[d_home],DCL[\q\],DCL[yN],DCL[yA],\n
+# 	DCL[xN],DCL[xA],DCL[l_walk*],DCL[l_walk],DCL[\d\],DCL[\q\0*],\n
+# 	DCL[\q\0],DCL[nsteps]
+
+*PARAM_NOW* DCL[\S(d\_r),"sum over d\_r"] @
+*PARAM_NOW* DCL[d_home_max,"maximum homing distance"] @
+*PARAM_NOW* DCL[l_sign_ch,"time between last change of sign of \d\ "] @
+*PARAM_NOW* DCL[l_walk*,"value of l when reset occurs"] @
+*PARAM_NOW* DCL[ranval] @
+*PARAM_NOW* DCL[d_home,"(homing) distance from nest (d)"] @
+*PARAM_NOW* DCL[l_walk,"walked distance (l)"] @
+*PARAM_NOW* DCL[nsteps,"number of steps"] @
+*PARAM_NOW* DCL[\d\_r*,"idem, in [0,360]"] @
+*PARAM_NOW* DCL[\j\_r,"direction of home vector \j\_r (ant-relative) (degrees)"] @
+*PARAM_NOW* DCL[\d\_r,"deviation (degrees) of current heading from current\n
+          (i.e. previous value of) home vector"] @
+*PARAM_NOW* DCL[\q\0*,"idem, at start of search (direction resulting from homing) (radians)"] @
+*PARAM_NOW* DCL[\q\0,"idem, at start of search (direction resulting from homing) (radians)"] @
+*PARAM_NOW* DCL[\d\,"value of search angle (mean of \d\_r)"] @
+*PARAM_NOW* DCL[\q\,"world direction of walking (radians)"] @
+*PARAM_NOW* DCL[xN,"coordinate X of nest"] @
+*PARAM_NOW* DCL[yA,"coordinate y of ant"] @
+*PARAM_NOW* DCL[yN,"coordinate Y of nest"] @
+*PARAM_NOW* DCL[xA,"coordinate x of ant"] @
+*PARAM_NOW* DCL[$UseConstantsLists,1]
+*PARAM_NOW* DCL[$compile_verbose,0]
+
+*AUTOSCRIPT* 1 0 2 0
+*PARAM_RANGE* 0,nsteps[5000]
+
+*PARAM_NOW* \q\0[0],\q\0*[0],verbose[SETMXY[5,add[1,nsteps]]],time[0]
+
+*PARAM_NOW*#x0a \d\[100],l_walk[0],l_walk*[300],xA[0],xN[000],yA[0],yN[000],\q\[0],d_home[0],\S(d\_r)[0],d_home_max[0],l_sign_ch[0],\j\_r[0]
+
+*PARAM_BEFORE* ranval[ran[-0.5,0.5]], \d\_r[\n
+ add[mul[\n
+          ifelse[>=[ranval,0],17.87,-17.87], 45, sub[ exp[mul[0.5,pow[ranval,2]]],1]\n
+        ], \d\\n
+    ]\n
+ ],ifelse[<[\d\_r,0],\d\_r*[add[360,\d\_r]],\d\_r]
+
+# *PARAM_AFTER* ifelse[ >[d_home,l_walk*],\n
+*PARAM_AFTER* progn[ifelse[ >[d_home,mul[17.5,log[add[1,mul[0.02,l_walk]]]]],\n
+   progn[progn[\n
+            degrees[\q\0[arg[xA,yA]]],\n
+            *add[l_walk,floor[d_home]],\n
+            return[\d\[add[9,mul[abs[\d\],0.95]]]]\n
+        ],\n
+# reset the ant to a position within a radius of 1 from the origin (nest)\n
+#         progn[d_home[sub[d_home,floor[d_home]]],xA[mul[d_home,cos[\q\0]]],yA[mul[d_home,sin[\q\0]]]],\n
+# ant walks back according to home vector in one timestep:\n
+        progn[\j\_r[add[\q\,radians[\j\_r]]],\n
+	         *sub[xA,mul[d_home,cos[\j\_r]]],\n
+	         *sub[yA,mul[d_home,sin[\j\_r]]],\n
+		    \q\0[\j\_r]\n
+        ],\n
+	   d_home[0],\j\_r[0]\n
+   ],\n
+#else:\n
+   progn[*add[l_walk,1], *add[ xA, cos[\q\]], *add[ yA, sin[\q\]],\n
+     return[d_home[add[0,len[xA,yA]]]],\q\0*[\q\0],\q\0[0]\n
+   ]\n
+ ],\n
+ \q\[add[\q\0,radians[sub[180,\d\_r]],arg[xA,yA]]],\n
+ \q\0*[0],\S(d\_r)[add[\S(d\_r),\d\_r]],\n
+ *add[\j\_r,div[mul[4.009e-5,\d\_r*,sub[360,\d\_r*],sub[180,\d\_r*]],\d\]],\n
+ progn[$self,MXY[2,$self,l_walk],MXY[1,$self,d_home],MXY[0,$self,\S(d\_r)],*MAX[d_home_max,d_home],\n
+       MXY[3,$self,\j\_r],MXY[4,$self,degrees[add[\q\,radians[\j\_r]]]]\n
+ ],\n
+ ifelse[ >[l_sign_ch,ran[100,200]],\n
+		progn[$self,return[\d\[mul[ifelse[>=[ran,0.5],1,-1],\d\]]],l_sign_ch[0]],\n
+         *add[l_sign_ch,1]\n
+ ]]
+
+*PARAM_NOW*#x0a \d\[100],l_walk[0],l_walk*[100],xA[0],xN[ 0],yA[0],yN[ 0],\q\[0],d_home[0],\S(d\_r)[0],d_home_max[0],l_sign_ch[0]
+*LEGEND*Example, resetting when d>17.5*log(0.02l+1)
+*PARAM_NOW* elapsed[1]
+*PARAM_FUNCTIONS* add[xN,xA],add[yN,yA],elapsed[1]
+
+# now show the calculated homing distance, and the cumulative search angle \d\
+*PARAM_NOW*#x0a \d\[100],l_walk[0],l_walk*[100],xA[0],xN[30],yA[0],yN[30],\q\[0],d_home[0],\S(d\_r)[0]
+*PARAM_BEFORE* elapsed[1]
+*PARAM_AFTER*
+*LEGEND*d against l/(0.5*MAX(d))
+*PARAM_FUNCTIONS* div[MXY[2,$DATA{0}],div[d_home_max,2]],MXY[1,$DATA{1}],elapsed[1]
+
+*PARAM_NOW*#x0a \d\[100],l_walk[0],l_walk*[100],xA[0],xN[30],yA[0],yN[30],\q\[0],d_home[0],\S(d\_r)[0]
+*LEGEND*\S(d\_r)/3600 (deg) against l/(0.5*MAX(d))
+*PARAM_FUNCTIONS* div[MXY[2,$DATA{0}],div[d_home_max,2]],fmod[div[MXY[0,$DATA{1}],3600],360],elapsed[1]
+
+*PARAM_NOW*#x0a \d\[100],l_walk[0],l_walk*[100],xA[0],xN[30],yA[0],yN[30],\q\[0],d_home[0],\S(d\_r)[0]
+*LEGEND*\j\_r (ant-rel) against l/(0.5*MAX(d))
+*PARAM_FUNCTIONS* div[MXY[2,$DATA{0}],div[d_home_max,2]],MXY[3,$DATA{1}],elapsed[1]
+
+*LEGEND* d against \j\_r (world-angles)
+*PARAM_FUNCTIONS* MXY[4,$DATA{0}],MXY[1,$DATA{1}],0
+
+*PARAM_NOW* verbose[SETMXY[0,0]]
+
+*ULABEL* 109 150 -68.8406 200 2
+total angle turned
+
+
+*ULABEL* 86.2319 56.9909 105.797 200 1
+distance from nest
+
+
+*ULABEL* -20.2899 -32.5075 -139.13 184.526 0
+actual trace
+
+
+*ULABEL* 94.9275 -45.9323 82.6087 -139.906 3
+ant's home vector
+
+
