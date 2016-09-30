@@ -35,7 +35,7 @@ setautovec() {
 	esac
 	case $compil in
 		*clang*)
-			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
+			MARCH="${MARCH} ${VU}"
 			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
 				OOPTIMOPT="${OOPTIMOPT} -fvectorize -fslp-vectorize-aggressive"
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -fvectorize -fslp-vectorize-aggressive ${AUTOVECx86} ${VU}"
@@ -48,7 +48,7 @@ setautovec() {
 			OPTIMOPT="$OOPTIMOPT"
 			;;
 		*llvm*gcc*|*llvm*g++*)
-			MARCH="${MARCH} ${VU} -msse4.1 -msse4.2"
+			MARCH="${MARCH} ${VU}"
 			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
 				OOPTIMOPT="${OOPTIMOPT} -ftree-vectorize"
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -ftree-vectorize ${AUTOVECx86} ${VU}"
@@ -131,14 +131,18 @@ setopts() {
 			MARCHUNI64=""
 			ARCHS32="-arch i386"
 			ARCHS64="-arch i386 -arch x86_64"
-			SDK="-isysroot /Developer/SDKs/MacOSX10.6.sdk -mmacosx-version-min=10.6"
+			#SDK="-isysroot /Developer/SDKs/MacOSX10.6.sdk -mmacosx-version-min=10.6"
 
 
 			RWSTRINGS=0
 
 			LNKOPTS=""
 
-			setautovec "x86_64" "-msse4 -mssse3 -mfpmath=sse -flax-vector-conversions"
+			if [ "${CPU}" = "core2" ] ;then
+				setautovec "x86_64" "-msse4 -msse4.1 -msse4.2 -mssse3 -mfpmath=sse -flax-vector-conversions"
+			else
+				setautovec "x86_64" "-flax-vector-conversions"
+			fi
 			;;
 
 		*)
