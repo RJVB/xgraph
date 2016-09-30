@@ -204,7 +204,7 @@ setopts() {
 			if [ "$compil" = "" ] ;then
 				compil="${DEFAULT_CC}"
 			fi
-			setautovec "`uname -m`" "-mfpmath=sse"
+			setautovec "`uname -m`" ""
 			;;
 
 		x86)
@@ -299,7 +299,7 @@ case $1 in
 				;;
 
 			*)
-				setopts "`cat /proc/cpuinfo | fgrep 'model name' | sed -e 's/(R)//g' -e 's/(TM)//g'`"
+				setopts "`cat /proc/cpuinfo | fgrep 'model name' | sed -e 's/(R)//g' -e 's/(TM)//g' | uniq`"
 				;;
 		esac
 		;;

@@ -122,29 +122,38 @@ targets=1
 Launch Configurations=Launch Configuration 0
 
 [Launch][Launch Configuration 0]
-Configured Launch Modes=execute
-Configured Launchers=nativeAppLauncher
+Configured Launch Modes=execute,debug
+Configured Launchers=nativeAppLauncher,lldb
 Name=xgraph
 Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
-Arguments=-progname xgraph -nodetach examples/AntSearch4
+Arguments=-progname xgraph -nodetach examples/PoidsYoda.xg
+Break on Start=true
 Debugger Shell=
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
 Display Demangle Names=true
 Display Static Members=true
-EnvironmentGroup=X11
-Executable=file:///Users/bertin/cworks/xgraph/xgraph.bin
+EnvironmentGroup=KF5/MacPorts
+Executable=file:///home/bertin/cworks/xgraph/xgraph.bin
 External Terminal=konsole --noclose --workdir %workdir -e %exe
 GDB Path=file:///opt/local/bin/ggdb
+LLDB Arguments=
+LLDB Config Script=
+LLDB Environment=KF5/MacPorts
+LLDB Executable=file:///opt/local/bin/lldb-mi-mp-3.9
+LLDB Inherit System Env=true
+LLDB Remote Debugging=false
+LLDB Remote Path=
+LLDB Remote Server=
 Project Target=
 Remote GDB Config Script=
 Remote GDB Run Script=
 Remote GDB Shell Script=
 Start With=GdbConsole
 Use External Terminal=false
-Working Directory=file:///Users/bertin/cworks/xgraph
+Working Directory=file:///home/bertin/cworks/xgraph/
 isExecutable=true
 
 [MakeBuilder]
