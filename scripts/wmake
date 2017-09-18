@@ -32,6 +32,9 @@ if [ "$1" = "--MP" ] ;then
 fi
 
 /bin/echo -n ']0;'"$0 ${JOBS} $@"'' 1>&2
+CWD="`pwd`"
+cd `realpath "${CWD}"`
+echo "# `pwd`" 1>&2
 echo "# `date`" 1>&2
 
 GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE
