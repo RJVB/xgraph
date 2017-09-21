@@ -23,7 +23,11 @@ for d in ${DIRS} ;do
 	d="`realpath ${d}`"
 	cd "${d}"
 	$@
+	RET=$?
 	cd "${cwd}"
+	if [ ${RET} != 0 ] ;then
+		exit ${RET}
+	fi
 done
 
 # https://raw.githubusercontent.com/mkropat/sh-realpath/master/realpath.sh
