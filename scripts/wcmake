@@ -5,6 +5,14 @@ export ECHO
 
 RWSTRINGS=0 ; export RWSTRINGS
 
+if [ "${1}" = "-E" -a "${2}" = "server" ] ;then
+	# emulate the error message from an older CMake version
+	(   echo "CMake Error: cmake version 3.0.1 (faked to avoid server mode)"
+	    echo "Usage: /opt/local/bin/cmake -E [command] [arguments ...]"
+	) 1>&2
+	exit 1
+fi
+
 if [ "${WCONFIGURE}" = "" ] ;then
 	WCONFIGURE="./wconfigure.env"
 	WCMAKECALL="./wcmake.call"
@@ -252,7 +260,9 @@ if [ "${MACPORTS}" != "" ] ;then
 fi
 ${ECHO} " $@" >> "${WCMAKECALL}"
 
-rm "${WCONFIGURE}"
+if [ "${WCONFIGURE}" != "/dev/null" ] ;then
+	rm "${WCONFIGURE}"
+fi
 rm -f ./wcmake.initcache
 if [ "${compiler}" != "" ] ;then
 	${ECHO} "compiler=\"${compiler}\" ; export compiler" >> "${WCONFIGURE}"
