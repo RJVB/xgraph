@@ -334,7 +334,11 @@ fi
 ${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 
 if [ -r ./wcmake.initcache ] ;then
-	exec "${CMAKEAPP}" -C./wcmake.initcache ${ARGS} "$@"
+	if [ "$1" = "-E" -a "$2" = "server" ] ;then
+		exec "${CMAKEAPP}" "$@"
+	else
+		exec "${CMAKEAPP}" -C./wcmake.initcache ${ARGS} "$@"
+	fi
 else
 	exec "${CMAKEAPP}" ${ARGS} "$@"
 fi
