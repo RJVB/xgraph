@@ -418,7 +418,7 @@ extern int ASCANF_TRUE_(double x);
 extern int Resize_ascanf_Array_force;
 extern void* (*ascanf_array_malloc)(size_t size);
 extern void (*ascanf_array_free)(void *memory);
-  /* When a dymod containing the free and/or malloc routines for ascanf_arrays is unloaded, remaining arrays
+  /* When a dymod containing the free and/or malloc routines for ascanf_arrays is unloaded, the remaining arrays
    \ need to be converted back to regular arrays. ascanf_Arrays2Regular() does that.
    */
 extern int ascanf_Arrays2Regular(void *malloc, void *free);
