@@ -47,8 +47,8 @@ vanilla=""
 
 _MARCH_="${MARCH}"
 
-ALWAYS_FLAGS="-fno-float-store -fomit-frame-pointer"
-# ALWAYS_FLAGS="-fomit-frame-pointer"
+# ALWAYS_FLAGS="-fno-float-store -fomit-frame-pointer"
+ALWAYS_FLAGS="-fomit-frame-pointer"
 
 NOTSHARED=""
 
