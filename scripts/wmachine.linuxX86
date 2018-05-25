@@ -35,9 +35,9 @@ setautovec() {
 		*clang*)
 			MARCH="${MARCH} ${VU}"
 			if [ "${GCCOPT_NOAUTOVECT}" = "" ] ;then
-				OOPTIMOPT="${OOPTIMOPT} -fvectorize -fslp-vectorize-aggressive"
-				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -fvectorize -fslp-vectorize-aggressive ${AUTOVECppc} ${AUTOVECx86} ${VU}"
-				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -fvectorize -fslp-vectorize-aggressive ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+				OOPTIMOPT="${OOPTIMOPT} -fvectorize"
+				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI} -fvectorize ${AUTOVECppc} ${AUTOVECx86} ${VU}"
+				MARCHUNI64="${ARCHS64} ${MARCHUNI64} -fvectorize ${AUTOVECppc} ${AUTOVECx86} ${VU}"
 				echo "# Enabling auto vectorisation" 1>&2
 			else
 				MARCHUNI="${ARCHS32} ${SDK} ${MARCHUNI}"
