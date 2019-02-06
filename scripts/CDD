@@ -2,19 +2,29 @@
 
 DIRS=""
 
+IGNORERRORS=0
+ERROR=0
+
 for d in "$@" ;do
-	if [ "${d}" != "--" ] ;then
-		DIRS="${DIRS} ${d}"
-		shift
-	else
-		shift
-		break
-	fi
+	case $d in
+		--)
+			shift
+			break
+			;;
+		-k)
+			IGNORERRORS=1
+			;;
+		*)
+			DIRS="${DIRS} ${d}"
+			;;
+	esac
+	shift
 done
 
 if [ "${DIRS}" = "" ] ;then
-	echo "Usage: `basename $0` dir1 [dir2 [...dirN]] -- command [args]"
+	echo "Usage: `basename $0` dir1 [dir2 [...dirN]] [-k] -- command [args]"
 	echo "Execute 'command [args]' in dir1...dirN consecutively"
+	echo "\t-k : ignore errors"
 	exit 1
 fi
 
@@ -26,7 +36,11 @@ for d in ${DIRS} ;do
 	RET=$?
 	cd "${cwd}"
 	if [ ${RET} != 0 ] ;then
-		exit ${RET}
+		if [ ${IGNORERRORS} = 0 ] ;then
+			exit ${RET}
+		else
+			ERROR=${RET}
+		fi
 	fi
 done
 
@@ -142,3 +156,6 @@ _bsd_stat_readlink() {
     stat -f %Y -- "$1" 2>/dev/null
 }
 
+if [ ${ERROR} != 0 ] ;then
+	exit ${ERROR}
+fi

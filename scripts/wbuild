@@ -22,6 +22,11 @@ if [ "$1" = "--MP" ] ;then
 	export PATH
 	QMAKE=/opt/local/bin/qmake ; export QMAKE
 	#QTDIR=/opt/local ; export QTDIR
+	if [ "${LD_LIBRARY_PATH}" = "" ] ;then
+		export LD_LIBRARY_PATH="/opt/local/lib"
+	else
+		export LD_LIBRARY_PATH="/opt/local/lib:${LD_LIBRARY_PATH}"
+	fi
 	shift 1
 fi
 

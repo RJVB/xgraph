@@ -28,6 +28,11 @@ if [ "$1" = "--MP" ] ;then
 	PATH=.:/Users/bertin/bin:/Users/bertin/script:./script:/opt/local/bin:/opt/local/sbin:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
 	export PATH
 	QMAKE=/opt/local/bin/qmake ; export QMAKE
+	if [ "${LD_LIBRARY_PATH}" = "" ] ;then
+		export LD_LIBRARY_PATH="/opt/local/lib"
+	else
+		export LD_LIBRARY_PATH="/opt/local/lib:${LD_LIBRARY_PATH}"
+	fi
 	shift 1
 fi
 
