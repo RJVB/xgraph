@@ -294,6 +294,24 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 fi
 
+if [ "$1" = "--MP" ] ;then
+	#CC_PRINT_OPTIONS=YES ; export CC_PRINT_OPTIONS
+	CPATH=/opt/local/include ; export CPATH
+	INSTALL="/usr/bin/install -c" ; export INSTALL
+	LIBRARY_PATH=/opt/local/lib ; export LIBRARY_PATH
+	#MOC=/opt/local/bin/moc ; export MOC
+	PATH=.:/Users/bertin/bin:/Users/bertin/script:./script:/opt/local/bin:/opt/local/sbin:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
+	export PATH
+	QMAKE=/opt/local/bin/qmake ; export QMAKE
+	#QTDIR=/opt/local ; export QTDIR
+	if [ "${LD_LIBRARY_PATH}" = "" ] ;then
+		export LD_LIBRARY_PATH="/opt/local/lib"
+	else
+		export LD_LIBRARY_PATH="/opt/local/lib:${LD_LIBRARY_PATH}"
+	fi
+	shift 1
+fi
+
 "${CONFIGURE}" ${ARGS} "$@"
 RET="$?"
 
