@@ -1,22 +1,5 @@
 #!/bin/sh
 
-if [ "$1" = "--nice" ] ;then
-	renice $2 $$
-	shift 2
-fi
-if [ "$1" = "--MP" ] ;then
-	CC_PRINT_OPTIONS=YES ; export CC_PRINT_OPTIONS
-	CPATH=/opt/local/include ; export CPATH
-	INSTALL=/usr/bin/install -c ; export INSTALL
-	LIBRARY_PATH=/opt/local/lib ; export LIBRARY_PATH
-	MOC=/opt/local/bin/moc ; export MOC
-	PATH=.:/Users/bertin/bin:/Users/bertin/script:./script:/opt/local/bin:/opt/local/sbin:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
-	export PATH
-	QMAKE=/opt/local/bin/qmake ; export QMAKE
-	QTDIR=/opt/local ; export QTDIR
-	shift 1
-fi
-
 echo
 if [ "${WCONFIGURE}" = "" ] ;then
 	WCONFIGURE="./wconfigure.env"
@@ -24,7 +7,39 @@ if [ "${WCONFIGURE}" = "" ] ;then
 else
 	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
 fi
-/bin/echo -n ']0;'"$0 $@"'' 1>&2
+
+JOBS=""
+case $1 in
+	-j*)
+		JOBS="$1"
+		shift
+		;;
+esac
+if [ "$1" = "--nice" ] ;then
+	renice $2 $$
+	shift 2
+fi
+if [ "$1" = "--MP" ] ;then
+	#CC_PRINT_OPTIONS=YES ; export CC_PRINT_OPTIONS
+	CPATH=/opt/local/include ; export CPATH
+	INSTALL="/usr/bin/install -c" ; export INSTALL
+	LIBRARY_PATH=/opt/local/lib ; export LIBRARY_PATH
+	MOC=/opt/local/bin/moc ; export MOC
+	PATH=.:/Users/bertin/bin:/Users/bertin/script:./script:/opt/local/bin:/opt/local/sbin:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
+	export PATH
+	QMAKE=/opt/local/bin/qmake ; export QMAKE
+	if [ "${LD_LIBRARY_PATH}" = "" ] ;then
+		export LD_LIBRARY_PATH="/opt/local/lib"
+	else
+		export LD_LIBRARY_PATH="/opt/local/lib:${LD_LIBRARY_PATH}"
+	fi
+	shift 1
+fi
+
+/bin/echo -n ']0;'"$0 ${JOBS} $@"'' 1>&2
+CWD="`pwd`"
+cd `realpath "${CWD}"`
+echo "# `pwd`" 1>&2
 echo "# `date`" 1>&2
 
 GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE

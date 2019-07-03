@@ -9,6 +9,13 @@ else
 fi
 
 JOBS=""
+ALLERRORS
+case $1 in
+	-k)
+		ALLERRORS="$1"
+		shift
+		;;
+esac
 case $1 in
 	-j*)
 		JOBS="$1"
@@ -36,7 +43,7 @@ if [ "$1" = "--MP" ] ;then
 	shift 1
 fi
 
-/bin/echo -n ']0;'"$0 ${JOBS} $@"'' 1>&2
+/bin/echo -n ']0;'"$0 ${JOBS} ${ALLERRORS} $@"'' 1>&2
 CWD="`pwd`"
 cd `realpath "${CWD}"`
 echo "# `pwd`" 1>&2
@@ -78,14 +85,14 @@ if [ "$NOWCC" != "" ] ;then
 		GXX="${CXX}" ; export GXX
 	fi
 	rm -f ${KK}
-	echo "make "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" ${JOBS} $@"
-	time make "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" ${JOBS} "$@"
+	echo "make "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" ${JOBS} ${ALLERRORS} $@"
+	time make "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" ${JOBS} ${ALLERRORS} "$@"
 	RET=$?
 else
 	if [ -r "${WCONFIGURE}" ] ;then
 		. "${WCONFIGURE}"
 	fi
-	time make ${JOBS} "$@"
+	time make ${JOBS} ${ALLERRORS} "$@"
 	RET=$?
 fi
 times
