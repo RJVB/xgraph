@@ -9,7 +9,7 @@ else
 fi
 
 JOBS=""
-ALLERRORS
+ALLERRORS=""
 case $1 in
 	-k)
 		ALLERRORS="$1"
