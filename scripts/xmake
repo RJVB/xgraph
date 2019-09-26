@@ -1,8 +1,8 @@
 #!/bin/bash
 #xmake <file> (&) : run make -f make<file> (in background): redirect 
-#stderr (compile errors) to  <file>$CMAKE
-#stdout redirected to <file>$CMAKE.l (make actions, link errors)
-#   Requires environmental variable CMAKE to be set!!!
+#stderr (compile errors) to  <file>$XMAKE
+#stdout redirected to <file>$XMAKE.l (make actions, link errors)
+#   Requires environmental variable XMAKE to be set!!!
 #   Redirection file will be erased if empty!!
 #	Makefiles are read from directory $MAKEDIR
 #(C)(R) R. J. Bertin 7/11/'89
@@ -25,10 +25,10 @@ if [ "$MAKEDIR" = "" ] ;then
 	MAKEDIR="Make/"
 	export MAKEDIR
 fi
-if [ "$CMAKE" = "" ] ;then
-	echo "CMAKE not set - assuming .cer"
-	CMAKE=".cer"
-	export CMAKE
+if [ "$XMAKE" = "" ] ;then
+	echo "XMAKE not set - assuming .cer"
+	XMAKE=".cer"
+	export XMAKE
 fi
 
 CALLEDAS="# $0 $@"
@@ -38,13 +38,13 @@ echo "${CALLEDAS}"
 if [ $# -ge 1 ]
 then
 	MAKEFILE="$MAKEDIR"make$1
-	ERRFILE=$1$CMAKE
-	GCCERRFILE=$1.gcc$CMAKE
+	ERRFILE=$1$XMAKE
+	GCCERRFILE=$1.gcc$XMAKE
 	shift
 else
 	MAKEFILE="Makefile"
-	ERRFILE="Makefile"$CMAKE
-	GCCERRFILE="Makefile".gcc$CMAKE
+	ERRFILE="Makefile"$XMAKE
+	GCCERRFILE="Makefile".gcc$XMAKE
 fi
 
 if [ "$MAKE" = "" ] ;then
@@ -223,7 +223,7 @@ trap "CleanUp `echo c_m_a_k_e_ aborting ... | ul 2>&1 `" 1
 trap "CleanUp `echo c_m_a_k_e_ aborting ... | ul 2>&1 `" 2
 
 # ls -l /dev/console | grep $LOGNAME >$HOME/.cons_mine
-# CMAKE_R="/usr/tmp/xmake_r$$" ; export CMAKE_R
+# XMAKE_R="/usr/tmp/xmake_r$$" ; export XMAKE_R
 
 if [ -r .env ] ;then
 	cd .env

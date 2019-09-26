@@ -90,7 +90,7 @@ XTB	= libxtb.a
 #LXTB = -lxtb
 LXTB = xtb/xtb.o
 SYSLIBS =
-LIBS	= -L. -lxgraph -Lxtb $(LXTB) -Lux11 $(LUX11) $(lX11) $(FFTW_LIBS) $(SYSLIBS) -lm $(OTHERLIBS) -lm
+LIBS	= libxgraph.a -Lxtb $(LXTB) -Lux11 $(LUX11) $(lX11) $(FFTW_LIBS) $(SYSLIBS) -lm $(OTHERLIBS) -lm
 XGLDOPTS:=$(shell ./machdepLDOPTS xgraph) 
 
 TARGET	= xgraph
@@ -137,7 +137,8 @@ $(TARGET):	config.h $(DEPLIBS) libxgraph.a main.c xgsupport.o xgraph.o
 	echo "#define XGraphBuildPlatform \"`uname -nmrs` ; CC=\'$(CC)\' ACC=\'$(ACC)\'\"" > buildplatform.h
 	$(CC) -gOpt3 $(COPTS) $(CFLAGS) $(CHECK) main.c
 #	ranlib libxgraph.a
-	$(CXX) -gOpt3 $(XGLDOPTS) $(COMPRESS) $(CFLAGS) $(XG_FLAGS) $(DYNAMIC) -o $(TARGET) main.o xgsupport.o xgraph.o $(OTHEROBS) $(LIBOBJ) $(LIBS)
+#	$(CXX) -gOpt3 $(XGLDOPTS) $(COMPRESS) $(CFLAGS) $(XG_FLAGS) $(DYNAMIC) -o $(TARGET) main.o xgsupport.o xgraph.o $(OTHEROBS) $(LIBOBJ) $(LIBS)
+	$(CXX) -gOpt3 $(XGLDOPTS) $(COMPRESS) $(CFLAGS) $(XG_FLAGS) $(DYNAMIC) -o $(TARGET) main.o xgsupport.o xgraph.o $(LIBS)
 # make_debug will either make a stripped ${TARGET}, leaving a gzipped, nonstripped copy in ${TARGET}.bin.gz, or
 # it will replace ${TARGET} by a wrapper script that will cause the debugger to be invoked (exe. in ${TARGET}.bin).
 	./make_debug $(TARGET) CFLAGS= $(CFLAGS) XCFLAGS= $(XCFLAGS) XG_FLAGS= $(XG_FLAGS) DEBUGSUPPORT= $(DEBUGSUPPORT)

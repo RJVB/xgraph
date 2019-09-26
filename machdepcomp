@@ -33,7 +33,11 @@ case $MACH in
 				MACHDEPCOMP="gccopt"
 				;;
 			ar)
-				MACHDEPCOMP="libtool -static -o"
+				if [ "${AR}" != "" ] ;then
+					MACHDEPCOMP="${AR} rv"
+				else
+					MACHDEPCOMP="libtool -static -o"
+				fi
 				;;
 			*)
 				MACHDEPCOMP="gccopt"
@@ -47,7 +51,11 @@ case $MACH in
 				MACHDEPCOMP="gccopt"
 				;;
 			ar)
-				MACHDEPCOMP="ar rv"
+				if [ "${AR}" != "" ] ;then
+					MACHDEPCOMP="${AR} qc"
+				else
+					MACHDEPCOMP="ar rv"
+				fi
 				;;
 			*)
 				MACHDEPCOMP="gccopt"

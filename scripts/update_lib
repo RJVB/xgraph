@@ -33,5 +33,11 @@ else
 fi
 
 if [ $randit != 0 ];then
-	ranlib $lib
+	if [ "${RANLIB}" != "" ] ;then
+		set -x
+		${RANLIB} $lib
+	else
+		set -x
+		ranlib $lib
+	fi
 fi
