@@ -16,7 +16,7 @@ Path=gcc
 Type=GCC
 
 [Filters]
-size=20
+size=21
 
 [Filters][0]
 inclusive=0
@@ -81,6 +81,11 @@ targets=1
 [Filters][2]
 inclusive=0
 pattern=CVS
+targets=2
+
+[Filters][20]
+inclusive=0
+pattern=/build
 targets=2
 
 [Filters][3]

@@ -6060,11 +6060,13 @@ LocalWin *TileWindows(int direction, int horvert )
 			X= XG_DisplayWidth( disp, screen, wi);
 			for( j= 0; j< nx && l; ){
 				wi= l->wi;
+#ifdef _HAVE_XINERAMA_
 				if( ui_NumHeads> 1 && wi ){
 					ux11_multihead_DisplayWidth( disp, screen,
 						(wi->dev_info.area_x+wi->dev_info.area_w/2), (wi->dev_info.area_y+wi->dev_info.area_h/2),
 						&scr_x, &scr_y, NULL );
 				}
+#endif
 				if( wi->delete_it!= -1 && wi->mapped ){
 					X-= sx;
 					XMoveResizeWindow( disp, wi->window, scr_x+X, scr_y+Y, sx, sy );
@@ -6115,11 +6117,13 @@ LocalWin *TileWindows(int direction, int horvert )
 			X= XG_DisplayWidth( disp, screen, wi);
 			for( j= 0; j< nx && l; ){
 				wi= l->wi;
+#ifdef _HAVE_XINERAMA_
 				if( ui_NumHeads> 1 && wi ){
 					ux11_multihead_DisplayWidth( disp, screen,
 						(wi->dev_info.area_x+wi->dev_info.area_w/2), (wi->dev_info.area_y+wi->dev_info.area_h/2),
 						&scr_x, &scr_y, NULL );
 				}
+#endif
 				if( wi->delete_it!= -1 && wi->mapped ){
 					X-= sx;
 					XMoveResizeWindow( disp, wi->window, scr_x+X, scr_y+Y, sx, sy );

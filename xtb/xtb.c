@@ -23,8 +23,8 @@ vim:ts=4:sw=4:
 
 #ifndef XGRAPH
 #	define NO_ENUM_BOOLEAN
-#	include "local/mxt.h"
-#	include "local/Macros.h"
+#	include "mxt.h"
+#	include "Macros.h"
 #endif
 
 IDENTIFY("XGraph Mini Toolkit for X11");

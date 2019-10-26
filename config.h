@@ -224,15 +224,22 @@ char *XGraph_Compile_Options= "$Options: @(#)"
 
 #define XG_IDENTIFY()	"XGraph v" STRING(VERSION_MAJOR) STRING(VERSION_MINOR) STRING(VERSION_PATCHL) " '" __FILE__ "'-[" __DATE__ "," __TIME__ "]"
 
+#ifdef C_COMMAND
+#   ifdef __cplusplus
+#       define SWITCHES STRING(CXX_COMMAND)
+#   else
+#       define SWITCHES STRING(C_COMMAND)
+#   endif
+#endif
 #ifndef SWITCHES
 #	ifdef DEBUG
-#		define _IDENTIFY(s,i)	static const char *xg_id_string= "$Id: @(#) "XG_IDENTIFY()"-(\015\013\t\t" s "\015\013\t) DEBUG version" i __ARCHITECTURE__" " " $"
+#		define _IDENTIFY(s,i)	static const char *xg_id_string= "$Id: @(#) " XG_IDENTIFY() "-(\015\013\t\t" s "\015\013\t) DEBUG version" i __ARCHITECTURE__" " " $"
 #	else
-#		define _IDENTIFY(s,i)	static const char *xg_id_string= "$Id: @(#) "XG_IDENTIFY()"-(\015\013\t\t" s "\015\013\t)" i __ARCHITECTURE__" " " $"
+#		define _IDENTIFY(s,i)	static const char *xg_id_string= "$Id: @(#) " XG_IDENTIFY() "-(\015\013\t\t" s "\015\013\t)" i __ARCHITECTURE__" " " $"
 #	endif
 #else
   /* SWITCHES contains the compiler name and the switches given to the compiler.	*/
-#	define _IDENTIFY(s,i)	static const char *xg_id_string= "$Id: @(#) "XG_IDENTIFY()"-(\015\013\t\t" s "\015\013\t)[" __ARCHITECTURE__" "SWITCHES"]" " $"
+#	define _IDENTIFY(s,i)	static const char *xg_id_string= "$Id: @(#) " XG_IDENTIFY() "-(\015\013\t\t" s "\015\013\t)[" __ARCHITECTURE__" "SWITCHES"]" " $"
 #endif
 
 #define __IDENTIFY(s,i)\
@@ -249,7 +256,7 @@ static const char *xg_id_string_stub(){ _IDENTIFY(s,i);\
 
 #ifdef __GNUC__
 #	ifdef __clang__
-#		define IDENTIFY(s)	__attribute__((used)) __IDENTIFY(s," (clang" STRING(__clang__) ")")
+#		define IDENTIFY(s)	__attribute__((used)) __IDENTIFY(s," (clang-" STRING(__clang_major__) ")")
 #	else
 #		define IDENTIFY(s)	__attribute__((used)) __IDENTIFY(s," (gcc" STRING(__GNUC__) ")")
 #	endif

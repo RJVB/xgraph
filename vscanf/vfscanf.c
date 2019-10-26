@@ -48,38 +48,7 @@ vim:ts=2:sw=2:
 /* (C) 1999, R.J.V. Bertin
  \ Code that puts in an identifier string, combined with compiling information.
  */
-#if !defined(IDENTIFY)
-
-#ifndef SWITCHES
-#	ifdef DEBUG
-#		define _IDENTIFY(s,i)	static char *ident= "@(#) $Id:'" __FILE__ "'-[" __DATE__ "," __TIME__ "]-(\015\013\t\t" s "\015\013\t) DEBUG version" i "$"
-#	else
-#		define _IDENTIFY(s,i)	static char *ident= "@(#) $Id:'" __FILE__ "'-[" __DATE__ "," __TIME__ "]-(\015\013\t\t" s "\015\013\t)" i "$"
-#	endif
-#else
-  /* SWITCHES contains the compiler name and the switches given to the compiler.	*/
-#	define _IDENTIFY(s,i)	static char *ident= "@(#) $Id:'" __FILE__ "'-[" __DATE__ "," __TIME__ "]-(\015\013\t\t" s "\015\013\t)["SWITCHES"]" "$"
-#endif
-
-#define __IDENTIFY(s,i)\
-static char *ident_stub(){ _IDENTIFY(s,i);\
-	static char called=0;\
-	if( !called){\
-		called=1;\
-		return(ident_stub());\
-	}\
-	else{\
-		called= 0;\
-		return(ident);\
-	}}
-
-#ifdef __GNUC__
-#	define IDENTIFY(s)	__attribute__((used)) __IDENTIFY(s," (gcc" STRING(__GNUC__) ")")
-#else
-#	define IDENTIFY(s)	__IDENTIFY(s," (cc)")
-#endif
-
-#endif
+#include "../config.h"
 
 #if !defined(IS_VSSCANF) && !defined(IS_ASSCANF)
 	IDENTIFY("vfscanf.c, from glibc 2.1.1, distilled by RJVB");
