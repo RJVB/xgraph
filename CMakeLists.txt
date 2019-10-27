@@ -2,12 +2,24 @@ cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 project(xgraph LANGUAGES C CXX)
 
+option(BUILD_XGTEST "build a test curves generator and the example dymod" OFF)
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules ${CMAKE_MODULE_PATH} )
 
 include(FeatureSummary)
+include(FindPkgConfig)
 include(GetGitRevisionDescription)
+include(AddDymods)
 
 find_package(X11)
+pkg_check_modules(PKG_FFTW3 fftw3)
+mark_as_advanced(PKG_FFTW3_INCLUDEDIR)
+
+set_package_properties(PKG_FFTW3 PROPERTIES
+                      DESCRIPTION "FFTW3 Fourier Transform library"
+                      TYPE OPTIONAL
+                      URL "http://www.fftw.org/")
+
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR})
 
@@ -92,3 +104,33 @@ install(TARGETS xgraph
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
 )
+
+if (BUILD_XGTEST)
+    add_executable(xgtest xgtest.c)
+    if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux")
+        target_link_libraries(xgtest
+            -lm)
+    endif()
+endif()
+
+### DyMods plugins:
+
+if (BUILD_XGTEST)
+    add_dymod(dm_example.c)
+endif()
+
+add_dymods(constants.c strings.c CMaps.c)
+
+add_dymods(contrib/splines.c
+    contrib/simanneal.c
+    contrib/integrators.c
+    contrib/ddeltaNEC.c
+    contrib/fig_dist.c)
+add_dymod(contrib/pearson_correl.c DYMOD_NAME pearson_correlation)
+add_dymod(contrib/fourconv3.c arrayvops.cpp DYMOD_NAME fourconv3)
+add_dymod(contrib/fourconv3.c arrayvops.cpp DYMOD_NAME fourconv3f DEFINITIONS FFTW_SINGLE)
+
+add_dymods(Import/GSRio.c Import/IEFio.c Import/CSVio.c)
+
+
+FEATURE_SUMMARY(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)

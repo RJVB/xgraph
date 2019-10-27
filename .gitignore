@@ -47,3 +47,10 @@ sse_mathfun/Macros.h
 sse_mathfun/cpu.h
 Prefs
 .gdb_args
+
+.AppleDouble
+Python/embedded_qtconsole.py
+Python/embedded_terminal.py
+compile_commands.json
+xgtest
+

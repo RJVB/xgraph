@@ -56,6 +56,8 @@ language) are better compiled by another compiler; such is the case under Irix 6
 Installing in a nutshell (/bin/nsh :))
 0) Unpack the distribution. This you already managed to do.
 
+00) Use CMake, or:
+
 1a) Have a look in the script directory. If your system is among the ones mentioned
 above, or if you have a recent gcc, you'll find the correct (g)ccopt.xx script ready.
 Copy or symlink this file, together with cmake, cx*, _obj* and zero to a directory

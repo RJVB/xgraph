@@ -204,7 +204,7 @@ void *XG_dlopen( char **name, int flags, char **error_mesg )
 
 void *XG_dlopen_now_ext( char **Name, int flags, char **error_mesg )
 { void *handle= NULL;
-  char *name= *Name, *bname= NULL, *ext[]= { ".dylib", ".so", ".dll", NULL };
+  char *name= *Name, *bname= NULL, *ext[]= { ".dymod", ".dylib", ".so", ".dll", NULL };
   int i= 0;
 	if( name ){
 		bname= XGstrdup(name);
@@ -1040,6 +1040,7 @@ int Auto_LoadDyMod_LastPtr( DyModAutoLoadTables *Table, int N, char *fname, DyMo
 						  DyModLists *new;
 
 							if( strcasecmp( table->DyModName, "Python" ) == 0
+								|| strcasecmp( table->DyModName, "Python.dymod" ) == 0
 								|| strcasecmp( table->DyModName, "Python.so" ) == 0
 								|| strcasecmp( table->DyModName, "Python.dll" ) == 0
 								|| strcasecmp( table->DyModName, "Python.dylib" ) == 0
