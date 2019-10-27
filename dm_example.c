@@ -436,12 +436,12 @@ int closeDyMod( DyModLists *target, int force )
  \ NB: These are example invocations. Care should be taken to use stderr and not StdErr, as XGRAPH_ATTACH will not yet
  \ have been called.
  */
-int _init()
+void __attribute__((constructor)) dm_example_init()
 { static int called= 0;
 	fprintf( stderr, "%s::_init(): call #%d\n", __FILE__, ++called );
 }
 
-int _fini()
+void __attribute__((destructor)) dm_example_fini()
 { static int called= 0;
 	fprintf( stderr, "%s::_fini(): call #%d\n", __FILE__, ++called );
 }
