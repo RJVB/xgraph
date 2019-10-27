@@ -132,5 +132,6 @@ add_dymod(contrib/fourconv3.c arrayvops.cpp DYMOD_NAME fourconv3f DEFINITIONS FF
 
 add_dymods(Import/GSRio.c Import/IEFio.c Import/CSVio.c)
 
+add_subdirectory(Python)
 
 FEATURE_SUMMARY(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)

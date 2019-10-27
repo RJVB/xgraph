@@ -106,6 +106,14 @@
 #	elif PYTHONdefault
 #		include "pythondefault_headers.h"
 #		include "pythondefault_numpy.h"
+#	else
+#		include <Python.h>
+#		include <bytesobject.h>
+#		if PY_MAJOR_VERSION < 3
+#			include <intobject.h>
+#		endif
+		  /* good question ... where are the numpy headers here?? */
+#		include "python_numpy.h"
 #	endif
 #else
 #	include <Python.h>

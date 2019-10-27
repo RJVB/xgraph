@@ -1,0 +1,1 @@
+#include <@Python_NumPy_INCLUDE_DIR@/numpy/arrayobject.h>
