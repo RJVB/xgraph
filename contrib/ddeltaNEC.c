@@ -589,18 +589,18 @@ DyModTypes initDyMod( INIT_DYMOD_ARGUMENTS )
 		   */
 	}
 
-	fprintf( StdErr, "%s::initDyMod(): Initialising %s loaded from %s (build: %s), call %d\n", __FILE__, new->name, new->path, XG_IDENTIFY(), ++called );
+	fprintf( StdErr, "%s::initDyMod(): Initialising %s loaded from %s (build: %s), call %d\n", __FILE__, theDyMod->name, theDyMod->path, XG_IDENTIFY(), ++called );
 	if( !initialised ){
 		  /* Perform all initialisations that are necessary. */
-		af_initialise( new, new->name );
+		af_initialise( theDyMod, theDyMod->name );
 		  /* And now add the functions we provide! */
 		add_ascanf_functions( ddeltaNEC_Function, ddeltaNEC_Functions, "ddeltaNEC::initDyMod()" );
 		initialised= True;
 	}
-	new->libHook= NULL;
-	new->libname= XGstrdup( "ddeltaNEC" );
-	new->buildstring= XGstrdup(XG_IDENTIFY());
-	new->description= XGstrdup(
+	theDyMod->libHook= NULL;
+	theDyMod->libname= XGstrdup( "ddeltaNEC" );
+	theDyMod->buildstring= XGstrdup(XG_IDENTIFY());
+	theDyMod->description= XGstrdup(
 		" A dynamic module (library) that contains\n"
 		" some test code for a Nec V853 microcontroller.\n"
 	);
@@ -668,19 +668,3 @@ int closeDyMod( DyModLists *target, int force )
 	}
 	return(ret);
 }
-
-/* _init() and _fini() are called at first initialisation, and final unloading respectively. This works under linux, and
- \ maybe solaris - not under Irix 6.3. It also requires that the -nostdlib flag is passed to gcc.
- \ NB: These are example invocations. Care should be taken to use stderr and not StdErr, as XGRAPH_ATTACH will not yet
- \ have been called.
- */
-int _init()
-{ static int called= 0;
-	fprintf( stderr, "%s::_init(): call #%d\n", __FILE__, ++called );
-}
-
-int _fini()
-{ static int called= 0;
-	fprintf( stderr, "%s::_fini(): call #%d\n", __FILE__, ++called );
-}
-
