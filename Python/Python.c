@@ -226,7 +226,7 @@ int Check_External_Availability()
 	return !inInteractiveShell();
 }
 
-#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION < 2
+#if PY_MAJOR_VERSION >= 3 && (PY_MINOR_VERSION < 2||PY_MINOR_VERSION > 4)
 //----------------- copied verbatim from the Python 3.2.3 distro
 #ifdef MS_WINDOWS
 #  include <windows.h>
@@ -406,7 +406,7 @@ _Py_wchar2char(const wchar_t *text, size_t *error_pos)
     return result;
 }
 //---------------------------------------------------------------
-#endif	// python 3.0 or 3.1
+#endif	// python 3.0 or 3.1 or 3.5+
 
 /* Attention: this function is very expensive, it slows down execution of a typical statement almost 20x!! */
 

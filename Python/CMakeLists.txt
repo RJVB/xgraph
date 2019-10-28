@@ -1,5 +1,10 @@
 # FindPython components are case-sensitive!
-find_package(Python COMPONENTS Interpreter Development NumPy)
+
+if (PYTHON_VERSION)
+    find_package(Python ${PYTHON_VERSION} COMPONENTS Interpreter Development NumPy)
+else()
+    find_package(Python COMPONENTS Interpreter Development NumPy)
+endif()
 
 if (Python_Interpreter_FOUND AND Python_NumPy_FOUND)
     configure_file(python_numpy.h.in ${CMAKE_CURRENT_BINARY_DIR}/python_numpy.h)
