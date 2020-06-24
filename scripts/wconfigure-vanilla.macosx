@@ -255,7 +255,7 @@ fi
 if [ "$POSTCONFIGEDIT" != "" ] ;then
 	${ECHO} -n " POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\"" >> ${WCONFCALL}
 fi
-${ECHO} " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0`" >> ${WCONFCALL}
+${ECHO} -n " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0`" >> ${WCONFCALL}
 for a in "$@" ;do
 	${ECHO} -n " \"$a\"" >> ${WCONFCALL}
 done
