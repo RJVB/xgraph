@@ -96,6 +96,9 @@ fi
 if [ "${cliFC}" != "" ] ;then
 	FC="${cliFC}" ; export FC
 fi
+if [ "${cliLD}" != "" ] ;then
+	LD="${cliLD}" ; export LD
+fi
 if [ "${cliCPPFLAGS}" != "" ] ;then
 	CPPFLAGS="${cliCPPFLAGS}" ; export CPPFLAGS
 fi
@@ -126,6 +129,15 @@ fi
 if [ "${cliPOSTCONFIGEDIT}" != "" ] ;then
 	POSTCONFIGEDIT="${cliPOSTCONFIGEDIT}" ; export POSTCONFIGEDIT
 fi
+if [ "${cliAR}" != "" ] ;then
+	AR="${cliAR}" ; export AR
+fi
+if [ "${cliNM}" != "" ] ;then
+	NM="${cliNM}" ; export NM
+fi
+if [ "${cliRANLIB}" != "" ] ;then
+	RANLIB="${cliRANLIB}" ; export RANLIB
+fi
 set -x
 
 # set NOWCC to the desired compiler script in order to attempt to retrieve its CC and CFLAGS settings
@@ -134,13 +146,14 @@ set -x
 if [ "$NOWCC" != "" ] ;then
 	case $NOWCC in
 		default|system|none)
-			${ECHO} "Using (provided) defaults: CPP=${CPP} CC=${CC} CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} CXX=${CXX} CXXFLAGS=${CXXFLAGS} OBJC=${OBJC} OBJCFLAGS=${OBJCFLAGS} F77=${F77} FFLAGS=${FFLAGS} FC=${FC} FCFLAGS=${FCFLAGS} PYTHON=${PYTHON} PYTHONPATH=${PYTHONPATH}"
+			${ECHO} "Using (provided) defaults: CPP=${CPP} CC=${CC} LD=${LD} CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} CXX=${CXX} CXXFLAGS=${CXXFLAGS} OBJC=${OBJC} OBJCFLAGS=${OBJCFLAGS} F77=${F77} FFLAGS=${FFLAGS} FC=${FC} FCFLAGS=${FCFLAGS} AR=${AR} NM=${NM} RANLIB=${RANLIB}PYTHON=${PYTHON} PYTHONPATH=${PYTHONPATH}"
 			;;
 		*)
 			KK="kk$$"
 			${NOWCC} -cli > ${KK}
-			CC="`fgrep 'CPP=' ${KK} | sed -e 's/CPP=\([^ ]*\).*/\1/'`" ; export CPP
+			CPP="`fgrep 'CPP=' ${KK} | sed -e 's/CPP=\([^ ]*\).*/\1/'`" ; export CPP
 			CC="`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\).*/\1/'`" ; export CC
+			LD="`fgrep 'LD=' ${KK} | sed -e 's/LD=\([^ ]*\).*/\1/'`" ; export LD
 			OPTS=`fgrep 'CC=' ${KK} | sed -e 's/CC=\([^ ]*\)\(.*\)/\2/'`
 			CPPFLAGS="`fgrep CPPFLAGS= ${KK} | sed -e 's/CPPFLAGS=//'` ${CPPFLAGS}" ; export CPPFLAGS
 			CFLAGS="`fgrep CFLAGS= ${KK} | sed -e 's/CFLAGS=//'` ${CFLAGS}"
@@ -153,6 +166,9 @@ if [ "$NOWCC" != "" ] ;then
 			PYTHONPATH="${PYTHONPATH}" ; export PYTHONPATH
 			macosx_deployment_target="`fgrep 'MACOSX_DEPLOYMENT_TARGET=' ${KK} | sed -e 's/MACOSX_DEPLOYMENT_TARGET=\([^ ]*\).*/\1/'`"
 			POSTCONFIGEDIT="${POSTCONFIGEDIT}" ; export POSTCONFIGEDIT
+			AR="`fgrep 'AR=' ${KK} | sed -e 's/AR=\([^ ]*\).*/\1/'`" ; export AR
+			NM="`fgrep 'NM=' ${KK} | sed -e 's/NM=\([^ ]*\).*/\1/'`" ; export NM
+			RANLIB="`fgrep 'RANLIB=' ${KK} | sed -e 's/RANLIB=\([^ ]*\).*/\1/'`" ; export RANLIB
 			rm -f ${KK}
 			;;
 	esac
@@ -213,6 +229,7 @@ fi
 # those flags into CFLAGS.
 if [ $MERGE_CPPFLAGS ] ;then
 	CFLAGS="${CPPFLAGS} ${CFLAGS}" ; export CFLAGS
+	OBJCFLAGS="${CPPFLAGS} ${OBJCFLAGS}" ; export OBJCFLAGS
 	CPPFLAGS="" ; export CPPFLAGS
 fi
 
@@ -250,13 +267,13 @@ if [ "$PYTHONPATH" != "" ] ;then
 	${ECHO} -n " PYTHONPATH=\"${PYTHONPATH}\" ; export PYTHONPATH" >> "${WCONFCALL}"
 fi
 if [ "$POSTCONFIGEDIT" != "" ] ;then
-	${ECHO} -n " POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\"" >> wconfigure.call
+	${ECHO} -n " POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\"" >> ${WCONFCALL}
 fi
-${ECHO} -n " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0`" >> wconfigure.call
-if [ "${MACPORTS}" != "" ] ;then
-	${ECHO} -n " --MP" >> wconfigure.call
-fi
-${ECHO} " $@" >> wconfigure.call
+${ECHO} " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0`" >> ${WCONFCALL}
+for a in "$@" ;do
+	${ECHO} -n " \"$a\"" >> ${WCONFCALL}
+done
+${ECHO} >> ${WCONFCALL}
 
 if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	rm "${WCONFIGURE}"
@@ -269,6 +286,11 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	${ECHO} "CC=\"${CC}\"" >> "${WCONFIGURE}"
 	${ECHO} "CPPFLAGS=\"${CPPFLAGS}\"" >> "${WCONFIGURE}"
 	${ECHO} "CFLAGS=\"${CFLAGS}\"" >> "${WCONFIGURE}"
+	if [ "${OBJCFLAGS}" = "${CFLAGS}" ] ;then
+		${ECHO} 'OBJCFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
+	else
+		${ECHO} "OBJCFLAGS=\"${OBJCFLAGS}\"" >> "${WCONFIGURE}"
+	fi
 	${ECHO} "CXX=\"${CXX}\"" >> "${WCONFIGURE}"
 	if [ "${CXXFLAGS}" = "${CFLAGS}" ] ;then
 		${ECHO} 'CXXFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
@@ -279,11 +301,6 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 		${ECHO} 'OBJC="${CC}"' >> "${WCONFIGURE}"
 	else
 		${ECHO} "OBJC=\"${OBJC}\"" >> "${WCONFIGURE}"
-	fi
-	if [ "${OBJCFLAGS}" = "${CFLAGS}" ] ;then
-		${ECHO} 'OBJCFLAGS="${CFLAGS}"' >> "${WCONFIGURE}"
-	else
-		${ECHO} "OBJCFLAGS=\"${OBJCFLAGS}\"" >> "${WCONFIGURE}"
 	fi
 	${ECHO} "F77=\"${F77}\"" >> "${WCONFIGURE}"
 	if [ "${FFLAGS}" = "${CFLAGS}" ] ;then
@@ -303,7 +320,17 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	else
 		${ECHO} "FCFLAGS=\"${FCFLAGS}\"" >> "${WCONFIGURE}"
 	fi
+	${ECHO} "LD=\"${LD}\" ; export LD" >> "${WCONFIGURE}"
 	${ECHO} "LDFLAGS=\"${LDFLAGS}\"" >> "${WCONFIGURE}"
+	if [ "${AR}" != "" ] ;then
+		${ECHO} "AR=\"${AR}\" ; export AR" >> "${WCONFIGURE}"
+	fi
+	if [ "${NM}" != "" ] ;then
+		${ECHO} "NM=\"${NM}\" ; export NM" >> "${WCONFIGURE}"
+	fi
+	if [ "${RANLIB}" != "" ] ;then
+		${ECHO} "RANLIB=\"${RANLIB}\" ; export RANLIB" >> "${WCONFIGURE}"
+	fi
 	if [ "$MACOSX_DEPLOYMENT_TARGET" != "" ] ;then
 		${ECHO} "MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\" ; export MACOSX_DEPLOYMENT_TARGET" >> "${WCONFIGURE}"
 	fi
