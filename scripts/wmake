@@ -43,6 +43,10 @@ if [ "$1" = "--MP" ] ;then
 	shift 1
 fi
 
+if [ "${MAKE}" = "" ] ;then
+	MAKE=make
+fi
+
 /bin/echo -n ']0;'"$0 ${JOBS} ${ALLERRORS} $@"'' 1>&2
 CWD="`pwd`"
 cd `realpath "${CWD}"`
@@ -51,6 +55,12 @@ echo "# `date`" 1>&2
 
 GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE
 GCCOPT_QUIET=1 ; export GCCOPT_QUIET
+
+if [ "${CCACHE_SLOPPINESS}" = "" ] ;then
+	export CCACHE_SLOPPINESS=pch_defines,time_macros
+else
+	CCACHE_SLOPPINESS=${CCACHE_SLOPPINESS},pch_defines,time_macros
+fi
 
 # 20090106
 # if [ "$MACOSX_DEPLOYMENT_TARGET" = "" ] ;then
@@ -85,14 +95,15 @@ if [ "$NOWCC" != "" ] ;then
 		GXX="${CXX}" ; export GXX
 	fi
 	rm -f ${KK}
-	echo "make "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" ${JOBS} ${ALLERRORS} $@"
-	time make "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" ${JOBS} ${ALLERRORS} "$@"
+	echo "${MAKE} "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" ${JOBS} ${ALLERRORS} $@"
+	time ${MAKE} "CC=${CC}" "CPPFLAGS=${CPPFLAGS}" "CFLAGS=${CFLAGS}" "CXX=${CXX}" ""CXXFLAGS=${CXXFLAGS}" ${JOBS} ${ALLERRORS} "$@"
 	RET=$?
 else
 	if [ -r "${WCONFIGURE}" ] ;then
 		. "${WCONFIGURE}"
 	fi
-	time make ${JOBS} ${ALLERRORS} "$@"
+	echo "${MAKE} ${JOBS} ${ALLERRORS} $@"
+	time ${MAKE} ${JOBS} ${ALLERRORS} "$@"
 	RET=$?
 fi
 times

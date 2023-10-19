@@ -38,6 +38,7 @@ if [ $# -lt 2 ] ;then
 fi
 
 COMPRESSED=0
+IC=0
 
 while [ $PARSE = 1 ] ;do
 	case $1 in
@@ -64,6 +65,7 @@ while [ $PARSE = 1 ] ;do
 			;;
 		-i)
 			FOPTS="$FOPTS -i"
+			IC=1
 #			EXINIT="`echo $EXINIT|sed -e 's/noignorecase//g'` ignorecase"
 #			export EXINIT
 #			echo $EXINIT
@@ -139,7 +141,11 @@ if [ "$HOTFILES" != "" ] ; then
 		else
 			case $APP in
 				vi*|less*)
-					$APP "+/$PAT" $HOTFILES
+					if [ $IC = 1 ] ;then
+						$APP "+/$PAT\\c" $HOTFILES
+					else
+						$APP "+/$PAT" $HOTFILES
+					fi
 					;;
 				*)
 					$APP $HOTFILES

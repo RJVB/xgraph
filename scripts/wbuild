@@ -18,7 +18,7 @@ if [ "$1" = "--MP" ] ;then
 	INSTALL="/usr/bin/install -c" ; export INSTALL
 	LIBRARY_PATH=/opt/local/lib ; export LIBRARY_PATH
 	#MOC=/opt/local/bin/moc ; export MOC
-	PATH=.:/Users/bertin/bin:/Users/bertin/script:./script:/opt/local/bin:/opt/local/sbin:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
+	PATH=.:${HOME}/bin:${HOME}/script:./script:/opt/local/bin:/opt/local/sbin:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
 	export PATH
 	QMAKE=/opt/local/bin/qmake ; export QMAKE
 	#QTDIR=/opt/local ; export QTDIR
@@ -27,6 +27,9 @@ if [ "$1" = "--MP" ] ;then
 	else
 		export LD_LIBRARY_PATH="/opt/local/lib:${LD_LIBRARY_PATH}"
 	fi
+	shift 1
+elif [ "$1" = "--no-MP" ] ;then
+	export PATH=.:${HOME}/bin:${HOME}/script:./script:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
 	shift 1
 fi
 
