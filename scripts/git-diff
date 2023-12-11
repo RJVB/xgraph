@@ -1,0 +1,29 @@
+#!/bin/sh
+
+WHERE=""
+REF="HEAD"
+if [ $# -gt 0 ] ;then
+	if [ -e "$1" ] ;then
+		git diff --summary "${1}..HEAD" 2>/dev/null 1>/dev/null
+		if [ $? = 0 ] ;then
+			echo "\"$1\" is an existing file/directory AND git commit; using it as the latter!" 1>&2
+			REF="$1"
+		else
+			WHERE="$1"
+		fi
+	else
+		REF="$1"
+	fi
+	shift 1
+fi
+
+if [ $# -gt 0 ] ;then
+	if [ "${WHERE}" = "" ] ;then
+		WHERE="$1"
+		shift 1
+	fi
+else
+	WHERE="."
+fi
+
+exec git diff --no-ext-diff "$@" "${REF}" -- "${WHERE}"
