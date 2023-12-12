@@ -2,6 +2,24 @@
 
 RWSTRINGS=0 ; export RWSTRINGS
 
+if [ "$1" = "--nice" ] ;then
+	renice $2 $$
+	shift 2
+fi
+if [ "$1" = "--MP" ] ;then
+	CC_PRINT_OPTIONS=YES ; export CC_PRINT_OPTIONS
+	CPATH=/opt/local/include ; export CPATH
+	INSTALL="/usr/bin/install -c" ; export INSTALL
+	LIBRARY_PATH=/opt/local/lib ; export LIBRARY_PATH
+	MOC=/opt/local/bin/moc ; export MOC
+	PATH=.:/Users/bertin/bin:/Users/bertin/script:./script:/opt/local/bin:/opt/local/sbin:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
+	export PATH
+	QMAKE=/opt/local/bin/qmake ; export QMAKE
+	QTDIR=/opt/local ; export QTDIR
+	MACPORTS=1
+	shift 1
+fi
+
 if [ "${WCONFIGURE}" = "" ] ;then
 	WCONFIGURE="./wconfigure.env"
 	WCONFCALL="./wconfigure.call"
@@ -54,6 +72,7 @@ cliPYTHON="${PYTHON}"
 cliPYTHONPATH="${PYTHONPATH}"
 cliMACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 cliPOSTCONFIGEDIT="${POSTCONFIGEDIT}"
+cliPKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
 cliAR="${AR}"
 cliNM="${NM}"
 cliRANLIB="${RANLIB}"
@@ -115,6 +134,9 @@ fi
 if [ "${cliPOSTCONFIGEDIT}" != "" ] ;then
 	POSTCONFIGEDIT="${cliPOSTCONFIGEDIT}" ; export POSTCONFIGEDIT
 fi
+if [ "${cliPKG_CONFIG_PATH}" != "" ] ;then
+	PKG_CONFIG_PATH="${cliPKG_CONFIG_PATH}" ; export PKG_CONFIG_PATH
+fi
 if [ "${cliAR}" != "" ] ;then
 	AR="${cliAR}" ; export AR
 fi
@@ -152,6 +174,7 @@ if [ "$NOWCC" != "" ] ;then
 			PYTHONPATH="${PYTHONPATH}" ; export PYTHONPATH
 			macosx_deployment_target="`fgrep 'MACOSX_DEPLOYMENT_TARGET=' ${KK} | sed -e 's/MACOSX_DEPLOYMENT_TARGET=\([^ ]*\).*/\1/'`"
 			POSTCONFIGEDIT="${POSTCONFIGEDIT}" ; export POSTCONFIGEDIT
+			PKG_CONFIG_PATH="${PKG_CONFIG_PATH}" ; export PKG_CONFIG_PATH
 			AR="`fgrep 'AR=' ${KK} | sed -e 's/AR=\([^ ]*\).*/\1/'`" ; export AR
 			NM="`fgrep 'NM=' ${KK} | sed -e 's/NM=\([^ ]*\).*/\1/'`" ; export NM
 			RANLIB="`fgrep 'RANLIB=' ${KK} | sed -e 's/RANLIB=\([^ ]*\).*/\1/'`" ; export RANLIB
@@ -209,6 +232,9 @@ else
 	if [ "$POSTCONFIGEDIT" = "" ] ;then
 		POSTCONFIGEDIT="" ; export POSTCONFIGEDIT
 	fi
+	if [ "$PKG_CONFIG_PATH" = "" ] ;then
+		PKG_CONFIG_PATH="" ; export PKG_CONFIG_PATH
+	fi
 fi
 
 # For those configure scripts that do not support CPPFLAGS: if requested, merge
@@ -255,7 +281,13 @@ fi
 if [ "$POSTCONFIGEDIT" != "" ] ;then
 	${ECHO} -n " POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\"" >> ${WCONFCALL}
 fi
+if [ "$PKG_CONFIG_PATH" != "" ] ;then
+	${ECHO} -n " PKG_CONFIG_PATH=\"${PKG_CONFIG_PATH}\"" >> wconfigure.call
+fi
 ${ECHO} -n " compiler=\"${compiler}\" CONFIGURE=\"${CONFIGURE}\" NOWCC=\"${NOWCC}\" WCC_STUB=\"${WCC_STUB}\" `basename $0`" >> ${WCONFCALL}
+if [ "${MACPORTS}" != "" ] ;then
+	${ECHO} -n " --MP" >> wconfigure.call
+fi
 for a in "$@" ;do
 	${ECHO} -n " \"$a\"" >> ${WCONFCALL}
 done
@@ -328,6 +360,9 @@ if [ "${WCONFIGURE_REWRITE}" != "FALSE" ] ;then
 	fi
 	if [ "$POSTCONFIGEDIT" != "" ] ;then
 		${ECHO} "POSTCONFIGEDIT=\"${POSTCONFIGEDIT}\" ; export POSTCONFIGEDIT" >> "${WCONFIGURE}"
+	fi
+	if [ "$PKG_CONFIG_PATH" != "" ] ;then
+		${ECHO} "PKG_CONFIG_PATH=\"${PKG_CONFIG_PATH}\" ; export PKG_CONFIG_PATH" >> "${WCONFIGURE}"
 	fi
 	${ECHO} "export CC CPPFLAGS CFLAGS CXX CXXFLAGS OBJC OBJCFLAGS F77 FFLAGS FC FCFLAGS LDFLAGS" >> "${WCONFIGURE}"
 fi

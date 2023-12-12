@@ -265,20 +265,20 @@ fi
 if [ "${CC}" != "" ] ;then
 	${ECHO} "CC=\"${CC}\"" >> "${WCONFIGURE}"
 	#ARGS+=" \"-DCMAKE_C_COMPILER:FILEPATH=${CC}\""
-	${ECHO} "SET (CMAKE_C_COMPILER:FILEPATH \"${CC}\")" >> ./wcmake.initcache
+	${ECHO} "set (CMAKE_C_COMPILER:FILEPATH \"${CC}\")" >> ./wcmake.initcache
 fi
 ${ECHO} "CPPFLAGS=\"${CPPFLAGS}\"" >> "${WCONFIGURE}"
 if [ "${CFLAGS}" != "" ] ;then
 	${ECHO} "CFLAGS=\"${CFLAGS}\"" >> "${WCONFIGURE}"
 	#ARGS+=" -DCMAKE_C_FLAGS:STRING=`echo ${CFLAGS} | sed -e 's/ /\\\\ /g'`"
-	${ECHO} "SET (CMAKE_C_FLAGS:STRING \"${CFLAGS}\")" >> ./wcmake.initcache
-	${ECHO} "SET (CMAKE_C_FLAGS_RELEASE:STRING \"${CFLAGS}\")" >> ./wcmake.initcache
-	${ECHO} "SET (CMAKE_C_FLAGS_RELWITHDEBINFO:STRING \"${CFLAGS} -g\")" >> ./wcmake.initcache
+	${ECHO} "set (CMAKE_C_FLAGS:STRING \"${CFLAGS}\")" >> ./wcmake.initcache
+	${ECHO} "set (CMAKE_C_FLAGS_RELEASE:STRING \"${CFLAGS}\")" >> ./wcmake.initcache
+	${ECHO} "set (CMAKE_C_FLAGS_RELWITHDEBINFO:STRING \"${CFLAGS} -g\")" >> ./wcmake.initcache
 fi
 if [ "${CXX}" != "" ] ;then
 	${ECHO} "CXX=\"${CXX}\"" >> "${WCONFIGURE}"
  	#ARGS+=" \"-DCMAKE_CXX_COMPILER:FILEPATH=${CXX}\""
-	${ECHO} "SET (CMAKE_CXX_COMPILER:FILEPATH \"${CXX}\")" >> ./wcmake.initcache
+	${ECHO} "set (CMAKE_CXX_COMPILER:FILEPATH \"${CXX}\")" >> ./wcmake.initcache
 fi
 if [ "${CXXFLAGS}" != "" ] ;then
 	if [ "${CXXFLAGS}" = "${CFLAGS}" ] ;then
@@ -287,9 +287,9 @@ if [ "${CXXFLAGS}" != "" ] ;then
 		${ECHO} "CXXFLAGS=\"${CXXFLAGS}\"" >> "${WCONFIGURE}"
 	fi
  	#ARGS+=" -DCMAKE_CXX_FLAGS:STRING=${CXXFLAGS}"
- 	${ECHO} "SET (CMAKE_CXX_FLAGS:STRING \"${CXXFLAGS}\")" >> ./wcmake.initcache
- 	${ECHO} "SET (CMAKE_CXX_FLAGS_RELEASE:STRING \"${CXXFLAGS}\")" >> ./wcmake.initcache
- 	${ECHO} "SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING \"${CXXFLAGS} -g\")" >> ./wcmake.initcache
+ 	${ECHO} "set (CMAKE_CXX_FLAGS:STRING \"${CXXFLAGS}\")" >> ./wcmake.initcache
+ 	${ECHO} "set (CMAKE_CXX_FLAGS_RELEASE:STRING \"${CXXFLAGS}\")" >> ./wcmake.initcache
+ 	${ECHO} "set (CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING \"${CXXFLAGS} -g\")" >> ./wcmake.initcache
 fi
 if [ "${OBJC}" = "${CC}" ] ;then
 	${ECHO} 'OBJC="${CC}"' >> "${WCONFIGURE}"
@@ -322,7 +322,7 @@ fi
 if [ "${LDFLAGS}" != "" ] ;then
 	${ECHO} "LDFLAGS=\"${LDFLAGS}\"" >> "${WCONFIGURE}"
 	#ARGS+=" \"-DCMAKE_EXE_LINKER_FLAG:STRINGS=${LDFLAGS}\""
-	${ECHO} "SET (CMAKE_EXE_LINKER_FLAG:STRINGS \"${LDFLAGS}\")" >> ./wcmake.initcache
+	${ECHO} "set (CMAKE_EXE_LINKER_FLAG:STRINGS \"${LDFLAGS}\")" >> ./wcmake.initcache
 fi
 if [ "$MACOSX_DEPLOYMENT_TARGET" != "" ] ;then
 	${ECHO} "MACOSX_DEPLOYMENT_TARGET=\"${MACOSX_DEPLOYMENT_TARGET}\" ; export MACOSX_DEPLOYMENT_TARGET" >> "${WCONFIGURE}"
