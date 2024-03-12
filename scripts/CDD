@@ -15,7 +15,11 @@ for d in "$@" ;do
 			IGNORERRORS=1
 			;;
 		*)
-			DIRS="${DIRS} ${d}"
+			if [ -d ${d} ] ;then
+				DIRS="${DIRS} ${d}"
+			else
+				echo "Ignoring non-directory \"${d}\"" 1>&2
+			fi
 			;;
 	esac
 	shift
