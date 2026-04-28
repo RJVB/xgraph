@@ -30,6 +30,9 @@ if [ "$1" == "--MP" ] ;then
 	QTDIR=/opt/local ; export QTDIR
 	MACPORTS=1
 	shift 1
+elif [ "$1" = "--no-MP" ] ;then
+	export PATH=.:${HOME}/bin:${HOME}/script:./script:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
+	shift 1
 fi
 
 if [ "${WCMAKEARGS}" = "" ] ;then

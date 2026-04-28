@@ -8,6 +8,8 @@ else
 	echo "# env WCONFIGURE=\"${WCONFIGURE}\" $0 $@" 1>&2
 fi
 
+XEXCLUDE=""
+
 if [ "$1" = "--nice" ] ;then
 	renice $2 $$
 	shift 2
@@ -29,8 +31,12 @@ if [ "$1" = "--MP" ] ;then
 	fi
 	shift 1
 elif [ "$1" = "--no-MP" ] ;then
-	export PATH=.:${HOME}/bin:${HOME}/script:./script:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
+	XEXCLUDE="`command -v firejail`"
+	export PATH=.:${HOME}/bin:${HOME}/script:./script:/usr/local/bin:/usr/bin/X11:/bin:/sbin:/usr/bin:/usr/sbin
 	shift 1
+	if [ "${XEXCLUDE}" != "" ] ;then
+		echo "(Hiding /opt/local/include)" 1>&2
+	fi
 fi
 
 /bin/echo -n ']0;'"$0 $@"'' 1>&2
@@ -38,6 +44,15 @@ echo "# `date`" 1>&2
 
 WBUILDCMD="$1"
 shift
+
+DoIt() {
+	if [ "${XEXCLUDE}" = "" ] ;then
+		time "${WBUILDCMD}" "$@"
+	else
+		time ${XEXCLUDE} --noprofile --nowhitelist=/opt/local/include '--whitelist=/opt/local/*' -- \
+			"${WBUILDCMD}" "$@"
+	fi
+}
 
 GCCOPT_SIMPLE=1 ; export GCCOPT_SIMPLE
 GCCOPT_QUIET=1 ; export GCCOPT_QUIET
@@ -74,9 +89,15 @@ if [ "$NOWCC" != "" ] ;then
 	if [ "$GXX" = "" ] ;then
 		GXX="${CXX}" ; export GXX
 	fi
+	if [ "${LD_LIBRARY_PATH}" != "" ] ;then
+		echo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
+	else
+		echo "(LD_LIBRARY_PATH not set)"
+	fi
+	echo "PATH=\"${PATH}\""
 	rm -f ${KK}
 	echo "${WBUILDCMD} $@"
-	time "${WBUILDCMD}" "$@"
+	DoIt "$@"
 	RET=$?
 else
 	if [ -r "${WCONFIGURE}" ] ;then
@@ -91,8 +112,14 @@ else
 	export CXXFLAGS
 	export OBJC
 	export OBJCFLAGS
+	if [ "${LD_LIBRARY_PATH}" != "" ] ;then
+		echo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
+	else
+		echo "(LD_LIBRARY_PATH not set)"
+	fi
+	echo "PATH=\"${PATH}\""
 	echo "${WBUILDCMD}" "$@"
-	time "${WBUILDCMD}" "$@"
+	DoIt "$@"
 	RET=$?
 fi
 times
